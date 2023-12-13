@@ -89,8 +89,6 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 			);
 		};
 
-		constexpr auto username = "Technical Machine"sv;
-
 		for (auto const & generation : paths_in_directory(get_test_directory() / "battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
 				INFO(path);
@@ -109,8 +107,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					}
 					auto const result = battles.handle_message(
 						block.room(),
-						*battle_message,
-						username
+						*battle_message
 					);
 					tv::visit(result, [&](auto const & value) {
 						evaluator(value, analysis_logger);

@@ -15,8 +15,8 @@ import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.make_party;
 import tm.clients.ps.message_block;
 import tm.clients.ps.parse_switch;
+import tm.clients.ps.parsed_team_to_known_team;
 import tm.clients.ps.switch_message;
-import tm.clients.ps.validate_generation;
 
 import tm.clients.party;
 import tm.clients.teams;
@@ -24,6 +24,9 @@ import tm.clients.turn_count;
 
 import tm.pokemon.max_pokemon_per_team;
 
+import tm.string_conversions.generation;
+
+import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
 import tm.team;
@@ -38,15 +41,15 @@ using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 struct Parsed {
+	Generation generation;
 	TeamSize foe_team_size;
 	SwitchMessage foe_starter;
-	Party party;
 };
 constexpr auto read_all_messages(
-	Generation const generation,
-	tv::variant<std::string_view, Party> user,
+	Party const party,
 	MessageBlock const messages
 ) -> Parsed {
+	auto generation = tv::optional<Generation>();
 	auto foe_team_size = tv::optional<TeamSize>();
 	auto foe_starter = tv::optional<SwitchMessage>();
 	auto ai_switched_in = false;
@@ -59,18 +62,12 @@ constexpr auto read_all_messages(
 			// This appears to mean nothing
 #endif
 		} else if (type == "gen") {
-			validate_generation(message.pop(), generation);
+			if (generation) {
+				throw std::runtime_error("Received gen multiple times");
+			}
+			generation = from_string<Generation>(message.pop());
 		} else if (type == "player") {
-			tv::visit(user, tv::overload(
-				[&](std::string_view const username) {
-					auto const player_id = message.pop();
-					auto const parsed_username = message.pop();
-					auto const party = make_party(player_id);
-					user = (parsed_username == username) ? party : other(party);
-				},
-				[](Party) {}
-			));
-			// message.remainder() == AVATAR
+			// message.remainder() == PLAYER_ID|USERNAME|AVATAR
 #if 0
 		} else if (type == "poke") {
 			// message.remainder() == PLAYER_ID|DETAILS|ITEM
@@ -87,43 +84,29 @@ constexpr auto read_all_messages(
 		} else if (type == "start") {
 			// We can't actually start the battle until we see the initial switch-in
 		} else if (type == "switch") {
-			tv::visit(user, tv::overload(
-				[](std::string_view) {
-					throw std::runtime_error("Received a switch message before receiving a party");
-				},
-				[&](Party const user_party) {
-					auto parsed = parse_switch(message);
-					if (user_party == parsed.party) {
-						if (ai_switched_in) {
-							throw std::runtime_error("AI switched in twice");
-						}
-						ai_switched_in = true;
-					} else {
-						if (foe_starter) {
-							throw std::runtime_error("Foe switched in twice");
-						}
-						insert(foe_starter, std::move(parsed));
-					}
+			auto parsed = parse_switch(message);
+			if (party == parsed.party) {
+				if (ai_switched_in) {
+					throw std::runtime_error("AI switched in twice");
 				}
-			));
+				ai_switched_in = true;
+			} else {
+				if (foe_starter) {
+					throw std::runtime_error("Foe switched in twice");
+				}
+				insert(foe_starter, std::move(parsed));
+			}
 		} else if (type == "t:") {
 			// message.remainder() == time_t
 		} else if (type == "teampreview") {
 			// This appears to mean nothing
 		} else if (type == "teamsize") {
-			tv::visit(user, tv::overload(
-				[](std::string_view) {
-					throw std::runtime_error("Received a teamsize message before receiving a player id");
-				},
-				[&](Party const user_party) {
-					auto const party = make_party(message.pop());
-					auto const team_size = bounded::to_integer<TeamSize>(message.pop());
-					// TODO: validate that the received teamsize matches my team size
-					if (user_party != party) {
-						insert(foe_team_size, team_size);
-					}
-				}
-			));
+			auto const team_party = make_party(message.pop());
+			auto const team_size = bounded::to_integer<TeamSize>(message.pop());
+			// TODO: validate that the received teamsize matches my team size
+			if (party != team_party) {
+				insert(foe_team_size, team_size);
+			}
 		} else if (type == "tier") {
 			// message.remainder() == string tier
 		} else if (type == "turn") {
@@ -141,6 +124,9 @@ constexpr auto read_all_messages(
 		}
 	}
 
+	if (!generation) {
+		throw std::runtime_error("Did not see generation");
+	}
 	if (!foe_team_size) {
 		throw std::runtime_error("Did not see foe's team size");
 	}
@@ -150,13 +136,10 @@ constexpr auto read_all_messages(
 	if (!foe_starter) {
 		throw std::runtime_error("Did not see foe in the first Pokemon");
 	}
-	if (user.index() != bounded::type<Party>) {
-		throw std::runtime_error("Did not see my own party");
-	}
 	return Parsed(
+		*generation,
 		*foe_team_size,
-		*foe_starter,
-		user[bounded::type<Party>]
+		*foe_starter
 	);
 }
 
@@ -175,27 +158,21 @@ constexpr auto make_foe(Parsed parsed) -> SeenTeam<generation> {
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
 auto make_battle_message_handler(
-	GenerationGeneric<KnownTeam> generic_team,
-	tv::variant<std::string_view, Party> user,
+	ParsedTeam const & team,
 	BattleInitMessage const & message
 ) -> BattleMessageHandler {
 	auto parsed = read_all_messages(
-		get_generation<KnownTeam>(generic_team),
-		user,
+		team.party,
 		message.messages()
 	);
-	auto const party = parsed.party;
 	return BattleMessageHandler(
-		party,
-		tv::visit(
-			std::move(generic_team),
-			[&]<Generation generation>(KnownTeam<generation> team) -> GenerationGeneric<Teams> {
-				return Teams<generation>{
-					std::move(team),
-					make_foe<generation>(std::move(parsed))
-				};
-			}
-		)
+		team.party,
+		constant_generation(parsed.generation, [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<Teams> {
+			return Teams<generation>(
+				parsed_team_to_known_team<generation>(team),
+				make_foe<generation>(std::move(parsed))
+			);
+		})
 	);
 }
 

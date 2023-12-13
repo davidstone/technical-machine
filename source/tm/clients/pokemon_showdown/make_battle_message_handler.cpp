@@ -7,21 +7,13 @@ export module tm.clients.ps.make_battle_message_handler;
 
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
-
-import tm.clients.party;
-
-import tm.generation_generic;
-import tm.team;
-
-import tv;
-import std_module;
+import tm.clients.ps.parsed_team;
 
 namespace technicalmachine::ps {
 
 export auto make_battle_message_handler(
-	GenerationGeneric<KnownTeam> generic_team,
-	tv::variant<std::string_view, Party> user,
-	BattleInitMessage const & message
+	ParsedTeam const &,
+	BattleInitMessage const &
 ) -> BattleMessageHandler;
 
 } // namespace technicalmachine::ps

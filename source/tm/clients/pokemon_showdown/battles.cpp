@@ -9,7 +9,6 @@ import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_started;
-import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room;
 import tm.clients.ps.start_of_turn;
 
@@ -18,6 +17,7 @@ import tm.clients.battle_continues;
 import tm.clients.battle_response_error;
 import tm.clients.battle_finished;
 
+import bounded;
 import containers;
 import tv;
 import std_module;
@@ -39,8 +39,7 @@ export struct Battles {
 	>;
 	constexpr auto handle_message(
 		Room const room,
-		BattleMessage const & generic_message,
-		std::string_view const user
+		BattleMessage const & generic_message
 	) -> Result {
 		auto const it = m_container.find(room);
 		return tv::visit(generic_message, tv::overload(
@@ -55,7 +54,7 @@ export struct Battles {
 				if (it == containers::end(m_container)) {
 					return BattleAlreadyFinished();
 				}
-				auto result = it->mapped.handle_message(message, user);
+				auto result = it->mapped.handle_message(message);
 				return tv::visit(
 					std::move(result),
 					[&]<typename T>(T value) -> Result {
@@ -73,10 +72,7 @@ private:
 	constexpr auto create_battle(Room const room) -> void {
 		m_container.lazy_insert(
 			containers::string(room),
-			[&] {
-				auto const generation = parse_generation_from_format(room, "battle-gen"sv);
-				return BattleManager(generation);
-			}
+			bounded::construct<BattleManager>
 		);
 	}
 

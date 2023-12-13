@@ -7,7 +7,7 @@ export module tm.clients.ps.battle_message;
 
 import tm.clients.ps.event_block;
 import tm.clients.ps.message_block;
-import tm.clients.ps.team_message;
+import tm.clients.ps.parsed_team;
 
 import std_module;
 import tv;
@@ -43,7 +43,7 @@ private:
 
 export using BattleMessage = tv::variant<
 	CreateBattle,
-	TeamMessage,
+	ParsedTeam,
 	BattleInitMessage,
 	EventBlock,
 	ErrorMessage

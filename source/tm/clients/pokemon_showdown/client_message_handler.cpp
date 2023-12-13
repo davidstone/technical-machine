@@ -200,8 +200,7 @@ private:
 		}
 		auto const result = m_battles.handle_message(
 			room,
-			*battle_message,
-			m_settings.username
+			*battle_message
 		);
 		auto analysis_logger = open_text_file(m_battles_directory / room / "analysis.txt");
 		auto call_determine_and_send_action = [&](ActionRequired const & value) {

@@ -14,7 +14,7 @@ import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.message_block;
-import tm.clients.ps.team_message;
+import tm.clients.ps.parsed_team;
 
 import bounded;
 import containers;
@@ -57,7 +57,7 @@ export constexpr auto make_battle_message(MessageBlock const messages) -> tv::op
 		if (json_str.empty()) {
 			return tv::none;
 		}
-		return TeamMessage(json_str);
+		return ParsedTeam(json_str);
 	} else if (matches(""sv)) {
 		if (first_message.remainder() == ladder_timeout) {
 			return tv::none;
