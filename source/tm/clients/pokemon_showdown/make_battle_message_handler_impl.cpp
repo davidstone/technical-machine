@@ -57,10 +57,6 @@ constexpr auto read_all_messages(
 		auto const type = message.type();
 		if (type == "") {
 			// Unnecessary
-#if 0
-		} else if (type == "clearpoke") {
-			// This appears to mean nothing
-#endif
 		} else if (type == "gen") {
 			if (generation) {
 				throw std::runtime_error("Received gen multiple times");
@@ -68,19 +64,11 @@ constexpr auto read_all_messages(
 			generation = from_string<Generation>(message.pop());
 		} else if (type == "player") {
 			// message.remainder() == PLAYER_ID|USERNAME|AVATAR
-#if 0
-		} else if (type == "poke") {
-			// message.remainder() == PLAYER_ID|DETAILS|ITEM
-#endif
 		} else if (type == "rated") {
 			// Received if and only if the game is rated. We don't care about this
 		} else if (type == "rule") {
 			// message.remainder() == RULE: DESCRIPTION
 			// Received for each clause in effect
-#if 0
-		} else if (type == "seed") {
-			// I have no idea what this is
-#endif
 		} else if (type == "start") {
 			// We can't actually start the battle until we see the initial switch-in
 		} else if (type == "switch") {
