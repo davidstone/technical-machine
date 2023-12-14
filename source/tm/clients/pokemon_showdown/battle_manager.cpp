@@ -12,6 +12,7 @@ module;
 export module tm.clients.ps.battle_manager;
 
 import tm.clients.ps.action_required;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_started;

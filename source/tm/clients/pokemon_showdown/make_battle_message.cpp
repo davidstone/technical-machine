@@ -10,6 +10,7 @@ module;
 
 export module tm.clients.ps.make_battle_message;
 
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;

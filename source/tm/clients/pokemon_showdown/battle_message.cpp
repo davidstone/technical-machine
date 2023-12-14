@@ -5,8 +5,8 @@
 
 export module tm.clients.ps.battle_message;
 
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.event_block;
-import tm.clients.ps.message_block;
 import tm.clients.ps.parsed_team;
 
 import std_module;
@@ -15,18 +15,6 @@ import tv;
 namespace technicalmachine::ps {
 
 export struct CreateBattle {
-};
-
-export struct BattleInitMessage {
-	constexpr explicit BattleInitMessage(MessageBlock messages):
-		m_messages(messages)
-	{
-	}
-	constexpr auto messages() const -> MessageBlock {
-		return m_messages;
-	}
-private:
-	MessageBlock m_messages;
 };
 
 export struct ErrorMessage {

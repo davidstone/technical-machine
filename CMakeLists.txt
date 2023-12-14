@@ -448,6 +448,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
 		source/tm/clients/pokemon_showdown/action_required.cpp
+		source/tm/clients/pokemon_showdown/battle_init_message.cpp
 		source/tm/clients/pokemon_showdown/battle_manager.cpp
 		source/tm/clients/pokemon_showdown/battle_message.cpp
 		source/tm/clients/pokemon_showdown/battle_message_handler.cpp

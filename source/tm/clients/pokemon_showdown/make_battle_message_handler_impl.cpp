@@ -10,11 +10,8 @@ module;
 
 module tm.clients.ps.make_battle_message_handler;
 
-import tm.clients.ps.battle_message;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
-import tm.clients.ps.make_party;
-import tm.clients.ps.message_block;
-import tm.clients.ps.parse_switch;
 import tm.clients.ps.parsed_team_to_known_team;
 import tm.clients.ps.switch_message;
 
