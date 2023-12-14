@@ -5,20 +5,27 @@
 
 export module tm.clients.ps.battle_init_message;
 
-import tm.clients.ps.message_block;
+import tm.clients.ps.switch_message;
+
+import tm.clients.party;
+
+import tm.pokemon.max_pokemon_per_team;
+
+import tm.generation;
+
+import bounded;
+import containers;
 
 namespace technicalmachine::ps {
+using namespace bounded::literal;
 
 export struct BattleInitMessage {
-	constexpr explicit BattleInitMessage(MessageBlock messages):
-		m_messages(messages)
-	{
-	}
-	constexpr auto messages() const -> MessageBlock {
-		return m_messages;
-	}
-private:
-	MessageBlock m_messages;
+	struct Team {
+		[[no_unique_address]] SwitchMessage starter;
+		[[no_unique_address]] TeamSize size;
+	};
+	Generation generation;
+	containers::array<Team, 2_bi> team;
 };
 
 } // namespace technicalmachine::ps

@@ -10,10 +10,10 @@ module;
 
 export module tm.clients.ps.make_battle_message;
 
-import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
+import tm.clients.ps.make_battle_init_message;
 import tm.clients.ps.message_block;
 import tm.clients.ps.parsed_team;
 
@@ -48,7 +48,7 @@ export constexpr auto make_battle_message(MessageBlock const messages) -> tv::op
 		if (containers::next(containers::begin(messages)) == containers::end(messages)) {
 			return tv::none;
 		} else {
-			return BattleInitMessage(messages);
+			return make_battle_init_message(messages);
 		}
 	} else if (matches("request"sv)) {
 		if (containers::linear_size(messages) != 1_bi) {

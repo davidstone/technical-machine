@@ -13,7 +13,7 @@ namespace technicalmachine::ps {
 
 export auto make_battle_message_handler(
 	ParsedTeam const &,
-	BattleInitMessage const &
+	BattleInitMessage
 ) -> BattleMessageHandler;
 
 } // namespace technicalmachine::ps
