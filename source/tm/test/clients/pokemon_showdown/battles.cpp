@@ -42,7 +42,10 @@ using namespace std::string_view_literals;
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
 	auto file = open_text_file_for_reading(file_name);
-	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
+	return containers::string(containers::range_view(
+		std::istreambuf_iterator<char>(file),
+		std::default_sentinel
+	));
 }
 
 constexpr auto depth = Depth(1_bi, 0_bi);
@@ -81,7 +84,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 			return containers::transform(
 				containers::range_view(
 					std::filesystem::directory_iterator(path),
-					std::filesystem::directory_iterator()
+					std::default_sentinel
 				),
 				[](std::filesystem::directory_entry const & entry) -> std::filesystem::path const & {
 					return entry.path();

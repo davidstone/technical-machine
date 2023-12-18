@@ -21,7 +21,7 @@ export auto files_in_directory(std::filesystem::path const & path) {
 	return containers::filter(
 		containers::range_view(
 			std::filesystem::recursive_directory_iterator(path),
-			std::filesystem::recursive_directory_iterator()
+			std::default_sentinel
 		),
 		not_directory()
 	);
