@@ -500,6 +500,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/files_in_directory.cpp
 		source/tm/ps_usage_stats/glicko1.cpp
 		source/tm/ps_usage_stats/mode.cpp
+		source/tm/ps_usage_stats/parse_input_log.cpp
 		source/tm/ps_usage_stats/parse_log.cpp
 		source/tm/ps_usage_stats/rating.cpp
 		source/tm/ps_usage_stats/serialize.cpp
