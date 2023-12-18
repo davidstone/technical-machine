@@ -3,12 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <iostream>
-#include <string_view>
-
 export module tm.ai.print_sizes;
 
 import tm.move.move;

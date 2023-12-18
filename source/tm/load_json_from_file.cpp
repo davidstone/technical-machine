@@ -3,12 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <fstream>
-#include <vector>
-
 export module tm.load_json_from_file;
 
 export import tm.nlohmann_json;

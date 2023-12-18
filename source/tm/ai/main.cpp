@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <std_module/prelude.hpp>
-#include <chrono>
-#include <iostream>
-
 import tm.ai.parse_args;
 import tm.ai.print_sizes;
 

@@ -3,11 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <string_view>
-
 module tm.clients.make_client_battle;
 
 import tm.clients.client_battle;

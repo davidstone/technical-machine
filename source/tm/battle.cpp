@@ -3,11 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <iostream>
-
 export module tm.battle;
 
 import tm.move.actual_damage;

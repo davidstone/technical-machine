@@ -6,7 +6,6 @@
 module;
 
 #include <std_module/prelude.hpp>
-#include <filesystem>
 #include <catch2/catch_test_macros.hpp>
 
 export module tm.test.clients.ps.battles;
