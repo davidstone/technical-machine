@@ -482,6 +482,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/parse_set_hp_message.cpp
 		source/tm/clients/pokemon_showdown/parse_status.cpp
 		source/tm/clients/pokemon_showdown/parse_switch.cpp
+		source/tm/clients/pokemon_showdown/parse_team_from_request.cpp
 		source/tm/clients/pokemon_showdown/parsed_team.cpp
 		source/tm/clients/pokemon_showdown/parsed_team_to_known_team.cpp
 		source/tm/clients/pokemon_showdown/party_from_player_id.cpp
@@ -602,6 +603,7 @@ target_sources(tm_test PRIVATE
 		source/tm/test/clients/pokemon_showdown/message_block.cpp
 		source/tm/test/clients/pokemon_showdown/packed_team.cpp
 		source/tm/test/clients/pokemon_showdown/parse_switch.cpp
+		source/tm/test/clients/pokemon_showdown/parse_team_from_request.cpp
 		
 		source/tm/test/clients/client_battle.cpp
 
@@ -636,7 +638,6 @@ target_sources(tm_test PRIVATE
 target_sources(tm_test PRIVATE
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
-	source/tm/test/clients/pokemon_showdown/parsed_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
 	source/tm/test/evaluate/evaluate.cpp
