@@ -9,7 +9,6 @@ import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
-import tm.clients.ps.parsed_team;
 import tm.clients.ps.switch_message;
 
 import tm.clients.party;
@@ -47,39 +46,6 @@ constexpr auto missed = true;
 constexpr auto did_not_miss = false;
 
 TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
-	auto const team = ps::ParsedTeam(
-		Party(0_bi),
-		{{
-			{
-				.species = Species::Tauros,
-				.stats = {
-					.hp = visible_hp(353_bi, 353_bi),
-					.atk = 298_bi,
-					.def = 288_bi,
-					.spa = 238_bi,
-					.spd = 238_bi,
-					.spe = 318_bi,
-				},
-				.moves = {{
-					MoveName::Body_Slam,
-				}},
-			},
-			{
-				.species = Species::Gengar,
-				.stats = {
-					.hp = visible_hp(323_bi, 323_bi),
-					.atk = 228_bi,
-					.def = 218_bi,
-					.spa = 358_bi,
-					.spd = 358_bi,
-					.spe = 318_bi,
-				},
-				.moves = {{
-					MoveName::Thunderbolt,
-				}},
-			},
-		}}
-	);
 	auto const parsed = battle_log_to_messages(
 		nlohmann::json({
 			"|j|☆355",
@@ -137,12 +103,9 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 			"|t:|1641491340",
 			"|switch|p1a: Gengar|Gengar|323/323",
 			"|turn|4",
-		}),
-		team
+		})
 	);
 	auto const expected = containers::vector<ps::BattleMessage>({
-		ps::CreateBattle(),
-		team,
 		ps::BattleInitMessage(
 			Generation::one,
 			{

@@ -18,7 +18,6 @@ import tm.clients.ps.battle_message;
 import tm.clients.ps.in_message;
 import tm.clients.ps.is_chat_message;
 import tm.clients.ps.make_battle_message;
-import tm.clients.ps.parsed_team;
 
 import tm.nlohmann_json;
 
@@ -51,34 +50,23 @@ constexpr auto is_not_chat_or_error_message = [](InMessage const message) {
 	return !is_chat_message(message) and message.type() != "error";
 };
 
-auto messages_in_log(nlohmann::json const & log) {
-	return containers::remove_none(containers::transform(
-		containers::chunk_by(
-			containers::filter(
-				containers::transform(log, [](nlohmann::json const & message) {
-					return InMessage(message.get<std::string_view>());
-				}),
-				is_not_chat_or_error_message
+export auto battle_log_to_messages(nlohmann::json const & log) -> containers::vector<BattleMessage> {
+	return containers::vector<BattleMessage>(
+		containers::remove_none(containers::transform(
+			containers::chunk_by(
+				containers::filter(
+					containers::transform(log, [](nlohmann::json const & message) {
+						return InMessage(message.get<std::string_view>());
+					}),
+					is_not_chat_or_error_message
+				),
+				is_part_of_previous_chunk
 			),
-			is_part_of_previous_chunk
-		),
-		[](auto const messages) {
-			return make_battle_message(messages);
-		}
-	));
-}
-
-export auto battle_log_to_messages(
-	nlohmann::json const & log,
-	ParsedTeam team
-) -> containers::vector<BattleMessage> {
-	return containers::vector<BattleMessage>(containers::concatenate_view(
-		containers::array({
-			BattleMessage(CreateBattle()),
-			BattleMessage(team)
-		}),
-		messages_in_log(log)
-	));
+			[](auto const messages) {
+				return make_battle_message(messages);
+			}
+		))
+	);
 }
 
 } // namespace technicalmachine::ps_usage_stats
