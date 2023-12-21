@@ -12,7 +12,6 @@ export module tm.clients.ps.event_block;
 
 import tm.clients.ps.in_message;
 import tm.clients.ps.make_party;
-import tm.clients.ps.message_block;
 import tm.clients.ps.party_from_player_id;
 import tm.clients.ps.parse_effect_source;
 import tm.clients.ps.parse_set_hp_message;
@@ -759,7 +758,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 
 // TODO: Max size?
 export using EventBlock = containers::vector<ParsedMessage, 1000_bi>;
-export constexpr auto make_event_block(MessageBlock messages) -> EventBlock {
+export constexpr auto make_event_block(auto const messages) -> EventBlock {
 	return EventBlock(
 		containers::remove_none(containers::transform(
 			messages,

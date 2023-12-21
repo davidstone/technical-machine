@@ -14,7 +14,6 @@ import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.make_battle_init_message;
-import tm.clients.ps.message_block;
 import tm.clients.ps.parsed_team;
 
 import bounded;
@@ -29,7 +28,7 @@ using namespace std::string_view_literals;
 
 constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"sv;
 
-export constexpr auto make_battle_message(MessageBlock const messages) -> tv::optional<BattleMessage> {
+export constexpr auto make_battle_message(auto const messages) -> tv::optional<BattleMessage> {
 	std::same_as<InMessage> auto const first_message = containers::front(messages);
 	auto matches = [&](auto const... strs) {
 		return (... or (first_message.type() == strs));
