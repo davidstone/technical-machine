@@ -461,6 +461,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/end_of_turn_state_builder.cpp
 		source/tm/clients/pokemon_showdown/event_block.cpp
 		source/tm/clients/pokemon_showdown/in_message.cpp
+		source/tm/clients/pokemon_showdown/is_chat_message.cpp
 		source/tm/clients/pokemon_showdown/is_chat_message_block.cpp
 		source/tm/clients/pokemon_showdown/log_battle_messages.cpp
 		source/tm/clients/pokemon_showdown/make_battle_message.cpp
