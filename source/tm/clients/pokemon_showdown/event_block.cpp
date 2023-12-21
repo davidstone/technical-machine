@@ -51,106 +51,130 @@ using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 export struct SeparatorMessage {
+	friend auto operator==(SeparatorMessage, SeparatorMessage) -> bool = default;
 };
 
 export struct AbilityMessage {
 	Party party;
 	Ability ability;
 	tv::optional<Ability> other_ability = tv::none;
+	friend auto operator==(AbilityMessage, AbilityMessage) -> bool = default;
 };
 
 export struct ForewarnMessage {
 	Party party;
 	MoveName other_move;
+	friend auto operator==(ForewarnMessage, ForewarnMessage) -> bool = default;
 };
 
 export struct ShedSkinMessage {
 	Party party;
+	friend auto operator==(ShedSkinMessage, ShedSkinMessage) -> bool = default;
 };
 
 export struct ItemMessage {
 	Party party;
 	Item item;
+	friend auto operator==(ItemMessage, ItemMessage) -> bool = default;
 };
 
 export struct DamageSubstituteMessage {
 	Party party;
+	friend auto operator==(DamageSubstituteMessage, DamageSubstituteMessage) -> bool = default;
 };
 export struct DestroySubstituteMessage {
 	Party party;
+	friend auto operator==(DestroySubstituteMessage, DestroySubstituteMessage) -> bool = default;
 };
 
 export struct FlinchMessage {
 	Party party;
+	friend auto operator==(FlinchMessage, FlinchMessage) -> bool = default;
 };
 
 export struct FocusPunchMessage {
 	Party party;
+	friend auto operator==(FocusPunchMessage, FocusPunchMessage) -> bool = default;
 };
 
 export struct FrozenSolidMessage {
 	Party party;
+	friend auto operator==(FrozenSolidMessage, FrozenSolidMessage) -> bool = default;
 };
 
 export struct FullyParalyzedMessage {
 	Party party;
+	friend auto operator==(FullyParalyzedMessage, FullyParalyzedMessage) -> bool = default;
 };
 
 export struct StillAsleepMessage {
 	Party party;
+	friend auto operator==(StillAsleepMessage, StillAsleepMessage) -> bool = default;
 };
 
 export struct RechargingMessage {
 	Party party;
+	friend auto operator==(RechargingMessage, RechargingMessage) -> bool = default;
 };
 
 export struct CriticalHitMessage {
 	Party party;
+	friend auto operator==(CriticalHitMessage, CriticalHitMessage) -> bool = default;
 };
 
 export struct StatusClearMessage {
 	Party party;
 	StatusName status;
+	friend auto operator==(StatusClearMessage, StatusClearMessage) -> bool = default;
 };
 
 export struct DamageMessage {
 	Party party;
 	StatusName status;
 	VisibleHP hp;
+	friend auto operator==(DamageMessage, DamageMessage) -> bool = default;
 };
 
 export struct HitSelfMessage {
 	Party party;
 	StatusName status;
 	VisibleHP hp;
+	friend auto operator==(HitSelfMessage, HitSelfMessage) -> bool = default;
 };
 
 export struct RecoilMessage {
 	Party party;
 	StatusName status;
 	VisibleHP hp;
+	friend auto operator==(RecoilMessage, RecoilMessage) -> bool = default;
 };
 
 export struct ConfusionEndedMessage {
 	Party party;
+	friend auto operator==(ConfusionEndedMessage, ConfusionEndedMessage) -> bool = default;
 };
 
 export struct TauntEndedMessage {
 	Party party;
+	friend auto operator==(TauntEndedMessage, TauntEndedMessage) -> bool = default;
 };
 
 export struct HPMessage {
 	Party party;
 	StatusName status;
 	VisibleHP hp;
-	struct Other {};
+	struct Other {
+		friend auto operator==(Other, Other) -> bool = default;
+	};
 	tv::variant<Other, Item, Ability> item = Other();
+	friend auto operator==(HPMessage, HPMessage) -> bool = default;
 };
 
 export struct MoveMessage {
 	Party party;
 	MoveName move;
 	bool miss;
+	friend auto operator==(MoveMessage, MoveMessage) -> bool = default;
 };
 
 export struct EffectivenessMessage {
@@ -160,6 +184,7 @@ export struct EffectivenessMessage {
 	using enum Value;
 	Party party;
 	Value value;
+	friend auto operator==(EffectivenessMessage, EffectivenessMessage) -> bool = default;
 };
 
 export struct ScreenEndMessage {
@@ -174,6 +199,7 @@ export struct ScreenEndMessage {
 	using enum ScreenName;
 	Party party;
 	ScreenName name;
+	friend auto operator==(ScreenEndMessage, ScreenEndMessage) -> bool = default;
 };
 
 constexpr auto parse_condition(std::string_view const str) -> tv::optional<ScreenEndMessage::ScreenName> {
@@ -196,39 +222,48 @@ constexpr auto parse_condition(std::string_view const str) -> tv::optional<Scree
 }
 
 export struct PhazeMessage : SwitchMessage {
+	friend auto operator==(PhazeMessage, PhazeMessage) -> bool = default;
 };
 
 export struct RampageEndMessage {
 	Party party;
+	friend auto operator==(RampageEndMessage, RampageEndMessage) -> bool = default;
 };
 
 export struct StartConfusionMessage {
 	Party party;
+	friend auto operator==(StartConfusionMessage, StartConfusionMessage) -> bool = default;
 };
 
 export struct MoveStatus {
 	Party party;
 	StatusName status;
+	friend auto operator==(MoveStatus, MoveStatus) -> bool = default;
 };
 
 export struct AbilityStatusMessage {
 	Party party;
 	Ability ability;
 	StatusName status;
+	friend auto operator==(AbilityStatusMessage, AbilityStatusMessage) -> bool = default;
 };
 
 export struct TurnMessage {
 	TurnCount count;
+	friend auto operator==(TurnMessage, TurnMessage) -> bool = default;
 };
 
 export struct EndOfTurnMessage {
+	friend auto operator==(EndOfTurnMessage, EndOfTurnMessage) -> bool = default;
 };
 
 export struct WeatherMessage {
 	Weather weather;
+	friend auto operator==(WeatherMessage, WeatherMessage) -> bool = default;
 };
 
 export struct BattleFinishedMessage {
+	friend auto operator==(BattleFinishedMessage, BattleFinishedMessage) -> bool = default;
 };
 
 export using ParsedMessage = tv::variant<
@@ -267,6 +302,8 @@ export using ParsedMessage = tv::variant<
 	WeatherMessage,
 	BattleFinishedMessage
 >;
+
+static_assert(bounded::equality_comparable<ParsedMessage>);
 
 constexpr auto party_from_side_id(std::string_view const str) -> Party {
 	return make_party(str.substr(0, 2));

@@ -23,9 +23,11 @@ export struct BattleInitMessage {
 	struct Team {
 		[[no_unique_address]] SwitchMessage starter;
 		[[no_unique_address]] TeamSize size;
+		friend auto operator==(Team, Team) -> bool = default;
 	};
 	Generation generation;
 	containers::array<Team, 2_bi> team;
+	friend auto operator==(BattleInitMessage, BattleInitMessage) -> bool = default;
 };
 
 } // namespace technicalmachine::ps

@@ -3,6 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <std_module/prelude.hpp>
+#include <string_view>
+
 export module tm.clients.ps.battle_message;
 
 import tm.clients.ps.battle_init_message;
@@ -15,6 +20,7 @@ import tv;
 namespace technicalmachine::ps {
 
 export struct CreateBattle {
+	friend auto operator==(CreateBattle, CreateBattle) -> bool = default;
 };
 
 export struct ErrorMessage {
@@ -25,6 +31,7 @@ export struct ErrorMessage {
 	constexpr auto message() const -> std::string_view {
 		return m_message;
 	}
+	friend auto operator==(ErrorMessage, ErrorMessage) -> bool = default;
 private:
 	std::string_view m_message;
 };
