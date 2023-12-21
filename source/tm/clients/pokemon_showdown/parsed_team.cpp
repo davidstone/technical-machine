@@ -107,7 +107,7 @@ auto parse_moves(nlohmann::json const & moves) -> ParsedMoves {
 struct ParsedPokemon {
 	Species species;
 	Nickname nickname = to_string(species);
-	Level level;
+	Level level = Level(100_bi);
 	Gender gender = Gender::genderless;
 	StatusName status = StatusName::clear;
 	Item item = Item::None;
