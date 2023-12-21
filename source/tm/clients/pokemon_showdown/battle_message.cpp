@@ -38,7 +38,7 @@ private:
 
 export using BattleMessage = tv::variant<
 	CreateBattle,
-	ParsedTeam,
+	ParsedSide,
 	BattleInitMessage,
 	EventBlock,
 	ErrorMessage

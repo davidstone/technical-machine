@@ -40,16 +40,16 @@ struct BattleExists {
 
 using BattleState = tv::variant<
 	BattleExists,
-	ParsedTeam,
+	ParsedSide,
 	BattleMessageHandler
 >;
 
 // We essentially create a state machine.
 // (nothing) + CreateBattle => BattleExists
-// BattleExists + ParsedTeam => ParsedTeam
-// ParsedTeam + ParsedTeam => ParsedTeam (check they are the same)
-// ParsedTeam + BattleInitMessage => BattleMessageHandler
-// BattleMessageHandler + ParsedTeam => BattleMessageHandler (check they are the same)
+// BattleExists + ParsedSide => ParsedSide
+// ParsedSide + ParsedSide => ParsedSide (check they are the same)
+// ParsedSide + BattleInitMessage => BattleMessageHandler
+// BattleMessageHandler + ParsedSide => BattleMessageHandler (check they are the same)
 // BattleMessageHandler + EventBlock => BattleMessageHandler or (nothing)
 
 export struct BattleManager {
@@ -64,12 +64,12 @@ export struct BattleManager {
 		BattleResponseError
 	>;
 
-	constexpr auto handle_message(ParsedTeam const message) -> Result {
+	constexpr auto handle_message(ParsedSide const message) -> Result {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists) {
 				m_battle = message;
 			},
-			[&](ParsedTeam const &) {
+			[&](ParsedSide const &) {
 				throw std::runtime_error("Got two teams while handling messages");
 			},
 			[&](BattleMessageHandler const &) {
@@ -87,7 +87,7 @@ export struct BattleManager {
 			[](BattleExists) -> BattleStarted {
 				throw std::runtime_error("Received a BattleInitMessage before getting a team");
 			},
-			[&](ParsedTeam & team) -> BattleStarted {
+			[&](ParsedSide & team) -> BattleStarted {
 				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
 					return make_battle_message_handler(
 						team,
@@ -107,7 +107,7 @@ export struct BattleManager {
 			[](BattleExists) -> Result {
 				throw std::runtime_error("Received an event before getting a team");
 			},
-			[](ParsedTeam const &) -> Result {
+			[](ParsedSide const &) -> Result {
 				throw std::runtime_error("Received an event before a BattleInitMessage");
 			},
 			[&](BattleMessageHandler & handler) -> Result {

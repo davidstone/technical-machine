@@ -49,7 +49,7 @@ constexpr auto visible_hp(auto const current, auto const max) {
 }
 
 TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
-	auto const expected = ps::ParsedTeam(
+	auto const expected = ps::ParsedSide(
 		Party(0_bi),
 		{{
 			{
@@ -167,7 +167,7 @@ TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 }
 
 TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
-	auto const expected = ps::ParsedTeam(
+	auto const expected = ps::ParsedSide(
 		Party(0_bi),
 		{{
 			{

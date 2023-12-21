@@ -98,11 +98,11 @@ auto parse_pokemon(nlohmann::json const & json) -> ParsedPokemon {
 	);
 }
 
-export auto parse_team_from_request(std::string_view const str) -> ParsedTeam {
+export auto parse_team_from_request(std::string_view const str) -> ParsedSide {
 	auto const json = nlohmann::json::parse(str).at("side");
-	return ParsedTeam(
+	return ParsedSide(
 		make_party(json.at("id").get<std::string_view>()),
-		AllParsedPokemon(containers::transform(json.at("pokemon"), parse_pokemon))
+		ParsedTeam(containers::transform(json.at("pokemon"), parse_pokemon))
 	);
 }
 

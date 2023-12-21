@@ -65,12 +65,12 @@ export struct ParsedPokemon {
 	friend auto operator==(ParsedPokemon, ParsedPokemon) -> bool = default;
 };
 
-export using AllParsedPokemon = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
+export using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
 
-export struct ParsedTeam {
+export struct ParsedSide {
 	Party party;
-	AllParsedPokemon all_pokemon;
-	friend auto operator==(ParsedTeam, ParsedTeam) -> bool = default;
+	ParsedTeam all_pokemon;
+	friend auto operator==(ParsedSide, ParsedSide) -> bool = default;
 };
 
 } // namespace technicalmachine::ps

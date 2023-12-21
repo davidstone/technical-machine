@@ -33,7 +33,7 @@ constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> 
 }
 
 auto make_battle_message_handler(
-	ParsedTeam const & team,
+	ParsedSide const & team,
 	BattleInitMessage const message
 ) -> BattleMessageHandler {
 	return BattleMessageHandler(

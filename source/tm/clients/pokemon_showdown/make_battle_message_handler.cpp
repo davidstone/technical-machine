@@ -12,7 +12,7 @@ import tm.clients.ps.parsed_team;
 namespace technicalmachine::ps {
 
 export auto make_battle_message_handler(
-	ParsedTeam const &,
+	ParsedSide const &,
 	BattleInitMessage
 ) -> BattleMessageHandler;
 
