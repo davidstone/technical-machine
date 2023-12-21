@@ -495,6 +495,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/to_packed_format.cpp
 
 		source/tm/ps_usage_stats/add_to_workers.cpp
+		source/tm/ps_usage_stats/battle_log_to_messages.cpp
 		source/tm/ps_usage_stats/battle_result.cpp
 		source/tm/ps_usage_stats/battle_result_reader.cpp
 		source/tm/ps_usage_stats/battle_result_writer.cpp
@@ -613,6 +614,7 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/pokemon/active_pokemon.cpp
 
+		source/tm/test/ps_usage_stats/battle_log_to_messages.cpp
 		source/tm/test/ps_usage_stats/glicko1.cpp
 		source/tm/test/ps_usage_stats/parse_input_log.cpp
 
