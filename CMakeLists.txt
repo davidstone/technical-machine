@@ -614,6 +614,7 @@ target_sources(tm_test PRIVATE
 		source/tm/test/pokemon/active_pokemon.cpp
 
 		source/tm/test/ps_usage_stats/glicko1.cpp
+		source/tm/test/ps_usage_stats/parse_input_log.cpp
 
 		source/tm/test/stat/calculate.cpp
 		source/tm/test/stat/calculate_ivs_and_evs.cpp
