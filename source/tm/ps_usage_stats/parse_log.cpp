@@ -13,6 +13,7 @@ export module tm.ps_usage_stats.parse_log;
 
 import tm.clients.ps.parse_gender;
 import tm.clients.ps.parse_generation_from_format;
+import tm.clients.ps.parse_moves;
 
 import tm.move.move;
 import tm.move.move_name;
@@ -35,7 +36,6 @@ import tm.stat.nature;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.item;
-import tm.string_conversions.move_name;
 import tm.string_conversions.nature;
 import tm.string_conversions.species;
 
@@ -104,10 +104,7 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 		auto const item = from_string<Item>(pokemon.at("item").get<std::string_view>());
 		auto const ability = from_string<Ability>(pokemon.at("ability").get<std::string_view>());
 		auto const gender = ps::parse_gender(pokemon.value("gender", ""));
-		auto const moves = RegularMoves(containers::transform(
-			pokemon.at("moves"),
-			[](nlohmann::json const & move) { return Move(generation, from_string<MoveName>(move.get<std::string_view>())); }
-		));
+		auto const moves = ps::parse_moves(pokemon.at("moves"));
 		auto const level = Level(bounded::check_in_range<Level::value_type>(pokemon.at("level").get<nlohmann::json::number_integer_t>()));
 		auto const nature_str = pokemon.at("nature").get<std::string_view>();
 		// A bug in the PS stats causes it to sometimes emit an empty nature
@@ -126,7 +123,10 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 				dvs_or_ivs,
 				evs
 			},
-			moves,
+			RegularMoves(containers::transform(
+				moves.names,
+				[](MoveName const name) { return Move(generation, move_name); }
+			)),
 			happiness
 		);
 	}));

@@ -8,11 +8,11 @@ export module tm.clients.ps.parse_team_from_request;
 import tm.clients.ps.make_party;
 import tm.clients.ps.parse_details;
 import tm.clients.ps.parse_hp_and_status;
+import tm.clients.ps.parse_moves;
 import tm.clients.ps.parse_pokemon_identity;
 import tm.clients.ps.parsed_team;
 
 import tm.move.move_name;
-import tm.move.move_names;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.item;
@@ -47,35 +47,6 @@ auto parse_stats(VisibleHP const hp, nlohmann::json const & stats) -> ParsedStat
 		get("spd"),
 		get("spe")
 	);
-}
-
-constexpr auto parse_hidden_power(std::string_view const str) -> Type {
-	constexpr auto prefix = std::string_view("hiddenpower");
-	if (!str.starts_with(prefix)) {
-		throw std::runtime_error("Hidden Power doesn't start with \"hiddenpower\" in PS team string");
-	}
-	return from_string<Type>(str.substr(prefix.size()));
-}
-
-struct MovesAndHiddenPower {
-	MoveNames names;
-	tv::optional<Type> hidden_power_type;
-};
-
-auto parse_moves(nlohmann::json const & moves) -> MovesAndHiddenPower {
-	auto result = MovesAndHiddenPower();
-	for (auto const & move : moves) {
-		auto const move_str = move.get<std::string_view>();
-		auto const move_name = from_string<MoveName>(move_str);
-		containers::push_back(result.names, move_name);
-		if (move_name == MoveName::Hidden_Power) {
-			if (result.hidden_power_type) {
-				throw std::runtime_error("Got two Hidden Powers");
-			}
-			result.hidden_power_type = parse_hidden_power(move_str);
-		}
-	}
-	return result;
 }
 
 auto parse_pokemon(nlohmann::json const & json) -> ParsedPokemon {

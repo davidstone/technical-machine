@@ -480,6 +480,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/parse_generation_from_format.cpp
 		source/tm/clients/pokemon_showdown/parse_hp.cpp
 		source/tm/clients/pokemon_showdown/parse_hp_and_status.cpp
+		source/tm/clients/pokemon_showdown/parse_moves.cpp
 		source/tm/clients/pokemon_showdown/parse_pokemon_identity.cpp
 		source/tm/clients/pokemon_showdown/parse_set_hp_message.cpp
 		source/tm/clients/pokemon_showdown/parse_status.cpp
