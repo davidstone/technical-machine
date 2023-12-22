@@ -16,6 +16,7 @@ module tm.clients.sb.read_team_file;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.pp;
 import tm.move.regular_moves;
 
@@ -312,7 +313,7 @@ private:
 		auto nickname = tv::optional<std::string_view>();
 		auto ivs = tv::optional<IVs>();
 		auto evs = tv::optional<EVs>();
-		auto moves = tv::optional<containers::static_vector<MoveName, max_moves_per_pokemon>>();
+		auto moves = tv::optional<MoveNames>();
 		// TODO: Use an array?
 		auto pp_ups = tv::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon>>();
 		for (auto const field : description.fields) {

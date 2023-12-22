@@ -121,6 +121,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/move_cures_target_status.cpp
 		source/tm/move/move_is_unsuccessful.cpp
 		source/tm/move/move_name.cpp
+		source/tm/move/move_names.cpp
 		source/tm/move/move_result.cpp
 		source/tm/move/no_effect_function.cpp
 		source/tm/move/other_move.cpp

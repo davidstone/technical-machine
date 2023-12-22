@@ -9,6 +9,7 @@ import tm.clients.party;
 
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
+import tm.move.move_names;
 
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
@@ -49,8 +50,6 @@ export struct ParsedStats {
 	friend auto operator==(ParsedStats, ParsedStats) -> bool = default;
 };
 
-export using ParsedMoves = containers::static_vector<MoveName, max_moves_per_pokemon>;
-
 export struct ParsedPokemon {
 	Species species;
 	Nickname nickname = to_string(species);
@@ -60,7 +59,7 @@ export struct ParsedPokemon {
 	Item item = Item::None;
 	Ability ability = Ability::Honey_Gather;
 	ParsedStats stats;
-	ParsedMoves moves;
+	MoveNames moves;
 	tv::optional<Type> hidden_power_type = tv::none;
 	friend auto operator==(ParsedPokemon, ParsedPokemon) -> bool = default;
 };

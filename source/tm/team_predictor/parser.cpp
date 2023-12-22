@@ -19,6 +19,7 @@ import tm.team_predictor.team_predictor;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.regular_moves;
 
 import tm.pokemon.level;
@@ -78,7 +79,6 @@ constexpr auto get_expected_integer_wrapper(std::string_view const input, std::s
 	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
 }
 
-using ParsedMoves = containers::static_vector<MoveName, max_moves_per_pokemon>;
 struct ParsedPokemon {
 	Species species;
 	Level level;
@@ -87,7 +87,7 @@ struct ParsedPokemon {
 	tv::optional<Ability> ability;
 	Nature nature;
 	EVs evs;
-	ParsedMoves moves;
+	MoveNames moves;
 };
 using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
 
@@ -128,7 +128,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Spe
 		if (ev_sum(evs) > max_total_evs(stat_style)) {
 			throw std::runtime_error("Too many EVs");
 		}
-		auto const moves = ParsedMoves(
+		auto const moves = MoveNames(
 			containers::remove_none(
 				containers::transform(
 					containers::integer_range(max_moves_per_pokemon),

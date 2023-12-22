@@ -10,6 +10,7 @@ import tm.can_execute_move;
 import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.regular_moves;
 
 import tm.pokemon.faint;
@@ -121,7 +122,7 @@ static_assert([]{
 static_assert([]{
 	auto environment = Environment();
 
-	constexpr auto moves = MovesInit({MoveName::Thunder, MoveName::Thunderbolt});
+	constexpr auto moves = MoveNames({MoveName::Thunder, MoveName::Thunderbolt});
 	auto user = make_team<generation>({
 		{
 			.species = Species::Pikachu,

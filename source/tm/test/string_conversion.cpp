@@ -14,6 +14,7 @@ export module tm.test.string_conversion;
 
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 
 import tm.pokemon.level;
 import tm.pokemon.pokemon;
@@ -89,7 +90,7 @@ static_assert(test_generic<Weather>());
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	constexpr auto check = [](MovesInit const moves, StatusName const status) {
+	constexpr auto check = [](MoveNames const moves, StatusName const status) {
 		auto pokemon = make_pokemon<generation>({
 			.species = Species::Mewtwo,
 			.item = Item::Leftovers,
@@ -112,14 +113,14 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		CHECK(pokemon == result);
 	};
 
-	constexpr auto moves = MovesInit({
+	constexpr auto moves = MoveNames({
 		MoveName::Psychic,
 		MoveName::Recover,
 		MoveName::Calm_Mind,
 		MoveName::Taunt,
 	});
 	for (auto const n : containers::integer_range(1_bi, 4_bi)) {
-		check(MovesInit(containers::take(moves, n)), StatusName::clear);
+		check(MoveNames(containers::take(moves, n)), StatusName::clear);
 	}
 	check(moves, StatusName::burn);
 }

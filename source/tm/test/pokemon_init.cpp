@@ -8,6 +8,7 @@ export module tm.test.pokemon_init;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.regular_moves;
 
 import tm.pokemon.known_pokemon;
@@ -37,8 +38,6 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export using MovesInit = containers::static_vector<MoveName, max_moves_per_pokemon>;
-
 export template<Generation generation>
 struct PokemonInit {
 	Species species;
@@ -50,7 +49,7 @@ struct PokemonInit {
 	Nature nature = Nature::Hardy;
 	decltype(max_dvs_or_ivs<generation>) ivs = max_dvs_or_ivs<generation>;
 	decltype(default_evs<generation>) evs = default_evs<generation>;
-	MovesInit moves = {{MoveName::Tackle}};
+	MoveNames moves = {{MoveName::Tackle}};
 };
 
 export struct SeenPokemonInit {

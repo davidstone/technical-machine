@@ -12,6 +12,7 @@ import tm.clients.ps.parse_pokemon_identity;
 import tm.clients.ps.parsed_team;
 
 import tm.move.move_name;
+import tm.move.move_names;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.item;
@@ -57,7 +58,7 @@ constexpr auto parse_hidden_power(std::string_view const str) -> Type {
 }
 
 struct MovesAndHiddenPower {
-	ParsedMoves names;
+	MoveNames names;
 	tv::optional<Type> hidden_power_type;
 };
 
