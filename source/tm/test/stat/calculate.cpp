@@ -5,9 +5,7 @@
 
 export module tm.test.stat.calculate;
 
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.active_pokemon;
 import tm.pokemon.level;
@@ -15,8 +13,6 @@ import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.calculate;
-import tm.stat.combined_stats;
-import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
@@ -34,7 +30,6 @@ import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
-import tm.team;
 
 import bounded;
 import containers;
@@ -184,38 +179,6 @@ static_assert([]{
 	pokemon.stages()[BoostableStat::spd] += 6_bi;
 
 	return calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, environment, false) == 3684_bi;
-}());
-
-// Calculate max Speed
-static_assert([]{
-	auto environment = Environment();
-	environment.activate_rain_from_move(false);
-
-	auto team = make_team<generation>({
-		{
-			.species = Species::Deoxys_Speed,
-			.item = Item::Choice_Scarf,
-			.ability = Ability::Swift_Swim,
-			.nature = Nature::Timid,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi)
-			),
-		},
-	});
-	auto pokemon = team.pokemon();
-
-	pokemon.switch_in(environment);
-
-	pokemon.stages()[BoostableStat::spe] += 6_bi;
-
-	team.activate_tailwind();
-
-	return calculate_speed(team, Ability::Honey_Gather, environment) == max_speed;
 }());
 
 } // namespace

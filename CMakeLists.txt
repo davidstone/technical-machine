@@ -190,6 +190,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/base_stats.cpp
 		source/tm/stat/calculate.cpp
 		source/tm/stat/calculate_ivs_and_evs.cpp
+		source/tm/stat/calculate_speed.cpp
 		source/tm/stat/chance_to_hit.cpp
 		source/tm/stat/combined_stats.cpp
 		source/tm/stat/current_hp.cpp

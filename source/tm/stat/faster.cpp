@@ -8,7 +8,7 @@ export module tm.stat.faster;
 import tm.move.move_name;
 import tm.move.priority;
 
-import tm.stat.calculate;
+import tm.stat.calculate_speed;
 
 import tm.environment;
 import tm.generation;

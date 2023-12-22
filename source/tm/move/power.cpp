@@ -19,8 +19,6 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.hp_ratio;
 import tm.pokemon.species;
 
-import tm.stat.calculate;
-
 import tm.status.status;
 import tm.status.status_name;
 

@@ -17,7 +17,7 @@ import tm.pokemon.species;
 
 import tm.ps_usage_stats.header;
 
-import tm.stat.calculate;
+import tm.stat.calculate_speed;
 
 import tm.ability;
 import tm.environment;

@@ -40,7 +40,6 @@ import tm.pokemon.pokemon;
 import tm.pokemon.pokemon_collection;
 import tm.pokemon.species;
 
-import tm.stat.calculate;
 import tm.stat.chance_to_hit;
 import tm.stat.faster;
 

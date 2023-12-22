@@ -45,7 +45,6 @@ import tm.pokemon.substitute;
 import tm.pokemon.taunt;
 import tm.pokemon.yawn;
 
-import tm.stat.calculate;
 import tm.stat.current_hp;
 import tm.stat.nature;
 import tm.stat.stage;

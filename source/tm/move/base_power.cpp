@@ -16,7 +16,7 @@ import tm.pokemon.happiness;
 import tm.pokemon.hp_ratio;
 import tm.pokemon.species;
 
-import tm.stat.calculate;
+import tm.stat.calculate_speed;
 import tm.stat.stage;
 
 import tm.any_team;

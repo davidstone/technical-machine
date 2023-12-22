@@ -14,7 +14,6 @@ import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
 import tm.pokemon.level;
 
 import tm.stat.base_stats;
-import tm.stat.calculate;
 import tm.stat.ev;
 import tm.stat.initial_stat;
 import tm.stat.iv;
