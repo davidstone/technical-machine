@@ -8,9 +8,9 @@ module;
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-#include <bounded/conditional.hpp>
-
 export module tm.clients.ps.parse_details;
+
+import tm.clients.ps.parse_gender;
 
 import tm.pokemon.level;
 import tm.pokemon.species;
@@ -45,11 +45,7 @@ export constexpr auto parse_details(std::string_view const details) -> ParsedDet
 	);
 
 	auto const gender_or_shiny_str = has_level ? parser.pop() : level_or_gender_or_shiny_str;
-	auto const gender = 
-		BOUNDED_CONDITIONAL(gender_or_shiny_str == "F", Gender::female,
-		BOUNDED_CONDITIONAL(gender_or_shiny_str == "M", Gender::male,
-		Gender::genderless
-	));
+	auto const gender = parse_gender(gender_or_shiny_str);
 
 	auto const shiny_str = gender != Gender::genderless ? parser.pop() : gender_or_shiny_str;
 	auto throw_exception = [&] {

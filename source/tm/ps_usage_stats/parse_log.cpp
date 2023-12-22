@@ -11,6 +11,7 @@ module;
 
 export module tm.ps_usage_stats.parse_log;
 
+import tm.clients.ps.parse_gender;
 import tm.clients.ps.parse_generation_from_format;
 
 import tm.move.move;
@@ -102,14 +103,7 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 		auto const species = from_string<Species>(pokemon.at("species").get<std::string_view>());
 		auto const item = from_string<Item>(pokemon.at("item").get<std::string_view>());
 		auto const ability = from_string<Ability>(pokemon.at("ability").get<std::string_view>());
-		auto const gender = [&] {
-			auto const gender_str = pokemon.value("gender", "");
-			return
-				gender_str == "" or gender_str == "N" ? Gender::genderless :
-				gender_str == "F" ? Gender::female :
-				gender_str == "M" ? Gender::male :
-				throw std::runtime_error("Invalid Gender string");
-		}();
+		auto const gender = ps::parse_gender(pokemon.value("gender", ""));
 		auto const moves = RegularMoves(containers::transform(
 			pokemon.at("moves"),
 			[](nlohmann::json const & move) { return Move(generation, from_string<MoveName>(move.get<std::string_view>())); }

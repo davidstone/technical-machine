@@ -475,6 +475,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/packed_format_to_team.cpp
 		source/tm/clients/pokemon_showdown/parse_details.cpp
 		source/tm/clients/pokemon_showdown/parse_effect_source.cpp
+		source/tm/clients/pokemon_showdown/parse_gender.cpp
 		source/tm/clients/pokemon_showdown/parse_generation_from_format.cpp
 		source/tm/clients/pokemon_showdown/parse_hp.cpp
 		source/tm/clients/pokemon_showdown/parse_hp_and_status.cpp
