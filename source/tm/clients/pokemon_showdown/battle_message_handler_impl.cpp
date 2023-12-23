@@ -219,9 +219,11 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 					auto natural_status_recovery = [&] {
 						switch (message.status) {
 							case StatusName::freeze:
+								use_previous_action();
 								make_move_builder().thaw(party);
 								break;
 							case StatusName::sleep:
+								use_previous_action();
 								make_move_builder().awaken(party, m_client_battle->generation());
 								break;
 							default:
