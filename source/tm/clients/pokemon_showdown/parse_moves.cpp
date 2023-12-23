@@ -23,11 +23,23 @@ namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
 constexpr auto parse_hidden_power(std::string_view const str) -> Type {
-	constexpr auto prefix = "hiddenpower"sv;
-	if (!str.starts_with(prefix)) {
-		throw std::runtime_error("Hidden Power doesn't start with \"hiddenpower\" in PS team string");
+	constexpr auto prefixes = containers::array({
+		"hiddenpower"sv,
+		"Hidden Power"sv,
+		"hp"sv,
+	});
+	auto const matches = [=](std::string_view const prefix) {
+		return str.starts_with(prefix);
+	};
+	auto const ptr = containers::maybe_find_if(prefixes, matches);
+	if (!ptr) {
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Unknown Hidden Power string: "sv,
+			str
+		));
 	}
-	return from_string<Type>(str.substr(prefix.size()));
+	auto const type_str = str.substr(ptr->size());
+	return type_str.empty() ? Type::Dark : from_string<Type>(type_str);
 }
 
 struct MovesAndHiddenPower {
