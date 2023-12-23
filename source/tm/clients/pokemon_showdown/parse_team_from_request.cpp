@@ -9,7 +9,6 @@ import tm.clients.ps.make_party;
 import tm.clients.ps.parse_details;
 import tm.clients.ps.parse_hp_and_status;
 import tm.clients.ps.parse_moves;
-import tm.clients.ps.parse_pokemon_identity;
 import tm.clients.ps.parsed_team;
 
 import tm.move.move_name;
@@ -56,9 +55,9 @@ auto parse_pokemon(nlohmann::json const & json) -> ParsedPokemon {
 	auto const details = parse_details(get("details"));
 	auto const hp_and_status = parse_hp_and_status(get("condition"));
 	auto const moves = parse_moves(json.at("moves"));
+	// auto const nickname = parse_pokemon_identity(get("ident")).nickname;
 	return ParsedPokemon(
 		details.species,
-		parse_pokemon_identity(get("ident")).nickname,
 		details.level,
 		details.gender,
 		hp_and_status.status,

@@ -14,15 +14,12 @@ import tm.move.move_names;
 import tm.pokemon.happiness;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
-import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.initial_stat;
 import tm.stat.stat_style;
 
 import tm.status.status_name;
-
-import tm.string_conversions.species;
 
 import tm.type.type;
 
@@ -53,7 +50,6 @@ export struct ParsedStats {
 
 export struct ParsedPokemon {
 	Species species;
-	Nickname nickname = to_string(species);
 	Level level = Level(100_bi);
 	Gender gender = Gender::genderless;
 	StatusName status = StatusName::clear;

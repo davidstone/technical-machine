@@ -14,7 +14,6 @@ import tm.move.used_move;
 
 import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
-import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.default_evs;

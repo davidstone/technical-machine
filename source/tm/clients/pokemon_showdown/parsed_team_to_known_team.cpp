@@ -20,6 +20,8 @@ import tm.stat.initial_stat;
 import tm.stat.stat_style;
 import tm.stat.stats;
 
+import tm.string_conversions.species;
+
 import tm.generation;
 import tm.team;
 
@@ -72,7 +74,7 @@ constexpr auto parsed_team_to_known_team(ParsedTeam const & team) -> KnownTeam<g
 			};
 			return KnownPokemon<generation>(
 				pokemon.species,
-				pokemon.nickname,
+				to_string(pokemon.species),
 				pokemon.level,
 				pokemon.gender,
 				pokemon.item,
