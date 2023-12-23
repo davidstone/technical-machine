@@ -42,7 +42,13 @@ export struct ClientBattle {
 	virtual auto state() const -> GenerationGeneric<VisibleState> = 0;
 
 	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) const -> TeamIndex = 0;
-	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
+	virtual auto foe_has(
+		Species,
+		std::string_view nickname,
+		Level,
+		Gender,
+		MaxVisibleHP
+	) & -> TeamIndex = 0;
 
 	virtual auto active_has(bool is_ai, MoveName) & -> void = 0;
 	virtual auto active_has(bool is_ai, Ability) & -> void = 0;

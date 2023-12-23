@@ -176,12 +176,18 @@ struct Battle {
 	}
 	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
 	// Species has not been seen yet.
-	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
+	auto foe_has(
+		Species const species,
+		std::string_view nickname,
+		Level const level,
+		Gender const gender,
+		MaxVisibleHP const max_hp
+	) & -> TeamIndex {
 		auto const it = containers::find_if(m_foe.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
 			return pokemon.species() == species;
 		});
 		if (it == containers::end(m_foe.all_pokemon())) {
-			m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
+			m_foe.all_pokemon().add({species, std::move(nickname), level, gender, max_hp});
 		}
 		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
 	}

@@ -27,7 +27,8 @@ constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> 
 		pokemon.species,
 		pokemon.nickname,
 		pokemon.level,
-		pokemon.gender
+		pokemon.gender,
+		pokemon.hp.max
 	});
 	return team;
 }

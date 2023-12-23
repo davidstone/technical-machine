@@ -498,7 +498,8 @@ auto BattleMessageHandler::handle_switch_message(SwitchMessage const message) ->
 			message.species,
 			message.nickname,
 			message.level,
-			message.gender
+			message.gender,
+			message.hp.max
 		);
 	}
 }

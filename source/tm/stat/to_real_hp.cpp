@@ -28,15 +28,6 @@ export constexpr auto to_real_hp(MaxHP const max_hp, VisibleHP const visible_hp)
 	if (visible_hp.current == CurrentVisibleHP(0_bi)) {
 		return AllowedHP(0_bi);
 	}
-	constexpr auto expected_max_visible_hp = MaxVisibleHP(100_bi);
-	if (expected_max_visible_hp != visible_hp.max) {
-		throw std::runtime_error(containers::concatenate<std::string>(
-			"Received an invalid max HP. Expected: "sv,
-			containers::to_string(expected_max_visible_hp.value()),
-			" but got "sv,
-			containers::to_string(visible_hp.max.value())
-		));
-	}
 	auto compute_value = [=](auto const visible_current) {
 		return bounded::assume_in_range<CurrentHP>(max_hp * visible_current / visible_hp.max.value());
 	};

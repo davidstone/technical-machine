@@ -36,8 +36,8 @@ import tm.generation_generic;
 import tm.item;
 import tm.team;
 import tm.visible_hp;
-import tm.weather;
 import tm.visible_state;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -81,8 +81,14 @@ struct ClientBattleImpl final : ClientBattle {
 	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) const -> TeamIndex final {
 		return m_battle.ai_has(species, nickname, level, gender);
 	}
-	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
-		return m_battle.foe_has(species, nickname, level, gender);
+	auto foe_has(
+		Species const species,
+		std::string_view nickname,
+		Level const level,
+		Gender const gender,
+		MaxVisibleHP const max_hp
+	) & -> TeamIndex final {
+		return m_battle.foe_has(species, nickname, level, gender, max_hp);
 	}
 
 	auto active_has(bool const is_ai, MoveName const move_name) & -> void final {
