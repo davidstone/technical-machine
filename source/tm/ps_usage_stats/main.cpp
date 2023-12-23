@@ -135,7 +135,11 @@ auto make_correlations(Mode const mode, ThreadCount const thread_count, std::fil
 					mode,
 					ratings_estimate,
 					result,
-					[&](auto const & team, double const weight) { if (weight != 0.0) { correlations.add(team, weight); } }
+					[&](auto const & team, double const weight) {
+						if (weight != 0.0) {
+							correlations.add(team, weight);
+						}
+					}
 				);
 			});
 		}));

@@ -5,10 +5,9 @@
 
 export module tm.ps_usage_stats.battle_result;
 
-import tm.ps_usage_stats.rating;
+import tm.clients.ps.parsed_team;
 
-import tm.generation_generic;
-import tm.team;
+import tm.ps_usage_stats.rating;
 
 import bounded;
 import tv;
@@ -19,7 +18,7 @@ namespace technicalmachine::ps_usage_stats {
 export struct BattleResult {
 	struct Side {
 		using ID = bounded::integer<0, bounded::builtin_max_value<std::uint64_t>>;
-		GenerationGeneric<Team> team;
+		ps::ParsedTeam team;
 		ID id;
 		tv::optional<Rating> rating;
 		friend auto operator==(Side const &, Side const &) -> bool = default;

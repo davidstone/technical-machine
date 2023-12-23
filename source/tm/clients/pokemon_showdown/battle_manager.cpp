@@ -87,10 +87,10 @@ export struct BattleManager {
 			[](BattleExists) -> BattleStarted {
 				throw std::runtime_error("Received a BattleInitMessage before getting a team");
 			},
-			[&](ParsedSide & team) -> BattleStarted {
+			[&](ParsedSide & side) -> BattleStarted {
 				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
 					return make_battle_message_handler(
-						team,
+						side,
 						message
 					);
 				});

@@ -6,6 +6,8 @@
 #include <std_module/prelude.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import tm.clients.ps.parsed_team;
+
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.regular_moves;
@@ -33,6 +35,7 @@ import tm.generation_generic;
 import tm.get_directory;
 import tm.item;
 import tm.team;
+import tm.visible_hp;
 
 import bounded;
 import containers;
@@ -41,86 +44,85 @@ import std_module;
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
-template<Generation generation>
-auto make_smallest_team() -> GenerationGeneric<Team> {
-	return GenerationGeneric<Team>(Team<generation>({
-		{
-			Species::Mew,
-			Level(1_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(0_bi), DV(0_bi), DV(0_bi), DV(0_bi)),
-				OldGenEVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Cut)
-			})
-		}
-	}));
+constexpr auto visible_hp(auto const value) {
+	return VisibleHP(CurrentVisibleHP(value), MaxVisibleHP(value));
 }
 
-auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
-	constexpr auto generation = Generation::one;
-	return GenerationGeneric<Team>(Team<generation>({
-		{
-			Species::Tauros,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+auto make_smallest_team() -> ps::ParsedTeam {
+	return ps::ParsedTeam({
+		ps::ParsedPokemon{
+			.species = Species::Mew,
+			.level = Level(1_bi),
+			.stats = {
+				visible_hp(13_bi),
+				7_bi,
+				7_bi,
+				7_bi,
+				7_bi,
+				7_bi
 			},
-			RegularMoves({
-				Move(generation, MoveName::Body_Slam),
-				Move(generation, MoveName::Earthquake)
-			})
+			.moves = {{
+				MoveName::Cut,
+			}}
+		}
+	});
+}
+
+auto make_team_with_two_pokemon() -> ps::ParsedTeam {
+	return ps::ParsedTeam({
+		{
+			.species = Species::Tauros,
+			.stats = {
+				visible_hp(353_bi),
+				298_bi,
+				288_bi,
+				238_bi,
+				238_bi,
+				318_bi
+			},
+			.moves = {{
+				MoveName::Body_Slam,
+				MoveName::Earthquake,
+			}}
 		},
 		{
-			Species::Pikachu,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+			.species = Species::Pikachu,
+			.stats = {
+				visible_hp(273_bi),
+				208_bi,
+				158_bi,
+				198_bi,
+				198_bi,
+				278_bi
 			},
-			RegularMoves({
-				Move(generation, MoveName::Thunderbolt),
-				Move(generation, MoveName::Thunder)
-			})
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Thunder,
+			}}
 		}
-	}));
+	});
 }
 
-auto make_second_team() -> GenerationGeneric<Team> {
-	constexpr auto generation = Generation::one;
-	return GenerationGeneric<Team>(Team<generation>({
+auto make_second_team() -> ps::ParsedTeam {
+	return ps::ParsedTeam({
 		{
-			Species::Tauros,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+			.species = Species::Tauros,
+			.stats = {
+				visible_hp(353_bi),
+				298_bi,
+				288_bi,
+				238_bi,
+				238_bi,
+				318_bi
 			},
-			RegularMoves({
-				Move(generation, MoveName::Body_Slam),
-				Move(generation, MoveName::Earthquake)
-			})
+			.moves = {{
+				MoveName::Body_Slam,
+				MoveName::Earthquake,
+			}}
 		}
-	}));
+	});
 }
 
 auto string_to_bytes(std::string_view const str) {
@@ -131,7 +133,7 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	constexpr auto generation = Generation::one;
-	auto const team = make_smallest_team<generation>();
+	auto const team = make_smallest_team();
 	usage_stats->add(team, weight);
 	auto correlations = ps_usage_stats::Correlations(*usage_stats);
 	correlations.add(team, weight);
@@ -254,8 +256,7 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
-	constexpr auto generation = Generation::one;
-	auto teams = containers::array{make_smallest_team<generation>(), make_second_team()};
+	auto teams = containers::array{make_smallest_team(), make_second_team()};
 	for (auto const team : teams) {
 		usage_stats->add(team, weight);
 	}
@@ -317,7 +318,7 @@ TEST_CASE("Serialize smallest non-empty Generation 2 file", "[ps_usage_stats]") 
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	constexpr auto generation = Generation::two;
-	auto const team = make_smallest_team<generation>();
+	auto const team = make_smallest_team();
 	usage_stats->add(team, weight);
 	auto correlations = ps_usage_stats::Correlations(*usage_stats);
 	correlations.add(team, weight);

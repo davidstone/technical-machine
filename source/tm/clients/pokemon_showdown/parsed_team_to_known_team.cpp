@@ -32,9 +32,9 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 
 export template<Generation generation>
-constexpr auto parsed_team_to_known_team(ParsedSide const & team) -> KnownTeam<generation> {
+constexpr auto parsed_team_to_known_team(ParsedTeam const & team) -> KnownTeam<generation> {
 	return KnownTeam<generation>(containers::transform(
-		team.all_pokemon,
+		team,
 		[](auto const & pokemon) {
 			auto stats = [&] {
 				if constexpr (generation == Generation::one) {

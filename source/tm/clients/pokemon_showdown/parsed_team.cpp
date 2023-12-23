@@ -11,6 +11,7 @@ import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.move_names;
 
+import tm.pokemon.happiness;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
@@ -61,6 +62,7 @@ export struct ParsedPokemon {
 	ParsedStats stats;
 	MoveNames moves;
 	tv::optional<Type> hidden_power_type = tv::none;
+	Happiness happiness = Happiness();
 	friend auto operator==(ParsedPokemon, ParsedPokemon) -> bool = default;
 };
 
@@ -68,7 +70,7 @@ export using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_p
 
 export struct ParsedSide {
 	Party party;
-	ParsedTeam all_pokemon;
+	ParsedTeam team;
 	friend auto operator==(ParsedSide, ParsedSide) -> bool = default;
 };
 

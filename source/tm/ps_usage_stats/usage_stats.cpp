@@ -9,8 +9,11 @@ module;
 
 export module tm.ps_usage_stats.usage_stats;
 
+import tm.clients.ps.parsed_team;
+
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.regular_moves;
 
 import tm.pokemon.species;
@@ -18,6 +21,7 @@ import tm.pokemon.species;
 import tm.ps_usage_stats.header;
 
 import tm.stat.calculate_speed;
+import tm.stat.stage;
 
 import tm.ability;
 import tm.environment;
@@ -34,6 +38,25 @@ namespace technicalmachine::ps_usage_stats {
 
 export using SpeedDistribution = containers::array<double, bounded::number_of<InitialSpeed>>;
 
+constexpr auto calculate_speed(ps::ParsedPokemon const pokemon) {
+	constexpr auto is_unburdened = false;
+	constexpr auto slow_start_is_active = false;
+	constexpr auto tailwind = false;
+	return calculate_speed(
+		pokemon.stats.spe,
+		pokemon.species,
+		pokemon.item,
+		pokemon.ability,
+		pokemon.status,
+		Stages(),
+		is_unburdened,
+		slow_start_is_active,
+		tailwind,
+		Ability::Honey_Gather,
+		Environment()
+	);
+}
+
 // Getting the full data set of correlations would require free memory measured
 // in TiB. Instead we restrict ourselves to correlations among the top N most
 // used moves per Pokemon. However, it's impossible to know in advance what this
@@ -41,20 +64,18 @@ export using SpeedDistribution = containers::array<double, bounded::number_of<In
 // first determines lower-cardinality data that informs what data to gather for
 // the higher-cardinality second pass.
 export struct UsageStats {
-	auto add(GenerationGeneric<Team> const & t, double const weight) & -> void {
-		tv::visit(t, [&]<typename TeamType>(TeamType const & team) {
-			for (auto const & pokemon : team.all_pokemon()) {
-				auto & per_species = m_all[bounded::integer(pokemon.species())];
-				per_species.total += weight;
-				per_species.abilities[bounded::integer(pokemon.initial_ability())] += weight;
-				per_species.items[bounded::integer(pokemon.item(false, false))] += weight;
-				for (auto const move : pokemon.regular_moves()) {
-					per_species.moves[bounded::integer(move.name())] += weight;
-				}
-				auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Environment());
-				containers::at(per_species.speed, calculated_speed) += weight;
+	auto add(ps::ParsedTeam const & team, double const weight) & -> void {
+		for (auto const & pokemon : team) {
+			auto & per_species = m_all[bounded::integer(pokemon.species)];
+			per_species.total += weight;
+			per_species.abilities[bounded::integer(pokemon.ability)] += weight;
+			per_species.items[bounded::integer(pokemon.item)] += weight;
+			for (auto const move : pokemon.moves) {
+				per_species.moves[bounded::integer(move)] += weight;
 			}
-		});
+			auto const calculated_speed = calculate_speed(pokemon);
+			containers::at(per_species.speed, calculated_speed) += weight;
+		}
 		m_total_teams += weight;
 	}
 
@@ -165,31 +186,32 @@ auto populate_correlation(auto & correlations, auto const key, double const weig
 	mapped += weight;
 }
 
-auto populate_teammate_correlations(Teammates & teammates, auto const & team, auto const & pokemon1, double const weight) -> void {
-	auto is_different = [&](auto const & pokemon2) { return std::addressof(pokemon1) != std::addressof(pokemon2); };
-	for (auto const & pokemon2 : containers::filter(team.all_pokemon(), is_different)) {
-		auto & mapped = teammates[bounded::integer(pokemon2.species())];
+auto populate_teammate_correlations(Teammates & teammates, ps::ParsedTeam const & team, ps::ParsedPokemon const & pokemon1, double const weight) -> void {
+	auto is_different = [&](ps::ParsedPokemon const & pokemon2) {
+		return std::addressof(pokemon1) != std::addressof(pokemon2);
+	};
+	for (auto const & pokemon2 : containers::filter(team, is_different)) {
+		auto & mapped = teammates[bounded::integer(pokemon2.species)];
 		mapped.usage += weight;
-		for (auto const move2 : pokemon2.regular_moves()) {
-			populate_correlation(mapped.other_moves, move2.name(), weight);
+		for (auto const move2 : pokemon2.moves) {
+			populate_correlation(mapped.other_moves, move2, weight);
 		}
 	}
 }
 
-auto populate_move_correlations(auto & correlations, RegularMoves const moves, MoveName const move1, double const weight) -> void {
-	auto is_different = [=](Move const move2) { return move2.name() != move1; };
+auto populate_move_correlations(auto & correlations, MoveNames const moves, MoveName const move1, double const weight) -> void {
+	auto is_different = [=](MoveName const move2) { return move2 != move1; };
 	for (auto const move2 : containers::filter(moves, is_different)) {
-		correlations[bounded::integer(move2.name())] += weight;
+		correlations[bounded::integer(move2)] += weight;
 	}
 }
 
-template<typename TeamType>
-auto populate_correlations(MoveData & data, TeamType const & team, auto const & pokemon, MoveName const move_name, double const weight) -> void {
+auto populate_correlations(MoveData & data, ps::ParsedTeam const & team, ps::ParsedPokemon const & pokemon, MoveName const move_name, double const weight) -> void {
 	populate_teammate_correlations(data.teammates, team, pokemon, weight);
-	populate_move_correlations(data.moves, pokemon.regular_moves(), move_name, weight);
-	data.items[bounded::integer(pokemon.item(false, false))] += weight;
-	data.abilities[bounded::integer(pokemon.initial_ability())] += weight;
-	auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Environment());
+	populate_move_correlations(data.moves, pokemon.moves, move_name, weight);
+	data.items[bounded::integer(pokemon.item)] += weight;
+	data.abilities[bounded::integer(pokemon.ability)] += weight;
+	auto const calculated_speed = calculate_speed(pokemon);
 	containers::at(data.speed, calculated_speed) += weight;
 }
 
@@ -215,22 +237,19 @@ export struct Correlations {
 		}
 	}
 
-	auto add(GenerationGeneric<Team> const & t, double const weight) & -> void {
-		tv::visit(t, [&](auto const & team) {
-			for (auto const & pokemon : team.all_pokemon()) {
-				auto & per_species = m_data[bounded::integer(pokemon.species())];
-				populate_teammate_correlations(per_species.teammates->locked().data, team, pokemon, weight);
-				for (auto const move : pokemon.regular_moves()) {
-					auto const move_name = move.name();
-					auto const maybe_correlations = containers::lookup(per_species.top_moves, move_name);
-					if (!maybe_correlations) {
-						continue;
-					}
-					auto & correlations = *maybe_correlations;
-					populate_correlations(correlations->locked().data, team, pokemon, move_name, weight);
+	auto add(ps::ParsedTeam const & team, double const weight) & -> void {
+		for (auto const & pokemon : team) {
+			auto & per_species = m_data[bounded::integer(pokemon.species)];
+			populate_teammate_correlations(per_species.teammates->locked().data, team, pokemon, weight);
+			for (auto const move : pokemon.moves) {
+				auto const maybe_correlations = containers::lookup(per_species.top_moves, move);
+				if (!maybe_correlations) {
+					continue;
 				}
+				auto & correlations = *maybe_correlations;
+				populate_correlations(correlations->locked().data, team, pokemon, move, weight);
 			}
-		});
+		}
 	}
 
 	constexpr auto top_moves(Species const species) const -> TopMoves const & {

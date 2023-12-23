@@ -9,19 +9,11 @@ module;
 
 export module tm.stat.calculate_speed;
 
-import tm.stat.stat_names;
-
-import tm.move.category;
-import tm.move.move_name;
-
-import tm.pokemon.any_pokemon;
-import tm.pokemon.hp_ratio;
-import tm.pokemon.is_type;
 import tm.pokemon.species;
 
 import tm.stat.stage;
+import tm.stat.stat_names;
 
-import tm.status.status;
 import tm.status.status_name;
 
 import tm.type.type;
@@ -44,10 +36,16 @@ constexpr auto is_boosted_by_quick_powder(Species const species) {
 	return species == Species::Ditto;
 }
 
-constexpr auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
+constexpr auto speed_ability_modifier(
+	Ability const ability,
+	StatusName const status,
+	bool const is_unburdened,
+	bool const slow_start_is_active,
+	Ability const other_ability,
+	Environment const environment
+) {
 	constexpr auto denominator = 2_bi;
-	auto const numerator = [&]() -> bounded::integer<1, 4> {
-		auto const ability = pokemon.ability();
+	auto const numerator = [&] -> bounded::integer<1, 4> {
 		switch (ability) {
 			case Ability::Chlorophyll: return BOUNDED_CONDITIONAL(
 				environment.sun() and !ability_blocks_weather(ability, other_ability),
@@ -60,17 +58,17 @@ constexpr auto speed_ability_modifier(any_active_pokemon auto const pokemon, Abi
 				denominator
 			);
 			case Ability::Unburden: return BOUNDED_CONDITIONAL(
-				pokemon.is_unburdened(),
+				is_unburdened,
 				denominator * 2_bi,
 				denominator
 			);
 			case Ability::Quick_Feet: return BOUNDED_CONDITIONAL(
-				!is_clear(pokemon.status()),
+				status != StatusName::clear,
 				denominator * 3_bi / 2_bi,
 				denominator
 			);
 			case Ability::Slow_Start: return BOUNDED_CONDITIONAL(
-				pokemon.slow_start_is_active(),
+				slow_start_is_active,
 				denominator * 1_bi / 2_bi,
 				denominator
 			);
@@ -104,17 +102,41 @@ constexpr auto item_modifier(Species const species, Item const item) {
 	return rational(numerator, denominator);
 }
 
+constexpr auto stat_name = SplitSpecialRegularStat::spe;
+
+constexpr auto lowers_speed(StatusName const status, Ability const ability) -> bool {
+	return status == StatusName::paralysis and !blocks_paralysis_speed_penalty(ability);
+}
+
 export constexpr auto max_speed = 13152_bi;
-export constexpr auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
-	constexpr auto stat = SplitSpecialRegularStat::spe;
-	auto const & pokemon = team.pokemon();
-	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);
-	auto const tailwind_multiplier = BOUNDED_CONDITIONAL(team.tailwind(), 2_bi, 1_bi);
+
+export constexpr auto calculate_speed(
+	auto const initial,
+	Species const species,
+	Item const item,
+	Ability const ability,
+	StatusName const status,
+	Stages const stages,
+	bool const is_unburdened,
+	bool const slow_start_is_active,
+	bool const tailwind,
+	Ability const other_ability,
+	Environment const environment
+) {
+	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(status, ability), 4_bi, 1_bi);
+	auto const tailwind_multiplier = BOUNDED_CONDITIONAL(tailwind, 2_bi, 1_bi);
 	auto const speed =
-		pokemon.stat(stat) *
-		modifier<BoostableStat(stat)>(pokemon.stages()) *
-		speed_ability_modifier(pokemon, other_ability, environment) *
-		item_modifier(pokemon.species(), pokemon.item(environment)) /
+		initial *
+		modifier<BoostableStat(stat_name)>(stages) *
+		speed_ability_modifier(
+			ability,
+			status,
+			is_unburdened,
+			slow_start_is_active,
+			other_ability,
+			environment
+		) *
+		item_modifier(species, item) /
 		paralysis_divisor *
 		tailwind_multiplier;
 
@@ -125,6 +147,23 @@ export constexpr auto calculate_speed(any_team auto const & team, Ability const 
 		bounded::max(speed, 1_bi),
 		1_bi,
 		max_speed
+	);
+}
+
+export constexpr auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
+	auto const pokemon = team.pokemon();
+	return calculate_speed(
+		pokemon.stat(stat_name),
+		pokemon.species(),
+		pokemon.item(environment),
+		pokemon.ability(),
+		pokemon.status().name(),
+		pokemon.stages(),
+		pokemon.is_unburdened(),
+		pokemon.slow_start_is_active(),
+		static_cast<bool>(team.tailwind()),
+		other_ability,
+		environment
 	);
 }
 

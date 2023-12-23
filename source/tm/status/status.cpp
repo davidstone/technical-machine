@@ -187,10 +187,6 @@ private:
 };
 
 
-export constexpr auto lowers_speed(Status const status, Ability const ability) -> bool {
-	return status.name() == StatusName::paralysis and !blocks_paralysis_speed_penalty(ability);
-}
-
 export constexpr auto is_clear(Status const status) {
 	return status.name() == StatusName::clear;
 }

@@ -6,7 +6,6 @@
 module;
 
 #include <std_module/prelude.hpp>
-#include <string>
 #include <string_view>
 
 export module tm.ps_usage_stats.parse_log;
@@ -14,10 +13,9 @@ export module tm.ps_usage_stats.parse_log;
 import tm.clients.ps.parse_gender;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.parse_moves;
+import tm.clients.ps.parsed_team;
 
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.happiness;
 import tm.pokemon.level;
@@ -27,12 +25,17 @@ import tm.pokemon.species;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.rating;
 
-import tm.stat.combined_stats;
+import tm.stat.base_stats;
 import tm.stat.ev;
-import tm.stat.evs;
 import tm.stat.generic_stats;
+import tm.stat.hp;
+import tm.stat.initial_stat;
 import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_names;
+import tm.stat.stat_style;
+
+import tm.status.status_name;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.item;
@@ -40,13 +43,11 @@ import tm.string_conversions.nature;
 import tm.string_conversions.species;
 
 import tm.ability;
-import tm.constant_generation;
 import tm.gender;
 import tm.generation;
-import tm.generation_generic;
 import tm.item;
 import tm.nlohmann_json;
-import tm.team;
+import tm.visible_hp;
 
 import bounded;
 import containers;
@@ -54,12 +55,13 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
-namespace {
 
-template<Generation generation>
-auto parse_stats_impl(nlohmann::json const & stats, auto const convert) {
+template<typename T>
+auto parse_stats(nlohmann::json const & stats) {
 	auto read = [&](std::string_view const key) {
-		return convert(stats.at(key).get<nlohmann::json::number_integer_t>());
+		return T(bounded::check_in_range<typename T::value_type>(
+			stats.at(key).get<nlohmann::json::number_integer_t>()
+		));
 	};
 	return GenericStats(
 		read("hp"),
@@ -71,65 +73,64 @@ auto parse_stats_impl(nlohmann::json const & stats, auto const convert) {
 	);
 }
 
-template<typename T>
-constexpr auto parse_individual_stat = [](nlohmann::json::number_integer_t const value) {
-	return T(bounded::check_in_range<typename T::value_type>(value));
+constexpr auto parse_nature(std::string_view const str) -> Nature {
+	// A bug in the PS stats causes it to sometimes emit an empty nature
+	return str == "" ? Nature::Hardy : from_string<Nature>(str);
+}
+
+constexpr auto parse_pokemon = [](Generation const generation, nlohmann::json const & pokemon) -> ps::ParsedPokemon {
+	auto const species = from_string<Species>(pokemon.at("species").get<std::string_view>());
+	auto const moves = ps::parse_moves(pokemon.at("moves"));
+	auto const level = Level(bounded::check_in_range<Level::value_type>(pokemon.at("level").get<nlohmann::json::number_integer_t>()));
+	auto const nature = parse_nature(pokemon.at("nature").get<std::string_view>());
+	auto const evs = parse_stats<EV>(pokemon.at("evs"));
+	auto const ivs = parse_stats<IV>(pokemon.at("ivs"));
+	auto const base_stats = BaseStats(generation, species);
+	auto get_hp = [=] {
+		auto const hp = HP(base_stats.hp(), level, ivs.hp(), evs.hp());
+		return VisibleHP(
+			CurrentVisibleHP(hp.current()),
+			MaxVisibleHP(hp.max())
+		);
+	};
+	auto get_stat = [=](SplitSpecialRegularStat const stat_name) {
+		return initial_stat<SpecialStyle::split>(
+			stat_name,
+			base_stats[stat_name],
+			level,
+			nature,
+			ivs[stat_name],
+			evs[stat_name]
+		);
+	};
+	return ps::ParsedPokemon(
+		species,
+		level,
+		ps::parse_gender(pokemon.value("gender", "")),
+		StatusName::clear,
+		from_string<Item>(pokemon.at("item").get<std::string_view>()),
+		from_string<Ability>(pokemon.at("ability").get<std::string_view>()),
+		ps::ParsedStats(
+			get_hp(),
+			get_stat(SplitSpecialRegularStat::atk),
+			get_stat(SplitSpecialRegularStat::def),
+			get_stat(SplitSpecialRegularStat::spa),
+			get_stat(SplitSpecialRegularStat::spd),
+			get_stat(SplitSpecialRegularStat::spe)
+		),
+		moves.names,
+		moves.hidden_power_type,
+		Happiness(bounded::check_in_range<Happiness::value_type>(pokemon.value("happiness", 255)))
+	);
 };
 
-template<Generation generation>
-auto parse_evs(nlohmann::json const & stats) {
-	auto const evs = parse_stats_impl<generation>(stats, parse_individual_stat<EV>);
-	if constexpr (generation <= Generation::two) {
-		return to_old_gen_evs(evs);
-	} else {
-		return evs;
-	}
-}
-
-template<Generation generation>
-auto parse_dvs_or_ivs(nlohmann::json const & stats) {
-	if constexpr (generation <= Generation::two) {
-		return to_dvs(parse_stats_impl<generation>(stats, [](nlohmann::json::number_integer_t const value) {
-			return DV(parse_individual_stat<IV>(value));
-		}));
-	} else {
-		return parse_stats_impl<generation>(stats, parse_individual_stat<IV>);
-	}
-}
-
-template<Generation generation>
-auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
-	return Team<generation>(containers::transform(team_array, [&](nlohmann::json const & pokemon) {
-		auto const species = from_string<Species>(pokemon.at("species").get<std::string_view>());
-		auto const item = from_string<Item>(pokemon.at("item").get<std::string_view>());
-		auto const ability = from_string<Ability>(pokemon.at("ability").get<std::string_view>());
-		auto const gender = ps::parse_gender(pokemon.value("gender", ""));
-		auto const moves = ps::parse_moves(pokemon.at("moves"));
-		auto const level = Level(bounded::check_in_range<Level::value_type>(pokemon.at("level").get<nlohmann::json::number_integer_t>()));
-		auto const nature_str = pokemon.at("nature").get<std::string_view>();
-		// A bug in the PS stats causes it to sometimes emit an empty nature
-		auto const nature = nature_str == "" ? Nature::Hardy : from_string<Nature>(nature_str);
-		auto const evs = parse_evs<generation>(pokemon.at("evs"));
-		auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(pokemon.at("ivs"));
-		auto const happiness = Happiness(bounded::check_in_range<Happiness::value_type>(pokemon.value("happiness", 255)));
-		return Pokemon<generation>(
-			species,
-			level,
-			gender,
-			item,
-			ability,
-			CombinedStatsFor<generation>{
-				nature,
-				dvs_or_ivs,
-				evs
-			},
-			RegularMoves(containers::transform(
-				moves.names,
-				[](MoveName const name) { return Move(generation, move_name); }
-			)),
-			happiness
-		);
-	}));
+auto parse_team(Generation const generation, nlohmann::json const & team_array) -> ps::ParsedTeam {
+	return ps::ParsedTeam(containers::transform(
+		team_array,
+		[=](nlohmann::json const & pokemon) {
+			return parse_pokemon(generation, pokemon);
+		}
+	));
 }
 
 auto parse_rating(nlohmann::json const & json) -> tv::optional<Rating> {
@@ -151,8 +152,6 @@ auto parse_rating(nlohmann::json const & json) -> tv::optional<Rating> {
 	);
 }
 
-} // namespace
-
 export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult> {
 	if (json.at("turns").get<nlohmann::json::number_integer_t>() < 3) {
 		return tv::none;
@@ -168,25 +167,18 @@ export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult>
 		winner_str == p2 ? BattleResult::Winner::side2 :
 		BattleResult::Winner::tie;
 
-	auto get_team = [&](std::string_view const key) {
-		return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
-			return GenerationGeneric<Team>(parse_team<g>(json.at(key)));
-		});
-	};
-	auto const side1 = BattleResult::Side{
-		get_team("p1team"),
-		bounded::to_integer<BattleResult::Side::ID>(p1),
-		// Arr
-		parse_rating(json.at("p1rating"))
-	};
-	auto const side2 = BattleResult::Side{
-		get_team("p2team"),
-		bounded::to_integer<BattleResult::Side::ID>(p2),
-		parse_rating(json.at("p2rating"))
-	};
 	return BattleResult{
-		side1,
-		side2,
+		BattleResult::Side{
+			parse_team(generation, json.at("p1team")),
+			bounded::to_integer<BattleResult::Side::ID>(p1),
+			// Arr
+			parse_rating(json.at("p1rating"))
+		},
+		BattleResult::Side{
+			parse_team(generation, json.at("p2team")),
+			bounded::to_integer<BattleResult::Side::ID>(p2),
+			parse_rating(json.at("p2rating"))
+		},
 		winner
 	};
 }

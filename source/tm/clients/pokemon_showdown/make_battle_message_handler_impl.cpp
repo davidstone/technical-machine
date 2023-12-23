@@ -33,15 +33,15 @@ constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> 
 }
 
 auto make_battle_message_handler(
-	ParsedSide const & team,
+	ParsedSide const & side,
 	BattleInitMessage const message
 ) -> BattleMessageHandler {
 	return BattleMessageHandler(
-		team.party,
+		side.party,
 		constant_generation(message.generation, [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<Teams> {
 			return Teams<generation>(
-				parsed_team_to_known_team<generation>(team),
-				make_foe<generation>(message.team[other(team.party).value()])
+				parsed_team_to_known_team<generation>(side.team),
+				make_foe<generation>(message.team[other(side.party).value()])
 			);
 		})
 	);
