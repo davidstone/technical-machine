@@ -116,6 +116,7 @@ auto determine_action(
 		return lhs.probability > rhs.probability;
 	});
 	log_foe_move_probabilities(stream, foe_moves, state.foe);
+	stream << std::flush;
 
 	auto scored_moves = score_moves(
 		state,
