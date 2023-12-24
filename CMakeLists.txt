@@ -45,6 +45,8 @@ target_compile_definitions(Boost::headers INTERFACE
 	BOOST_CHRONO_HEADER_ONLY
 )
 
+find_package(TBB REQUIRED)
+
 add_library(nlohmann_json INTERFACE IMPORTED)
 target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/include")
 
@@ -543,6 +545,7 @@ target_sources(ai PRIVATE
 target_link_libraries(ai
 	tm_common
 	tm_pokemon_showdown
+	TBB::tbb
 )
 
 add_executable(file_converter
@@ -675,6 +678,7 @@ target_link_libraries(tm_test
 	tm_pokemon_showdown
 	tm_shoddy_battle
 	Catch2::Catch2WithMain
+	TBB::tbb
 )
 
 add_executable(ps_regression_test)
@@ -688,6 +692,7 @@ target_link_libraries(ps_regression_test
 	tm_common
 	tm_pokemon_showdown
 	Catch2::Catch2WithMain
+	TBB::tbb
 )
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

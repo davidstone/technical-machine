@@ -41,6 +41,7 @@ export template<Generation generation>
 struct TranspositionTable {
 	auto add_score(State<generation> const & state, ScoredMoves moves) -> void {
 		auto const compressed_battle = compress_battle(state);
+		auto _ = std::scoped_lock(m_mutex);
 		auto & value = m_data[index(compressed_battle)];
 		value.compressed_battle = compressed_battle;
 		value.depth = state.depth;
@@ -49,6 +50,7 @@ struct TranspositionTable {
 
 	auto get_score(State<generation> const & state) const -> tv::optional<ScoredMoves> {
 		auto const compressed_battle = compress_battle(state);
+		auto _ = std::scoped_lock(m_mutex);
 		auto const & value = m_data[index(compressed_battle)];
 		if (value.depth >= state.depth and value.compressed_battle == compressed_battle) {
 			return value.moves;
@@ -79,6 +81,7 @@ private:
 	static_assert(std::same_as<TableIndex, containers::index_type<Data>>);
 
 	Data m_data;
+	mutable std::mutex m_mutex;
 };
 
 } // namespace technicalmachine

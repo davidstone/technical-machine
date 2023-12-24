@@ -32,13 +32,22 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
+auto parallel_sum(auto && range) {
+	return std::reduce(
+		std::execution::par_unseq,
+		containers::legacy_iterator(containers::begin(range)),
+		containers::legacy_iterator(containers::end(range)),
+		0.0
+	);
+}
+
 template<Generation generation>
 struct ScoreMovesEvaluator {
 	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, MoveProbabilities const foe_moves, Evaluate<generation>, auto const function) -> ScoredMoves {
 		return ScoredMoves(containers::transform(ai_selections, [&](MoveName const ai_move) {
 			return ScoredMove{
 				ai_move,
-				containers::sum(containers::transform(
+				parallel_sum(containers::transform(
 					foe_moves,
 					[&](MoveProbability const foe_move) {
 						return foe_move.probability * function(state, ai_move, foe_move.name);
