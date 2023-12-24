@@ -30,6 +30,7 @@ import tm.item;
 import tm.team;
 
 import bounded;
+import concurrent;
 import containers;
 import tv;
 import std_module;
@@ -115,27 +116,6 @@ private:
 	double m_total_teams = 0.0;
 };
 
-template<typename T>
-struct LockedAccess {
-	auto locked() & {
-		struct Result {
-			std::scoped_lock<std::mutex> lock;
-			T & data;
-		};
-		return Result{
-			std::scoped_lock(m_mutex),
-			m_data
-		};
-	}
-	constexpr auto unlocked() const -> T const & {
-		return m_data;
-	}
-
-private:
-	mutable std::mutex m_mutex;
-	T m_data;
-};
-
 struct LocalTopMoves {
 	MoveName move;
 	double value;
@@ -219,10 +199,10 @@ export struct Correlations {
 	using PerTeammate = PerTeammate;
 	using Teammates = Teammates;
 	using MoveData = MoveData;
-	using TopMoves = containers::flat_map<MoveName, std::unique_ptr<LockedAccess<MoveData>>>;
+	using TopMoves = containers::flat_map<MoveName, std::unique_ptr<concurrent::locked_access<MoveData>>>;
 	struct PerSpecies {
 		TopMoves top_moves;
-		std::unique_ptr<LockedAccess<Teammates>> teammates = std::make_unique<LockedAccess<Teammates>>();
+		std::unique_ptr<concurrent::locked_access<Teammates>> teammates = std::make_unique<concurrent::locked_access<Teammates>>();
 	};
 
 	explicit Correlations(UsageStats const & usage_stats) {
@@ -231,7 +211,7 @@ export struct Correlations {
 			m_data[bounded::integer(species)].top_moves = TopMoves(
 				containers::assume_unique,
 				containers::transform(get_most_used(usage_stats.moves(species), threshold), [](LocalTopMoves const moves) {
-					return containers::range_value_t<TopMoves>{moves.move, std::make_unique<LockedAccess<MoveData>>()};
+					return containers::range_value_t<TopMoves>{moves.move, std::make_unique<concurrent::locked_access<MoveData>>()};
 				})
 			);
 		}
@@ -240,14 +220,20 @@ export struct Correlations {
 	auto add(ps::ParsedTeam const & team, double const weight) & -> void {
 		for (auto const & pokemon : team) {
 			auto & per_species = m_data[bounded::integer(pokemon.species)];
-			populate_teammate_correlations(per_species.teammates->locked().data, team, pokemon, weight);
+			{
+				auto const locked = per_species.teammates->locked();
+				populate_teammate_correlations(locked.value(), team, pokemon, weight);
+			}
 			for (auto const move : pokemon.moves) {
 				auto const maybe_correlations = containers::lookup(per_species.top_moves, move);
 				if (!maybe_correlations) {
 					continue;
 				}
 				auto & correlations = *maybe_correlations;
-				populate_correlations(correlations->locked().data, team, pokemon, move, weight);
+				{
+					auto const locked = correlations->locked();
+					populate_correlations(locked.value(), team, pokemon, move, weight);
+				}
 			}
 		}
 	}
