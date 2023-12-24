@@ -53,7 +53,7 @@ target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/inc
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
 	add_subdirectory(dependencies/cmake_strict_defaults)
-	add_subdirectory(dependencies/concurrent-queue)
+	add_subdirectory(dependencies/concurrent)
 	add_subdirectory(dependencies/numeric-traits)
 	add_subdirectory(dependencies/operators)
 	add_subdirectory(dependencies/bounded-integer)
@@ -525,7 +525,7 @@ target_sources(tm_pokemon_showdown PRIVATE
 target_link_libraries(tm_pokemon_showdown
 	Boost::headers
 	bounded
-	concurrent_queue
+	concurrent
 	containers
 	tm_common
 	tm_clients

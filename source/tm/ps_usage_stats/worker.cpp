@@ -9,7 +9,7 @@ module;
 
 export module tm.ps_usage_stats.worker;
 
-import concurrent_queue;
+import concurrent;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
