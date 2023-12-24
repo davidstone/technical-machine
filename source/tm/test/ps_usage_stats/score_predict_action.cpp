@@ -4,22 +4,27 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <std_module/prelude.hpp>
-#include <iostream>
 #include <string_view>
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
+import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.in_message;
+import tm.clients.ps.parsed_team;
+import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
-import tm.evaluate.state;
 
 import tm.move.move_name;
+import tm.move.is_switch;
 
 import tm.ps_usage_stats.add_to_workers;
+import tm.ps_usage_stats.battle_log_to_messages;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.files_in_directory;
 import tm.ps_usage_stats.parse_input_log;
@@ -29,23 +34,19 @@ import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
 
 import tm.team_predictor.all_usage_stats;
+import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
 import tm.get_both_actions;
 import tm.generation;
-import tm.generation_generic;
 import tm.load_json_from_file;
 import tm.team;
+import tm.visible_state;
 
 import bounded;
 import containers;
 import std_module;
 import tv;
-
-import tm.test.usage_bytes;
-import tm.string_conversions.move_name;
-
-#if 0
 
 namespace technicalmachine {
 using namespace std::string_view_literals;
@@ -79,54 +80,62 @@ constexpr auto is_input_for(Party const party) {
 	};
 }
 
-constexpr auto actions_for(std::span<PlayerInput const> player_inputs, BattleManager const & battle, Party const party) {
-	return containers::transform(
-		containers::filter(std::move(player_inputs), is_input_for(party)),
-		[&](PlayerInput const input) -> MoveName {
-			return tv::visit(input.action, tv::overload(
-				[](MoveName const move) -> MoveName {
-					std::cerr << "Input: move " << to_string(move) << '\n';
-					return move;
-				},
-				[&](BattleResponseSwitch const response) -> MoveName {
-					std::cerr << "Input: switch " << response << '\n';
-					return battle.switch_index_to_switch(response);
-				}
-			));
-		}
-	);
-}
+struct PredictedAction {
+	MoveProbabilities predicted;
+	SlotMemory slot_memory;
+};
 
-auto get_predicted_action(BattleManager & battle, AllEvaluate const evaluate) {
-	return [&, evaluate](InMessage const message) -> tv::optional<MoveProbabilities> {
-		auto function = [=]<Generation generation>(State<generation> const & state) {
+auto get_predicted_action(
+	BattleManager & battle,
+	AllUsageStats const & all_usage_stats,
+	AllEvaluate const & evaluate
+) {
+	return [&](BattleMessage const & message) -> tv::optional<PredictedAction> {
+		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
 			return get_both_actions(
-				state.ai,
-				state.foe,
+				Team<generation>(state.ai),
+				most_likely_team(all_usage_stats[generation], state.foe),
 				state.environment,
 				evaluate.get<generation>()
 			).predicted;
 		};
-		auto const battle_result = battle.handle_message(message);
-		return tv::visit(battle_result, tv::overload(
-			[&](bounded::bounded_integer auto) -> tv::optional<MoveProbabilities> {
-				return tv::visit(battle.predicted_state(), function);
+		auto const battle_result = tv::visit(message, tv::overload(
+			[](ps::CreateBattle) -> BattleManager::Result {
+				throw std::runtime_error("Should never receive CreateBattle");
 			},
-			[](auto) -> tv::optional<MoveProbabilities> {
-				return tv::none;
+			[&](auto const & msg) -> BattleManager::Result {
+				return battle.handle_message(msg);
 			}
 		));
+		return tv::visit(battle_result, [&]<typename T>(T const & result) -> tv::optional<PredictedAction> {
+			if constexpr (bounded::convertible_to<T, ActionRequired>) {
+				return PredictedAction(
+					tv::visit(result.state, function),
+					result.slot_memory
+				);
+			} else {
+				return tv::none;
+			}
+		});
 	};
 }
 
 constexpr auto individual_brier_score = [](auto const & tuple) -> double {
-	auto const & [predicted, actual] = tuple;
+	auto const & [evaluated, reported] = tuple;
+	auto const actual = tv::visit(reported.action, tv::overload(
+		[](MoveName const move) -> MoveName {
+			return move;
+		},
+		[&](BattleResponseSwitch const response) -> MoveName {
+			return to_switch(evaluated.slot_memory.reverse_lookup(response));
+		}
+	));
 	auto score_prediction = [&](MoveProbability const move) {
 		auto const is_correct = actual == move.name;
 		auto const value = is_correct ? 1.0 - move.probability : move.probability;
 		return value * value;
 	};
-	return containers::sum(containers::transform(predicted, score_prediction));
+	return containers::sum(containers::transform(evaluated.predicted, score_prediction));
 };
 
 struct WeightedScore {
@@ -150,49 +159,41 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 }
 
 auto predicted_actions(
-	std::span<std::string_view const> battle_log,
+	std::span<BattleMessage const> const battle_messages,
 	BattleManager & battle,
-	AllEvaluate const evaluate
+	AllUsageStats const & all_usage_stats,
+	AllEvaluate const & evaluate
 ) {
 	return containers::remove_none(containers::transform(
-		containers::transform(std::move(battle_log), bounded::construct<InMessage>),
-		get_predicted_action(battle, evaluate)
+		std::move(battle_messages),
+		get_predicted_action(battle, all_usage_stats, evaluate)
 	));
 }
 
-struct Side {
-	constexpr explicit Side(Party const party_, BattleResult::Side const & side):
-		party(party_),
-		team(side.team),
-		rating(side.rating)
+struct RatedSide {
+	constexpr RatedSide(Party const party, BattleResult::Side const & side_):
+		side(party, side_.team),
+		rating(side_.rating)
 	{
 	}
-	Party party;
-	GenerationGeneric<Team> team;
+	ParsedSide side;
 	tv::optional<Rating> rating;
 };
 
 auto score_one_side_of_battle(
-	AllEvaluate const evaluate,
-	UsageStats const & usage_stats,
-	Side const & side,
-	std::span<std::string_view const> const battle_log,
-	std::span<PlayerInput const> player_inputs
+	AllUsageStats const & all_usage_stats,
+	AllEvaluate const & evaluate,
+	RatedSide const & rated_side,
+	std::span<BattleMessage const> const battle_messages,
+	std::span<PlayerInput const> const player_inputs
 ) -> WeightedScore {
-	auto battle = BattleManager(
-		tv::visit(side.team, []<Generation generation>(Team<generation> team) {
-			return GenerationGeneric<KnownTeam>(KnownTeam<generation>(std::move(team)));
-		}),
-		side.party
-	);
+	auto battle = BattleManager();
+	battle.handle_message(rated_side.side);
 
-	// I don't especially like that this code depends on side effects of
-	// advancing through `predicted_actions` so that `actions_for` will get the
-	// right data at the right time.
 	auto const scores = containers::vector(containers::transform(
 		containers::zip(
-			predicted_actions(battle_log, battle, evaluate),
-			actions_for(player_inputs, battle, side.party)
+			predicted_actions(battle_messages, battle, all_usage_stats, evaluate),
+			containers::filter(player_inputs, is_input_for(rated_side.side.party))
 		),
 		individual_brier_score
 	));
@@ -205,16 +206,11 @@ auto parse_battle_log(nlohmann::json const & json) -> containers::vector<std::st
 	}));
 }
 
-constexpr auto for_generation = [](Generation const generation) {
-	return bytes_to_usage_stats(smallest_team_bytes(generation));
-};
-
-
 auto score_predict_action(ThreadCount const thread_count, std::filesystem::path const & input_directory) -> double {
 	auto score = std::atomic<WeightedScore>();
 	{
 		auto const all_evaluate = AllEvaluate();
-		auto const all_usage_stats = AllUsageStats(StatsForGeneration(for_generation));
+		auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
 		auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {
 			return make_worker<std::filesystem::path>([&](std::filesystem::path const & input_file) {
 				try {
@@ -223,19 +219,19 @@ auto score_predict_action(ThreadCount const thread_count, std::filesystem::path 
 					if (!battle_result) {
 						return;
 					}
-					auto const generation = get_generation(battle_result->side1.team);
-					auto const battle_log = parse_battle_log(json.at("log"));
+					std::cerr << "Evaluating " << input_file << '\n';
+					auto const battle_messages = battle_log_to_messages(json.at("log"));
 					auto const input_log = parse_input_log(json.at("inputLog"));
 					auto sides = containers::array({
-						Side(Party(0_bi), battle_result->side1),
-						Side(Party(1_bi), battle_result->side2)
+						RatedSide(Party(0_bi), battle_result->side1),
+						RatedSide(Party(1_bi), battle_result->side2)
 					});
-					auto const individual = containers::sum(containers::transform(sides, [&](Side const & side) {
+					auto const individual = containers::sum(containers::transform(sides, [&](RatedSide const & rated_side) {
 						return score_one_side_of_battle(
+							all_usage_stats,
 							all_evaluate,
-							all_usage_stats[generation],
-							side,
-							battle_log,
+							rated_side,
+							battle_messages,
 							input_log
 						);
 					}));
@@ -263,16 +259,10 @@ auto score_predict_action(ThreadCount const thread_count, std::filesystem::path 
 
 } // namespace technicalmachine
 
-#endif
-
 auto main(int argc, char ** argv) -> int {
-	static_cast<void>(argc);
-	static_cast<void>(argv);
-	#if 0
 	using namespace technicalmachine;
 	auto const args = parse_args(argc, argv);
 	auto const result = score_predict_action(args.thread_count, args.input_directory);
 	std::cout << "Brier score: " << result << '\n';
-	#endif
 	return 0;
 }

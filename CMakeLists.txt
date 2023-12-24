@@ -695,6 +695,14 @@ target_link_libraries(ps_regression_test
 	TBB::tbb
 )
 
+add_executable(score_predict_action
+	source/tm/test/ps_usage_stats/score_predict_action.cpp
+)
+target_link_libraries(score_predict_action
+	tm_common
+	tm_pokemon_showdown
+)
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	if(MSVC)
 		target_link_options(tm_common PUBLIC
@@ -737,6 +745,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	endif()
 	target_link_libraries(ai pthread)
 	target_link_libraries(predict pthread)
+	target_link_libraries(score_predict_action atomic)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
