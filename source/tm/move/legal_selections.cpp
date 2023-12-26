@@ -18,6 +18,7 @@ using namespace bounded::literal;
 
 // The possible selection sets are:
 // Pass
+// Team size (6) - 1 switches
 // Struggle, team size (6) - 1 switches
 // Normal moves (4), team size (6) - 1 switches
 export constexpr auto maximum_possible_selections = max_moves_per_pokemon + max_pokemon_per_team - 1_bi;

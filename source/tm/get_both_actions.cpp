@@ -20,6 +20,7 @@ import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
 import tm.team;
+import tm.team_is_empty;
 
 import bounded;
 import std_module;
@@ -34,7 +35,7 @@ struct BothActions {
 
 export template<Generation generation>
 auto get_both_actions(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate) -> BothActions {
-	if (team.size() == 0_bi or other.size() == 0_bi) {
+	if (team_is_empty(team) or team_is_empty(other)) {
 		throw std::runtime_error("Tried to determine an action with an empty team.");
 	}
 	auto const team_selections = get_legal_selections(team, other, environment);

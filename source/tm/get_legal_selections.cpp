@@ -5,6 +5,7 @@
 
 module;
 
+#include <bounded/assert.hpp>
 #include <operators/forward.hpp>
 
 export module tm.get_legal_selections;
@@ -26,6 +27,7 @@ import tm.environment;
 import tm.item;
 import tm.generation;
 import tm.switch_decision_required;
+import tm.team_is_empty;
 
 import bounded;
 import containers;
@@ -119,6 +121,8 @@ constexpr auto get_legal_selections(
 	TeamType const & other,
 	Environment const environment
 ) -> LegalSelections {
+	BOUNDED_ASSERT(!team_is_empty(user));
+	BOUNDED_ASSERT(!team_is_empty(other));
 	auto replacement_switches = [&] {
 		return potential_switches(
 			user.size(),

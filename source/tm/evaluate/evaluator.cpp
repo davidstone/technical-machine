@@ -17,7 +17,6 @@ import tm.evaluate.possible_executed_moves;
 import tm.evaluate.scored_move;
 import tm.evaluate.selector;
 import tm.evaluate.state;
-import tm.evaluate.team_is_empty;
 import tm.evaluate.transposition;
 import tm.evaluate.victory;
 import tm.evaluate.win;
@@ -62,6 +61,7 @@ import tm.generation;
 import tm.get_legal_selections;
 import tm.switch_decision_required;
 import tm.team;
+import tm.team_is_empty;
 
 import bounded;
 import containers;

@@ -97,7 +97,6 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/scored_move.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
-		source/tm/evaluate/team_is_empty.cpp
 		source/tm/evaluate/transposition.cpp
 		source/tm/evaluate/victory.cpp
 		source/tm/evaluate/win.cpp
@@ -318,6 +317,7 @@ target_sources(tm_common PUBLIC
 		source/tm/split_view.cpp
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
+		source/tm/team_is_empty.cpp
 		source/tm/to_used_move.cpp
 		source/tm/visible_damage_to_actual_damage.cpp
 		source/tm/visible_hp.cpp

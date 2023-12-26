@@ -16,7 +16,6 @@ import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
-import tm.evaluate.team_is_empty;
 
 import tm.move.legal_selections;
 import tm.move.move_name;
@@ -24,6 +23,7 @@ import tm.move.move_name;
 import tm.environment;
 import tm.generation;
 import tm.team;
+import tm.team_is_empty;
 
 import bounded;
 import containers;
