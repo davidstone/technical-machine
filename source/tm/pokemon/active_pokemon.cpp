@@ -54,6 +54,7 @@ import tm.status.blocks_status;
 import tm.status.clears_status;
 import tm.status.status;
 import tm.status.status_name;
+import tm.status.toxic_resets_on_switch;
 
 import tm.type.pokemon_types;
 import tm.type.type;
@@ -819,7 +820,7 @@ public:
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
 		this->m_flags.types = PokemonTypes(generation, this->m_pokemon.species());
-		if (generation <= Generation::two and this->m_pokemon.status().name() == StatusName::toxic) {
+		if (toxic_resets_on_switch(generation) and this->m_pokemon.status().name() == StatusName::toxic) {
 			this->m_pokemon.set_status(StatusName::poison);
 		}
 		this->m_flags.status.set(this->m_pokemon.status().name());

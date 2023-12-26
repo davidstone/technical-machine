@@ -223,6 +223,7 @@ target_sources(tm_common PUBLIC
 		source/tm/status/status_can_apply.cpp
 		source/tm/status/status_name.cpp
 		source/tm/status/team_has_status.cpp
+		source/tm/status/toxic_resets_on_switch.cpp
 	
 		source/tm/string_conversions/ability.cpp
 		source/tm/string_conversions/from_string.cpp
