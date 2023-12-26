@@ -224,7 +224,9 @@ private:
 			},
 			[&](BattleStarted const & value) {
 				call_determine_and_send_action(value);
-				m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
+				if (m_settings.style.index() == bounded::type<SettingsFile::Ladder>) {
+					m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
+				}
 			},
 			[&](BattleFinished) {
 				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room));
