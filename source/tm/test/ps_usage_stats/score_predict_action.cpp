@@ -109,10 +109,14 @@ auto get_predicted_action(
 		));
 		return tv::visit(battle_result, [&]<typename T>(T const & result) -> tv::optional<PredictedAction> {
 			if constexpr (bounded::convertible_to<T, ActionRequired>) {
-				return PredictedAction(
+				auto action = PredictedAction(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
+				if (action.predicted == MoveProbabilities({{MoveName::Pass, 1.0}})) {
+					return tv::none;
+				}
+				return action;
 			} else {
 				return tv::none;
 			}
