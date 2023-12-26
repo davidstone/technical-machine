@@ -194,6 +194,11 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 				auto & move_builder = make_move_builder();
 				move_builder.fully_paralyze(message.party);
 			},
+			[&](PartiallyTrappedMessage const message) {
+				use_previous_action();
+				auto & move_builder = make_move_builder();
+				move_builder.partial_trap(message.party);
+			},
 			[&](StillAsleepMessage const message) {
 				use_previous_action();
 				auto & move_builder = make_move_builder();

@@ -28,6 +28,7 @@ export struct Awakening {};
 export struct Flinched {};
 export struct FrozenSolid {};
 export struct FullyParalyzed {};
+export struct PartiallyTrapped {};
 export struct Recharging {};
 export struct Used {
 	constexpr explicit Used(MoveName const selected_, bool miss_ = false):
@@ -52,6 +53,7 @@ export using MoveResult = tv::variant<
 	Flinched,
 	FrozenSolid,
 	FullyParalyzed,
+	PartiallyTrapped,
 	Recharging,
 	Used
 >;

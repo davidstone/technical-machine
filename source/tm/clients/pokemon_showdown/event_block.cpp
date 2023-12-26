@@ -106,6 +106,11 @@ export struct FullyParalyzedMessage {
 	friend auto operator==(FullyParalyzedMessage, FullyParalyzedMessage) -> bool = default;
 };
 
+export struct PartiallyTrappedMessage {
+	Party party;
+	friend auto operator==(PartiallyTrappedMessage, PartiallyTrappedMessage) -> bool = default;
+};
+
 export struct StillAsleepMessage {
 	Party party;
 	friend auto operator==(StillAsleepMessage, StillAsleepMessage) -> bool = default;
@@ -277,6 +282,7 @@ export using ParsedMessage = tv::variant<
 	FocusPunchMessage,
 	FrozenSolidMessage,
 	FullyParalyzedMessage,
+	PartiallyTrappedMessage,
 	StillAsleepMessage,
 	RechargingMessage,
 	CriticalHitMessage,
@@ -393,6 +399,8 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			return FrozenSolidMessage(party);
 		} else if (reason == "par") {
 			return FullyParalyzedMessage(party);
+		} else if (reason == "partiallytrapped") {
+			return PartiallyTrappedMessage(party);
 		} else if (reason == "slp") {
 			return StillAsleepMessage(party);
 		} else if (reason == "recharge") {
