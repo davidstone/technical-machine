@@ -223,7 +223,6 @@ auto score_predict_action(ThreadCount const thread_count, std::filesystem::path 
 					if (!battle_result) {
 						return;
 					}
-					std::cerr << "Evaluating " << input_file << '\n';
 					auto const battle_messages = battle_log_to_messages(json.at("log"));
 					auto const input_log = parse_input_log(json.at("inputLog"));
 					auto sides = containers::array({
