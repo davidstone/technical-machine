@@ -30,8 +30,10 @@ import tm.move.move_name;
 import tm.pokemon.max_pokemon_per_team;
 
 import tm.status.status_name;
+import tm.status.toxic_resets_on_switch;
 
 import tm.ability;
+import tm.generation;
 import tm.generation_generic;
 import tm.team;
 import tm.visible_hp;
@@ -393,11 +395,24 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 			},
 			[&](MoveStatus const message) {
 				tv::visit(action_builder, tv::overload(
+					[](Nothing) {
+						throw std::runtime_error("Move status without a move");
+					},
 					[&](MoveStateBuilder & builder) {
 						builder.status_from_move(message.party, message.status);
 					},
-					[](auto) {
-						throw std::runtime_error("Move status without a move");
+					[&](Switches & switches) {
+						auto const ptr = find_switch(switches, message.party);
+						if (!ptr) {
+							throw std::runtime_error("Status changed from switching without a switch");
+						}
+						if (message.status != StatusName::poison) {
+							throw std::runtime_error("Status changed from switching and it wasn't poison");
+						}
+						if (!toxic_resets_on_switch(m_client_battle->generation())) {
+							throw std::runtime_error("Toxic poison changed to poison from switching in later generations");
+						}
+						ptr->status = message.status;
 					}
 				));
 			},
