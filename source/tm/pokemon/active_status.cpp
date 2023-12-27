@@ -45,14 +45,49 @@ constexpr auto handle_leech_seed(any_mutable_active_pokemon auto const pokemon, 
 	}
 }
 
-constexpr auto handle_burn(any_mutable_active_pokemon auto const pokemon, Environment const environment) -> void {
-	auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(pokemon.ability()), 16_bi, 8_bi);
-	heal(pokemon, environment, rational(-1_bi, denominator));
+template<any_mutable_active_pokemon PokemonType>
+constexpr auto handle_burn(PokemonType const pokemon, Environment const environment) -> void {
+	constexpr auto denominator = 32_bi;
+	auto const numerator = [&] -> bounded::integer<1, 4> {
+		switch (generation_from<PokemonType>) {
+			case Generation::one:
+				return 2_bi;
+			case Generation::two:
+			case Generation::three:
+			case Generation::four:
+			case Generation::five:
+			case Generation::six:
+				return BOUNDED_CONDITIONAL(
+					weakens_burn(pokemon.ability()),
+					2_bi,
+					4_bi
+				);
+			default:
+				return BOUNDED_CONDITIONAL(
+					weakens_burn(pokemon.ability()),
+					1_bi,
+					2_bi
+				);
+		}
+	}();
+	heal(pokemon, environment, rational(-numerator, denominator));
 }
 
-constexpr auto handle_poison(any_mutable_active_pokemon auto const pokemon, Environment const environment) -> void {
-	auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(pokemon.ability()), 1_bi, -1_bi);
-	heal(pokemon, environment, rational(numerator, 8_bi));
+template<any_mutable_active_pokemon PokemonType>
+constexpr auto handle_poison(PokemonType const pokemon, Environment const environment) -> void {
+	constexpr auto denominator = 16_bi;
+	auto const numerator = [&] {
+		if constexpr (generation_from<PokemonType> == Generation::one) {
+			return -1_bi;
+		} else {
+			return BOUNDED_CONDITIONAL(
+				absorbs_poison_damage(pokemon.ability()),
+				2_bi,
+				-2_bi
+			);
+		}
+	}();
+	heal(pokemon, environment, rational(numerator, denominator));
 }
 
 constexpr auto handle_sleep_and_rest(any_mutable_active_pokemon auto const pokemon, any_active_pokemon auto const other, Environment const environment, bool const nightmare, bool const uproar = false) -> void {
