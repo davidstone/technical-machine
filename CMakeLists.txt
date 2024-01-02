@@ -614,6 +614,8 @@ target_sources(tm_test PRIVATE
 		source/tm/test/clients/pokemon_showdown/parse_switch.cpp
 		source/tm/test/clients/pokemon_showdown/parse_team_from_request.cpp
 		
+		source/tm/test/clients/shoddy_battle/read_team_file.cpp
+
 		source/tm/test/clients/client_battle.cpp
 
 		source/tm/test/collections/variable_collection.cpp
