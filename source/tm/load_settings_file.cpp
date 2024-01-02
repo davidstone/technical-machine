@@ -52,7 +52,7 @@ auto parse_style(nlohmann::json const & json) {
 		});
 	} else if (mode == "accept") {
 		return SettingsFile::Style(SettingsFile::Accept{
-			containers::vector<containers::string>(json.at("users").get<std::vector<std::string_view>>())
+			containers::dynamic_array<containers::string>(json.at("users").get<std::vector<std::string_view>>())
 		});
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "sv, mode));

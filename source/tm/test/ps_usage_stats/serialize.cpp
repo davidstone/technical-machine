@@ -126,7 +126,7 @@ auto make_second_team() -> ps::ParsedTeam {
 }
 
 auto string_to_bytes(std::string_view const str) {
-	return containers::vector(std::as_bytes(std::span(str)));
+	return containers::dynamic_array(std::as_bytes(std::span(str)));
 }
 
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
@@ -152,7 +152,7 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	correlations.add(team, weight);
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, correlations);
-	auto const expected = containers::concatenate<containers::vector<std::byte>>(
+	auto const expected = containers::dynamic_array<std::byte>(containers::concatenate_view(
 		usage_stats_magic_string,
 		version_bytes(0),
 		generation_bytes(Generation::one),
@@ -249,7 +249,7 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 								count_bytes(1),
 									move_bytes(MoveName::Body_Slam),
 									weight_bytes(1.0)
-	);
+	));
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
@@ -266,7 +266,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	}
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, correlations);
-	auto const expected = containers::concatenate<containers::vector<std::byte>>(
+	auto const expected = containers::dynamic_array<std::byte>(containers::concatenate_view(
 		usage_stats_magic_string,
 		version_bytes(0),
 		generation_bytes(Generation::one),
@@ -310,7 +310,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 								weight_bytes(1.0),
 						count_bytes(0), // Teammates
 						count_bytes(0) // MoveName
-	);
+	));
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
 

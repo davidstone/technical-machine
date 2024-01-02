@@ -32,7 +32,7 @@ export struct SettingsFile {
 	};
 	struct Accept {
 		// TODO: How does this line up with allowed teams?
-		containers::vector<containers::string> users;
+		containers::dynamic_array<containers::string> users;
 	};
 	using Style = tv::variant<Ladder, Challenge, Accept>;
 	Style style;

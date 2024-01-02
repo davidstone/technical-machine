@@ -110,7 +110,7 @@ private:
 using Outputter = tv::variant<AsStringPrinted, AsStringFile, AsPL, AsPO>;
 struct ParsedArgs {
 	Outputter outputter;
-	containers::vector<std::filesystem::path> paths;
+	containers::dynamic_array<std::filesystem::path> paths;
 };
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
@@ -129,7 +129,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 		return result;
 	};
 	auto get_paths = [=](int const initial) {
-		return containers::vector<std::filesystem::path>(containers::range_view(argv + initial, argv + argc));
+		return containers::dynamic_array<std::filesystem::path>(containers::range_view(argv + initial, argv + argc));
 	};
 	switch (output_type) {
 		case OutputType::print:

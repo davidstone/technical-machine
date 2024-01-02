@@ -84,8 +84,8 @@ constexpr auto parse_input = [](nlohmann::json const & json) -> tv::optional<Pla
 	}
 };
 
-export auto parse_input_log(nlohmann::json const & input_log) -> containers::vector<PlayerInput> {
-	return containers::vector(containers::remove_none(containers::transform(
+export auto parse_input_log(nlohmann::json const & input_log) -> containers::dynamic_array<PlayerInput> {
+	return containers::dynamic_array(containers::remove_none(containers::transform(
 		input_log,
 		parse_input
 	)));

@@ -194,7 +194,7 @@ auto score_one_side_of_battle(
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 
-	auto const scores = containers::vector(containers::transform(
+	auto const scores = containers::dynamic_array(containers::transform(
 		containers::zip(
 			predicted_actions(battle_messages, battle, all_usage_stats, evaluate),
 			containers::filter(player_inputs, is_input_for(rated_side.side.party))
@@ -202,12 +202,6 @@ auto score_one_side_of_battle(
 		individual_brier_score
 	));
 	return weighted_score(scores);
-}
-
-auto parse_battle_log(nlohmann::json const & json) -> containers::vector<std::string_view> {
-	return containers::vector(containers::transform(json, [](nlohmann::json const & element) {
-		return element.get<std::string_view>();
-	}));
 }
 
 auto score_predict_action(ThreadCount const thread_count, std::filesystem::path const & input_directory) -> double {

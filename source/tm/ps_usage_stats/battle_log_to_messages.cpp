@@ -50,8 +50,8 @@ constexpr auto is_not_chat_or_error_message = [](InMessage const message) {
 	return !is_chat_message(message) and message.type() != "error";
 };
 
-export auto battle_log_to_messages(nlohmann::json const & log) -> containers::vector<BattleMessage> {
-	return containers::vector<BattleMessage>(
+export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dynamic_array<BattleMessage> {
+	return containers::dynamic_array<BattleMessage>(
 		containers::remove_none(containers::transform(
 			containers::chunk_by(
 				containers::filter(

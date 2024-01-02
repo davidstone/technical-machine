@@ -38,7 +38,7 @@ TEST_CASE("Parse input log", "[parse_input_log]") {
 	}));
 	constexpr auto p1 = Party(0_bi);
 	constexpr auto p2 = Party(1_bi);
-	auto const expected = containers::vector({
+	auto const expected = containers::dynamic_array({
 		PlayerInput(p1, MoveName::Body_Slam),
 		PlayerInput(p2, ps::BattleResponseSwitch(3_bi)),
 		PlayerInput(p1, MoveName::Body_Slam),

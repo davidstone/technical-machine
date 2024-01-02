@@ -105,7 +105,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 			"|turn|4",
 		})
 	);
-	auto const expected = containers::vector<ps::BattleMessage>({
+	auto const expected = containers::dynamic_array<ps::BattleMessage>({
 		ps::BattleInitMessage(
 			Generation::one,
 			{
