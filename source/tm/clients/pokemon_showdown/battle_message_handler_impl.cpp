@@ -74,7 +74,7 @@ constexpr auto find_switch(auto & switches, Party const party) {
 }
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
-auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
+auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const block) -> Result {
 	using ActionBuilder = tv::variant<
 		Nothing,
 		MoveStateBuilder,

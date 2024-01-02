@@ -42,7 +42,7 @@ export struct BattleMessageHandler {
 		StartOfTurn,
 		BattleFinished
 	>;
-	auto handle_message(EventBlock const & block) -> Result;
+	auto handle_message(std::span<ParsedMessage const> const block) -> Result;
 
 	auto state() const -> GenerationGeneric<VisibleState> {
 		return m_client_battle->state();

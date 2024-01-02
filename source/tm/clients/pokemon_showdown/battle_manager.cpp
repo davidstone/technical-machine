@@ -102,7 +102,7 @@ export struct BattleManager {
 		));
 	}
 
-	auto handle_message(EventBlock const & message) -> Result {
+	auto handle_message(std::span<ParsedMessage const> const message) -> Result {
 		return tv::visit(m_battle, tv::overload(
 			[](BattleExists) -> Result {
 				throw std::runtime_error("Received an event before getting a team");
