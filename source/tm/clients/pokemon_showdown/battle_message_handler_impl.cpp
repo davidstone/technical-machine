@@ -12,9 +12,9 @@ module tm.clients.ps.battle_message_handler;
 
 import tm.clients.ps.end_of_turn_state;
 import tm.clients.ps.end_of_turn_state_builder;
-import tm.clients.ps.event_block;
 import tm.clients.ps.move_state;
 import tm.clients.ps.move_state_builder;
+import tm.clients.ps.parsed_message;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 

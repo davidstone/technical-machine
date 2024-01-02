@@ -9,6 +9,7 @@ import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
+import tm.clients.ps.parsed_message;
 import tm.clients.ps.switch_message;
 
 import tm.clients.party;
