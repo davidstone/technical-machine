@@ -130,18 +130,24 @@ struct Field {
 struct ClassDescription {
 	std::string_view name;
 	std::byte flags;
-	containers::vector<Field> fields;
+	containers::dynamic_array<Field> fields;
 };
 
 struct ParsedData;
 
-using IntegerVector = containers::static_vector<ByteInteger<4_bi>, bounded::max(number_of_stats, max_moves_per_pokemon)>;
-using AnyVector = containers::vector<ParsedData, bounded::max(max_pokemon_per_team, max_moves_per_pokemon)>;
+using IntegerContainer = containers::static_vector<
+	ByteInteger<4_bi>,
+	bounded::max(number_of_stats, max_moves_per_pokemon)
+>;
+using AnyContainer = containers::dynamic_array<
+	ParsedData,
+	bounded::integer<0, bounded::normalize<bounded::max(max_pokemon_per_team, max_moves_per_pokemon)>>
+>;
 
 struct ParsedData {
 	using State = tv::variant<
-		IntegerVector,
-		AnyVector,
+		IntegerContainer,
+		AnyContainer,
 		ClassDescription,
 		std::string_view,
 		Nature,
@@ -223,7 +229,7 @@ struct Parser {
 		m_byte_parser(bytes)
 	{
 	}
-	auto parse_and_validate_header() & -> void {
+	constexpr auto parse_and_validate_header() & -> void {
 		auto const file_magic_bytes = m_byte_parser.pop_integer(2_bi);
 		constexpr auto expected_magic_bytes = bounded::constant<0xACED>; // 44269
 		if (file_magic_bytes != expected_magic_bytes) {
@@ -236,7 +242,7 @@ struct Parser {
 			throw std::runtime_error("Incorrect file version");
 		}
 	}
-	auto parse_any() & -> ParsedData {
+	constexpr auto parse_any() & -> ParsedData {
 		auto const type = m_byte_parser.pop_byte();
 		switch (type) {
 			case object_type:
@@ -281,28 +287,28 @@ private:
 			}
 		});
 		auto & parsed = containers::push_back(m_objects, ParsedData(std::monostate()));
-		switch (code) {
-			case 'L':
-				if (size > numeric_traits::max_value<AnyVector::size_type>) {
-					throw std::runtime_error("Tried to add too many objects");
-				}
-				parsed = ParsedData(AnyVector(containers::generate_n(size, [&] { return parse_any(); })));
-				break;
-			case 'I':
-				if (size > IntegerVector::capacity()) {
-					throw std::runtime_error("Tried to add too many integers");
-				}
-				parsed = ParsedData(IntegerVector(containers::generate_n(size, [&] {
-					return m_byte_parser.pop_integer(4_bi);
-				})));
-				break;
-			default:
-				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "sv, containers::array{code}));
-		}
+		parsed = parse_array_data(code, size);
 		return parsed;
 	}
 
-	auto parse_pokemon(ClassDescription const & description) & -> ParsedData {
+	auto parse_array_data(char const code, auto const size) & -> ParsedData {
+		switch (code) {
+			case 'L':
+				return ParsedData(AnyContainer(containers::generate_n(
+					size,
+					[&] { return parse_any(); }
+				)));
+			case 'I':
+				return ParsedData(IntegerContainer(containers::generate_n(
+					size,
+					[&] { return m_byte_parser.pop_integer(4_bi); }
+				)));
+			default:
+				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "sv, containers::array{code}));
+		}
+	}
+
+	constexpr auto parse_pokemon(ClassDescription const & description) & -> ParsedData {
 		auto gender = tv::optional<Gender>();
 		auto level = tv::optional<Level>();
 		auto shiny = tv::optional<bool>();
@@ -333,7 +339,7 @@ private:
 							} else {
 								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "sv, field.name));
 							}
-						} else if constexpr (std::same_as<State, IntegerVector>) {
+						} else if constexpr (std::same_as<State, IntegerContainer>) {
 							if (field.name == "m_iv") {
 								add_stat(ivs, state);
 							} else if (field.name == "m_ev") {
@@ -348,7 +354,7 @@ private:
 							} else {
 								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"sv, field.name));
 							}
-						} else if constexpr (std::same_as<State, AnyVector>) {
+						} else if constexpr (std::same_as<State, AnyContainer>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
 								return from_string<MoveName>(inner_parsed.state[bounded::type<std::string_view>]);
 							};
@@ -448,15 +454,15 @@ private:
 		));
 	}
 
-	auto parse_move(ClassDescription const description) & -> ParsedData {
-		auto const move = parse_any();
+	constexpr auto parse_move(ClassDescription const & description) & -> ParsedData {
+		auto move = parse_any();
 		if ((description.flags & write_method) != std::byte(0x00)) {
 			m_byte_parser.ignore(1_bi);
 		}
 		return move;
 	}
 
-	auto parse_class_description() & -> ParsedData {
+	constexpr auto parse_class_description() & -> ParsedData {
 		auto const type = m_byte_parser.pop_byte();
 		switch (type) {
 			case class_description_type:
@@ -477,24 +483,30 @@ private:
 		[[maybe_unused]] auto const uid = m_byte_parser.pop_integer(8_bi);
 		auto const flags = m_byte_parser.pop_byte();
 		auto const count = m_byte_parser.pop_integer(2_bi);
-		auto fields = containers::vector<Field>(containers::generate_n(count, [&] {
-			return Field(parse_field());
+		auto const fields = containers::make_static_vector(containers::generate_n(count, [&] {
+			return parse_field();
 		}));
 		m_byte_parser.ignore(1_bi);
-		auto base_class_fields = tv::visit(parse_class_description().state, []<typename T>(T base) {
+		auto const base_class_fields = tv::visit(parse_class_description().state, []<typename T>(T base) {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return std::move(base).fields;
 			} else {
-				return containers::vector<Field>();
+				return containers::dynamic_array<Field>();
 			}
 		});
-		if ((flags & write_method) != std::byte(0x00)) {
-			containers::push_back(fields, Field{Field::Type::byte, ""});
-		}
+		constexpr auto empty_field = Field{Field::Type::byte, ""};
+		using MaybeEmptyField = containers::static_vector<Field, 1_bi>;
+		auto const maybe_empty_field = (flags & write_method) != std::byte(0x00) ?
+			MaybeEmptyField({empty_field}) :
+			MaybeEmptyField();
 		result = ParsedData(ClassDescription{
 			name,
 			flags,
-			containers::concatenate<containers::vector<Field>>(base_class_fields, std::move(fields))
+			containers::dynamic_array<Field>(containers::concatenate_view(
+				base_class_fields,
+				fields,
+				maybe_empty_field
+			))
 		});
 		return result;
 	}
@@ -515,13 +527,13 @@ private:
 		}
 	}
 
-	auto parse_reference() & -> ParsedData {
+	constexpr auto parse_reference() & -> ParsedData {
 		m_byte_parser.ignore(2_bi);
 		auto const index = m_byte_parser.pop_integer(2_bi);
 		return containers::at(m_objects, index);
 	}
 
-	auto parse_object() & -> ParsedData {
+	constexpr auto parse_object() & -> ParsedData {
 		auto const description = tv::visit(parse_class_description().state, []<typename T>(T && value) -> ClassDescription {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return value;
@@ -549,7 +561,7 @@ private:
 	}
 
 	ByteParser m_byte_parser;
-	containers::stable_vector<ParsedData, 1000_bi> m_objects;
+	containers::static_vector<ParsedData, 1000_bi> m_objects;
 };
 
 auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
@@ -559,7 +571,7 @@ auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric
 	// String or Null
 	[[maybe_unused]] auto const uuid = parser.parse_any();
 	auto const parsed_all_pokemon = parser.parse_any();
-	constexpr auto array_index = bounded::type<AnyVector>;
+	constexpr auto array_index = bounded::type<AnyContainer>;
 	if (parsed_all_pokemon.state.index() != array_index) {
 		throw std::runtime_error("Expected team to be an array");
 	}
