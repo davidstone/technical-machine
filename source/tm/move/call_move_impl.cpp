@@ -296,7 +296,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 template<any_mutable_active_pokemon UserPokemon>
 void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<UserPokemon> const other_pokemon, Environment const environment) {
-	if constexpr (generation_from<UserPokemon> == Generation::two) {
+	if constexpr (generation_from<UserPokemon> <= Generation::two) {
 		user_pokemon.status_and_leech_seed_effects(other_pokemon, environment);
 		handle_curse(user_pokemon, environment);
 	}
