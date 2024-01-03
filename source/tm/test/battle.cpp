@@ -135,5 +135,80 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 	CHECK(hp.current() == 290_bi);
 }
 
+TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
+	constexpr auto generation = Generation::one;
+	auto battle = Battle<generation>(
+		make_known_team<generation>({
+			{
+				.species = Species::Magikarp,
+				.moves = {{
+					MoveName::Splash,
+				}}
+			},
+			{
+				.species = Species::Gyarados,
+				.moves = {{
+					MoveName::Splash,
+				}}
+			},
+		}),
+		make_seen_team<generation>({
+			{
+				.species = Species::Jolteon,
+			},
+		})
+	);
+
+	battle.use_move(
+		false,
+		Used(MoveName::Toxic),
+		false
+	);
+
+	battle.use_move(
+		true,
+		Used(MoveName::Splash),
+		false
+	);
+
+	{
+		auto const hp = battle.ai().pokemon().hp();
+		CHECK(hp.current() == 228_bi);
+		CHECK(hp.max() == 243_bi);
+	}
+
+	battle.end_turn(false, end_of_turn_flags, end_of_turn_flags);
+
+	{
+		auto const hp = battle.ai().pokemon().hp();
+		CHECK(hp.current() == 228_bi);
+		CHECK(hp.max() == 243_bi);
+	}
+
+	battle.use_move(
+		true,
+		Used(MoveName::Switch1),
+		false
+	);
+
+	battle.use_move(
+		false,
+		damaging_move(MoveName::Thunderbolt, visible_hp(0_bi, 393_bi)),
+		false
+	);
+
+	battle.use_move(
+		true,
+		Used(MoveName::Switch0),
+		false
+	);
+
+	{
+		auto const hp = battle.ai().pokemon().hp();
+		CHECK(hp.current() == 228_bi);
+		CHECK(hp.max() == 243_bi);
+	}
+}
+
 } // namespace
 } // namespace technicalmachine
