@@ -21,7 +21,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 // Returns victory if the battle is won. Returns -victory if the battle is
-// lost. Returns 0 otherwise.
+// lost. Returns 0 if the battle ends in a tie.
 export template<any_team TeamType>
 constexpr auto win(TeamType const & team1, TeamType const & team2) -> tv::optional<double> {
 	constexpr auto generation = generation_from<TeamType>;
