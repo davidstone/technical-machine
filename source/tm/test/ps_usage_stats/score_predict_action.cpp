@@ -193,8 +193,7 @@ auto score_one_side_of_battle(
 ) -> WeightedScore {
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
-
-	auto const scores = containers::dynamic_array(containers::transform(
+	auto const scores = containers::vector(containers::transform(
 		containers::zip(
 			predicted_actions(battle_messages, battle, all_usage_stats, evaluate),
 			containers::filter(player_inputs, is_input_for(rated_side.side.party))
