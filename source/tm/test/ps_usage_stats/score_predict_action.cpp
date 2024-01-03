@@ -135,8 +135,8 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 		}
 	));
 	auto score_prediction = [&](MoveProbability const move) {
-		auto const is_correct = actual == move.name;
-		auto const value = is_correct ? 1.0 - move.probability : move.probability;
+		auto const actual_probability = actual == move.name ? 1.0 : 0.0;
+		auto const value = move.probability - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));
