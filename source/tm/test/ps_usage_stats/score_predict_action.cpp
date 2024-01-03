@@ -168,7 +168,7 @@ auto predicted_actions(
 	AllUsageStats const & all_usage_stats,
 	AllEvaluate const & evaluate
 ) {
-	return containers::remove_none(containers::transform(
+	return containers::remove_none(containers::transform_non_idempotent(
 		std::move(battle_messages),
 		get_predicted_action(battle, all_usage_stats, evaluate)
 	));
