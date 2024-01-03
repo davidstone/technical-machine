@@ -14,6 +14,7 @@ import tm.type.effectiveness;
 import tm.type.pokemon_types;
 import tm.type.type;
 
+import tm.ability;
 import tm.entry_hazards;
 import tm.exists_if;
 import tm.generation;
