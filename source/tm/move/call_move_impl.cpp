@@ -307,8 +307,11 @@ auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTea
 	if (move.selected == MoveName::Pass) {
 		return;
 	}
+	auto const replacing_fainted = user.pokemon().hp().current() == 0_bi;
 	try_use_move(user, move, other, other_move, environment, clear_status, actual_damage, is_fully_paralyzed);
-	end_of_attack(user.pokemon(), other.pokemon(), environment);
+	if (!replacing_fainted) {
+		end_of_attack(user.pokemon(), other.pokemon(), environment);
+	}
 }
 
 #define INSTANTIATE_ONE(UserTeam) \
