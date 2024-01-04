@@ -294,6 +294,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			[&](RecoilMessage const message) {
 				tv::visit(action_builder, tv::overload(
 					[&](MoveStateBuilder & builder) {
+						builder.recoil(message.party);
 						builder.set_expected(message.party, message.status);
 						builder.set_expected(message.party, message.hp);
 					},
