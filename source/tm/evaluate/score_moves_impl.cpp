@@ -16,6 +16,7 @@ import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
+import tm.evaluate.win;
 
 import tm.move.legal_selections;
 import tm.move.move_name;
@@ -23,7 +24,6 @@ import tm.move.move_name;
 import tm.environment;
 import tm.generation;
 import tm.team;
-import tm.team_is_empty;
 
 import bounded;
 import containers;
@@ -77,8 +77,8 @@ struct ScoreMovesEvaluator {
 
 template<Generation generation>
 auto score_moves(State<generation> const & state, LegalSelections const ai_selections, MoveProbabilities const foe_moves, Evaluate<generation> const evaluate) -> ScoredMoves {
-	if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
-		throw std::runtime_error("Tried to evaluate a position with an empty team");
+	if (auto const score = win(state.ai, state.foe)) {
+		return ScoredMoves({ScoredMove(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
 	auto const moves = evaluator.select_type_of_move(

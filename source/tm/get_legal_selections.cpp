@@ -5,7 +5,6 @@
 
 module;
 
-#include <bounded/assert.hpp>
 #include <operators/forward.hpp>
 
 export module tm.get_legal_selections;
@@ -121,8 +120,9 @@ constexpr auto get_legal_selections(
 	TeamType const & other,
 	Environment const environment
 ) -> LegalSelections {
-	BOUNDED_ASSERT(!team_is_empty(user));
-	BOUNDED_ASSERT(!team_is_empty(other));
+	if (team_is_empty(user) or team_is_empty(other)) {
+		return LegalSelections({MoveName::Pass});
+	}
 	auto replacement_switches = [&] {
 		return potential_switches(
 			user.size(),

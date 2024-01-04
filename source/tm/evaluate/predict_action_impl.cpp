@@ -5,8 +5,6 @@
 
 module;
 
-#include <bounded/assert.hpp>
-
 #include <tm/for_each_generation.hpp>
 
 module tm.evaluate.predict_action;
@@ -35,8 +33,6 @@ using namespace bounded::literal;
 
 template<Generation generation>
 auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities {
-	BOUNDED_ASSERT(!team_is_empty(team));
-	BOUNDED_ASSERT(!team_is_empty(other));
 	auto all_equally_likely = [&] {
 		auto const possible_moves = double(containers::size(selections));
 		return MoveProbabilities(containers::transform(
