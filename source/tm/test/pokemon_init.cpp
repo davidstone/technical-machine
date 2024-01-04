@@ -11,6 +11,7 @@ import tm.move.move_name;
 import tm.move.move_names;
 import tm.move.regular_moves;
 
+import tm.pokemon.happiness;
 import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.nickname;
@@ -50,6 +51,7 @@ struct PokemonInit {
 	decltype(max_dvs_or_ivs<generation>) ivs = max_dvs_or_ivs<generation>;
 	decltype(default_evs<generation>) evs = default_evs<generation>;
 	MoveNames moves = {{MoveName::Tackle}};
+	Happiness happiness = Happiness();
 };
 
 export struct SeenPokemonInit {
@@ -77,7 +79,8 @@ constexpr auto make_pokemon = [](PokemonInit<generation> const pokemon) {
 			[](MoveName const move) {
 				return Move(generation, move);
 			}
-		))
+		)),
+		pokemon.happiness
 	);
 };
 
@@ -100,7 +103,8 @@ constexpr auto make_known_pokemon = [](PokemonInit<generation> const pokemon) {
 			[](MoveName const move) {
 				return Move(generation, move);
 			}
-		))
+		)),
+		pokemon.happiness
 	);
 };
 
