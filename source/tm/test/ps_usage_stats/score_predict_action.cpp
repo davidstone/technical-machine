@@ -235,12 +235,8 @@ auto score_predict_action(ThreadCount const thread_count, std::filesystem::path 
 					while (!score.compare_exchange_weak(previous, previous + individual)) {
 					}
 				} catch (std::exception const & ex) {
-					throw std::runtime_error(containers::concatenate<std::string>(
-						"Error parsing "sv,
-						input_file.string(),
-						": "sv,
-						std::string_view(ex.what())
-					));
+					std::cerr << "Unable to process " << input_file.string() << ": " << ex.what() << ", skipping\n";
+					return;
 				}
 			});
 		}));
