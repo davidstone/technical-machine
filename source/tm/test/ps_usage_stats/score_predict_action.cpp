@@ -11,7 +11,7 @@ import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.in_message;
-import tm.clients.ps.parsed_team;
+import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;

@@ -11,7 +11,7 @@ module;
 export module tm.test.parse_team_from_request;
 
 import tm.clients.ps.parse_team_from_request;
-import tm.clients.ps.parsed_team;
+import tm.clients.ps.parsed_side;
 
 import tm.clients.party;
 

@@ -491,6 +491,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/parse_switch.cpp
 		source/tm/clients/pokemon_showdown/parse_team_from_request.cpp
 		source/tm/clients/pokemon_showdown/parsed_message.cpp
+		source/tm/clients/pokemon_showdown/parsed_side.cpp
 		source/tm/clients/pokemon_showdown/parsed_team.cpp
 		source/tm/clients/pokemon_showdown/parsed_team_to_known_team.cpp
 		source/tm/clients/pokemon_showdown/party_from_player_id.cpp

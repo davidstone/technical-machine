@@ -12,7 +12,7 @@ export module tm.clients.ps.battle_message;
 
 import tm.clients.ps.battle_init_message;
 import tm.clients.ps.event_block;
-import tm.clients.ps.parsed_team;
+import tm.clients.ps.parsed_side;
 
 import std_module;
 import tv;

@@ -18,7 +18,7 @@ import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.parsed_message;
-import tm.clients.ps.parsed_team;
+import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.start_of_turn;
 

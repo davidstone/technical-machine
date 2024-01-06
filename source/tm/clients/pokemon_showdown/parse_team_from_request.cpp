@@ -9,6 +9,7 @@ import tm.clients.ps.make_party;
 import tm.clients.ps.parse_details;
 import tm.clients.ps.parse_hp_and_status;
 import tm.clients.ps.parse_moves;
+import tm.clients.ps.parsed_side;
 import tm.clients.ps.parsed_team;
 
 import tm.move.move_name;

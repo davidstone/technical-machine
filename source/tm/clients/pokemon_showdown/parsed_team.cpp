@@ -5,8 +5,6 @@
 
 export module tm.clients.ps.parsed_team;
 
-import tm.clients.party;
-
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.move_names;
@@ -63,11 +61,5 @@ export struct ParsedPokemon {
 };
 
 export using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
-
-export struct ParsedSide {
-	Party party;
-	ParsedTeam team;
-	friend auto operator==(ParsedSide, ParsedSide) -> bool = default;
-};
 
 } // namespace technicalmachine::ps

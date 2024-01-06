@@ -7,6 +7,7 @@ module tm.clients.ps.make_battle_message_handler;
 
 import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
+import tm.clients.ps.parsed_side;
 import tm.clients.ps.parsed_team_to_known_team;
 
 import tm.clients.party;
