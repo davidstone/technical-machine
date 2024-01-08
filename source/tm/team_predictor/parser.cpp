@@ -130,7 +130,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Spe
 		}
 		auto const moves = MoveNames(
 			containers::remove_none(
-				containers::transform(
+				containers::transform_non_idempotent(
 					containers::integer_range(max_moves_per_pokemon),
 					get_move
 				)
