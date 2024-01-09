@@ -1790,7 +1790,7 @@ constexpr auto game_version_to_generation(GameVersion const game_version) -> Gen
 		case 1: return Generation::two; // "GSC with Trades"
 		case 2: return Generation::three; // "Ru/Sa Only"
 		case 3: return Generation::three; // "Full Advance"
-		case 4: return Generation::three; // "Full Advance + XD MoveName"
+		case 4: return Generation::three; // "Full Advance + XD Moves"
 		case 5: return Generation::one; // "True RBY"
 		case 6: return Generation::two; // "True GSC"
 		case 7: return Generation::four; // "True Diamond + Pearl"
