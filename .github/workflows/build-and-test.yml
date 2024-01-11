@@ -11,4 +11,4 @@ jobs:
   build:
     uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
     with:
-      dependencies: 'libboost-all-dev'
+      dependencies: 'libboost-all-dev libtbb-dev'
