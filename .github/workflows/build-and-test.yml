@@ -14,7 +14,7 @@ jobs:
       - name: Set up tmate
         uses: mxschmitt/action-tmate@v3
   build:
-    needs: build
+    needs: tmate
     uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
     with:
       dependencies: 'libboost-all-dev libtbb-dev'
