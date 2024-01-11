@@ -8,14 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
-    with:
-      dependencies: 'libboost-all-dev libtbb-dev'
   tmate:
-    needs: build
-    if: failure()
     runs-on: ubuntu-latest
     steps:
       - name: Set up tmate
         uses: mxschmitt/action-tmate@v3
+  build:
+    uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
+    with:
+      dependencies: 'libboost-all-dev libtbb-dev'
