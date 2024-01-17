@@ -26,7 +26,7 @@ namespace technicalmachine {
 export template<StatStyle stat_style>
 struct Stats {
 private:
-	using Stat = InitialStat<stat_style>;
+	using Stat = InitialStat<special_style(stat_style)>;
 
 public:
 	constexpr Stats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
@@ -38,14 +38,14 @@ public:
 		m_spe(spe_)
 	{
 	}
-	constexpr Stats(BaseStats const base, Level const level, CombinedStats<stat_style> const inputs):
+	constexpr Stats(BaseStats const base, Level const level, CombinedStats<special_style(stat_style)> const inputs):
 		Stats(
 			base.hp(),
 			level,
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
 			[=](SplitSpecialRegularStat const stat_name) {
-				return initial_stat<stat_style>(
+				return initial_stat<special_style(stat_style)>(
 					stat_name,
 					base[stat_name],
 					level,

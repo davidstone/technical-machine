@@ -7,45 +7,26 @@ export module tm.stat.stat_style;
 
 import tm.generation;
 
+import numeric_traits;
+
 namespace technicalmachine {
 
 // Split special for base stat, DV / IV, and EV
 export enum class StatStyle { gen1, gen2, current };
 
 // Split special for DV / IV and EV
-export struct SpecialStyle {
-private:
-	enum class Style { combined, split };
-	static constexpr auto convert(StatStyle const style) -> Style {
-		switch (style) {
-			case StatStyle::gen1:
-			case StatStyle::gen2:
-				return Style::combined;
-			case StatStyle::current:
-				return Style::split;
-		}
+export enum class SpecialStyle { combined, split };
+
+export constexpr auto special_style(StatStyle const style) -> SpecialStyle {
+	switch (style) {
+		case StatStyle::gen1:
+		case StatStyle::gen2:
+			return SpecialStyle::combined;
+		case StatStyle::current:
+			return SpecialStyle::split;
 	}
+}
 
-	constexpr SpecialStyle(Style const style):
-		m_style(style)
-	{
-	}
-public:
-	constexpr SpecialStyle(StatStyle const style):
-		m_style(convert(style))
-	{
-	}
-
-	friend constexpr auto operator==(SpecialStyle, SpecialStyle) -> bool = default;
-
-	static SpecialStyle const combined;
-	static SpecialStyle const split;
-
-	// Treat as private
-	Style m_style;
-};
-constexpr SpecialStyle SpecialStyle::combined = SpecialStyle(Style::combined);
-constexpr SpecialStyle SpecialStyle::split = SpecialStyle(Style::split);
 
 export constexpr auto stat_style_for(Generation const generation) {
 	switch (generation) {
@@ -79,3 +60,15 @@ export constexpr auto special_style_for(Generation const generation) {
 }
 
 } // namespace technicalmachine
+
+template<>
+constexpr auto numeric_traits::min_value<technicalmachine::StatStyle> = technicalmachine::StatStyle::gen1;
+
+template<>
+constexpr auto numeric_traits::max_value<technicalmachine::StatStyle> = technicalmachine::StatStyle::current;
+
+template<>
+constexpr auto numeric_traits::min_value<technicalmachine::SpecialStyle> = technicalmachine::SpecialStyle::combined;
+
+template<>
+constexpr auto numeric_traits::max_value<technicalmachine::SpecialStyle> = technicalmachine::SpecialStyle::split;
