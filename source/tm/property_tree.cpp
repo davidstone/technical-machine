@@ -66,32 +66,7 @@ private:
 	boost::property_tree::ptree const & m_ptree;
 };
 
-export struct ptree_writer {
-	explicit ptree_writer(boost::property_tree::ptree & ptree):
-		m_ptree(ptree)
-	{
-	}
-	template<typename T>
-	auto add(char const * const key, T const & mapped) -> ptree_writer {
-		return ptree_writer(m_ptree.add(key, mapped));
-	}
-	template<typename T>
-	auto put(char const * const key, T const & mapped) -> void {
-		m_ptree.put(key, mapped);
-	}
-
-	auto write_xml(std::filesystem::path const & file_name) -> void {
-		auto settings = boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type>('\t', 1);
-		boost::property_tree::write_xml(file_name.string(), m_ptree, std::locale(), settings);
-	}
-private:
-	boost::property_tree::ptree & m_ptree;
-};
-
 export struct ptree {
-	operator ptree_writer() {
-		return ptree_writer(m_ptree);
-	}
 	auto read_xml(std::span<std::byte const> const bytes) -> ptree_reader {
 		auto const source = boost::iostreams::array_source(
 			reinterpret_cast<char const *>(bytes.data()),
