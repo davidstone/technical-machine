@@ -26,8 +26,7 @@ using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 export struct IV {
-	static constexpr auto max = 31;
-	using value_type = bounded::integer<0, max>;
+	using value_type = bounded::integer<0, 31>;
 
 	// So it can be stored in a constexpr static_vector
 	IV() = default;
@@ -52,8 +51,7 @@ export constexpr auto default_iv(Generation const generation) {
 export using IVs = GenericStats<IV>;
 
 export struct DV {
-	static constexpr auto max = 15;
-	using value_type = bounded::integer<0, max>;
+	using value_type = bounded::integer<0, 15>;
 
 	// So it can be stored in a constexpr static_vector
 	DV() = default;
