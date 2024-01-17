@@ -372,7 +372,6 @@ target_sources(tm_pokemon_lab PUBLIC
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
 		source/tm/clients/pokemon_lab/read_team_file.cpp
-		source/tm/clients/pokemon_lab/write_team_file.cpp
 )
 target_sources(tm_pokemon_lab PRIVATE
 	source/tm/clients/pokemon_lab/read_team_file_impl.cpp

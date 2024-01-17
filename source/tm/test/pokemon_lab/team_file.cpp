@@ -7,7 +7,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 import tm.clients.pl.read_team_file;
-import tm.clients.pl.write_team_file;
 
 import tm.bytes_in_file;
 import tm.get_directory;
@@ -22,7 +21,7 @@ using namespace std::string_view_literals;
 
 constexpr auto team_xml = R"(
 <?xml version="1.0" encoding="UTF-8" ?>
-<shoddybattle generation="4">
+<shoddybattle>
 
 <pokemon species="Hippowdon">
 	<nickname></nickname>
@@ -172,15 +171,7 @@ constexpr auto team_xml = R"(
 )"sv;
 
 TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
-	auto const original_team = pl::read_team_file(std::as_bytes(std::span(team_xml)));
-	auto const directory = get_test_directory() / "teams";
-	auto const new_file = directory / "test2.sbt";
-	tv::visit(original_team, [&](auto const & team) {
-		pl::write_team(team, new_file);
-	});
-	auto const new_team = pl::read_team_file(bytes_in_file(new_file));
-	CHECK(original_team == new_team);
-	std::filesystem::remove(new_file);
+	[[maybe_unused]] auto const parsed = pl::read_team_file(std::as_bytes(std::span(team_xml)));
 }
 
 } // namespace
