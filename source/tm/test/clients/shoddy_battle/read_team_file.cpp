@@ -14,6 +14,7 @@ import tm.clients.sb.read_team_file;
 
 import tm.move.move_name;
 
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.species;
 
@@ -21,12 +22,14 @@ import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.test.pokemon_init;
 
 import tm.ability;
 import tm.gender;
 import tm.generation;
+import tm.initial_team;
 import tm.item;
 import tm.team;
 
@@ -41,15 +44,22 @@ using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
 
-constexpr auto expected_team = make_known_team<generation>({
+using SBPokemon = InitialPokemon<SpecialStyle::split>;
+
+static_assert(bounded::tombstone_traits<SBPokemon>::spare_representations > 0_bi);
+static_assert(bounded::trivially_destructible<SBPokemon>);
+
+constexpr auto expected_team = InitialTeam<SpecialStyle::split>({
 	{
 		.species = Species::Jirachi,
 		.nickname = "Homeland Security"sv,
 		.item = Item::Leftovers,
 		.ability = Ability::Serene_Grace,
-		.nature = Nature::Impish,
-		.ivs = IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(26_bi), IV(31_bi), IV(31_bi)),
-		.evs = EVs(EV(252_bi), EV(8_bi), EV(216_bi), EV(0_bi), EV(0_bi), EV(32_bi)),
+		.stats = {
+			.nature = Nature::Impish,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(25_bi), IV(31_bi), IV(31_bi)),
+			.evs = EVs(EV(252_bi), EV(8_bi), EV(216_bi), EV(0_bi), EV(0_bi), EV(32_bi)),
+		},
 		.moves = {{
 			MoveName::Stealth_Rock,
 			MoveName::Wish,
@@ -63,8 +73,10 @@ constexpr auto expected_team = make_known_team<generation>({
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::No_Guard,
-		.nature = Nature::Adamant,
-		.evs = EVs(EV(252_bi), EV(216_bi), EV(40_bi), EV(0_bi), EV(0_bi), EV(0_bi)),
+		.stats = {
+			.nature = Nature::Adamant,
+			.evs = EVs(EV(252_bi), EV(216_bi), EV(40_bi), EV(0_bi), EV(0_bi), EV(0_bi)),
+		},
 		.moves = {{
 			MoveName::Dynamic_Punch,
 			MoveName::Rest,
@@ -78,8 +90,10 @@ constexpr auto expected_team = make_known_team<generation>({
 		.gender = Gender::male,
 		.item = Item::Choice_Band,
 		.ability = Ability::Sand_Stream,
-		.nature = Nature::Adamant,
-		.evs = EVs(EV(252_bi), EV(252_bi), EV(0_bi), EV(0_bi), EV(4_bi), EV(0_bi)),
+		.stats = {
+			.nature = Nature::Adamant,
+			.evs = EVs(EV(252_bi), EV(252_bi), EV(0_bi), EV(0_bi), EV(4_bi), EV(0_bi)),
+		},
 		.moves = {{
 			MoveName::Pursuit,
 			MoveName::Earthquake,
@@ -93,8 +107,10 @@ constexpr auto expected_team = make_known_team<generation>({
 		.gender = Gender::female,
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
-		.nature = Nature::Calm,
-		.evs = EVs(EV(0_bi), EV(0_bi), EV(252_bi), EV(80_bi), EV(176_bi), EV(0_bi)),
+		.stats = {
+			.nature = Nature::Calm,
+			.evs = EVs(EV(0_bi), EV(0_bi), EV(252_bi), EV(80_bi), EV(176_bi), EV(0_bi)),
+		},
 		.moves = {{
 			MoveName::Thunder_Wave,
 			MoveName::Soft_Boiled,
@@ -107,9 +123,11 @@ constexpr auto expected_team = make_known_team<generation>({
 		.nickname = "Secret Service"sv,
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
-		.nature = Nature::Bold,
-		.ivs = IVs(IV(31_bi), IV(17_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-		.evs = EVs(EV(252_bi), EV(0_bi), EV(220_bi), EV(0_bi), EV(4_bi), EV(32_bi)),
+		.stats = {
+			.nature = Nature::Bold,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(17_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+			.evs = EVs(EV(252_bi), EV(0_bi), EV(220_bi), EV(0_bi), EV(4_bi), EV(32_bi)),
+		},
 		.moves = {{
 			MoveName::Grass_Knot,
 			MoveName::Recover,
@@ -122,9 +140,11 @@ constexpr auto expected_team = make_known_team<generation>({
 		.nickname = "Air Force"sv,
 		.item = Item::Leftovers,
 		.ability = Ability::Pressure,
-		.nature = Nature::Modest,
-		.ivs = IVs(IV(31_bi), IV(10_bi), IV(30_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-		.evs = EVs(EV(248_bi), EV(0_bi), EV(124_bi), EV(16_bi), EV(0_bi), EV(120_bi)),
+		.stats = {
+			.nature = Nature::Modest,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(10_bi), IV(30_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+			.evs = EVs(EV(248_bi), EV(0_bi), EV(124_bi), EV(16_bi), EV(0_bi), EV(120_bi)),
+		},
 		.moves = {{
 			MoveName::Flamethrower,
 			MoveName::Hidden_Power,
@@ -754,14 +774,7 @@ constexpr auto team_bytes = containers::array({
 });
 
 TEST_CASE("read_team_file", "[shoddy_battle]") {
-	tv::visit(sb::read_team_file(team_bytes), tv::overload(
-		[&](KnownTeam<generation> const & parsed) {
-			CHECK(parsed == expected_team);
-		},
-		[](auto const &) {
-			FAIL_CHECK("Incorrect generation");
-		}
-	));
+	CHECK(sb::read_team_file(team_bytes) == expected_team);
 }
 
 } // namespace technicalmachine

@@ -13,14 +13,14 @@ module;
 
 module tm.clients.sb.read_team_file;
 
+import tm.move.initial_move;
 import tm.move.max_moves_per_pokemon;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_names;
 import tm.move.pp;
 import tm.move.regular_moves;
 
-import tm.pokemon.known_pokemon;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
@@ -41,10 +41,7 @@ import tm.string_conversions.species;
 import tm.ability;
 import tm.buffer_view;
 import tm.gender;
-import tm.generation;
-import tm.generation_generic;
 import tm.item;
-import tm.team;
 
 import bounded;
 import containers;
@@ -60,8 +57,6 @@ import std_module;
 namespace technicalmachine::sb {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
-
-constexpr auto generation = Generation::four;
 
 constexpr auto number_of_stats = containers::size(containers::enum_range<SplitSpecialPermanentStat>());
 
@@ -144,6 +139,8 @@ using AnyContainer = containers::dynamic_array<
 	bounded::integer<0, bounded::normalize<bounded::max(max_pokemon_per_team, max_moves_per_pokemon)>>
 >;
 
+using SBPokemon = InitialPokemon<SpecialStyle::split>;
+
 struct ParsedData {
 	using State = tv::variant<
 		IntegerContainer,
@@ -151,7 +148,7 @@ struct ParsedData {
 		ClassDescription,
 		std::string_view,
 		Nature,
-		KnownPokemon<generation>,
+		SBPokemon,
 		std::monostate
 	>;
 
@@ -418,9 +415,6 @@ private:
 		if (!ability) {
 			throw std::runtime_error("Did not receive ability");
 		}
-		if (!item) {
-			item = Item::None;
-		}
 		if (!nickname) {
 			throw std::runtime_error("Did not receive nickname");
 		}
@@ -436,21 +430,18 @@ private:
 		if (!pp_ups) {
 			throw std::runtime_error("Did not receive pp_ups");
 		}
-		return ParsedData(KnownPokemon<generation>(
+		return ParsedData(SBPokemon(
 			*species,
 			Nickname(*nickname),
 			*level,
 			*gender,
-			*item,
+			item ? *item : Item::None,
 			*ability,
-			CombinedStatsFor<generation>{
-				*nature,
-				*ivs,
-				*evs
-			},
-			RegularMoves(containers::transform(containers::integer_range(containers::size(*moves)), [=](auto const index) {
-				return Move(generation, (*moves)[index], (*pp_ups)[index]);
-			}))
+			{*nature, *ivs, *evs},
+			InitialMoves(containers::transform(
+				containers::zip(*moves, *pp_ups),
+				[=](auto const data) { return InitialMove(data[0_bi], data[1_bi]); }
+			))
 		));
 	}
 
@@ -564,7 +555,7 @@ private:
 	containers::static_vector<ParsedData, 1000_bi> m_objects;
 };
 
-auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+auto read_team_file(std::span<std::byte const> const bytes) -> SBTeam {
 	auto parser = Parser(bytes);
 	parser.parse_and_validate_header();
 
@@ -576,14 +567,16 @@ auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric
 		throw std::runtime_error("Expected team to be an array");
 	}
 	auto const & all_pokemon = parsed_all_pokemon.state[array_index];
-	auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
-		constexpr auto pokemon_index = bounded::type_t<KnownPokemon<generation>>();
-		if (pokemon.state.index() != pokemon_index) {
-			throw std::runtime_error("Expected team to be an array of Pokemon");
-		}
-		return pokemon.state[pokemon_index];
-	});
-	return GenerationGeneric<KnownTeam>(KnownTeam<generation>(transformed));
+	return SBTeam(containers::transform(all_pokemon, [](ParsedData const & data) {
+		return tv::visit(data.state, tv::overload(
+			[](SBPokemon pokemon) -> SBPokemon {
+				return pokemon;
+			},
+			[](auto const &) -> SBPokemon {
+				throw std::runtime_error("Expected team to be an array of Pokemon");
+			}
+		));
+	}));
 }
 
 } // namespace technicalmachine::sb

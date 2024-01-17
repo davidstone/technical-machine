@@ -17,14 +17,14 @@ import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
-
-import tm.test.pokemon_init;
+import tm.stat.stat_style;
 
 import tm.ability;
 import tm.bytes_in_file;
 import tm.gender;
 import tm.generation;
 import tm.get_directory;
+import tm.initial_team;
 import tm.item;
 
 import bounded;
@@ -37,13 +37,16 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto expected_team = make_known_team<Generation::four>({
+constexpr auto expected_team = InitialTeam<SpecialStyle::split>({
 	{
 		.species = Species::Bulbasaur,
 		.gender = Gender::male,
 		.item = Item::None,
 		.ability = Ability::Overgrow,
-		.ivs = IVs(IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+		.stats = {
+        	.nature = Nature::Hardy,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+		},
 		.moves = {{
 			MoveName::Light_Screen,
 		}},
@@ -55,8 +58,10 @@ constexpr auto expected_team = make_known_team<Generation::four>({
 		.gender = Gender::female,
 		.item = Item::Bright_Powder,
 		.ability = Ability::Anticipation,
-        .nature = Nature::Bold,
-		.evs = EVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(88_bi), EV(0_bi)),
+		.stats = {
+        	.nature = Nature::Bold,
+			.evs = EVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(88_bi), EV(0_bi)),
+		},
 		.moves = {{
 			MoveName::Dig,
 			MoveName::Double_Team,

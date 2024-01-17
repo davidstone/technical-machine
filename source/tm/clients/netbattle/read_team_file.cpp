@@ -3,11 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <string_view>
-
 export module tm.clients.nb.read_team_file;
 
 import tm.clients.nb.file_version;
@@ -18,13 +13,11 @@ import tm.clients.nb.id_to_item;
 import tm.clients.nb.id_to_move;
 import tm.clients.nb.id_to_species;
 
+import tm.move.initial_move;
 import tm.move.max_moves_per_pokemon;
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
-import tm.pokemon.is_genderless;
-import tm.pokemon.known_pokemon;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
@@ -41,12 +34,7 @@ import tm.stat.stat_style;
 
 import tm.ability;
 import tm.bit_view;
-import tm.constant_generation;
-import tm.gender;
-import tm.generation;
-import tm.generation_generic;
-import tm.item;
-import tm.team;
+import tm.initial_team;
 
 import bounded;
 import containers;
@@ -133,19 +121,18 @@ constexpr auto parse_ability(Parser & parser, Species const species) -> Ability 
 	}
 }
 
-constexpr auto parse_moves(Generation const generation, Parser & parser) -> RegularMoves {
+constexpr auto parse_moves(Parser & parser) -> InitialMoves {
 	auto pop_move = [&] {
 		return id_to_move(parser.pop_integer<MoveID>(9_bi));
 	};
-	// filter does not properly handle input iterators
-	auto moves = RegularMoves();
-	for (auto const move_name : containers::generate_n(max_moves_per_pokemon, pop_move)) {
-		if (!move_name) {
-			continue;
+	return InitialMoves(containers::transform(
+		containers::remove_none(
+			containers::generate_n(max_moves_per_pokemon, pop_move)
+		),
+		[](MoveName const move) {
+			return InitialMove(move);
 		}
-		moves.push_back(Move(generation, *move_name));
-	}
-	return moves;
+	));
 }
 
 template<typename T>
@@ -186,9 +173,8 @@ constexpr auto parse_evs(Parser & parser) {
 	}
 }
 
-template<Generation generation>
-constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<generation>> {
-	constexpr auto style = special_style_for(generation);
+template<SpecialStyle style>
+constexpr auto parse_pokemon(Parser & parser) -> tv::optional<InitialPokemon<style>> {
 	constexpr auto nickname_bytes = 15_bi;
 	auto const padded_nickname = parser.pop_string(nickname_bytes);
 	auto const padded_nickname_view = std::string_view(padded_nickname);
@@ -215,7 +201,7 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 	[[maybe_unused]] auto const box = parser.pop_integer(4_bi);
 	[[maybe_unused]] auto const unown_letter = parser.pop_integer(5_bi);
 
-	auto const moves = parse_moves(generation, parser);
+	auto const moves = parse_moves(parser);
 	auto const ivs = parse_ivs<style>(parser);
 	auto const evs = parse_evs<style>(parser);
 
@@ -224,7 +210,7 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 	auto const prefer_generation_4_item = parser.pop_integer(1_bi) == 1_bi ? true : false;
 	auto const item = id_to_item(item_id, prefer_generation_4_item);
 
-	return KnownPokemon<generation>(
+	return InitialPokemon<style>(
 		species,
 		nickname,
 		level,
@@ -236,14 +222,17 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 	);
 }
 
-template<Generation generation>
-constexpr auto parse_team(Parser & parser) -> KnownTeam<generation> {
-	return KnownTeam<generation>(containers::remove_none(
-		containers::generate_n(max_pokemon_per_team, [&] { return parse_pokemon<generation>(parser); })
+template<SpecialStyle style>
+constexpr auto parse_team(Parser & parser) -> InitialTeam<style> {
+	return InitialTeam<style>(containers::remove_none(
+		containers::generate_n(
+			max_pokemon_per_team,
+			[&] { return parse_pokemon<style>(parser); }
+		)
 	));
 }
 
-export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto parser = Parser(bytes);
 	// username
 	parser.ignore_sized_string();
@@ -260,9 +249,12 @@ export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> 
 	auto const generation = game_version_to_generation(parser.pop_integer<GameVersion>(8_bi));
 	[[maybe_unused]] auto const avatar = parser.pop_integer(8_bi);
 	[[maybe_unused]] auto const sprite_type = parser.pop_integer(8_bi);
-	return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
-		return GenerationGeneric<KnownTeam>(parse_team<g>(parser));
-	});
+	switch (special_style_for(generation)) {
+		case SpecialStyle::combined:
+			return parse_team<SpecialStyle::combined>(parser);
+		case SpecialStyle::split:
+			return parse_team<SpecialStyle::split>(parser);
+	}
 }
 
 } // namespace technicalmachine::nb

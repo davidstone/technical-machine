@@ -8,15 +8,28 @@
 
 import tm.clients.pl.read_team_file;
 
-import tm.bytes_in_file;
-import tm.get_directory;
+import tm.move.move_name;
 
-import tv;
+import tm.pokemon.species;
+
+import tm.stat.ev;
+import tm.stat.evs;
+import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.stat_style;
+
+import tm.ability;
+import tm.gender;
+import tm.initial_team;
+import tm.item;
+
+import bounded;
 import std_module;
 
 namespace technicalmachine {
 namespace {
 
+using namespace bounded;
 using namespace std::string_view_literals;
 
 constexpr auto team_xml = R"(
@@ -170,8 +183,109 @@ constexpr auto team_xml = R"(
 </shoddybattle>
 )"sv;
 
+constexpr auto expected = InitialTeam<SpecialStyle::split>({
+	{
+		.species = Species::Hippowdon,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.ability = Ability::Sand_Stream,
+		.stats = {
+			.nature = Nature::Impish,
+			.evs = {EV(252_bi), EV(24_bi), EV(192_bi), EV(0_bi), EV(40_bi), EV(0_bi)}
+		},
+		.moves = {{
+			MoveName::Earthquake,
+			MoveName::Slack_Off,
+			MoveName::Stealth_Rock,
+			MoveName::Roar,
+		}}
+	},
+	{
+		.species = Species::Celebi,
+		.item = Item::Leftovers,
+		.ability = Ability::Natural_Cure,
+		.stats = {
+			.nature = Nature::Bold,
+			.evs = {EV(252_bi), EV(0_bi), EV(216_bi), EV(0_bi), EV(8_bi), EV(32_bi)}
+		},
+		.moves = {{
+			MoveName::Perish_Song,
+			MoveName::Recover,
+			MoveName::Grass_Knot,
+			MoveName::U_turn,
+		}}
+	},
+	{
+		.species = Species::Blissey,
+		.gender = Gender::female,
+		.item = Item::Leftovers,
+		.ability = Ability::Natural_Cure,
+		.stats = {
+			.nature = Nature::Calm,
+			.dvs_or_ivs = {IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)},
+			.evs = {EV(0_bi), EV(0_bi), EV(252_bi), EV(80_bi), EV(176_bi), EV(0_bi)}
+		},
+		.moves = {{
+			MoveName::Wish,
+			MoveName::Soft_Boiled,
+			MoveName::Toxic,
+			MoveName::Flamethrower,
+		}}
+	},
+	{
+		.species = Species::Skarmory,
+		.gender = Gender::male,
+		.item = Item::Shed_Shell,
+		.ability = Ability::Keen_Eye,
+		.stats = {
+			.nature = Nature::Impish,
+			.evs = {EV(252_bi), EV(0_bi), EV(200_bi), EV(0_bi), EV(36_bi), EV(20_bi)}
+		},
+		.moves = {{
+			MoveName::Spikes,
+			MoveName::Roost,
+			MoveName::Brave_Bird,
+			MoveName::Whirlwind,
+		}}
+	},
+	{
+		.species = Species::Tentacruel,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.ability = Ability::Liquid_Ooze,
+		.stats = {
+			.nature = Nature::Calm,
+			.evs = {EV(252_bi), EV(0_bi), EV(120_bi), EV(0_bi), EV(136_bi), EV(0_bi)}
+		},
+		.moves = {{
+			MoveName::Toxic_Spikes,
+			MoveName::Rapid_Spin,
+			MoveName::Surf,
+			MoveName::Sludge_Bomb,
+		}}
+	},
+	{
+		.species = Species::Rotom_Wash,
+		.nickname = "Rotom-w"sv,
+		.item = Item::Leftovers,
+		.ability = Ability::Levitate,
+		.stats = {
+			.nature = Nature::Calm,
+			.dvs_or_ivs = {IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)},
+			.evs = {EV(252_bi), EV(0_bi), EV(136_bi), EV(0_bi), EV(120_bi), EV(0_bi)}
+		},
+		.moves = {{
+			MoveName::Thunderbolt,
+			MoveName::Shadow_Ball,
+			MoveName::Reflect,
+			MoveName::Hydro_Pump,
+		}}
+	},
+});
+
 TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
-	[[maybe_unused]] auto const parsed = pl::read_team_file(std::as_bytes(std::span(team_xml)));
+	auto const parsed = pl::read_team_file(std::as_bytes(std::span(team_xml)));
+	CHECK(parsed == expected);
 }
 
 } // namespace

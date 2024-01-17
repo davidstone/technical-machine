@@ -13,8 +13,7 @@ import tm.clients.sb.read_team_file;
 
 import tm.bytes_in_file;
 import tm.files_in_path;
-import tm.generation_generic;
-export import tm.team;
+import tm.initial_team;
 
 import bounded;
 import containers;
@@ -45,7 +44,7 @@ auto parse_extension(std::filesystem::path const & file_name) -> Extension {
 	}
 }
 
-export auto load_team_from_file(std::filesystem::path const & file_name) -> GenerationGeneric<KnownTeam> {
+export auto load_team_from_file(std::filesystem::path const & file_name) -> AnyInitialTeam {
 	auto const extension = parse_extension(file_name);
 	auto const bytes = bytes_in_file(file_name);
 	try {
@@ -64,7 +63,7 @@ export auto load_team_from_file(std::filesystem::path const & file_name) -> Gene
 	}
 }
 
-export auto load_random_team_from_directory(std::mt19937 & random_engine, std::filesystem::path const & path) -> GenerationGeneric<KnownTeam> {
+export auto load_random_team_from_directory(std::mt19937 & random_engine, std::filesystem::path const & path) -> AnyInitialTeam {
 	auto const files = files_in_path(path);
 	if (containers::is_empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");

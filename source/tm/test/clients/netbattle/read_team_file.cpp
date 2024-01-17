@@ -5,29 +5,23 @@
 
 import tm.clients.nb.read_team_file;
 
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
-import tm.pokemon.known_pokemon;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.species;
 
-import tm.stat.combined_stats;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
-
-import tm.test.pokemon_init;
+import tm.stat.stat_style;
 
 import tm.ability;
-import tm.any_team;
 import tm.gender;
-import tm.generation;
 import tm.get_directory;
+import tm.initial_team;
 import tm.item;
-import tm.team;
 
 import bounded;
 import containers;
@@ -39,15 +33,17 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
-	{
+constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Forretress,
 		.nickname = "Alcatraz"sv,
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::Sturdy,
-		.nature = Nature::Jolly,
-		.evs = EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Jolly,
+			.evs = EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Earthquake,
 			MoveName::Explosion,
@@ -55,14 +51,16 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 			MoveName::Spikes,
 		}}
 	},
-	{
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Houndoom,
 		.nickname = "Crunch Time"sv,
 		.gender = Gender::male,
 		.item = Item::Salac_Berry,
 		.ability = Ability::Flash_Fire,
-		.nature = Nature::Naive,
-		.evs = EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Naive,
+			.evs = EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Crunch,
 			MoveName::Endure,
@@ -70,15 +68,17 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 			MoveName::Reversal,
 		}}
 	},
-	{
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Gengar,
 		.nickname = "Clyde"sv,
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::Levitate,
-		.nature = Nature::Timid,
-		.ivs = IVs(IV(31_bi), IV(0_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-		.evs = EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Timid,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(0_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+			.evs = EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Dream_Eater,
 			MoveName::Hypnosis,
@@ -86,14 +86,16 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 			MoveName::Nightmare,
 		}}
 	},
-	{
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Heracross,
 		.nickname = "Blinky"sv,
 		.gender = Gender::male,
 		.item = Item::Salac_Berry,
 		.ability = Ability::Swarm,
-		.nature = Nature::Jolly,
-		.evs = EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Jolly,
+			.evs = EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Endure,
 			MoveName::Flail,
@@ -101,13 +103,15 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 			MoveName::Reversal,
 		}}
 	},
-	{
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Mew,
 		.nickname = "Houdini"sv,
 		.item = Item::Leftovers,
 		.ability = Ability::Synchronize,
-		.nature = Nature::Mild,
-		.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Mild,
+			.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Ancient_Power,
 			MoveName::Ice_Beam,
@@ -115,14 +119,16 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 			MoveName::Soft_Boiled,
 		}}
 	},
-	{
+	InitialPokemon<SpecialStyle::split>{
 		.species = Species::Zapdos,
 		.nickname = "Sparky"sv,
 		.item = Item::Leftovers,
 		.ability = Ability::Pressure,
-		.nature = Nature::Modest,
-		.ivs = IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(30_bi), IV(31_bi), IV(30_bi)),
-		.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		.stats = {
+			.nature = Nature::Modest,
+			.dvs_or_ivs = IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(30_bi), IV(31_bi), IV(30_bi)),
+			.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		},
 		.moves = {{
 			MoveName::Drill_Peck,
 			MoveName::Hidden_Power,
@@ -132,12 +138,14 @@ constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
 	},
 });
 
-constexpr auto expected_netbattle_supremacy_team = make_known_team<Generation::two>({
+constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialStyle::combined>({
 	{
 		.species = Species::Raikou,
 		.nickname = "Aaron Carter"sv,
 		.item = Item::Leftovers,
-		.ivs = DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
+		.stats = {
+			.dvs_or_ivs = DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
+		},
 		.moves = {{
 			MoveName::Crunch,
 			MoveName::Rest,
@@ -185,7 +193,9 @@ constexpr auto expected_netbattle_supremacy_team = make_known_team<Generation::t
 		.nickname = "Chuck Norris"sv,
 		.gender = Gender::male,
 		.item = Item::Leftovers,
-		.ivs = DVs(DV(13_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
+		.stats = {
+			.dvs_or_ivs = DVs(DV(13_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
+		},
 		.moves = {{
 			MoveName::Counter,
 			MoveName::Cross_Chop,
@@ -392,16 +402,8 @@ constexpr auto netbattle_supremacy_bytes = containers::array{
 	std::byte(0x20)
 };
 
-template<any_known_team ExpectedTeam>
-constexpr auto matches(std::span<std::byte const> const source, ExpectedTeam const expected) -> bool {
-	return tv::visit(nb::read_team_file(source), tv::overload(
-		[&](ExpectedTeam const & parsed) { return parsed == expected; },
-		[](auto const &) { return false; }
-	));
-}
-
-static_assert(matches(netbattle_bytes, expected_netbattle_team));
-static_assert(matches(netbattle_supremacy_bytes, expected_netbattle_supremacy_team));
+static_assert(nb::read_team_file(netbattle_bytes) == expected_netbattle_team);
+static_assert(nb::read_team_file(netbattle_supremacy_bytes) == expected_netbattle_supremacy_team);
 
 } // namespace
 } // namespace technicalmachine

@@ -7,12 +7,15 @@ module tm.clients.get_team;
 
 import tm.clients.load_team_from_file;
 
+import tm.stat.stat_style;
+
 import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.team_predictor;
 
 import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
+import tm.initial_team;
 import tm.settings_file;
 import tm.team;
 
@@ -36,10 +39,19 @@ auto get_team(Generation const generation, SettingsFile::Team const & source, Al
 		},
 		[&](std::filesystem::path const & path) -> tv::optional<GenerationGeneric<KnownTeam>> {
 			auto const team = load_random_team_from_directory(random_engine, path);
-			if (team.index() != bounded::integer(generation) - 1_bi) {
+			if (team.index() != bounded::integer(special_style_for(generation))) {
 				throw std::runtime_error("Generation mismatch in team file vs. battle.");
 			}
-			return team;
+			return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
+				return tv::visit(team, tv::overload(
+					[](InitialTeam<special_style_for(g)> const & t) -> GenerationGeneric<KnownTeam> {
+						return KnownTeam<g>(t);
+					},
+					[](auto const &) -> GenerationGeneric<KnownTeam> {
+						throw std::runtime_error("Invalid team for generation");
+					}
+				));
+			});
 		}
 	));
 }

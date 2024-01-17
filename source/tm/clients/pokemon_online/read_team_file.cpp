@@ -13,40 +13,38 @@ export module tm.clients.po.read_team_file;
 import tm.clients.po.conversion;
 import tm.clients.po.invalid_team_file;
 
-import tm.move.move;
-import tm.move.regular_moves;
+import tm.move.initial_move;
+import tm.move.max_moves_per_pokemon;
+import tm.move.pp;
 
 import tm.pokemon.happiness;
-import tm.pokemon.known_pokemon;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
-import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
 
 import tm.stat.combined_stats;
-import tm.stat.generic_stats;
-import tm.stat.ingame_id_to_nature;
 import tm.stat.ev;
 import tm.stat.evs;
+import tm.stat.generic_stats;
+import tm.stat.ingame_id_to_nature;
 import tm.stat.iv;
+import tm.stat.stat_style;
 
-import tm.constant_generation;
 import tm.generation;
-import tm.generation_generic;
+import tm.initial_team;
 import tm.property_tree;
-export import tm.team;
 
 import bounded;
 import containers;
 import numeric_traits;
-import operators;
-import tv;
 import std_module;
+import tv;
 
 namespace technicalmachine::po {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-struct CheckedIterator : operators::arrow<CheckedIterator> {
+struct CheckedIterator {
 	explicit CheckedIterator(property_tree::ptree_reader pt):
 		m_it(pt.begin()),
 		m_last(pt.end())
@@ -80,22 +78,26 @@ auto parse_species(property_tree::ptree_reader pt) -> tv::optional<SpeciesIDs::I
 	}
 }
 
-auto parse_moves(Generation const generation, CheckedIterator it) {
+auto parse_moves(CheckedIterator it) {
 	struct Parsed {
-		RegularMoves moves;
+		InitialMoves moves;
 		CheckedIterator it;
 	};
-	auto moves = RegularMoves();
-	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
-		auto const & value = it.advance("Move");
-		// TODO: return optional
-		using ReadMoveID = bounded::integer<0, bounded::normalize<numeric_traits::max_value<MoveID>>>;
-		auto const move_id = value.get_value<ReadMoveID>();
-		if (move_id != 0_bi) {
-			moves.push_back(Move(generation, id_to_move(bounded::assume_in_range<MoveID>(move_id))));
-		}
-	}
-	return Parsed{moves, it};
+	auto moves = InitialMoves(containers::remove_none(
+		containers::generate_n(max_moves_per_pokemon, [&] -> tv::optional<InitialMove> {
+			auto const & value = it.advance("Move");
+			static_assert(numeric_traits::min_value<MoveID> == 1_bi);
+			using ReadMoveID = bounded::integer<0, bounded::normalize<numeric_traits::max_value<MoveID>>>;
+			auto const move_id = value.get_value<ReadMoveID>();
+			if (move_id == 0_bi) {
+				return tv::none;
+			}
+			return InitialMove(
+				id_to_move(bounded::assume_in_range<MoveID>(move_id))
+			);
+		})
+	));
+	return Parsed(moves, it);
 }
 
 template<typename T>
@@ -121,62 +123,46 @@ auto parse_stats(std::string_view const name, CheckedIterator it) {
 	};
 }
 
-template<Generation generation>
+template<SpecialStyle style>
 auto parse_dvs_or_ivs(CheckedIterator it) {
-	constexpr auto name = std::string_view("DV");
-	if constexpr (generation <= Generation::two) {
+	constexpr auto name = "DV"sv;
+	if constexpr (style == SpecialStyle::combined) {
+		auto const parsed = parse_stats<DV>(name, it);
 		struct Parsed {
 			DVs stats;
 			CheckedIterator it;
 		};
-		auto get_next = [&] {
-			auto const & value = it.advance(name);
-			return DV(value.get_value<DV::value_type>());
-		};
-		auto const hp = get_next();
-		auto const atk = get_next();
-		auto const def = get_next();
-		auto const spc = get_next();
-		get_next();
-		auto const spe = get_next();
-		auto const dvs = DVs(atk, def, spe, spc);
-		if (dvs.hp() != hp) {
-			throw std::runtime_error("Stored HP DV does not match calculated HP DV.");
-		}
-		return Parsed{dvs, it};
+		return Parsed(to_dvs_using_spa_as_spc(parsed.stats), parsed.it);
 	} else {
 		return parse_stats<IV>(name, it);
 	}
 }
 
-template<Generation generation>
+template<SpecialStyle style>
 auto parse_evs(CheckedIterator it) {
-	constexpr auto name = std::string_view("EV");
-	if constexpr (generation <= Generation::two) {
+	auto const parsed = parse_stats<EV>("EV"sv, it);
+	if constexpr (style == SpecialStyle::combined) {
 		struct Parsed {
 			OldGenEVs stats;
 			CheckedIterator it;
 		};
-		auto get_next = [&] {
-			auto const & value = it.advance(name);
-			return EV(value.get_value<EV::value_type>());
-		};
-		auto const hp = get_next();
-		auto const atk = get_next();
-		auto const def = get_next();
-		auto const spc = get_next();
-		get_next();
-		auto const spe = get_next();
-		auto const evs = OldGenEVs(hp, atk, def, spe, spc);
-		return Parsed{evs, it};
+		auto const stored = parsed.stats;
+		return Parsed(
+			OldGenEVs(stored.hp(), stored.atk(), stored.def(), stored.spe(), stored.spa()),
+			parsed.it
+		);
 	} else {
-		return parse_stats<EV>(name, it);
+		return parsed;
 	}
 }
 
-template<Generation generation>
-auto parse_pokemon(property_tree::ptree_reader pt, SpeciesIDs::ID species_id) {
-	auto const species = id_to_species({species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")});
+template<SpecialStyle style>
+auto parse_pokemon(property_tree::ptree_reader pt) -> tv::optional<InitialPokemon<style>> {
+	auto const species_id = parse_species(pt);
+	if (!species_id) {
+		return tv::none;
+	}
+	auto const species = id_to_species({*species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")});
 	auto const nickname = Nickname(pt.get<std::string>("<xmlattr>.Nickname"));
 	auto const gender = id_to_gender(pt.get<GenderID>("<xmlattr>.Gender"));
 	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
@@ -186,50 +172,54 @@ auto parse_pokemon(property_tree::ptree_reader pt, SpeciesIDs::ID species_id) {
 	auto const nature = ingame_id_to_nature(pt.get<IngameNatureID>("<xmlattr>.Nature"));
 
 	auto const it = CheckedIterator(pt.get_child(""));
-	auto const parsed_moves = parse_moves(generation, it);
+	auto const parsed_moves = parse_moves(it);
 
-	auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(parsed_moves.it);
-	auto const evs = parse_evs<generation>(dvs_or_ivs.it);
+	auto const dvs_or_ivs = parse_dvs_or_ivs<style>(parsed_moves.it);
+	auto const evs = parse_evs<style>(dvs_or_ivs.it);
 
-	return KnownPokemon<generation>(
+	return InitialPokemon<style>(
 		species,
 		nickname,
 		level,
 		gender,
 		item,
 		ability,
-		CombinedStatsFor<generation>{nature, dvs_or_ivs.stats, evs.stats},
+		{
+			nature,
+			dvs_or_ivs.stats,
+			evs.stats
+		},
 		parsed_moves.moves,
 		happiness
 	);
 }
 
-template<Generation generation>
-auto parse_team(property_tree::ptree_reader pt) {
-	auto all_pokemon = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>();
-	for (auto const & value : pt) {
-		if (value.first != "Pokemon") {
-			continue;
-		}
-		auto const species = parse_species(value.second);
-		if (!species) {
-			continue;
-		}
-		containers::push_back(all_pokemon, parse_pokemon<generation>(value.second, *species));
-	}
-	return KnownTeam<generation>(std::move(all_pokemon));
+template<SpecialStyle style>
+auto parse_team(property_tree::ptree_reader pt) -> InitialTeam<style> {
+	return InitialTeam<style>(containers::remove_none(
+		containers::transform(
+			containers::filter(
+				pt,
+				[](auto const & value) { return value.first == "Pokemon"; }
+			),
+			[=](auto const & value) { return parse_pokemon<style>(value.second); }
+		)
+	));
 }
 
-export auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+export auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto owner = property_tree::ptree();
 	auto pt = owner.read_xml(bytes);
 
 	auto const all_pokemon = pt.get_child("Team");
 	using GenerationInteger = bounded::integer<1, 7>;
-	auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
-	return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
-		return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
-	});
+	auto const generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
+	switch (special_style_for(generation)) {
+		case SpecialStyle::combined:
+			return parse_team<SpecialStyle::combined>(all_pokemon);
+		case SpecialStyle::split:
+			return parse_team<SpecialStyle::split>(all_pokemon);
+	}
 }
 
 } // namespace technicalmachine::po

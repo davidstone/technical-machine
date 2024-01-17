@@ -11,13 +11,12 @@ module;
 
 module tm.clients.pl.read_team_file;
 
-import tm.move.move;
+import tm.move.initial_move;
 import tm.move.move_name;
 import tm.move.pp;
-import tm.move.regular_moves;
 
 import tm.pokemon.happiness;
-import tm.pokemon.known_pokemon;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
@@ -39,17 +38,14 @@ import tm.string_conversions.nature;
 import tm.string_conversions.species;
 
 import tm.ability;
-import tm.constant_generation;
 import tm.gender;
 import tm.generation;
-import tm.generation_generic;
-import tm.property_tree;
+import tm.initial_team;
 import tm.item;
-import tm.team;
+import tm.property_tree;
 
 import bounded;
 import containers;
-import numeric_traits;
 import tv;
 import std_module;
 
@@ -57,7 +53,7 @@ namespace technicalmachine::pl {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto parse_species(std::string_view const str) {
+constexpr auto parse_species(std::string_view const str) -> Species {
 	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Species>>({
@@ -83,16 +79,20 @@ constexpr auto parse_species(std::string_view const str) {
 	return result ? *result : from_string<Species>(str);
 }
 
-auto parse_moves(Generation const generation, property_tree::ptree_reader pt) {
-	return RegularMoves(containers::transform(pt, [=](property_tree::ptree_reader::value_type const & value) {
-		auto const name = from_string<MoveName>(value.second.get_value<std::string>());
-		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		return Move(generation, name, pp_ups);
-	}));
+auto parse_moves(property_tree::ptree_reader pt) -> InitialMoves {
+	return InitialMoves(containers::transform(
+		pt,
+		[=](property_tree::ptree_reader::value_type const & value) {
+			auto const & mapped = value.second;
+			auto const name = from_string<MoveName>(mapped.get_value<std::string>());
+			auto const pp_ups = mapped.get<PP::pp_ups_type>("<xmlattr>.pp-up");
+			return InitialMove(name, pp_ups);
+		}
+	));
 }
 
 template<SpecialStyle stat_style>
-auto parse_stats(property_tree::ptree_reader pt) {
+auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
 	constexpr auto is_combined = stat_style == SpecialStyle::combined;
 	using StatType = std::conditional_t<is_combined, DVAndEV, IVAndEV>;
 	auto hp = tv::optional<StatType>();
@@ -154,37 +154,37 @@ auto parse_stats(property_tree::ptree_reader pt) {
 	}
 }
 
-template<Generation generation>
-auto parse_pokemon(property_tree::ptree_reader pt) {
+template<SpecialStyle style>
+auto parse_pokemon(property_tree::ptree_reader pt) -> InitialPokemon<style> {
 	auto const species_str = pt.get<std::string>("<xmlattr>.species");
 	auto const given_nickname = pt.get<std::string>("nickname");
-	return KnownPokemon<generation>(
+	return InitialPokemon<style>(
 		parse_species(species_str),
 		Nickname(containers::is_empty(given_nickname) ? species_str : given_nickname),
 		Level(pt.get<Level::value_type>("level")),
 		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
 		from_string<Item>(pt.get<std::string>("item")),
 		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
-		parse_stats<special_style_for(generation)>(pt),
-		parse_moves(generation, pt.get_child("moveset")),
+		parse_stats<style>(pt),
+		parse_moves(pt.get_child("moveset")),
 		Happiness(pt.get<Happiness::value_type>("happiness"))
 	);
 }
 
-template<Generation generation>
-auto parse_team(property_tree::ptree_reader ptree) {
-	return KnownTeam<generation>(
+template<SpecialStyle style>
+auto parse_team(property_tree::ptree_reader ptree) -> InitialTeam<style> {
+	return InitialTeam<style>(
 		containers::transform(
 			containers::filter(
 				ptree,
 				[](auto const & value) { return value.first == "pokemon"; }
 			),
-			[](auto const & value) { return parse_pokemon<generation>(value.second); }
+			[](auto const & value) { return parse_pokemon<style>(value.second); }
 		)
 	);
 }
 
-auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto owner = property_tree::ptree();
 	auto pt = owner.read_xml(bytes);
 
@@ -192,10 +192,13 @@ auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric
 	using GenerationInteger = bounded::integer<1, 7>;
 	// The original format did not include a generation. Allow users to add
 	// this field.
-	auto const parsed_generation = static_cast<Generation>(all_pokemon.get("<xmlattr>.generation", GenerationInteger(4_bi)));
-	return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
-		return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
-	});
+	auto const generation = static_cast<Generation>(all_pokemon.get("<xmlattr>.generation", GenerationInteger(4_bi)));
+	switch (special_style_for(generation)) {
+		case SpecialStyle::combined:
+			return parse_team<SpecialStyle::combined>(all_pokemon);
+		case SpecialStyle::split:
+			return parse_team<SpecialStyle::split>(all_pokemon);
+	}
 }
 
 } // namespace technicalmachine::pl

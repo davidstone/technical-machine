@@ -5,13 +5,12 @@
 
 export module tm.clients.pl.read_team_file;
 
-import tm.generation_generic;
-export import tm.team;
+import tm.initial_team;
 
 import std_module;
 
 namespace technicalmachine::pl {
 
-export auto read_team_file(std::span<std::byte const>) -> GenerationGeneric<KnownTeam>;
+export auto read_team_file(std::span<std::byte const>) -> AnyInitialTeam;
 
 } // namespace technicalmachine::pl

@@ -9,10 +9,13 @@
 
 import tm.clients.load_team_from_file;
 
+import tm.stat.stat_style;
+
+import tm.string_conversions.initial_team;
 import tm.string_conversions.team;
 
-import tm.any_team;
 import tm.files_in_path;
+import tm.initial_team;
 import tm.open_file;
 
 import bounded;
@@ -45,7 +48,8 @@ constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 }
 
 struct AsStringPrinted {
-	static auto operator()(any_known_team auto const & team, std::filesystem::path const &) -> void {
+	template<SpecialStyle style>
+	static auto operator()(InitialTeam<style> const & team, std::filesystem::path const &) -> void {
 		std::cout << to_string(team) << '\n';
 	}
 };
@@ -55,7 +59,8 @@ struct AsStringFile {
 		m_base_path(std::move(base_path))
 	{
 	}
-	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
+	template<SpecialStyle style>
+	auto operator()(InitialTeam<style> const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
 		path.replace_extension("txt");
 		auto stream = open_text_file_for_writing(path);
