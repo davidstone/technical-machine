@@ -350,6 +350,13 @@ target_sources(tm_netbattle PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/clients/netbattle/file_version.cpp
+		source/tm/clients/netbattle/game_version_to_generation.cpp
+		source/tm/clients/netbattle/id_to_ability.cpp
+		source/tm/clients/netbattle/id_to_gender.cpp
+		source/tm/clients/netbattle/id_to_item.cpp
+		source/tm/clients/netbattle/id_to_move.cpp
+		source/tm/clients/netbattle/id_to_species.cpp
 		source/tm/clients/netbattle/read_team_file.cpp
 )
 target_link_libraries(tm_netbattle
