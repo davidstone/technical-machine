@@ -12,12 +12,13 @@ import tm.compress;
 import tm.generation;
 
 import bounded;
+import numeric_traits;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
 export struct Move {
-	explicit constexpr Move(Generation const generation, MoveName const move, PP::pp_ups_type const pp_ups = 3_bi) :
+	explicit constexpr Move(Generation const generation, MoveName const move, PP::pp_ups_type const pp_ups = numeric_traits::max_value<PP::pp_ups_type>) :
 		m_name(move),
 		m_pp(generation, move, pp_ups)
 	{
