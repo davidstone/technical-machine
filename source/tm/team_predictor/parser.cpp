@@ -79,7 +79,7 @@ constexpr auto get_expected_integer_wrapper(std::string_view const input, std::s
 	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
 }
 
-struct ParsedPokemon {
+struct PredictorPokemon {
 	Species species;
 	Level level;
 	Gender gender;
@@ -89,10 +89,11 @@ struct ParsedPokemon {
 	EVs evs;
 	MoveNames moves;
 };
-using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
 
-constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, SpecialStyle const stat_style) -> ParsedTeam {
-	auto get_pokemon = [&](TeamIndex const index) -> tv::optional<ParsedPokemon> {
+using PredictorTeam = containers::static_vector<PredictorPokemon, max_pokemon_per_team>;
+
+constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, SpecialStyle const stat_style) -> PredictorTeam {
+	auto get_pokemon = [&](TeamIndex const index) -> tv::optional<PredictorPokemon> {
 		auto const index_str = containers::to_string(index);
 		auto get_integer_wrapper = [&]<typename T>(bounded::type_t<T>, std::string_view const key) -> T {
 			return get_expected_integer_wrapper<T>(buffer.pop(), containers::concatenate<containers::string>(key, index_str));
@@ -141,7 +142,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Spe
 			return tv::none;
 		}
 
-		return ParsedPokemon{
+		return PredictorPokemon{
 			*species,
 			level,
 			gender ? *gender : Gender::genderless,
@@ -153,7 +154,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Spe
 		};
 	};
 
-	return ParsedTeam(
+	return PredictorTeam(
 		containers::remove_none(
 			containers::transform(
 				containers::integer_range(max_pokemon_per_team),
@@ -164,7 +165,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Spe
 }
 
 template<Generation generation>
-auto parsed_pokemon_to_seen_pokemon(ParsedPokemon const parsed) -> SeenPokemon<generation> {
+auto parsed_pokemon_to_seen_pokemon(PredictorPokemon const parsed) -> SeenPokemon<generation> {
 	auto pokemon = SeenPokemon<generation>(
 		parsed.species,
 		parsed.level,
@@ -196,7 +197,7 @@ auto parsed_pokemon_to_seen_pokemon(ParsedPokemon const parsed) -> SeenPokemon<g
 }
 
 template<Generation generation>
-auto parsed_team_to_seen_team(ParsedTeam const parsed) -> SeenTeam<generation> {
+auto parsed_team_to_seen_team(PredictorTeam const parsed) -> SeenTeam<generation> {
 	auto team = SeenTeam<generation>(max_pokemon_per_team);
 	for (auto const pokemon : parsed) {
 		team.add_pokemon(SeenPokemon<generation>(
