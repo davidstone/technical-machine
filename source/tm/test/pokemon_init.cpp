@@ -23,6 +23,7 @@ import tm.stat.combined_stats;
 import tm.stat.default_evs;
 import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.string_conversions.species;
 
@@ -48,8 +49,8 @@ struct PokemonInit {
 	Item item = Item::None;
 	Ability ability = Ability::Honey_Gather;
 	Nature nature = Nature::Hardy;
-	decltype(max_dvs_or_ivs<generation>) ivs = max_dvs_or_ivs<generation>;
-	decltype(default_evs<generation>) evs = default_evs<generation>;
+	DVsOrIVs<special_style_for(generation)> ivs = max_dvs_or_ivs<special_style_for(generation)>;
+	decltype(default_evs<special_style_for(generation)>) evs = default_evs<special_style_for(generation)>;
 	MoveNames moves = {{MoveName::Tackle}};
 	Happiness happiness = Happiness();
 };

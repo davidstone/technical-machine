@@ -13,8 +13,6 @@ import tm.pokemon.level;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
-import tm.stat.default_evs;
-
 import tm.test.pokemon_init;
 
 import tm.ability;

@@ -5,6 +5,7 @@
 
 export module tm.stat.combined_stats;
 
+import tm.stat.default_evs;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
@@ -18,9 +19,9 @@ namespace technicalmachine {
 
 export template<SpecialStyle stat_style>
 struct CombinedStats {
-	Nature nature;
-	DVsOrIVs<stat_style> dvs_or_ivs;
-	std::conditional_t<stat_style == SpecialStyle::combined, OldGenEVs, EVs> evs;
+	Nature nature = Nature::Hardy;
+	DVsOrIVs<stat_style> dvs_or_ivs = max_dvs_or_ivs<stat_style>;
+	std::conditional_t<stat_style == SpecialStyle::combined, OldGenEVs, EVs> evs =  default_evs<stat_style>;
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 

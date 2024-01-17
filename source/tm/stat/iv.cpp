@@ -156,9 +156,9 @@ export constexpr auto to_dvs(GenericStats<DV> const stats) -> DVs {
 	return to_dvs_using_spa_as_spc(stats);
 }
 
-export template<Generation generation>
+export template<SpecialStyle style>
 constexpr auto max_dvs_or_ivs = [] {
-	if constexpr (generation <= Generation::two) {
+	if constexpr (style == SpecialStyle::combined) {
 		constexpr auto value = DV(15_bi);
 		return DVs(
 			value,
@@ -167,6 +167,7 @@ constexpr auto max_dvs_or_ivs = [] {
 			value
 		);
 	} else {
+		static_assert(style == SpecialStyle::split);
 		constexpr auto value = IV(31_bi);
 		return IVs(
 			value,

@@ -17,8 +17,6 @@ import tm.pokemon.level;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
-import tm.stat.default_evs;
-
 import tm.status.clears_status;
 import tm.status.status_name;
 

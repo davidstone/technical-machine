@@ -14,7 +14,6 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
-import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.hp;
@@ -55,7 +54,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	constexpr auto include_special_attack = false;
 	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Adamant,
-		max_dvs_or_ivs<generation>,
+		max_dvs_or_ivs<special_style_for(generation)>,
 		EVs(
 			EV(252_bi),
 			EV(96_bi),
@@ -135,7 +134,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Modest,
-		max_dvs_or_ivs<generation>,
+		max_dvs_or_ivs<special_style_for(generation)>,
 		EVs(
 			EV(192_bi),
 			EV(0_bi),
@@ -155,7 +154,7 @@ TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	constexpr auto ivs_and_evs = default_combined_stats<generation>;
+	constexpr auto ivs_and_evs = CombinedStatsFor<generation>();
 	auto const base_stats = BaseStats(generation, species);
 	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);

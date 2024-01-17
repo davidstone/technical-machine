@@ -38,8 +38,6 @@ import tm.stat.nature;
 
 import tm.status.status_name;
 
-import tm.stat.default_evs;
-
 import tm.test.pokemon_init;
 
 import tm.ability;

@@ -20,7 +20,6 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
-import tm.stat.default_evs;
 import tm.stat.hp;
 import tm.stat.nature;
 import tm.stat.stat_names;
@@ -62,7 +61,11 @@ struct SeenPokemon {
 		m_gender(gender),
 		m_level(level),
 		m_hp{CurrentVisibleHP(hp_resolution.value()), hp_resolution},
-		m_stats(BaseStats(generation, m_species), m_level, default_combined_stats<generation>)
+		m_stats(
+			BaseStats(generation, m_species),
+			m_level,
+			CombinedStatsFor<generation>()
+		)
 	{
 	}
 	constexpr SeenPokemon(Species const species, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):

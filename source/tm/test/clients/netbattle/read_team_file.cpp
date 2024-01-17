@@ -19,8 +19,6 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 
-import tm.stat.default_evs;
-
 import tm.test.pokemon_init;
 
 import tm.ability;

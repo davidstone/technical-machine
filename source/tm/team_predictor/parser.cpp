@@ -179,16 +179,17 @@ auto parsed_pokemon_to_seen_pokemon(ParsedPokemon const parsed) -> SeenPokemon<g
 	for (auto const move : parsed.moves) {
 		pokemon.add_move(Move(generation, move));
 	}
+	constexpr auto style = special_style_for(generation);
 	auto const evs = [&] {
-		if constexpr (generation <= Generation::two) {
+		if constexpr (style == SpecialStyle::combined) {
 			return to_old_gen_evs(parsed.evs);
 		} else {
 			return parsed.evs;
 		}
 	}();
-	pokemon.set_ivs_and_evs(CombinedStatsFor<generation>{
+	pokemon.set_ivs_and_evs(CombinedStats<style>{
 		parsed.nature,
-		max_dvs_or_ivs<generation>,
+		max_dvs_or_ivs<style>,
 		evs
 	});
 	return pokemon;
