@@ -64,7 +64,7 @@ struct KnownPokemon {
 		return m_pokemon;
 	}
 
-	constexpr auto nickname() const -> std::string_view {
+	constexpr auto nickname() const -> Nickname {
 		return m_nickname;
 	}
 
@@ -115,7 +115,14 @@ struct KnownPokemon {
 	}
 	constexpr auto set_initial_ability(Ability const ability) const -> void {
 		if (ability != initial_ability()) {
-			throw std::runtime_error(containers::concatenate<std::string>("Inconsistent abilities. Tried to change "sv, nickname(), " from "sv, to_string(initial_ability()), " to "sv, to_string(ability)));
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Inconsistent abilities. Tried to change "sv,
+				nickname().str(),
+				" from "sv,
+				to_string(initial_ability()),
+				" to "sv,
+				to_string(ability)
+			));
 		}
 	}
 

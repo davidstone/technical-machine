@@ -13,6 +13,7 @@ import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.status.status_name;
@@ -41,10 +42,10 @@ export struct ClientBattle {
 	virtual auto generation() const -> Generation = 0;
 	virtual auto state() const -> GenerationGeneric<VisibleState> = 0;
 
-	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) const -> TeamIndex = 0;
+	virtual auto ai_has(Species, Nickname nickname, Level, Gender) const -> TeamIndex = 0;
 	virtual auto foe_has(
 		Species,
-		std::string_view nickname,
+		Nickname nickname,
 		Level,
 		Gender,
 		MaxVisibleHP

@@ -19,7 +19,7 @@ export struct Nickname {
 	{
 	}
 
-	constexpr operator std::string_view() const {
+	constexpr auto str() const -> std::string_view {
 		return std::string_view(containers::data(m_str), static_cast<std::size_t>(containers::size(m_str)));
 	}
 

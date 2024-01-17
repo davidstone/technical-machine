@@ -22,6 +22,7 @@ import tm.pokemon.find_required_pokemon_index;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
@@ -170,7 +171,7 @@ struct Battle {
 
 	// This assumes Species Clause is in effect. Throws if the Species is not in
 	// the team.
-	auto ai_has(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
+	auto ai_has(Species const species, Nickname, Level, Gender) const -> TeamIndex {
 		// TODO: Validate nickname, level, and gender?
 		return find_required_pokemon_index(m_ai.all_pokemon(), species);
 	}
@@ -178,7 +179,7 @@ struct Battle {
 	// Species has not been seen yet.
 	auto foe_has(
 		Species const species,
-		std::string_view nickname,
+		Nickname const nickname,
 		Level const level,
 		Gender const gender,
 		MaxVisibleHP const max_hp
@@ -187,7 +188,7 @@ struct Battle {
 			return pokemon.species() == species;
 		});
 		if (it == containers::end(m_foe.all_pokemon())) {
-			m_foe.all_pokemon().add({species, std::move(nickname), level, gender, max_hp});
+			m_foe.all_pokemon().add({species, nickname, level, gender, max_hp});
 		}
 		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
 	}

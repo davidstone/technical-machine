@@ -54,8 +54,8 @@ using namespace bounded::literal;
 
 constexpr auto pokemon_delimiter = ']';
 
-constexpr auto parse_species(std::string_view const species_str, std::string_view const nickname) {
-	return from_string<Species>(species_str.empty() ? nickname : species_str);
+constexpr auto parse_species(std::string_view const species_str, Nickname const nickname) {
+	return from_string<Species>(species_str.empty() ? nickname.str() : species_str);
 }
 
 constexpr auto parse_ability(std::string_view const ability_str, Species const species [[maybe_unused]]) {

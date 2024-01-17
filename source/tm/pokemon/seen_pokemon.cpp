@@ -56,8 +56,8 @@ using namespace std::string_view_literals;
 
 export template<Generation generation>
 struct SeenPokemon {
-	constexpr SeenPokemon(Species const species, Nickname nickname, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
-		m_nickname(std::move(nickname)),
+	constexpr SeenPokemon(Species const species, Nickname const nickname, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
+		m_nickname(nickname),
 		m_species(species),
 		m_gender(gender),
 		m_level(level),
@@ -70,7 +70,7 @@ struct SeenPokemon {
 	{
 	}
 
-	constexpr auto nickname() const -> std::string_view {
+	constexpr auto nickname() const -> Nickname {
 		return m_nickname;
 	}
 

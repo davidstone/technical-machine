@@ -46,9 +46,9 @@ constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & te
 		result = containers::concatenate<containers::string>(
 			std::move(result),
 			is_first ? ""sv : "]"sv,
-			pokemon.nickname(),
+			pokemon.nickname().str(),
 			separator,
-			species_str == pokemon.nickname() ? ""sv : species_str,
+			species_str == pokemon.nickname().str() ? ""sv : species_str,
 			separator,
 			item == Item::None ? ""sv : to_string(item),
 			separator,

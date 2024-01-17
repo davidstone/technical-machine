@@ -18,6 +18,7 @@ import tm.move.move_result;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.hp;
@@ -78,12 +79,12 @@ struct ClientBattleImpl final : ClientBattle {
 		return m_battle.state();
 	}
 
-	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) const -> TeamIndex final {
+	auto ai_has(Species const species, Nickname const nickname, Level const level, Gender const gender) const -> TeamIndex final {
 		return m_battle.ai_has(species, nickname, level, gender);
 	}
 	auto foe_has(
 		Species const species,
-		std::string_view nickname,
+		Nickname const nickname,
 		Level const level,
 		Gender const gender,
 		MaxVisibleHP const max_hp
