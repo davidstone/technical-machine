@@ -52,7 +52,7 @@ struct PokemonCollection {
 
 	template<typename OtherPokemon> requires any_known_pokemon<PokemonType> or any_real_pokemon<PokemonType>
 	constexpr explicit PokemonCollection(PokemonCollection<OtherPokemon> const & other):
-		m_container(containers::transform(other, [](OtherPokemon const & pokemon) { return PokemonType(pokemon); })),
+		m_container(containers::transform(other, bounded::construct<PokemonType>)),
 		m_index(other.index())
 	{
 	}
