@@ -36,6 +36,8 @@ import tm.stat.evs;
 import tm.stat.generic_stats;
 import tm.stat.ingame_id_to_nature;
 import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.ability;
 import tm.bit_view;
@@ -107,6 +109,30 @@ private:
 	FileVersion m_file_version;
 };
 
+template<SpecialStyle style>
+constexpr auto parse_nature(Parser & parser) -> Nature {
+	// Nature is preserved but ignored in older generations
+	auto const id = parser.pop_integer<IngameNatureID>(5_bi);
+	switch (style) {
+		case SpecialStyle::combined:
+			return Nature::Hardy;
+		case SpecialStyle::split:
+			return ingame_id_to_nature(id);
+	}
+}
+
+template<SpecialStyle style>
+constexpr auto parse_ability(Parser & parser, Species const species) -> Ability {
+	// Ability is preserved but ignored in older generations
+	auto const id = parser.pop_integer(1_bi);
+	switch (style) {
+		case SpecialStyle::combined:
+			return Ability::Honey_Gather;
+		case SpecialStyle::split:
+			return id_to_ability(species, id);
+	}
+}
+
 constexpr auto parse_moves(Generation const generation, Parser & parser) -> RegularMoves {
 	auto pop_move = [&] {
 		return id_to_move(parser.pop_integer<MoveID>(9_bi));
@@ -136,20 +162,20 @@ constexpr auto parse_ivs_or_evs(Parser & parser, auto const bits) {
 	return GenericStats(hp, attack, defense, special_attack, special_defense, speed);
 }
 
-template<Generation generation>
+template<SpecialStyle style>
 constexpr auto parse_ivs(Parser & parser) {
 	constexpr auto bits = 5_bi;
-	if constexpr (generation <= Generation::two) {
+	if constexpr (style == SpecialStyle::combined) {
 		return to_dvs_using_spa_as_spc(parse_ivs_or_evs<DV>(parser, bits));
 	} else {
 		return parse_ivs_or_evs<IV>(parser, bits);
 	}
 }
 
-template<Generation generation>
+template<SpecialStyle style>
 constexpr auto parse_evs(Parser & parser) {
 	auto const stored = parse_ivs_or_evs<EV>(parser, 8_bi);
-	if constexpr (generation <= Generation::two) {
+	if constexpr (style == SpecialStyle::combined) {
 		// NetBattle technically preserves but ignores the EV values populated
 		// in old generations. Given that this matters only when moving Pokemon
 		// forward to later generations, I do not think that information needs
@@ -162,6 +188,7 @@ constexpr auto parse_evs(Parser & parser) {
 
 template<Generation generation>
 constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<generation>> {
+	constexpr auto style = special_style_for(generation);
 	constexpr auto nickname_bytes = 15_bi;
 	auto const padded_nickname = parser.pop_string(nickname_bytes);
 	auto const padded_nickname_view = std::string_view(padded_nickname);
@@ -180,8 +207,8 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 	[[maybe_unused]] auto const game_version = parser.pop_integer(3_bi);
 	auto const level = Level(parser.pop_integer<Level::value_type>(7_bi));
 	auto const item_id = parser.pop_integer<ItemID>(7_bi);
-	auto const nature = ingame_id_to_nature(parser.pop_integer<IngameNatureID>(5_bi));
-	auto const ability = id_to_ability(species, parser.pop_integer(1_bi));
+	auto const nature = parse_nature<style>(parser);
+	auto const ability = parse_ability<style>(parser, species);
 	auto const gender = id_to_gender(species, parser.pop_integer(1_bi));
 
 	[[maybe_unused]] auto const shiny = parser.pop_integer(1_bi);
@@ -189,8 +216,8 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 	[[maybe_unused]] auto const unown_letter = parser.pop_integer(5_bi);
 
 	auto const moves = parse_moves(generation, parser);
-	auto const ivs = parse_ivs<generation>(parser);
-	auto const evs = parse_evs<generation>(parser);
+	auto const ivs = parse_ivs<style>(parser);
+	auto const evs = parse_evs<style>(parser);
 
 	[[maybe_unused]] auto const unused = parser.pop_integer(1_bi);
 	[[maybe_unused]] auto const is_generation_4 = parser.pop_integer(1_bi);
@@ -204,7 +231,7 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 		gender,
 		item,
 		ability,
-		CombinedStatsFor<generation>{nature, ivs, evs},
+		CombinedStats<style>(nature, ivs, evs),
 		moves
 	);
 }
