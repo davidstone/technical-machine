@@ -7,9 +7,6 @@
 #include <iostream>
 #include <string_view>
 
-import tm.clients.pl.write_team_file;
-import tm.clients.po.write_team_file;
-
 import tm.clients.load_team_from_file;
 
 import tm.string_conversions.team;
@@ -31,21 +28,17 @@ using namespace std::string_view_literals;
 
 constexpr auto invalid_args_message =
 	"Usage is file_converter output_type output_location files...\n"
-	"Valid output types are: print, text, pl, po\n"
+	"Valid output types are: print, text\n"
 	"If output_type is \"print\", there is no \"output_location\"\n"
 	"If \"files...\" includes a directory, all files in that directory will be parsed.";
 
-enum class OutputType { print, text, pl, po };
+enum class OutputType { print, text };
 
 constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 	if (str == "print") {
 		return OutputType::print;
 	} else if (str == "text") {
 		return OutputType::text;
-	} else if (str == "pl") {
-		return OutputType::pl;
-	} else if (str == "po") {
-		return OutputType::po;
 	} else {
 		throw std::runtime_error(invalid_args_message);
 	}
@@ -73,41 +66,7 @@ private:
 	std::filesystem::path m_base_path;
 };
 
-struct AsPL {
-	explicit AsPL(std::filesystem::path base_path):
-		m_base_path(std::move(base_path))
-	{
-	}
-
-	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
-		auto path = m_base_path / trailing_path;
-		std::filesystem::create_directories(path.parent_path());
-		path.replace_extension("sbt");
-		pl::write_team(team, path);
-	}
-
-private:
-	std::filesystem::path m_base_path;
-};
-
-struct AsPO {
-	explicit AsPO(std::filesystem::path base_path):
-		m_base_path(std::move(base_path))
-	{
-	}
-
-	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
-		auto path = m_base_path / trailing_path;
-		std::filesystem::create_directories(path.parent_path());
-		path.replace_extension("tp");
-		po::write_team(team, path);
-	}
-
-private:
-	std::filesystem::path m_base_path;
-};
-
-using Outputter = tv::variant<AsStringPrinted, AsStringFile, AsPL, AsPO>;
+using Outputter = tv::variant<AsStringPrinted, AsStringFile>;
 struct ParsedArgs {
 	Outputter outputter;
 	containers::dynamic_array<std::filesystem::path> paths;
@@ -136,10 +95,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 			return ParsedArgs{Outputter(AsStringPrinted()), get_paths(2)};
 		case OutputType::text:
 			return ParsedArgs{Outputter(AsStringFile(output_location())), get_paths(3)};
-		case OutputType::pl:
-			return ParsedArgs{Outputter(AsPL(output_location())), get_paths(3)};
-		case OutputType::po:
-			return ParsedArgs{Outputter(AsPO(output_location())), get_paths(3)};
 	}
 }
 
