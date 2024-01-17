@@ -112,6 +112,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/damage_type.cpp
 		source/tm/move/executed_move.cpp
 		source/tm/move/healing_move_fails_in_generation_1.cpp
+		source/tm/move/initial_move.cpp
 		source/tm/move/is_blocked_by_gravity.cpp
 		source/tm/move/is_healing.cpp
 		source/tm/move/is_switch.cpp
@@ -157,6 +158,7 @@ target_sources(tm_common PUBLIC
 		source/tm/pokemon/hidden_power.cpp
 		source/tm/pokemon/hp_ratio.cpp
 		source/tm/pokemon/indirect_status_can_apply.cpp
+		source/tm/pokemon/initial_pokemon.cpp
 		source/tm/pokemon/is_genderless.cpp
 		source/tm/pokemon/is_type.cpp
 		source/tm/pokemon/known_pokemon.cpp
@@ -228,6 +230,7 @@ target_sources(tm_common PUBLIC
 		source/tm/string_conversions/from_string.cpp
 		source/tm/string_conversions/gender.cpp
 		source/tm/string_conversions/generation.cpp
+		source/tm/string_conversions/initial_team.cpp
 		source/tm/string_conversions/invalid_string_conversion.cpp
 		source/tm/string_conversions/item.cpp
 		source/tm/string_conversions/lowercase_alphanumeric.cpp
@@ -297,6 +300,7 @@ target_sources(tm_common PUBLIC
 		source/tm/handle_curse.cpp
 		source/tm/heal.cpp
 		source/tm/held_item.cpp
+		source/tm/initial_team.cpp
 		source/tm/item.cpp
 		source/tm/get_both_actions.cpp
 		source/tm/get_legal_selections.cpp
