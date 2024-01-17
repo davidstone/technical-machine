@@ -392,7 +392,6 @@ target_sources(tm_pokemon_online PUBLIC
 		source/tm/clients/pokemon_online/conversion.cpp
 		source/tm/clients/pokemon_online/invalid_team_file.cpp
 		source/tm/clients/pokemon_online/read_team_file.cpp
-		source/tm/clients/pokemon_online/write_team_file.cpp
 )
 target_link_libraries(tm_pokemon_online
 	bounded

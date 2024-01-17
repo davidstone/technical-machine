@@ -7,7 +7,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 import tm.clients.po.read_team_file;
-import tm.clients.po.write_team_file;
 
 import tm.move.move_name;
 
@@ -184,14 +183,6 @@ constexpr auto team_xml = R"(
 TEST_CASE("Pokemon Online team file", "[Pokemon Online]") {
 	auto const original_team = po::read_team_file(std::as_bytes(std::span(team_xml)));
 	CHECK(original_team == expected_team);
-	auto const directory = get_test_directory() / "teams";
-	auto const new_file = directory / "test2.tp";
-	tv::visit(original_team, [&](auto const & team) {
-		po::write_team(team, new_file);
-	});
-	auto const new_team = po::read_team_file(bytes_in_file(new_file));
-	CHECK(original_team == new_team);
-	std::filesystem::remove(new_file);
 }
 
 } // namespace
