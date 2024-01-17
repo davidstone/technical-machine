@@ -13,6 +13,7 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.happiness;
 import tm.pokemon.has_hidden_power;
 import tm.pokemon.hidden_power;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.nickname;
 import tm.pokemon.pokemon;
@@ -21,6 +22,7 @@ import tm.pokemon.species;
 import tm.stat.combined_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 
 import tm.status.status;
 import tm.status.status_name;
@@ -56,6 +58,13 @@ struct KnownPokemon {
 	explicit constexpr KnownPokemon(Pokemon<generation> pokemon):
 		m_pokemon(pokemon),
 		m_nickname(to_string(m_pokemon.species()))
+	{
+		check_no_generation_one_hidden_power();
+	}
+
+	explicit constexpr KnownPokemon(InitialPokemon<special_style_for(generation)> const other):
+		m_pokemon(other),
+		m_nickname(other.nickname)
 	{
 		check_no_generation_one_hidden_power();
 	}

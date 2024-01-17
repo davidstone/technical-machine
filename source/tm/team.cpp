@@ -22,6 +22,8 @@ import tm.pokemon.pokemon;
 export import tm.pokemon.pokemon_collection;
 import tm.pokemon.seen_pokemon;
 
+import tm.stat.stat_style;
+
 import tm.activate_ability_on_switch;
 import tm.apply_entry_hazards;
 import tm.any_team;
@@ -29,6 +31,7 @@ import tm.compress;
 import tm.entry_hazards;
 import tm.environment;
 import tm.generation;
+import tm.initial_team;
 import tm.item;
 import tm.other_team;
 import tm.screens;
@@ -66,6 +69,11 @@ struct TeamImpl {
 
 	constexpr explicit TeamImpl(TeamSize const team_size) requires any_seen_pokemon<PokemonType>:
 		m_all_pokemon(team_size)
+	{
+	}
+
+	constexpr explicit TeamImpl(InitialTeam<special_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
+		m_all_pokemon(other)
 	{
 	}
 

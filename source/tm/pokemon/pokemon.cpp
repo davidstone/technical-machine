@@ -9,6 +9,7 @@ module;
 
 export module tm.pokemon.pokemon;
 
+import tm.move.initial_move;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.pp;
@@ -17,6 +18,7 @@ import tm.move.regular_moves;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.happiness;
 import tm.pokemon.hidden_power;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
@@ -90,6 +92,22 @@ struct Pokemon {
 		m_happiness(252_bi),
 		m_hidden_power(other.hidden_power()),
 		m_has_been_seen(true)
+	{
+	}
+
+	explicit constexpr Pokemon(InitialPokemon<special_style_for(generation)> const & other):
+		Pokemon(
+			other.species,
+			other.level,
+			other.gender,
+			other.item,
+			other.ability,
+			other.stats,
+			RegularMoves(containers::transform(other.moves, [](InitialMove const move) {
+				return Move(generation, move.name, move.pp_ups);
+			})),
+			other.happiness
+		)
 	{
 	}
 

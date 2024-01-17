@@ -19,6 +19,7 @@ import tm.pokemon.species;
 import tm.compress;
 import tm.exists_if;
 import tm.generation;
+import tm.initial_team;
 export import tm.operators;
 
 import bounded;
@@ -54,6 +55,11 @@ struct PokemonCollection {
 	constexpr explicit PokemonCollection(PokemonCollection<OtherPokemon> const & other):
 		m_container(containers::transform(other, bounded::construct<PokemonType>)),
 		m_index(other.index())
+	{
+	}
+
+	constexpr explicit PokemonCollection(InitialTeam<special_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
+		m_container(containers::transform(other, bounded::construct<PokemonType>))
 	{
 	}
 
