@@ -56,7 +56,6 @@ import tm.get_directory;
 import tm.nlohmann_json;
 import tm.open_file;
 import tm.settings_file;
-import tm.team;
 import tm.visible_state;
 
 import bounded;

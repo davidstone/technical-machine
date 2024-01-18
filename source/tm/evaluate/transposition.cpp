@@ -15,7 +15,6 @@ import tm.move.move_name;
 import tm.compress;
 import tm.environment;
 import tm.generation;
-import tm.team;
 
 import bounded;
 import containers;

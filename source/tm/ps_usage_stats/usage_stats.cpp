@@ -27,7 +27,6 @@ import tm.ability;
 import tm.environment;
 import tm.generation_generic;
 import tm.item;
-import tm.team;
 
 import bounded;
 import concurrent;

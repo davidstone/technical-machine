@@ -34,7 +34,6 @@ import tm.generation;
 import tm.generation_generic;
 import tm.get_directory;
 import tm.item;
-import tm.team;
 import tm.visible_hp;
 
 import bounded;

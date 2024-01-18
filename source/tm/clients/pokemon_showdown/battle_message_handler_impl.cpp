@@ -35,7 +35,6 @@ import tm.status.toxic_resets_on_switch;
 import tm.ability;
 import tm.generation;
 import tm.generation_generic;
-import tm.team;
 import tm.visible_hp;
 
 import bounded;

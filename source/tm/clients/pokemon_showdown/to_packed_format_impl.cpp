@@ -25,6 +25,7 @@ import tm.any_team;
 import tm.generation;
 import tm.generation_generic;
 import tm.item;
+import tm.team;
 
 import bounded;
 import containers;

@@ -29,7 +29,6 @@ import tm.gender;
 import tm.generation;
 import tm.initial_team;
 import tm.item;
-import tm.team;
 
 import bounded;
 import containers;
