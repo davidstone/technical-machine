@@ -79,65 +79,65 @@ constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool 
 TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
 		make_team<generation>({
-			{.species = Species::Lugia},
+			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}),
 		make_team<generation>({
-			{.species = Species::Bulbasaur},
-			{.species = Species::Ivysaur},
+			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
 		})
 	));
 }
 TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
 		make_team<generation>({
-			{.species = Species::Lugia},
+			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}),
 		make_team<generation>({
-			{.species = Species::Bulbasaur},
-			{.species = Species::Ivysaur},
-			{.species = Species::Venusaur},
+			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
 		})
 	));
 }
 TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
 		make_team<generation>({
-			{.species = Species::Lugia},
+			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}),
 		make_team<generation>({
-			{.species = Species::Bulbasaur},
-			{.species = Species::Ivysaur},
-			{.species = Species::Venusaur},
-			{.species = Species::Charmander},
+			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charmander, .moves = {{ MoveName::Tackle }}},
 		})
 	));
 }
 TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
 		make_team<generation>({
-			{.species = Species::Lugia},
+			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}),
 		make_team<generation>({
-			{.species = Species::Bulbasaur},
-			{.species = Species::Ivysaur},
-			{.species = Species::Venusaur},
-			{.species = Species::Charmander},
-			{.species = Species::Charmeleon},
+			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charmander, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charmeleon, .moves = {{ MoveName::Tackle }}},
 		})
 	));
 }
 TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
 		make_team<generation>({
-			{.species = Species::Lugia},
+			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}),
 		make_team<generation>({
-			{.species = Species::Bulbasaur},
-			{.species = Species::Ivysaur},
-			{.species = Species::Venusaur},
-			{.species = Species::Charmander},
-			{.species = Species::Charmeleon},
-			{.species = Species::Charizard},
+			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charmander, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charmeleon, .moves = {{ MoveName::Tackle }}},
+			{.species = Species::Charizard, .moves = {{ MoveName::Tackle }}},
 		})
 	));
 }

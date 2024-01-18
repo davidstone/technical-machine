@@ -41,6 +41,9 @@ TEST_CASE("Recover", "[possible_side_effects]") {
 	auto const other = make_team<generation>({
 		{
 			.species = Species::Bulbasaur,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 

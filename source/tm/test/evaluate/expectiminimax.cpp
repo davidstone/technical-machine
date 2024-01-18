@@ -234,15 +234,17 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			.species = Species::Hippopotas,
 			.item = Item::Leftovers,
 			.ability = Ability::Sand_Stream,
-			.nature = Nature::Adamant,
-			.evs = EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Adamant,
+				.evs = EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Curse,
 				MoveName::Crunch,
@@ -259,15 +261,17 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			.species = Species::Wobbuffet,
 			.item = Item::Leftovers,
 			.ability = Ability::Shadow_Tag,
-			.nature = Nature::Hardy,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Hardy,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Counter,
 			}}
@@ -412,6 +416,9 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 		{
 			.species = Species::Magikarp,
 			.level = Level(5_bi),
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 		{
 			.species = Species::Slugma,
@@ -423,7 +430,9 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 		{
 			.species = Species::Zapdos,
 			.item = Item::Choice_Specs,
-			.nature = Nature::Modest,
+			.stats = {
+				.nature = Nature::Modest,
+			},
 			.moves = {{
 				MoveName::Thunderbolt,
 			}}
@@ -484,15 +493,17 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			.species = Species::Latias,
 			.item = Item::Leftovers,
 			.ability = Ability::Levitate,
-			.nature = Nature::Calm,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(120_bi),
-				EV(136_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Calm,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Calm_Mind,
 				MoveName::Dragon_Pulse,
@@ -507,15 +518,17 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
 			.ability = Ability::Pressure,
-			.nature = Nature::Calm,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(120_bi),
-				EV(136_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Calm,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Ice_Beam,
 				MoveName::Rest,
@@ -851,15 +864,17 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			.species = Species::Hippopotas,
 			.item = Item::Leftovers,
 			.ability = Ability::Sand_Stream,
-			.nature = Nature::Adamant,
-			.evs = EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Adamant,
+				.evs = EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Curse,
 				MoveName::Crunch,
@@ -876,15 +891,17 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			.species = Species::Wobbuffet,
 			.item = Item::Leftovers,
 			.ability = Ability::Shadow_Tag,
-			.nature = Nature::Hardy,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Hardy,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Counter,
 			}}
@@ -948,6 +965,9 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 		{
 			.species = Species::Magikarp,
 			.level = Level(5_bi),
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 		{
 			.species = Species::Slugma,
@@ -959,7 +979,9 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 		{
 			.species = Species::Zapdos,
 			.item = Item::Choice_Specs,
-			.nature = Nature::Modest,
+			.stats = {
+				.nature = Nature::Modest,
+			},
 			.moves = {{
 				MoveName::Thunderbolt,
 			}}
@@ -1018,15 +1040,17 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			.species = Species::Latias,
 			.item = Item::Leftovers,
 			.ability = Ability::Levitate,
-			.nature = Nature::Calm,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(120_bi),
-				EV(136_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Calm,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Calm_Mind,
 				MoveName::Dragon_Pulse,
@@ -1041,15 +1065,17 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
 			.ability = Ability::Pressure,
-			.nature = Nature::Calm,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(120_bi),
-				EV(136_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Calm,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				MoveName::Ice_Beam,
 				MoveName::Rest,

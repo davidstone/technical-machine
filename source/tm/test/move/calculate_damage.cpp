@@ -68,15 +68,17 @@ constexpr auto attacker() {
 			.species = Species::Shuckle,
 			.item = Item::Metronome,
 			.ability = Ability::Pure_Power,
-			.nature = Nature::Impish,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Impish,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				move,
 			}}
@@ -102,6 +104,9 @@ constexpr auto defender() {
 		{
 			.species = Species::Combee,
 			.level = Level(1_bi),
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto pokemon = team.pokemon();
@@ -140,15 +145,17 @@ constexpr auto attacker() {
 			.species = Species::Deoxys_Attack,
 			.item = Item::Metronome,
 			.ability = Ability::Blaze,
-			.nature = Nature::Modest,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(EV::max),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Modest,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(EV::max),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				move,
 			}}
@@ -176,6 +183,9 @@ constexpr auto defender() {
 			.species = Species::Paras,
 			.level = Level(1_bi),
 			.ability = Ability::Dry_Skin,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto pokemon = team.pokemon();

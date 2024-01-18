@@ -194,6 +194,9 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		{
 			.species = Species::Shedinja,
 			.ability = Ability::Wonder_Guard,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto shedinja = defender.pokemon();
@@ -242,6 +245,9 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 	auto defender = make_team<generation>({
 		{
 			.species = Species::Vaporeon,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto vaporeon = defender.pokemon();
@@ -305,6 +311,9 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	auto other = make_team<generation>({
 		{
 			.species = Species::Bulbasaur,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -391,6 +400,9 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 		},
 		{
 			.species = Species::Regice,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	user.pokemon().switch_in(environment);
@@ -456,6 +468,9 @@ TEST_CASE("Perish Song", "[call_move]") {
 		},
 		{
 			.species = Species::Regice,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	user.pokemon().switch_in(environment);
@@ -469,6 +484,9 @@ TEST_CASE("Perish Song", "[call_move]") {
 		},
 		{
 			.species = Species::Regice,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);

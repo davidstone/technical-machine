@@ -7,6 +7,7 @@ export module tm.test.block;
 
 import tm.can_execute_move;
 
+import tm.move.initial_move;
 import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
@@ -108,6 +109,9 @@ static_assert([]{
 	auto other = make_team<generation>({
 		{
 			.species = Species::Pikachu,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -120,7 +124,7 @@ static_assert([]{
 static_assert([]{
 	auto environment = Environment();
 
-	constexpr auto moves = MoveNames({MoveName::Thunder, MoveName::Thunderbolt});
+	constexpr auto moves = InitialMoves({MoveName::Thunder, MoveName::Thunderbolt});
 	auto user = make_team<generation>({
 		{
 			.species = Species::Pikachu,
@@ -129,12 +133,15 @@ static_assert([]{
 	});
 	user.pokemon().switch_in(environment);
 	for (auto const move : moves) {
-		remove_all_pp(user.pokemon(), move, environment);
+		remove_all_pp(user.pokemon(), move.name, environment);
 	}
 
 	auto other = make_team<generation>({
 		{
 			.species = Species::Pikachu,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -150,9 +157,15 @@ static_assert([]{
 	auto team = make_team<generation>({
 		{
 			.species = Species::Slugma,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 		{
 			.species = Species::Zapdos,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	team.pokemon().switch_in(environment);
@@ -160,6 +173,9 @@ static_assert([]{
 	auto other = make_team<generation>({
 		{
 			.species = Species::Suicune,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);

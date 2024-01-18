@@ -12,6 +12,7 @@ module;
 
 export module tm.test.string_conversion;
 
+import tm.move.initial_move;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_names;
@@ -90,20 +91,22 @@ static_assert(test_generic<Weather>());
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	constexpr auto check = [](MoveNames const moves, StatusName const status) {
+	constexpr auto check = [](InitialMoves const moves, StatusName const status) {
 		auto pokemon = make_pokemon<generation>({
 			.species = Species::Mewtwo,
 			.item = Item::Leftovers,
 			.ability = Ability::Pressure,
-			.nature = Nature::Modest,
-			.evs = EVs(
-				EV(4_bi),
-				EV(12_bi),
-				EV(24_bi),
-				EV(0_bi),
-				EV(32_bi),
-				EV(100_bi)
-			),
+			.stats = {
+				.nature = Nature::Modest,
+				.evs = EVs(
+					EV(4_bi),
+					EV(12_bi),
+					EV(24_bi),
+					EV(0_bi),
+					EV(32_bi),
+					EV(100_bi)
+				),
+			},
 			.moves = moves
 		});
 		pokemon.set_status(status);
@@ -113,14 +116,14 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		CHECK(pokemon == result);
 	};
 
-	constexpr auto moves = MoveNames({
+	constexpr auto moves = InitialMoves({
 		MoveName::Psychic,
 		MoveName::Recover,
 		MoveName::Calm_Mind,
 		MoveName::Taunt,
 	});
 	for (auto const n : containers::integer_range(1_bi, 4_bi)) {
-		check(MoveNames(containers::take(moves, n)), StatusName::clear);
+		check(InitialMoves(containers::take(moves, n)), StatusName::clear);
 	}
 	check(moves, StatusName::burn);
 }

@@ -52,15 +52,20 @@ static_assert([]{
 		.species = Species::Shuckle,
 		.item = Item::Choice_Band,
 		.ability = Ability::Pure_Power,
-		.nature = Nature::Impish,
-		.evs = EVs(
-			EV(0_bi),
-			EV(0_bi),
-			EV(252_bi),
-			EV(0_bi),
-			EV(0_bi),
-			EV(0_bi)
-		),
+		.stats = {
+			.nature = Nature::Impish,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+		},
+		.moves = {{
+			MoveName::Tackle,
+		}}
 	});
 	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
@@ -82,15 +87,17 @@ static_assert([]{
 		.species = Species::Deoxys_Attack,
 		.item = Item::Choice_Specs,
 		.ability = Ability::Solar_Power,
-		.nature = Nature::Modest,
-		.evs = EVs(
-			EV(0_bi),
-			EV(0_bi),
-			EV(0_bi),
-			EV(252_bi),
-			EV(0_bi),
-			EV(0_bi)
-		),
+		.stats = {
+			.nature = Nature::Modest,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+		},
 		.moves = {{
 			MoveName::Psychic,
 		}}
@@ -112,15 +119,20 @@ static_assert([]{
 		{
 			.species = Species::Shuckle,
 			.ability = Ability::Marvel_Scale,
-			.nature = Nature::Bold,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Bold,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	defender.pokemon().switch_in(environment);
@@ -140,6 +152,9 @@ static_assert([]{
 		{
 			.species = Species::Combee,
 			.level = Level(1_bi),
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto pokemon = defender.pokemon();
@@ -161,15 +176,20 @@ static_assert([]{
 	auto defender = make_team<generation>({
 		{
 			.species = Species::Shuckle,
-			.nature = Nature::Calm,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Calm,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi)
+				),
+			},
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto pokemon = defender.pokemon();

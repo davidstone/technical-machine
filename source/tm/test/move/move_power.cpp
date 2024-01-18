@@ -65,15 +65,17 @@ constexpr auto attacker() {
 			.gender = Gender::male,
 			.item = Item::Rock_Incense,
 			.ability = Ability::Rivalry,
-			.nature = Nature::Impish,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			),
+			.stats = {
+				.nature = Nature::Impish,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				),
+			},
 			.moves = {{
 				move,
 			}}
@@ -97,6 +99,9 @@ constexpr auto defender() {
 			.species = Species::Combee,
 			.level = Level(1_bi),
 			.gender = Gender::male,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	auto pokemon = team.pokemon();

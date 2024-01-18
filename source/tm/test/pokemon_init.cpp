@@ -5,6 +5,7 @@
 
 export module tm.test.pokemon_init;
 
+import tm.move.initial_move;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move;
 import tm.move.move_name;
@@ -12,6 +13,7 @@ import tm.move.move_names;
 import tm.move.regular_moves;
 
 import tm.pokemon.happiness;
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.nickname;
@@ -40,21 +42,6 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export template<Generation generation>
-struct PokemonInit {
-	Species species;
-	Nickname nickname = to_string(species);
-	Level level = Level(100_bi);
-	Gender gender = Gender::genderless;
-	Item item = Item::None;
-	Ability ability = Ability::Honey_Gather;
-	Nature nature = Nature::Hardy;
-	DVsOrIVs<special_style_for(generation)> ivs = max_dvs_or_ivs<special_style_for(generation)>;
-	decltype(default_evs<special_style_for(generation)>) evs = default_evs<special_style_for(generation)>;
-	MoveNames moves = {{MoveName::Tackle}};
-	Happiness happiness = Happiness();
-};
-
 export struct SeenPokemonInit {
 	Species species;
 	Nickname nickname = to_string(species);
@@ -63,22 +50,18 @@ export struct SeenPokemonInit {
 };
 
 export template<Generation generation>
-constexpr auto make_pokemon = [](PokemonInit<generation> const pokemon) {
+constexpr auto make_pokemon = [](InitialPokemon<special_style_for(generation)> const pokemon) {
 	return Pokemon<generation>(
 		pokemon.species,
 		pokemon.level,
 		pokemon.gender,
 		pokemon.item,
 		pokemon.ability,
-		CombinedStatsFor<generation>(
-			pokemon.nature,
-			pokemon.ivs,
-			pokemon.evs
-		),
+		pokemon.stats,
 		RegularMoves(containers::transform(
 			pokemon.moves,
-			[](MoveName const move) {
-				return Move(generation, move);
+			[](InitialMove const move) {
+				return Move(generation, move.name, move.pp_ups);
 			}
 		)),
 		pokemon.happiness
@@ -86,7 +69,7 @@ constexpr auto make_pokemon = [](PokemonInit<generation> const pokemon) {
 };
 
 export template<Generation generation>
-constexpr auto make_known_pokemon = [](PokemonInit<generation> const pokemon) {
+constexpr auto make_known_pokemon = [](InitialPokemon<special_style_for(generation)> const pokemon) {
 	return KnownPokemon<generation>(
 		pokemon.species,
 		pokemon.nickname,
@@ -94,15 +77,11 @@ constexpr auto make_known_pokemon = [](PokemonInit<generation> const pokemon) {
 		pokemon.gender,
 		pokemon.item,
 		pokemon.ability,
-		CombinedStatsFor<generation>(
-			pokemon.nature,
-			pokemon.ivs,
-			pokemon.evs
-		),
+		pokemon.stats,
 		RegularMoves(containers::transform(
 			pokemon.moves,
-			[](MoveName const move) {
-				return Move(generation, move);
+			[](InitialMove const move) {
+				return Move(generation, move.name, move.pp_ups);
 			}
 		)),
 		pokemon.happiness
@@ -120,7 +99,7 @@ constexpr auto make_seen_pokemon(SeenPokemonInit const pokemon) {
 }
 
 export template<Generation generation, std::size_t size>
-constexpr auto make_team(containers::c_array<PokemonInit<generation>, size> const & init) {
+constexpr auto make_team(containers::c_array<InitialPokemon<special_style_for(generation)>, size> const & init) {
 	return Team<generation>(containers::transform(
 		std::span(init),
 		make_pokemon<generation>
@@ -128,7 +107,7 @@ constexpr auto make_team(containers::c_array<PokemonInit<generation>, size> cons
 }
 
 export template<Generation generation, std::size_t size>
-constexpr auto make_known_team(containers::c_array<PokemonInit<generation>, size> const & init) {
+constexpr auto make_known_team(containers::c_array<InitialPokemon<special_style_for(generation)>, size> const & init) {
 	return KnownTeam<generation>(containers::transform(
 		std::span(init),
 		make_known_pokemon<generation>

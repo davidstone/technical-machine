@@ -12,7 +12,10 @@ import tm.clients.teams;
 import tm.move.move_name;
 import tm.move.move_result;
 
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.species;
+
+import tm.stat.stat_style;
 
 import tm.test.pokemon_init;
 import tm.test.usage_bytes;
@@ -32,7 +35,7 @@ using namespace bounded::literal;
 
 template<Generation generation, std::size_t known_size, std::size_t seen_size>
 auto make_battle(
-	containers::c_array<PokemonInit<generation>, known_size> const & known,
+	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> const & known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
 	auto battle = make_client_battle(
@@ -129,9 +132,15 @@ TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
 		{
 			{
 				.species = Species::Bulbasaur,
+				.moves = {{
+					MoveName::Tackle,
+				}}
 			},
 			{
 				.species = Species::Jynx,
+				.moves = {{
+					MoveName::Tackle,
+				}}
 			},
 		},
 		{

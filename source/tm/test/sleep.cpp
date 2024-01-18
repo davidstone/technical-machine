@@ -64,6 +64,9 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 	auto defender = make_team<generation>({
 		{
 			.species = Species::Gyarados,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	defender.pokemon().switch_in(environment);

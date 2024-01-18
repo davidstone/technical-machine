@@ -42,6 +42,9 @@ static_assert([]{
 	auto other = make_team<generation>({
 		{
 			.species = Species::Smeargle,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -66,6 +69,9 @@ static_assert([]{
 		},
 		{
 			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	user.pokemon().switch_in(environment);
@@ -73,6 +79,9 @@ static_assert([]{
 	auto other = make_team<generation>({
 		{
 			.species = Species::Smeargle,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -136,6 +145,9 @@ static_assert([]{
 		},
 		{
 			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	user.pokemon().switch_in(environment);
@@ -143,6 +155,9 @@ static_assert([]{
 	auto other = make_team<generation>({
 		{
 			.species = Species::Smeargle,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	other.pokemon().switch_in(environment);
@@ -187,6 +202,9 @@ static_assert([]{
 		},
 		{
 			.species = Species::Tauros,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	user.pokemon().switch_in(environment);

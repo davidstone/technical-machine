@@ -37,6 +37,9 @@ static_assert([] {
 	auto team1 = make_team<generation>({
 		{
 			.species = Species::Blissey,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	team1.pokemon().switch_in(environment);
@@ -45,6 +48,9 @@ static_assert([] {
 	auto team2 = make_team<generation>({
 		{
 			.species = Species::Blissey,
+			.moves = {{
+				MoveName::Tackle,
+			}}
 		},
 	});
 	team2.pokemon().switch_in(environment);

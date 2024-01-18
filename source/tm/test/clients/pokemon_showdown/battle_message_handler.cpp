@@ -32,11 +32,14 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_result;
 
+import tm.pokemon.initial_pokemon;
 import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
+
+import tm.stat.stat_style;
 
 import tm.status.status_name;
 
@@ -73,7 +76,7 @@ using namespace std::string_view_literals;
 
 template<Generation generation, std::size_t known_size, std::size_t seen_size>
 auto make_init(
-	containers::c_array<PokemonInit<generation>, known_size> const & known,
+	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> const & known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
 	auto teams = [&] {
@@ -178,8 +181,8 @@ TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemo
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
-			{.species = Species::Pikachu},
-			{.species = Species::Eevee},
+			{.species = Species::Pikachu, .moves = {{MoveName::Tackle}}},
+			{.species = Species::Eevee, .moves = {{MoveName::Tackle}}},
 		},
 		{
 			{.species = Species::Bulbasaur},
@@ -290,6 +293,7 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			},
 			{
 				.species = Species::Bulbasaur,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -370,7 +374,10 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 				.species = Species::Smeargle,
 				.moves = {{MoveName::Baton_Pass}}
 			},
-			{.species = Species::Eevee},
+			{
+				.species = Species::Eevee,
+				.moves = {{MoveName::Tackle}}
+			},
 		},
 		{
 			{.species = Species::Bulbasaur},
@@ -440,6 +447,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			},
 			{
 				.species = Species::Tauros,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -513,6 +521,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			},
 			{
 				.species = Species::Tauros,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -583,9 +592,11 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			},
 			{
 				.species = Species::Shedinja,
+				.moves = {{MoveName::Tackle}}
 			},
 			{
 				.species = Species::Bulbasaur,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -708,6 +719,7 @@ TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
 		{
 			{
 				.species = Species::Smeargle,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -736,9 +748,11 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		{
 			{
 				.species = Species::Bulbasaur,
+				.moves = {{MoveName::Tackle}}
 			},
 			{
 				.species = Species::Jynx,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{
@@ -1072,6 +1086,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			},
 			{
 				.species = Species::Shedinja,
+				.moves = {{MoveName::Tackle}}
 			},
 		},
 		{

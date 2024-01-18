@@ -59,6 +59,9 @@ TEST_CASE("Perish Song", "[Battle]") {
 			},
 			{
 				.species = Species::Regice,
+				.moves = {{
+					MoveName::Tackle,
+				}}
 			},
 		}),
 		make_seen_team<generation>({
