@@ -10,7 +10,6 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.power;
-import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.species;

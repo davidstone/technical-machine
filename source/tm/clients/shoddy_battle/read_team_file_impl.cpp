@@ -18,7 +18,6 @@ import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.move_names;
 import tm.move.pp;
-import tm.move.regular_moves;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;

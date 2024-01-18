@@ -11,10 +11,8 @@ export module tm.ps_usage_stats.usage_stats;
 
 import tm.clients.ps.parsed_team;
 
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_names;
-import tm.move.regular_moves;
 
 import tm.pokemon.species;
 

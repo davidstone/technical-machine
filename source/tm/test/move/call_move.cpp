@@ -9,11 +9,9 @@
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.legal_selections;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;
-import tm.move.regular_moves;
 import tm.move.side_effects;
 import tm.move.used_move;
 

@@ -9,7 +9,6 @@ import tm.clients.turn_count;
 
 import tm.move.move_name;
 import tm.move.move_result;
-import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;

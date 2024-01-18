@@ -15,7 +15,6 @@ import tm.clients.po.invalid_team_file;
 
 import tm.move.initial_move;
 import tm.move.max_moves_per_pokemon;
-import tm.move.pp;
 
 import tm.pokemon.happiness;
 import tm.pokemon.initial_pokemon;

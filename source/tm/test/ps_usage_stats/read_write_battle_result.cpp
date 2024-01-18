@@ -13,9 +13,7 @@ import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.battle_result_writer;
 import tm.ps_usage_stats.rating;
 
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.species;

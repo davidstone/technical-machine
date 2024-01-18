@@ -13,7 +13,6 @@ module;
 export module tm.test.string_conversion;
 
 import tm.move.initial_move;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_names;
 

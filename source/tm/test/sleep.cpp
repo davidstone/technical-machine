@@ -8,7 +8,6 @@
 
 import tm.move.actual_damage;
 import tm.move.call_move;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;

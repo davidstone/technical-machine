@@ -10,7 +10,6 @@ import tm.clients.check_weathers_match;
 import tm.clients.teams;
 
 import tm.move.known_move;
-import tm.move.move;
 import tm.move.move_cures_target_status;
 import tm.move.move_name;
 import tm.move.move_result;

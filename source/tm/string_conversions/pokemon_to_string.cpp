@@ -9,8 +9,6 @@ module;
 
 export module tm.string_conversions.pokemon_to_string;
 
-import tm.move.regular_moves;
-
 import tm.pokemon.any_pokemon;
 import tm.pokemon.hp_ratio;
 

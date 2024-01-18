@@ -5,6 +5,8 @@
 
 export module tm.pokemon.any_pokemon;
 
+export import tm.operators;
+
 import std_module;
 
 namespace technicalmachine {

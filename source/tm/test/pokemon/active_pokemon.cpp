@@ -9,7 +9,6 @@ module;
 
 export module tm.test.pokemon.active_pokemon;
 
-import tm.move.move;
 import tm.move.move_name;
 
 import tm.pokemon.active_pokemon;

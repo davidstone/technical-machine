@@ -7,7 +7,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 import tm.move.actual_damage;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_result;
 import tm.move.used_move;

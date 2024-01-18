@@ -14,7 +14,6 @@ import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.state;
 
-import tm.move.move;
 import tm.move.move_name;
 
 import tm.pokemon.level;

@@ -9,10 +9,8 @@ import tm.can_execute_move;
 
 import tm.move.initial_move;
 import tm.move.legal_selections;
-import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_names;
-import tm.move.regular_moves;
 
 import tm.pokemon.faint;
 import tm.pokemon.level;

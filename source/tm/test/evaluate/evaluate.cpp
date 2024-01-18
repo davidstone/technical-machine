@@ -5,9 +5,7 @@
 
 import tm.evaluate.evaluate;
 
-import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.change_hp;
 import tm.pokemon.level;

@@ -10,8 +10,6 @@ import tm.clients.ps.client;
 
 import tm.evaluate.depth;
 
-import tm.move.move;
-
 import tm.environment;
 import tm.get_directory;
 import tm.load_settings_file;
