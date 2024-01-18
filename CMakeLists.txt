@@ -643,6 +643,7 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/stat/calculate.cpp
 		source/tm/test/stat/calculate_ivs_and_evs.cpp
+		source/tm/test/stat/calculate_speed.cpp
 
 		source/tm/test/status/status.cpp
 		

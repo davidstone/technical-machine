@@ -3,7 +3,9 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.test.stat.calculate;
+export module tm.test.stat.calculate_speed;
+
+import tm.move.move_name;
 
 import tm.pokemon.species;
 
@@ -17,6 +19,7 @@ import tm.ability;
 import tm.environment;
 import tm.generation;
 import tm.item;
+import tm.team;
 
 import bounded;
 
@@ -35,15 +38,18 @@ static_assert([]{
 			.species = Species::Regieleki,
 			.item = Item::Choice_Scarf,
 			.ability = Ability::Swift_Swim,
-			.nature = Nature::Timid,
-			.evs = EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi)
-			),
+			.stats = {
+				.nature = Nature::Timid,
+				.evs = EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi)
+				),
+			},
+			.moves = {{ MoveName::Tackle }},
 		},
 	}});
 	auto pokemon = team.pokemon();
