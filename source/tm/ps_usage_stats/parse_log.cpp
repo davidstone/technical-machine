@@ -19,7 +19,6 @@ import tm.move.move_name;
 
 import tm.pokemon.happiness;
 import tm.pokemon.level;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.ps_usage_stats.battle_result;

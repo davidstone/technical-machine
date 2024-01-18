@@ -13,7 +13,6 @@ import tm.move.power;
 import tm.move.regular_moves;
 
 import tm.pokemon.level;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;

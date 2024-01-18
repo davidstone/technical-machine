@@ -11,7 +11,6 @@ import tm.move.regular_moves;
 
 import tm.pokemon.change_hp;
 import tm.pokemon.level;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.ability;

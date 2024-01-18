@@ -21,7 +21,6 @@ import tm.move.side_effects;
 
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.ability;

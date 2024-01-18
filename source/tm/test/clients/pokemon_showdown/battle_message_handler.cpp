@@ -33,10 +33,8 @@ import tm.move.move_name;
 import tm.move.move_result;
 
 import tm.pokemon.initial_pokemon;
-import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
 import tm.stat.stat_style;

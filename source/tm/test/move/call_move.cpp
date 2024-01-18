@@ -18,7 +18,6 @@ import tm.move.side_effects;
 import tm.move.used_move;
 
 import tm.pokemon.level;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;

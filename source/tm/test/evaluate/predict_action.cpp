@@ -18,7 +18,6 @@ import tm.move.move;
 import tm.move.move_name;
 
 import tm.pokemon.level;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.ability;

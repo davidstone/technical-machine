@@ -19,7 +19,6 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.regular_moves;
 
-import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.species;
 
