@@ -55,7 +55,7 @@ constexpr auto damage = ActualDamage::Unknown{};
 TEST_CASE("Baton Pass", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
@@ -70,10 +70,10 @@ TEST_CASE("Baton Pass", "[call_move]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gengar,
 			.item = Item::Choice_Specs,
@@ -88,7 +88,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	CHECK(
@@ -172,7 +172,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 TEST_CASE("Wonder Guard", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.moves = {{
@@ -187,10 +187,10 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Shedinja,
 			.ability = Ability::Wonder_Guard,
@@ -198,7 +198,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(environment);
 
@@ -232,24 +232,24 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 TEST_CASE("Fire move thaws target", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Charmander,
 			.moves = {{
 				MoveName::Ember,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Vaporeon,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto vaporeon = defender.pokemon();
 	vaporeon.switch_in(environment);
 	vaporeon.set_status(StatusName::freeze, environment);
@@ -295,7 +295,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Registeel,
 			.moves = {{
@@ -303,19 +303,19 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 				MoveName::Substitute,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 	user.pokemon().set_hp(environment, 5_bi);
 	user.pokemon().rest(environment, false);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Bulbasaur,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	CHECK(user.pokemon().substitute().hp() == 0_bi);
@@ -346,17 +346,17 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 TEST_CASE("Static paralyzes", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Sentret,
 			.moves = {{
 				MoveName::Scratch,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Electabuzz,
 			.ability = Ability::Static,
@@ -364,7 +364,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 				MoveName::Scratch,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	call_move(
@@ -391,7 +391,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Registeel,
 			.moves = {{
@@ -404,17 +404,17 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Ninjask,
 			.moves = {{
 				MoveName::Substitute,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	{
@@ -459,7 +459,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 TEST_CASE("Perish Song", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Misdreavus,
 			.moves = {{
@@ -472,10 +472,10 @@ TEST_CASE("Perish Song", "[call_move]") {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Starmie,
 			.moves = {{
@@ -488,7 +488,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	auto call_perish_song = [&] {

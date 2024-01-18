@@ -63,7 +63,7 @@ namespace max_physical_damage {
 constexpr auto move = MoveName::Rollout;
 
 constexpr auto attacker() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Shuckle,
 			.item = Item::Metronome,
@@ -83,7 +83,7 @@ constexpr auto attacker() {
 				move,
 			}}
 		},
-	});
+	}});
 
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
@@ -100,7 +100,7 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Combee,
 			.level = Level(1_bi),
@@ -108,7 +108,7 @@ constexpr auto defender() {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
@@ -140,7 +140,7 @@ constexpr auto environment() {
 constexpr auto move = MoveName::Blast_Burn;
 
 constexpr auto attacker() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Deoxys_Attack,
 			.item = Item::Metronome,
@@ -160,7 +160,7 @@ constexpr auto attacker() {
 				move,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(environment());
 	pokemon.set_hp(environment(), 1_bi);
@@ -178,7 +178,7 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Paras,
 			.level = Level(1_bi),
@@ -187,7 +187,7 @@ constexpr auto defender() {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(environment());
 	for (auto const _ [[maybe_unused]] : containers::integer_range(3_bi)) {

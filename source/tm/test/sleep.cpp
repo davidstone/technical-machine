@@ -49,7 +49,7 @@ constexpr auto damage = ActualDamage::Unknown{};
 TEST_CASE("Sleep Talk", "[Sleep]") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Zapdos,
 			.moves = {{
@@ -57,18 +57,18 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 	attacker.pokemon().set_status(StatusName::sleep, environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	call_move(
@@ -158,7 +158,7 @@ struct Sleeper {
 
 private:
 	static auto make_sleeper_team(Environment & environment) -> Team<generation> {
-		auto team = make_team<generation>({
+		auto team = Team<generation>({{
 			{
 				.species = Species::Blissey,
 				.moves = {{
@@ -167,19 +167,19 @@ private:
 					MoveName::Wish,
 				}}
 			},
-		});
+		}});
 		team.pokemon().switch_in(environment);
 		return team;
 	}
 	static auto make_other_team(Environment & environment) -> Team<generation> {
-		auto team = make_team<generation>({
+		auto team = Team<generation>({{
 			{
 				.species = Species::Blissey,
 				.moves = {{
 					MoveName::Seismic_Toss,
 				}}
 			},
-		});
+		}});
 		team.pokemon().switch_in(environment);
 		return team;
 	}

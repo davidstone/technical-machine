@@ -16,6 +16,7 @@ import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
 import tm.item;
+import tm.team;
 
 import bounded;
 
@@ -28,7 +29,7 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Misdreavus,
 			.item = Item::Choice_Specs,
@@ -36,17 +37,17 @@ static_assert([]{
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	return
@@ -59,7 +60,7 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
@@ -73,17 +74,17 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	return
@@ -100,24 +101,24 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Magikarp,
 			.moves = {{
 				MoveName::Splash,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Magikarp,
 			.moves = {{
 				MoveName::Splash,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	user.pokemon().successfully_use_move(MoveName::Splash);
@@ -136,7 +137,7 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
@@ -149,17 +150,17 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	user.pokemon().successfully_use_move(MoveName::Baton_Pass);
@@ -193,7 +194,7 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = {{
@@ -206,17 +207,17 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Golem,
 			.moves = {{
 				MoveName::Earthquake,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	user.pokemon().successfully_use_move(MoveName::Thunderbolt);
@@ -244,7 +245,7 @@ static_assert([]{
 
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = {{
@@ -257,17 +258,17 @@ static_assert([]{
 				MoveName::Hyper_Beam,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Golem,
 			.moves = {{
 				MoveName::Earthquake,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	user.pokemon().successfully_use_move(MoveName::Thunderbolt);

@@ -89,7 +89,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -101,10 +101,10 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.item = Item::Leftovers,
@@ -116,7 +116,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 				MoveName::Taunt,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	{
@@ -125,7 +125,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 		CHECK(best_move.score == victory<generation>);
 	}
 	
-	auto team3 = make_team<generation>({
+	auto team3 = Team<generation>({{
 		{
 			.species = Species::Shedinja,
 			.item = Item::Lum_Berry,
@@ -137,7 +137,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 				MoveName::Will_O_Wisp,
 			}}
 		},
-	});
+	}});
 	team3.pokemon().switch_in(environment);
 	
 	{
@@ -153,7 +153,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 	
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -165,10 +165,10 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Swampert,
 			.item = Item::Leftovers,
@@ -178,7 +178,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 				MoveName::Ice_Beam,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
@@ -191,7 +191,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Charizard,
 			.item = Item::Salac_Berry,
@@ -203,10 +203,10 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 				MoveName::Double_Edge,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Mew,
 			.item = Item::Leftovers,
@@ -215,7 +215,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 				MoveName::Soft_Boiled,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
@@ -229,7 +229,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(11_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Hippopotas,
 			.item = Item::Leftovers,
@@ -250,13 +250,13 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 				MoveName::Crunch,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Wobbuffet,
 			.item = Item::Leftovers,
@@ -276,7 +276,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 				MoveName::Counter,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
@@ -291,7 +291,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	auto environment = Environment();
 	constexpr auto depth = Depth(1_bi, 0_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.item = Item::Leftovers,
@@ -309,10 +309,10 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 				MoveName::Psycho_Cut,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Misdreavus,
 			.item = Item::Choice_Specs,
@@ -321,7 +321,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	{
@@ -372,7 +372,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = Depth(3_bi, 0_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
@@ -386,10 +386,10 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 				MoveName::Psycho_Cut,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Misdreavus,
 			.item = Item::Choice_Specs,
@@ -397,7 +397,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
@@ -412,7 +412,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	auto environment = Environment();
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Magikarp,
 			.level = Level(5_bi),
@@ -437,10 +437,10 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
@@ -451,7 +451,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 				MoveName::Ice_Beam,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	{
@@ -488,7 +488,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(3_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Latias,
 			.item = Item::Leftovers,
@@ -510,10 +510,10 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
@@ -534,7 +534,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 				MoveName::Rest,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
@@ -547,7 +547,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	auto environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -557,10 +557,10 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.item = Item::Life_Orb,
@@ -569,7 +569,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 				MoveName::Earthquake,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	constexpr auto keep_status = false;
@@ -662,7 +662,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Alakazam,
 			.moves = {{
@@ -671,17 +671,17 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gengar,
 			.moves = {{
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);
 	defender.pokemon().switch_in(environment);
@@ -719,7 +719,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -731,10 +731,10 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.item = Item::Leftovers,
@@ -746,7 +746,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 				MoveName::Taunt,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	{
@@ -755,7 +755,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 		CHECK(best_move.score == Catch::Approx(victory<generation>));
 	}
 	
-	auto team3 = make_team<generation>({
+	auto team3 = Team<generation>({{
 		{
 			.species = Species::Shedinja,
 			.item = Item::Lum_Berry,
@@ -767,7 +767,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 				MoveName::Will_O_Wisp,
 			}}
 		},
-	});
+	}});
 	team3.pokemon().switch_in(environment);
 	
 	{
@@ -783,7 +783,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 	
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -795,10 +795,10 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Swampert,
 			.item = Item::Leftovers,
@@ -808,7 +808,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 				MoveName::Ice_Beam,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
@@ -821,7 +821,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Charizard,
 			.item = Item::Salac_Berry,
@@ -833,10 +833,10 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 				MoveName::Double_Edge,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Mew,
 			.item = Item::Leftovers,
@@ -845,7 +845,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 				MoveName::Soft_Boiled,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
@@ -859,7 +859,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(11_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Hippopotas,
 			.item = Item::Leftovers,
@@ -880,13 +880,13 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 				MoveName::Crunch,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Wobbuffet,
 			.item = Item::Leftovers,
@@ -906,7 +906,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 				MoveName::Counter,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
@@ -921,7 +921,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = Depth(3_bi, 0_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Smeargle,
 			.moves = {{
@@ -935,10 +935,10 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 				MoveName::Psycho_Cut,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Misdreavus,
 			.item = Item::Choice_Specs,
@@ -946,7 +946,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
@@ -961,7 +961,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 	auto environment = Environment();
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Magikarp,
 			.level = Level(5_bi),
@@ -986,10 +986,10 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
@@ -1000,7 +1000,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 				MoveName::Ice_Beam,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	{
@@ -1035,7 +1035,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 	auto const environment = Environment();
 	constexpr auto depth = make_depth(3_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Latias,
 			.item = Item::Leftovers,
@@ -1057,10 +1057,10 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.item = Item::Leftovers,
@@ -1081,7 +1081,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 				MoveName::Rest,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
@@ -1094,7 +1094,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	auto environment = Environment();
 	constexpr auto depth = make_depth(1_bi);
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.item = Item::Leftovers,
@@ -1104,10 +1104,10 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.item = Item::Life_Orb,
@@ -1116,7 +1116,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 				MoveName::Earthquake,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	constexpr auto keep_status = false;
@@ -1209,7 +1209,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
 
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = Species::Alakazam,
 			.moves = {{
@@ -1218,17 +1218,17 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 				MoveName::Recover,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Gengar,
 			.moves = {{
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);
 	defender.pokemon().switch_in(environment);

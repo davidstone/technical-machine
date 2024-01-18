@@ -32,7 +32,7 @@ static_assert([]{
 	auto environment = Environment();
 	environment.activate_rain_from_move(false);
 
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Regieleki,
 			.item = Item::Choice_Scarf,
@@ -47,7 +47,7 @@ static_assert([]{
 				EV(252_bi)
 			),
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 
 	pokemon.switch_in(environment);

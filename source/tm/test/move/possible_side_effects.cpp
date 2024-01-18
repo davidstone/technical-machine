@@ -19,6 +19,7 @@ import tm.test.pokemon_init;
 
 import tm.environment;
 import tm.generation;
+import tm.team;
 
 import bounded;
 import containers;
@@ -30,22 +31,22 @@ using namespace bounded::literal;
 TEST_CASE("Recover", "[possible_side_effects]") {
 	constexpr auto generation = Generation::four;
 	auto const environment = Environment();
-	auto const user = make_team<generation>({
+	auto const user = Team<generation>({{
 		{
 			.species = Species::Starmie,
 			.moves = {{
 				MoveName::Recover,
 			}}
 		},
-	});
-	auto const other = make_team<generation>({
+	}});
+	auto const other = Team<generation>({{
 		{
 			.species = Species::Bulbasaur,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 
 	auto const recover_side_effects = possible_side_effects(
 		MoveName::Recover,

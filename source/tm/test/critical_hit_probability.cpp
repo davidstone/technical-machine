@@ -31,7 +31,7 @@ using namespace bounded::literal;
 template<Generation generation>
 constexpr auto individual_test(Species const species, MoveName const move_name, Item const item, bool const focus_energy, double const rate) -> bool {
 	auto environment = Environment();
-	auto attacker = make_team<generation>({
+	auto attacker = Team<generation>({{
 		{
 			.species = species,
 			.item = item,
@@ -39,7 +39,7 @@ constexpr auto individual_test(Species const species, MoveName const move_name, 
 				move_name,
 			}}
 		},
-	});
+	}});
 	attacker.pokemon().switch_in(environment);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();

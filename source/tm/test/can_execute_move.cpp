@@ -47,7 +47,7 @@ constexpr auto generation = Generation::four;
 static_assert([]{
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.moves = {{
@@ -57,10 +57,10 @@ static_assert([]{
 				MoveName::Shadow_Ball,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.moves = {{
@@ -70,7 +70,7 @@ static_assert([]{
 				MoveName::Taunt,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	auto const selections = get_legal_selections(user, other, environment);
@@ -94,7 +94,7 @@ constexpr auto remove_all_pp(auto const pokemon, MoveName const move, Environmen
 static_assert([]{
 	auto environment = Environment();
 
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = {{
@@ -102,18 +102,18 @@ static_assert([]{
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 	remove_all_pp(user.pokemon(), MoveName::Thunder, environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	auto const selections = get_legal_selections(user, other, environment);
@@ -125,25 +125,25 @@ static_assert([]{
 	auto environment = Environment();
 
 	constexpr auto moves = InitialMoves({MoveName::Thunder, MoveName::Thunderbolt});
-	auto user = make_team<generation>({
+	auto user = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = moves
 		},
-	});
+	}});
 	user.pokemon().switch_in(environment);
 	for (auto const move : moves) {
 		remove_all_pp(user.pokemon(), move.name, environment);
 	}
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Pikachu,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	auto const selections = get_legal_selections(user, other, environment);
@@ -154,7 +154,7 @@ static_assert([]{
 static_assert([]{
 	auto environment = Environment();
 
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Slugma,
 			.moves = {{
@@ -167,17 +167,17 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	team.pokemon().switch_in(environment);
 
-	auto other = make_team<generation>({
+	auto other = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	other.pokemon().switch_in(environment);
 
 	faint(team.pokemon());

@@ -66,7 +66,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.ability = Ability::Volt_Absorb,
@@ -74,10 +74,10 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Snorlax,
 			.ability = Ability::Thick_Fat,
@@ -85,7 +85,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 				MoveName::Snore,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
@@ -97,7 +97,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Jolteon,
 			.ability = Ability::Volt_Absorb,
@@ -106,10 +106,10 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 				MoveName::Hidden_Power,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Gyarados,
 			.ability = Ability::Intimidate,
@@ -117,7 +117,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 				MoveName::Earthquake,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
@@ -129,7 +129,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.ability = Ability::Pressure,
@@ -138,10 +138,10 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 				MoveName::Ice_Beam,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Latias,
 			.ability = Ability::Levitate,
@@ -150,7 +150,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 				MoveName::Dragon_Pulse,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
@@ -166,7 +166,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Suicune,
 			.ability = Ability::Pressure,
@@ -176,10 +176,10 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 				MoveName::Roar,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Latias,
 			.ability = Ability::Levitate,
@@ -188,7 +188,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 				MoveName::Dragon_Pulse,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
@@ -204,7 +204,7 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Magneton,
 			.ability = Ability::Magnet_Pull,
@@ -229,10 +229,10 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 				MoveName::Body_Slam,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Skarmory,
 			.ability = Ability::Sturdy,
@@ -260,7 +260,7 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 				MoveName::Roar,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);

@@ -59,7 +59,7 @@ namespace max_physical_power {
 constexpr auto move = MoveName::Rollout;
 
 constexpr auto attacker() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Shuckle,
 			.gender = Gender::male,
@@ -80,7 +80,7 @@ constexpr auto attacker() {
 				move,
 			}}
 		},
-	});
+	}});
 
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
@@ -94,7 +94,7 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Combee,
 			.level = Level(1_bi),
@@ -103,7 +103,7 @@ constexpr auto defender() {
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
 	return team;
@@ -124,7 +124,7 @@ namespace max_special_power {
 constexpr auto move = MoveName::Surf;
 
 constexpr auto attacker() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Deoxys_Attack,
 			.item = Item::Wave_Incense,
@@ -133,7 +133,7 @@ constexpr auto attacker() {
 				move,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
 	pokemon.switch_in(environment);
@@ -142,7 +142,7 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = make_team<generation>({
+	auto team = Team<generation>({{
 		{
 			.species = Species::Blastoise,
 			.level = Level(1_bi),
@@ -151,7 +151,7 @@ constexpr auto defender() {
 				MoveName::Dive,
 			}}
 		},
-	});
+	}});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
 	pokemon.switch_in(environment);

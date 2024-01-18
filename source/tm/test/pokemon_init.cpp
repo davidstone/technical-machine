@@ -60,14 +60,6 @@ constexpr auto make_seen_pokemon(SeenPokemonInit const pokemon) {
 }
 
 export template<Generation generation, std::size_t size>
-constexpr auto make_team(containers::c_array<InitialPokemon<special_style_for(generation)>, size> const & init) {
-	return Team<generation>(containers::transform(
-		std::span(init),
-		bounded::construct<Pokemon<generation>>
-	));
-}
-
-export template<Generation generation, std::size_t size>
 constexpr auto make_seen_team(containers::c_array<SeenPokemonInit, size> const & init) {
 	auto team = SeenTeam<generation>(bounded::constant<size>);
 	for (SeenPokemonInit const pokemon : init) {

@@ -30,6 +30,7 @@ import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.team;
 
 import bounded;
 import containers;
@@ -115,7 +116,7 @@ static_assert([]{
 static_assert([]{
 	constexpr auto environment = Environment();
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Shuckle,
 			.ability = Ability::Marvel_Scale,
@@ -134,7 +135,7 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	defender.pokemon().switch_in(environment);
 
 	defender.pokemon().stages()[BoostableStat::def] += 6_bi;
@@ -148,7 +149,7 @@ static_assert([]{
 static_assert([]{
 	constexpr auto environment = Environment();
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Combee,
 			.level = Level(1_bi),
@@ -156,7 +157,7 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto pokemon = defender.pokemon();
 
 	pokemon.switch_in(environment);
@@ -173,7 +174,7 @@ static_assert([]{
 	auto environment = Environment();
 	environment.activate_sand_from_move(false);
 
-	auto defender = make_team<generation>({
+	auto defender = Team<generation>({{
 		{
 			.species = Species::Shuckle,
 			.stats = {
@@ -191,7 +192,7 @@ static_assert([]{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	auto pokemon = defender.pokemon();
 
 	pokemon.switch_in(environment);

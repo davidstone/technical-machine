@@ -34,25 +34,25 @@ constexpr auto generation = Generation::four;
 static_assert([] {
 	auto environment = Environment();
 
-	auto team1 = make_team<generation>({
+	auto team1 = Team<generation>({{
 		{
 			.species = Species::Blissey,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	team1.pokemon().switch_in(environment);
 	change_hp(team1.pokemon(), environment, -50_bi);
 
-	auto team2 = make_team<generation>({
+	auto team2 = Team<generation>({{
 		{
 			.species = Species::Blissey,
 			.moves = {{
 				MoveName::Tackle,
 			}}
 		},
-	});
+	}});
 	team2.pokemon().switch_in(environment);
 
 	constexpr auto evaluate = Evaluate<generation>({
