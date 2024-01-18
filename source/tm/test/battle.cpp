@@ -50,7 +50,7 @@ constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> 
 TEST_CASE("Perish Song", "[Battle]") {
 	constexpr auto generation = Generation::four;
 	auto battle = Battle<generation>(
-		make_known_team<generation>({
+		KnownTeam<generation>({{
 			{
 				.species = Species::Misdreavus,
 				.moves = {{
@@ -63,7 +63,7 @@ TEST_CASE("Perish Song", "[Battle]") {
 					MoveName::Tackle,
 				}}
 			},
-		}),
+		}}),
 		make_seen_team<generation>({
 			{.species = Species::Starmie},
 		})
@@ -101,14 +101,14 @@ TEST_CASE("Perish Song", "[Battle]") {
 TEST_CASE("Accurate HP after move", "[Battle]") {
 	constexpr auto generation = Generation::one;
 	auto battle = Battle<generation>(
-		make_known_team<generation>({
+		KnownTeam<generation>({{
 			{
 				.species = Species::Bulbasaur,
 				.moves = {{
 					MoveName::Tackle,
 				}}
 			},
-		}),
+		}}),
 		make_seen_team<generation>({
 			{
 				.species = Species::Bulbasaur,
@@ -139,7 +139,7 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 	constexpr auto generation = Generation::one;
 	auto battle = Battle<generation>(
-		make_known_team<generation>({
+		KnownTeam<generation>({{
 			{
 				.species = Species::Magikarp,
 				.moves = {{
@@ -152,7 +152,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 					MoveName::Splash,
 				}}
 			},
-		}),
+		}}),
 		make_seen_team<generation>({
 			{
 				.species = Species::Jolteon,

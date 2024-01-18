@@ -76,12 +76,12 @@ using namespace std::string_view_literals;
 
 template<Generation generation, std::size_t known_size, std::size_t seen_size>
 auto make_init(
-	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> const & known,
+	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> && known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
 	auto teams = [&] {
 		return Teams<generation>{
-			make_known_team<generation>(known),
+			KnownTeam<generation>({std::move(known)}),
 			make_seen_team<generation>(seen)
 		};
 	};
