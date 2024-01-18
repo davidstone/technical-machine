@@ -92,7 +92,7 @@ TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
 	constexpr auto check = [](InitialMoves const moves, StatusName const status) {
-		auto pokemon = make_pokemon<generation>({
+		auto pokemon = Pokemon<generation>({
 			.species = Species::Mewtwo,
 			.item = Item::Leftovers,
 			.ability = Ability::Pressure,

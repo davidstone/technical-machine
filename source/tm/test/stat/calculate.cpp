@@ -48,7 +48,7 @@ static_assert([]{
 	constexpr auto environment = Environment();
 
 	auto flags = ActivePokemonFlags<generation>();
-	auto pokemon = make_pokemon<generation>({
+	auto pokemon = Pokemon<generation>({
 		.species = Species::Shuckle,
 		.item = Item::Choice_Band,
 		.ability = Ability::Pure_Power,
@@ -83,7 +83,7 @@ static_assert([]{
 	environment.activate_sun_from_move(false);
 
 	auto flags = ActivePokemonFlags<generation>();
-	auto pokemon = make_pokemon<generation>({
+	auto pokemon = Pokemon<generation>({
 		.species = Species::Deoxys_Attack,
 		.item = Item::Choice_Specs,
 		.ability = Ability::Solar_Power,

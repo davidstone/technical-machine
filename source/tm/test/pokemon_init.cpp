@@ -50,25 +50,6 @@ export struct SeenPokemonInit {
 };
 
 export template<Generation generation>
-constexpr auto make_pokemon = [](InitialPokemon<special_style_for(generation)> const pokemon) {
-	return Pokemon<generation>(
-		pokemon.species,
-		pokemon.level,
-		pokemon.gender,
-		pokemon.item,
-		pokemon.ability,
-		pokemon.stats,
-		RegularMoves(containers::transform(
-			pokemon.moves,
-			[](InitialMove const move) {
-				return Move(generation, move.name, move.pp_ups);
-			}
-		)),
-		pokemon.happiness
-	);
-};
-
-export template<Generation generation>
 constexpr auto make_known_pokemon = [](InitialPokemon<special_style_for(generation)> const pokemon) {
 	return KnownPokemon<generation>(
 		pokemon.species,
@@ -102,7 +83,7 @@ export template<Generation generation, std::size_t size>
 constexpr auto make_team(containers::c_array<InitialPokemon<special_style_for(generation)>, size> const & init) {
 	return Team<generation>(containers::transform(
 		std::span(init),
-		make_pokemon<generation>
+		bounded::construct<Pokemon<generation>>
 	));
 }
 

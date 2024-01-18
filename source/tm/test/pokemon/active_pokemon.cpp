@@ -37,7 +37,7 @@ constexpr auto generation = Generation::four;
 
 // Chesto Berry awakens from Rest
 static_assert([]{
-	auto pokemon = make_pokemon<generation>({
+	auto pokemon = Pokemon<generation>({
 		.species = Species::Charmander,
 		.item = Item::Chesto_Berry,
 		.ability = Ability::Blaze,
@@ -57,7 +57,7 @@ static_assert([]{
 
 // Chesto Berry awakens after Rest cures status
 static_assert([]{
-	auto pokemon = make_pokemon<generation>({
+	auto pokemon = Pokemon<generation>({
 		.species = Species::Charmander,
 		.item = Item::Chesto_Berry,
 		.ability = Ability::Blaze,
