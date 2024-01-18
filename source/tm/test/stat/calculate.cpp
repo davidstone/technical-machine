@@ -21,8 +21,6 @@ import tm.stat.stat_names;
 
 import tm.status.status_name;
 
-import tm.test.pokemon_init;
-
 import tm.type.type;
 
 import tm.ability;

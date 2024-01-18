@@ -10,8 +10,6 @@ import tm.move.move_name;
 
 import tm.pokemon.species;
 
-import tm.test.pokemon_init;
-
 import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;

@@ -21,8 +21,6 @@ import tm.pokemon.species;
 
 import tm.string_conversions.move_name;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.environment;
 import tm.gender;

@@ -22,8 +22,6 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 
-import tm.test.pokemon_init;
-
 import tm.type.type;
 
 import tm.ability;

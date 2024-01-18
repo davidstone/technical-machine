@@ -15,8 +15,6 @@ import tm.move.side_effects;
 
 import tm.pokemon.species;
 
-import tm.test.pokemon_init;
-
 import tm.environment;
 import tm.generation;
 import tm.team;

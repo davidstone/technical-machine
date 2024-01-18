@@ -24,8 +24,6 @@ import tm.stat.iv;
 import tm.stat.nature;
 import tm.stat.stat_style;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.gender;
 import tm.generation;

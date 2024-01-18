@@ -16,7 +16,7 @@ import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.species;
 
-import tm.test.pokemon_init;
+import tm.test.make_seen_team;
 
 import tm.ability;
 import tm.battle;

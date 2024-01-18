@@ -13,8 +13,6 @@ import tm.pokemon.level;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.critical_hit_probability;
 import tm.environment;

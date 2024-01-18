@@ -27,8 +27,6 @@ import tm.stat.nature;
 
 import tm.status.status_name;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.contact_ability_effect;
 import tm.environment;

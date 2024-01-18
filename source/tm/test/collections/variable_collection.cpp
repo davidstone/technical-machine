@@ -24,8 +24,6 @@ import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.environment;
 import tm.gender;

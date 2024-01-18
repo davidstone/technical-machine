@@ -13,8 +13,6 @@ import tm.stat.evs;
 import tm.stat.nature;
 import tm.stat.stat_names;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.environment;
 import tm.generation;

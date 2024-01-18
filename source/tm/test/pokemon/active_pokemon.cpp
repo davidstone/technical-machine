@@ -20,8 +20,6 @@ import tm.pokemon.species;
 import tm.status.clears_status;
 import tm.status.status_name;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.environment;
 import tm.gender;

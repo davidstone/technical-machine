@@ -42,8 +42,6 @@ import tm.string_conversions.status_name;
 import tm.string_conversions.type;
 import tm.string_conversions.weather;
 
-import tm.test.pokemon_init;
-
 import tm.type.type;
 
 import tm.ability;

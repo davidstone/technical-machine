@@ -17,7 +17,7 @@ import tm.pokemon.species;
 
 import tm.stat.stat_style;
 
-import tm.test.pokemon_init;
+import tm.test.make_seen_team;
 import tm.test.usage_bytes;
 
 import tm.end_of_turn_flags;

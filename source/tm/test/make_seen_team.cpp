@@ -3,36 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.test.pokemon_init;
+export module tm.test.make_seen_team;
 
-import tm.move.initial_move;
-import tm.move.max_moves_per_pokemon;
-import tm.move.move;
-import tm.move.move_name;
-import tm.move.move_names;
-import tm.move.regular_moves;
-
-import tm.pokemon.happiness;
-import tm.pokemon.initial_pokemon;
-import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.nickname;
-import tm.pokemon.pokemon;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
-import tm.stat.combined_stats;
-import tm.stat.default_evs;
-import tm.stat.iv;
-import tm.stat.nature;
-import tm.stat.stat_style;
-
 import tm.string_conversions.species;
 
-import tm.ability;
 import tm.gender;
 import tm.generation;
-import tm.item;
 import tm.team;
 
 import bounded;
@@ -49,21 +30,16 @@ export struct SeenPokemonInit {
 	Gender gender = Gender::genderless;
 };
 
-export template<Generation generation>
-constexpr auto make_seen_pokemon(SeenPokemonInit const pokemon) {
-	return SeenPokemon<generation>(
-		pokemon.species,
-		pokemon.nickname,
-		pokemon.level,
-		pokemon.gender
-	);
-}
-
 export template<Generation generation, std::size_t size>
 constexpr auto make_seen_team(containers::c_array<SeenPokemonInit, size> const & init) {
 	auto team = SeenTeam<generation>(bounded::constant<size>);
 	for (SeenPokemonInit const pokemon : init) {
-		team.add_pokemon(make_seen_pokemon<generation>(pokemon));
+		team.add_pokemon(SeenPokemon<generation>(
+			pokemon.species,
+			pokemon.nickname,
+			pokemon.level,
+			pokemon.gender
+		));
 	}
 	return team;
 }

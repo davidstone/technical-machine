@@ -45,7 +45,7 @@ import tm.status.status_name;
 
 import tm.string_conversions.team;
 
-import tm.test.pokemon_init;
+import tm.test.make_seen_team;
 
 import tm.ability;
 import tm.environment;

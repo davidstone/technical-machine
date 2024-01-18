@@ -38,8 +38,6 @@ import tm.stat.nature;
 
 import tm.status.status_name;
 
-import tm.test.pokemon_init;
-
 import tm.ability;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
