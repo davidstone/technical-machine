@@ -200,9 +200,7 @@ template<Generation generation>
 auto parsed_team_to_seen_team(PredictorTeam const parsed) -> SeenTeam<generation> {
 	auto team = SeenTeam<generation>(max_pokemon_per_team);
 	for (auto const pokemon : parsed) {
-		team.add_pokemon(SeenPokemon<generation>(
-			parsed_pokemon_to_seen_pokemon<generation>(pokemon)
-		));
+		team.add_pokemon(parsed_pokemon_to_seen_pokemon<generation>(pokemon));
 	}
 	return team;
 }
