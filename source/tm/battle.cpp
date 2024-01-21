@@ -108,7 +108,7 @@ constexpr auto ability_from_recoil(
 }
 
 template<typename PokemonType>
-constexpr auto other_move(PokemonType const other_pokemon, MoveName const user_move, ActualDamage const damage) -> OtherMove {
+constexpr auto other_move(PokemonType const other_pokemon, ActualDamage const damage) -> OtherMove {
 	auto const last_used_move = other_pokemon.last_used_move();
 	return last_used_move.moved_this_turn() ?
 		OtherMove([&]{
@@ -120,9 +120,7 @@ constexpr auto other_move(PokemonType const other_pokemon, MoveName const user_m
 			);
 			return KnownMove{move_name, type};
 		}()) :
-		OtherMove(FutureMove{
-			user_move == MoveName::Sucker_Punch and damage.did_any_damage()
-		});
+		OtherMove(FutureMove(damage.did_any_damage()));
 }
 
 export template<Generation generation>
@@ -264,7 +262,7 @@ struct Battle {
 				user_team,
 				to_used_move(move, user_team, other_team, m_environment),
 				other_team,
-				other_move(other_pokemon, move.executed, damage),
+				other_move(other_pokemon, damage),
 				m_environment,
 				status_clears,
 				damage,
