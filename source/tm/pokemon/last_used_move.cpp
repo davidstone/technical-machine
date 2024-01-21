@@ -51,20 +51,25 @@ export struct LastUsedMove {
 		});
 	}
 
-	constexpr auto unsuccessful_move(MoveName const move) & {
+	constexpr auto unsuccessful_move(MoveName const move) & -> void {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
 		m_moved_this_turn = true;
 	}
 
-	constexpr auto successful_move(MoveName const move, bool const replacing_fainted) & {
+	constexpr auto successful_move(MoveName const move) & -> void {
 		if (m_move == move) {
 			saturating_increment(m_consecutive_successes);
 		} else {
 			m_move = move;
 			m_consecutive_successes = 1_bi;
 		}
-		if (!replacing_fainted) {
+		m_moved_this_turn = true;
+	}
+
+	constexpr auto use_switch(bool const replacing_fainted_or_initial_switch) & {
+		m_move = MoveName::Switch0;
+		if (!replacing_fainted_or_initial_switch) {
 			m_moved_this_turn = true;
 		}
 	}

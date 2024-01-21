@@ -149,8 +149,7 @@ struct TeamImpl {
 		}
 
 		auto const replacement_pokemon = pokemon();
-		replacement_pokemon.switch_in(environment);
-		replacement_pokemon.successfully_use_move(to_switch(replacement), replacing_fainted);
+		replacement_pokemon.switch_in(environment, replacing_fainted);
 		apply(m_entry_hazards, replacement_pokemon, environment);
 		if (replacement_pokemon.hp().current() != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other, environment);

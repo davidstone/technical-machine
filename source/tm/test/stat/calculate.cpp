@@ -68,7 +68,7 @@ static_assert([]{
 	});
 	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
-	active_pokemon.switch_in(environment);
+	active_pokemon.switch_in(environment, true);
 
 	active_pokemon.activate_power_trick();
 	active_pokemon.stages()[BoostableStat::atk] += 6_bi;
@@ -103,7 +103,7 @@ static_assert([]{
 	});
 	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
-	active_pokemon.switch_in(environment);
+	active_pokemon.switch_in(environment, true);
 
 	active_pokemon.stages()[BoostableStat::spa] += 6_bi;
 
@@ -134,7 +134,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	defender.pokemon().stages()[BoostableStat::def] += 6_bi;
 
@@ -158,7 +158,7 @@ static_assert([]{
 	}});
 	auto pokemon = defender.pokemon();
 
-	pokemon.switch_in(environment);
+	pokemon.switch_in(environment, true);
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
@@ -193,7 +193,7 @@ static_assert([]{
 	}});
 	auto pokemon = defender.pokemon();
 
-	pokemon.switch_in(environment);
+	pokemon.switch_in(environment, true);
 
 	pokemon.stages()[BoostableStat::spd] += 6_bi;
 

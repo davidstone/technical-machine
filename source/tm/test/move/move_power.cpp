@@ -79,7 +79,7 @@ constexpr auto attacker() {
 	}});
 
 	auto pokemon = team.pokemon();
-	pokemon.switch_in(Environment());
+	pokemon.switch_in(Environment(), true);
 
 	pokemon.defense_curl();
 	for (auto const _ [[maybe_unused]] : containers::integer_range(4_bi)) {
@@ -100,8 +100,7 @@ constexpr auto defender() {
 			}}
 		},
 	}});
-	auto pokemon = team.pokemon();
-	pokemon.switch_in(Environment());
+	team.pokemon().switch_in(Environment(), true);
 	return team;
 }
 
@@ -132,7 +131,7 @@ constexpr auto attacker() {
 	}});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
-	pokemon.switch_in(environment);
+	pokemon.switch_in(environment, true);
 	pokemon.set_hp(environment, 1_bi);
 	return team;
 }
@@ -150,7 +149,7 @@ constexpr auto defender() {
 	}});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
-	pokemon.switch_in(environment);
+	pokemon.switch_in(environment, true);
 	pokemon.successfully_use_move(MoveName::Dive);
 	pokemon.use_vanish_move(environment);
 	return team;

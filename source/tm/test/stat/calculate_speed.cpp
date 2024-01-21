@@ -54,7 +54,7 @@ static_assert([]{
 	}});
 	auto pokemon = team.pokemon();
 
-	pokemon.switch_in(environment);
+	pokemon.switch_in(environment, true);
 
 	pokemon.stages()[BoostableStat::spe] += 6_bi;
 

@@ -37,7 +37,7 @@ static_assert([] {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 	change_hp(team1.pokemon(), environment, -50_bi);
 
 	auto team2 = Team<generation>({{
@@ -48,7 +48,7 @@ static_assert([] {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	constexpr auto evaluate = Evaluate<generation>({
 		.hp = 1000_bi,

@@ -53,7 +53,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 
 	auto other = Team<generation>({{
 		{
@@ -66,7 +66,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({
@@ -98,7 +98,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 	remove_all_pp(user.pokemon(), MoveName::Thunder, environment);
 
 	auto other = Team<generation>({{
@@ -109,7 +109,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Thunderbolt});
@@ -126,7 +126,7 @@ static_assert([]{
 			.moves = moves
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 	for (auto const move : moves) {
 		remove_all_pp(user.pokemon(), move.name, environment);
 	}
@@ -139,7 +139,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Struggle});
@@ -163,7 +163,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	team.pokemon().switch_in(environment);
+	team.pokemon().switch_in(environment, true);
 
 	auto other = Team<generation>({{
 		{
@@ -173,7 +173,7 @@ static_assert([]{
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	faint(team.pokemon());
 

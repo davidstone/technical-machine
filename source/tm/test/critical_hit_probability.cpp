@@ -35,7 +35,7 @@ constexpr auto individual_test(Species const species, MoveName const move_name, 
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();
 	}

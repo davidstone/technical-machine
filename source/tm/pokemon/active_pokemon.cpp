@@ -815,7 +815,7 @@ public:
 		indirect_damage(environment, this->m_flags.substitute.create(this->hp().max()));
 	}
 
-	constexpr auto switch_in(Environment const environment) const {
+	constexpr auto switch_in(Environment const environment, bool const replacing_fainted_or_initial_switch) const {
 		this->m_pokemon.mark_as_seen();
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
@@ -827,6 +827,7 @@ public:
 		if (this->item(environment) == Item::Berserk_Gene) {
 			activate_berserk_gene(*this, environment);
 		}
+		this->m_flags.last_used_move.use_switch(replacing_fainted_or_initial_switch);
 	}
 
 	constexpr auto switch_out() const -> void {
@@ -972,8 +973,8 @@ public:
 		return applied_damage;
 	}
 
-	constexpr auto successfully_use_move(MoveName const move, bool const replacing_fainted = false) const {
-		this->m_flags.last_used_move.successful_move(move, replacing_fainted);
+	constexpr auto successfully_use_move(MoveName const move) const {
+		this->m_flags.last_used_move.successful_move(move);
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);

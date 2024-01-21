@@ -66,7 +66,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -84,7 +84,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
@@ -183,7 +183,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -195,7 +195,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		},
 	}});
 	auto shedinja = defender.pokemon();
-	shedinja.switch_in(environment);
+	shedinja.switch_in(environment, true);
 
 	CHECK(shedinja.hp().current() == 1_bi);
 
@@ -235,7 +235,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -246,7 +246,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		},
 	}});
 	auto vaporeon = defender.pokemon();
-	vaporeon.switch_in(environment);
+	vaporeon.switch_in(environment, true);
 	vaporeon.set_status(StatusName::freeze, environment);
 
 	CHECK(vaporeon.status().name() == StatusName::freeze);
@@ -299,7 +299,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 	user.pokemon().set_hp(environment, 5_bi);
 	user.pokemon().rest(environment, false);
 
@@ -311,7 +311,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	CHECK(user.pokemon().substitute().hp() == 0_bi);
 
@@ -349,7 +349,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 
 	auto other = Team<generation>({{
 		{
@@ -360,7 +360,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	call_move(
 		user,
@@ -400,7 +400,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 
 	auto other = Team<generation>({{
 		{
@@ -410,7 +410,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	{
 		auto const side_effects = possible_side_effects(MoveName::Substitute, other.pokemon().as_const(), other, environment);
@@ -468,7 +468,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 			}}
 		},
 	}});
-	user.pokemon().switch_in(environment);
+	user.pokemon().switch_in(environment, true);
 
 	auto other = Team<generation>({{
 		{
@@ -484,7 +484,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 			}}
 		},
 	}});
-	other.pokemon().switch_in(environment);
+	other.pokemon().switch_in(environment, true);
 
 	auto call_perish_song = [&] {
 		auto const side_effects = possible_side_effects(MoveName::Perish_Song, user.pokemon().as_const(), other, environment);

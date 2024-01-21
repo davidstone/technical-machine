@@ -98,7 +98,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -113,7 +113,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	{
 		auto const best_move = determine_best_move(team1, team2, environment, evaluate, depth);
@@ -134,7 +134,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			}}
 		},
 	}});
-	team3.pokemon().switch_in(environment);
+	team3.pokemon().switch_in(environment, true);
 	
 	{
 		auto const best_move = determine_best_move(team1, team3, environment, evaluate, depth);
@@ -162,7 +162,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -175,7 +175,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Shadow_Ball);
@@ -200,7 +200,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -212,7 +212,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
@@ -247,7 +247,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
@@ -273,7 +273,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Curse);
@@ -306,7 +306,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -318,7 +318,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	{
 		constexpr auto move_name = MoveName::Shadow_Ball;
@@ -383,7 +383,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -394,7 +394,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
@@ -434,7 +434,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -448,7 +448,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	{
 		constexpr auto move_name = MoveName::Surf;
@@ -507,7 +507,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -531,7 +531,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Calm_Mind);
@@ -554,7 +554,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -566,7 +566,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
@@ -668,7 +668,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -680,7 +680,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	}});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
 	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
@@ -728,7 +728,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -743,7 +743,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	{
 		auto const best_move = determine_best_move2(team1, team2, environment, evaluate, depth);
@@ -764,7 +764,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			}}
 		},
 	}});
-	team3.pokemon().switch_in(environment);
+	team3.pokemon().switch_in(environment, true);
 	
 	{
 		auto const best_move = determine_best_move2(team1, team3, environment, evaluate, depth);
@@ -792,7 +792,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -805,7 +805,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Shadow_Ball);
@@ -830,7 +830,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -842,7 +842,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
@@ -877,7 +877,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
@@ -903,7 +903,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Curse);
@@ -932,7 +932,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -943,7 +943,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
@@ -983,7 +983,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -997,7 +997,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	{
 		constexpr auto move_name = MoveName::Surf;
@@ -1054,7 +1054,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -1078,7 +1078,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Calm_Mind);
@@ -1101,7 +1101,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -1113,7 +1113,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
@@ -1215,7 +1215,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 
 	auto defender = Team<generation>({{
 		{
@@ -1227,7 +1227,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 	}});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
 	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);

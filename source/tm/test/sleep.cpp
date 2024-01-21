@@ -54,7 +54,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			}}
 		},
 	}});
-	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().switch_in(environment, true);
 	attacker.pokemon().set_status(StatusName::sleep, environment);
 
 	auto defender = Team<generation>({{
@@ -65,7 +65,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			}}
 		},
 	}});
-	defender.pokemon().switch_in(environment);
+	defender.pokemon().switch_in(environment, true);
 
 	call_move(
 		attacker,
@@ -164,7 +164,7 @@ private:
 				}}
 			},
 		}});
-		team.pokemon().switch_in(environment);
+		team.pokemon().switch_in(environment, true);
 		return team;
 	}
 	static auto make_other_team(Environment & environment) -> Team<generation> {
@@ -176,7 +176,7 @@ private:
 				}}
 			},
 		}});
-		team.pokemon().switch_in(environment);
+		team.pokemon().switch_in(environment, true);
 		return team;
 	}
 

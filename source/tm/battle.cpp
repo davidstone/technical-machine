@@ -140,7 +140,7 @@ struct Battle {
 		auto const ai_pokemon = m_ai.pokemon();
 		auto const foe_pokemon = m_foe.pokemon();
 		auto do_switch = [&](auto const switcher, auto const other) {
-			switcher.switch_in(m_environment);
+			switcher.switch_in(m_environment, true);
 			activate_ability_on_switch(switcher, other, m_environment);
 		};
 		if (ai_first) {

@@ -71,7 +71,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -82,7 +82,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
@@ -103,7 +103,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -114,7 +114,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
@@ -135,7 +135,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -147,7 +147,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
@@ -173,7 +173,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -185,7 +185,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
@@ -226,7 +226,7 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 			}}
 		},
 	}});
-	team1.pokemon().switch_in(environment);
+	team1.pokemon().switch_in(environment, true);
 
 	auto team2 = Team<generation>({{
 		{
@@ -257,7 +257,7 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 			}}
 		},
 	}});
-	team2.pokemon().switch_in(environment);
+	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
