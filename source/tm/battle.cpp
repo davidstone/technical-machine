@@ -8,7 +8,6 @@ export module tm.battle;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.causes_recoil;
-import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;

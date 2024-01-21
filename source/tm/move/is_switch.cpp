@@ -32,17 +32,6 @@ export constexpr auto is_switch(MoveName const move) -> bool {
 	}
 }
 
-export constexpr auto is_delayed_switch(MoveName const move) -> bool {
-	switch (move) {
-		case MoveName::Baton_Pass:
-		case MoveName::Flip_Turn:
-		case MoveName::U_turn:
-			return true;
-		default:
-			return false;
-	}
-}
-
 export constexpr auto to_switch(TeamIndex const replacement) -> MoveName {
 	return static_cast<MoveName>(replacement + bounded::constant<MoveName::Switch0>);
 }

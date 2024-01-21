@@ -16,6 +16,7 @@ import tm.pokemon.uproar;
 import tm.bide.bide;
 
 import tm.move.move_name;
+import tm.move.is_delayed_switch;
 import tm.move.is_switch;
 
 import tm.stat.current_hp;

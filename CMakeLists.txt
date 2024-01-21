@@ -114,6 +114,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/healing_move_fails_in_generation_1.cpp
 		source/tm/move/initial_move.cpp
 		source/tm/move/is_blocked_by_gravity.cpp
+		source/tm/move/is_delayed_switch.cpp
 		source/tm/move/is_healing.cpp
 		source/tm/move/is_switch.cpp
 		source/tm/move/known_move.cpp

@@ -11,8 +11,6 @@ module;
 
 export module tm.team;
 
-import tm.move.is_switch;
-
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.known_pokemon;
