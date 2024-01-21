@@ -108,7 +108,7 @@ export struct LastUsedMove {
 		return m_effects.index() == bounded::type<ChargingUp>;
 	}
 	constexpr auto use_charge_up_move() & -> void {
-		BOUNDED_ASSERT(!is_locked_in_by_move());
+		BOUNDED_ASSERT(!locked_in_by_move());
 		m_effects = ChargingUp{};
 	}
 
@@ -137,8 +137,8 @@ export struct LastUsedMove {
 		return bounded::min(base << m_consecutive_successes, 160_bi);
 	}
 
-	constexpr auto is_locked_in_by_move() const -> bool {
-		return m_effects.index() != bounded::type<Empty>;
+	constexpr auto locked_in_by_move() const -> tv::optional<MoveName> {
+		return m_effects.index() != bounded::type<Empty> ? tv::optional(m_move) : tv::none;
 	}
 	// Returns whether the use should get confused
 	constexpr auto advance_lock_in(bool const ending) & -> bool {
@@ -192,7 +192,7 @@ export struct LastUsedMove {
 		return m_effects.index() == bounded::type<Protecting>;
 	}
 	constexpr auto protect() & -> void {
-		BOUNDED_ASSERT(!is_locked_in_by_move());
+		BOUNDED_ASSERT(!locked_in_by_move());
 		m_effects = Protecting();
 	}
 	constexpr auto break_protect() & -> void {
@@ -202,7 +202,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto activate_rampage() & -> void {
-		BOUNDED_ASSERT(!is_locked_in_by_move());
+		BOUNDED_ASSERT(!locked_in_by_move());
 		// TODO: Have it be active when it is constructed
 		auto rampage = Rampage();
 		rampage.activate();
@@ -216,7 +216,7 @@ export struct LastUsedMove {
 		));
 	}
 	constexpr auto use_recharge_move() & -> void {
-		BOUNDED_ASSERT(!is_locked_in_by_move());
+		BOUNDED_ASSERT(!locked_in_by_move());
 		m_effects = Recharging();
 	}
 

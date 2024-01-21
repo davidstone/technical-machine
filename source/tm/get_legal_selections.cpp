@@ -140,8 +140,8 @@ constexpr auto get_legal_selections(
 	if (last_used_move.moved_this_turn()) {
 		return LegalSelections({MoveName::Pass});
 	}
-	if (last_used_move.is_locked_in_by_move()) {
-		return LegalSelections({last_used_move.name()});
+	if (auto const move = last_used_move.locked_in_by_move()) {
+		return LegalSelections({*move});
 	}
 	auto const other_pokemon = other.pokemon();
 	auto const regular = potential_regular(

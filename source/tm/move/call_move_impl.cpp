@@ -247,7 +247,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const other_ability = other_pokemon.ability();
 
-	if (move.executed != MoveName::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
+	if (move.executed != MoveName::Hit_Self and !user_pokemon.last_used_move().locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
 		user_pokemon.reduce_pp(move.selected, environment, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
