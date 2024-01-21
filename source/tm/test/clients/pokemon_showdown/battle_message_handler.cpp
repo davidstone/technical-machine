@@ -40,8 +40,6 @@ import tm.stat.stat_style;
 
 import tm.status.status_name;
 
-import tm.string_conversions.team;
-
 import tm.test.make_seen_team;
 
 import tm.ability;
@@ -58,13 +56,6 @@ import bounded;
 import containers;
 import tv;
 import std_module;
-
-template<technicalmachine::Generation generation>
-struct Catch::StringMaker<technicalmachine::Team<generation>> {
-	static auto convert(technicalmachine::Team<generation> const & team) -> std::string {
-		return std::string(std::string_view(technicalmachine::to_string(team)));
-	}
-};
 
 namespace technicalmachine {
 namespace {
