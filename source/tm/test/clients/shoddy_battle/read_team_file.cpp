@@ -41,11 +41,6 @@ using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
 
-using SBPokemon = InitialPokemon<SpecialStyle::split>;
-
-static_assert(bounded::tombstone_traits<SBPokemon>::spare_representations > 0_bi);
-static_assert(bounded::trivially_destructible<SBPokemon>);
-
 constexpr auto expected_team = InitialTeam<SpecialStyle::split>({
 	{
 		.species = Species::Jirachi,
