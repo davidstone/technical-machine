@@ -184,11 +184,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 		CHECK(hp.max() == 243_bi);
 	}
 
-	battle.use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
+	battle.use_switch(true, MoveName::Switch1);
 
 	battle.use_move(
 		false,
@@ -196,11 +192,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 		false
 	);
 
-	battle.use_move(
-		true,
-		Used(MoveName::Switch0),
-		false
-	);
+	battle.use_switch(true, MoveName::Switch0);
 
 	{
 		auto const hp = battle.ai().pokemon().hp();

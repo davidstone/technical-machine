@@ -271,6 +271,22 @@ struct Battle {
 		});
 	}
 
+	auto use_switch(bool const ai_is_user, MoveName const switch_) & -> void {
+		constexpr auto damage = ActualDamage::Known(0_bi);
+		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
+			call_move(
+				user_team,
+				to_used_move(Used(switch_), user_team, other_team, m_environment),
+				other_team,
+				other_move(other_team.pokemon(), damage),
+				m_environment,
+				false,
+				damage,
+				false
+			);
+		});
+	}
+
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void {
 		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
 			end_of_turn(first, first_flags, last, last_flags, m_environment);
