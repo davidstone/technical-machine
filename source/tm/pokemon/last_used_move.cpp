@@ -66,6 +66,28 @@ export struct LastUsedMove {
 			m_consecutive_successes = 1_bi;
 		}
 		m_moved_this_turn = true;
+		switch (move) {
+			case MoveName::Outrage:
+			case MoveName::Petal_Dance:
+			case MoveName::Thrash:
+				tv::visit(m_effects, tv::overload(
+					[&](Empty) {
+						// TODO: Have it be active when it is constructed
+						auto rampage = Rampage();
+						rampage.activate();
+						m_effects = rampage;
+					},
+					[](Rampage) {
+					},
+					[](auto) {
+						// TODO: Assert instead?
+						throw std::runtime_error("Tried to use a rampage move while locked into another move");
+					}
+				));
+				break;
+			default:
+				break;
+		}
 	}
 
 	constexpr auto use_switch(bool const replacing_fainted_or_initial_switch) & {
@@ -199,14 +221,6 @@ export struct LastUsedMove {
 		if (is_protecting()) {
 			m_effects = Empty();
 		}
-	}
-
-	constexpr auto activate_rampage() & -> void {
-		BOUNDED_ASSERT(!locked_in_by_move());
-		// TODO: Have it be active when it is constructed
-		auto rampage = Rampage();
-		rampage.activate();
-		m_effects = rampage;
 	}
 
 	constexpr auto recharge() & -> bool {

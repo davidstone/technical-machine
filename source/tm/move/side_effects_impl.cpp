@@ -1670,12 +1670,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().try_to_give_nightmares();
 			});
-		case MoveName::Outrage:
-		case MoveName::Petal_Dance:
-		case MoveName::Thrash:
-			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				user.pokemon().activate_rampage();
-			});
 		case MoveName::Pain_Split:
 			return guaranteed_effect<UserTeam>(equalize_hp);
 		case MoveName::Perish_Song:
@@ -1972,10 +1966,12 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Night_Slash:
 		case MoveName::Obstruct:
 		case MoveName::Overdrive:
+		case MoveName::Outrage:
 		case MoveName::Pass:
 		case MoveName::Pay_Day:
 		case MoveName::Payback:
 		case MoveName::Peck:
+		case MoveName::Petal_Dance:
 		case MoveName::Pin_Missile:
 		case MoveName::Poltergeist:
 		case MoveName::Pound:
@@ -2045,6 +2041,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Telekinesis:
 		case MoveName::Teleport:
 		case MoveName::Terrain_Pulse:
+		case MoveName::Thrash:
 		case MoveName::Triple_Axel:
 		case MoveName::Triple_Kick:
 		case MoveName::Trump_Card:

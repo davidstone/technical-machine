@@ -749,9 +749,6 @@ public:
 	constexpr auto break_protect() const {
 		this->m_flags.last_used_move.break_protect();
 	}
-	constexpr auto activate_rampage() const {
-		this->m_flags.last_used_move.activate_rampage();
-	}
 	constexpr auto recharge() const -> bool {
 		return this->m_flags.last_used_move.recharge();
 	}
