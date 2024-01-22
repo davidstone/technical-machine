@@ -29,7 +29,7 @@ import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.side_effects;
 import tm.move.used_move;
 
@@ -119,7 +119,7 @@ constexpr auto paralysis_probability(StatusName const status) -> double {
 }
 
 template<Generation generation>
-auto execute_move(State<generation> const & state, Selector<generation> const select, SelectedAndExecuted const move, OtherMove const other_move, auto const continuation) -> double {
+auto execute_move(State<generation> const & state, Selector<generation> const select, SelectedAndExecuted const move, OtherAction const other_action, auto const continuation) -> double {
 	auto const selected = select(state);
 	auto const user_pokemon = selected.team.pokemon();
 	auto const other_pokemon = selected.other.pokemon();
@@ -152,7 +152,7 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 									side_effect.function
 								),
 								selected_copy.other,
-								other_move,
+								other_action,
 								copy.environment,
 								clear_status,
 								ActualDamage::Unknown{},
@@ -485,7 +485,7 @@ private:
 	}
 
 
-	auto score_executed_moves(State<generation> const & state, Selector<generation> const select, MoveName const selected_move, OtherMove const other_move, auto const continuation) const -> double {
+	auto score_executed_moves(State<generation> const & state, Selector<generation> const select, MoveName const selected_move, OtherAction const other_action, auto const continuation) const -> double {
 		double score = 0.0;
 		auto const executed_moves = possible_executed_moves(selected_move, select(state).team);
 		for (auto const executed_move : executed_moves) {
@@ -493,7 +493,7 @@ private:
 				state,
 				select,
 				SelectedAndExecuted{selected_move, executed_move},
-				other_move,
+				other_action,
 				continuation
 			);
 		}

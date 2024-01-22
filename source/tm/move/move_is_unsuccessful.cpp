@@ -6,7 +6,7 @@
 export module tm.move.move_is_unsuccessful;
 
 import tm.move.move_name;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.target;
 
 import tm.stat.current_hp;
@@ -18,7 +18,7 @@ import bounded;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) -> bool {
+constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability const other_ability, OtherAction const other_action) -> bool {
 	switch (move) {
 		case MoveName::Boomburst:
 		case MoveName::Bug_Buzz:
@@ -52,7 +52,7 @@ constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability 
 		case MoveName::Focus_Punch:
 			return user_damaged;
 		case MoveName::Sucker_Punch:
-			return !other_move.future_move_is_damaging();
+			return !other_action.future_move_is_damaging();
 		default:
 			return false;
 	}
@@ -112,9 +112,9 @@ constexpr auto fails_against_fainted(Target const target) -> bool {
 	}
 }
 
-export constexpr auto move_is_unsuccessful(Target const target, MoveName const move, bool const user_damaged, CurrentHP const other_hp, Ability const other_ability, OtherMove const other_move, bool const is_protecting) -> bool {
+export constexpr auto move_is_unsuccessful(Target const target, MoveName const move, bool const user_damaged, CurrentHP const other_hp, Ability const other_ability, OtherAction const other_action, bool const is_protecting) -> bool {
 	return
-		move_fails(move, user_damaged, other_ability, other_move) or
+		move_fails(move, user_damaged, other_ability, other_action) or
 		(other_hp == 0_bi and fails_against_fainted(target)) or
 		(is_protecting and blocked_by_protect(target, move));
 }

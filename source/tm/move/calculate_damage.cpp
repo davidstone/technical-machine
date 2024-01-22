@@ -15,7 +15,7 @@ import tm.move.executed_move;
 import tm.move.is_self_ko;
 import tm.move.known_move;
 import tm.move.move_name;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.power;
 
 import tm.pokemon.any_pokemon;
@@ -239,7 +239,7 @@ constexpr auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserT
 }
 
 template<any_team UserTeam, any_team OtherTeamType>
-constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender_team, OtherMove const defender_move, Environment const environment) -> damage_type {
+constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender_team, OtherAction const defender_action, Environment const environment) -> damage_type {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
@@ -248,7 +248,7 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 			// TODO: Determine the damage here
 			return 0_bi;
 		case MoveName::Counter:
-			return defender_move.is_counterable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
+			return defender_action.is_counterable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case MoveName::Dragon_Rage:
 			return 40_bi;
 		case MoveName::Endeavor:
@@ -263,7 +263,7 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 		case MoveName::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
 		case MoveName::Mirror_Coat:
-			return defender_move.is_mirror_coatable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
+			return defender_action.is_mirror_coatable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case MoveName::Night_Shade:
 		case MoveName::Seismic_Toss:
 			return attacker.level()();
@@ -285,9 +285,9 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 }
 
 export template<any_team UserTeam, any_team OtherTeamType>
-constexpr auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender, OtherMove const defender_move, Environment const environment) -> damage_type {
+constexpr auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender, OtherAction const defender_action, Environment const environment) -> damage_type {
 	return affects_target(executed.move, defender.pokemon(), environment) ?
-		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, environment) :
+		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_action, environment) :
 		0_bi;
 }
 

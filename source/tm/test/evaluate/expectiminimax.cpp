@@ -22,7 +22,7 @@ import tm.move.call_move;
 import tm.move.future_action;
 import tm.move.move_name;
 import tm.move.no_effect_function;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.side_effects;
 import tm.move.used_move;
 

@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.move.other_move;
+export module tm.move.other_action;
 
 import tm.move.category;
 import tm.move.future_action;
@@ -19,12 +19,12 @@ import tv;
 
 namespace technicalmachine {
 
-export struct OtherMove {
-	constexpr OtherMove(KnownMove const move):
+export struct OtherAction {
+	constexpr OtherAction(KnownMove const move):
 		m_move(move)
 	{
 	}
-	constexpr OtherMove(FutureAction const action):
+	constexpr OtherAction(FutureAction const action):
 		m_move(action)
 	{
 	}

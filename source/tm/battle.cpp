@@ -13,7 +13,7 @@ import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_result;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.used_move;
 
 import tm.pokemon.any_pokemon;
@@ -109,10 +109,10 @@ constexpr auto ability_from_recoil(
 }
 
 template<typename PokemonType>
-constexpr auto other_move(PokemonType const other_pokemon, ActualDamage const damage) -> OtherMove {
+constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const damage) -> OtherAction {
 	auto const last_used_move = other_pokemon.last_used_move();
 	return last_used_move.moved_this_turn() ?
-		OtherMove([&]{
+		OtherAction([&]{
 			auto const move_name = last_used_move.name();
 			auto const type = move_type(
 				generation_from<PokemonType>,
@@ -121,7 +121,7 @@ constexpr auto other_move(PokemonType const other_pokemon, ActualDamage const da
 			);
 			return KnownMove{move_name, type};
 		}()) :
-		OtherMove(FutureAction(damage.did_any_damage()));
+		OtherAction(FutureAction(damage.did_any_damage()));
 }
 
 export template<Generation generation>
@@ -263,7 +263,7 @@ struct Battle {
 				user_team,
 				to_used_move(move, user_team, other_team, m_environment),
 				other_team,
-				other_move(other_pokemon, damage),
+				other_action(other_pokemon, damage),
 				m_environment,
 				status_clears,
 				damage,
@@ -279,7 +279,7 @@ struct Battle {
 				user_team,
 				to_used_move(Used(switch_), user_team, other_team, m_environment),
 				other_team,
-				other_move(other_team.pokemon(), damage),
+				other_action(other_team.pokemon(), damage),
 				m_environment,
 				false,
 				damage,

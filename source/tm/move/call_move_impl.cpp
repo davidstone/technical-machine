@@ -21,7 +21,7 @@ import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_is_unsuccessful;
 import tm.move.move_name;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.target;
 import tm.move.used_move;
 
@@ -122,7 +122,7 @@ constexpr auto activate_target_ability(any_mutable_active_pokemon auto const use
 }
 
 template<any_team UserTeam, any_team OtherTeamType>
-auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherMove const other_move, Environment & environment, ActualDamage const actual_damage) -> void {
+auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherAction const other_action, Environment & environment, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
@@ -135,7 +135,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	auto const damaging = is_damaging(executed.move.name);
 	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
 	auto const weakened = damaging and activate_when_hit_item(executed.move, other_pokemon, environment, effectiveness);
-	auto const damage = actual_damage.value(user, executed, weakened, other, other_move, environment);
+	auto const damage = actual_damage.value(user, executed, weakened, other, other_action, environment);
 	BOUNDED_ASSERT(damaging or damage == 0_bi);
 
 	auto const effects = static_cast<bool>(other_pokemon.substitute()) ?
@@ -206,7 +206,7 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, En
 }
 
 template<any_team UserTeam>
-auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	if (is_switch(move.selected)) {
 		BOUNDED_ASSERT(move.executed == move.selected);
 		// TODO: !recharging?
@@ -266,7 +266,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const target = move_target(generation, move.executed);
 
-	if (move_is_unsuccessful(target, move.executed, user_pokemon.damaged(), other_pokemon.hp().current(), other_ability, other_move, other_pokemon.last_used_move().is_protecting())) {
+	if (move_is_unsuccessful(target, move.executed, user_pokemon.damaged(), other_pokemon.hp().current(), other_ability, other_action, other_pokemon.last_used_move().is_protecting())) {
 		unsuccessfully_use_move();
 		return;
 	}
@@ -286,9 +286,9 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			move.contact_ability_effect
 		};
 		if (executed_move.move.name == MoveName::Hit_Self) {
-			use_move(user, executed_move, target, user, other_move, environment, actual_damage);
+			use_move(user, executed_move, target, user, other_action, environment, actual_damage);
 		} else {
-			use_move(user, executed_move, target, other, other_move, environment, actual_damage);
+			use_move(user, executed_move, target, other, other_action, environment, actual_damage);
 		}
 	}
 	user_pokemon.successfully_use_move(move.executed);
@@ -303,19 +303,19 @@ void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<Use
 }
 
 template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	if (move.selected == MoveName::Pass) {
 		return;
 	}
 	auto const replacing_fainted = user.pokemon().hp().current() == 0_bi;
-	try_use_move(user, move, other, other_move, environment, clear_status, actual_damage, is_fully_paralyzed);
+	try_use_move(user, move, other, other_action, environment, clear_status, actual_damage, is_fully_paralyzed);
 	if (!replacing_fainted) {
 		end_of_attack(user.pokemon(), other.pokemon(), environment);
 	}
 }
 
 #define INSTANTIATE_ONE(UserTeam) \
-	template auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void
+	template auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void
 
 #define INSTANTIATE_ALL(generation) \
 	INSTANTIATE_ONE(Team<generation>); \

@@ -10,7 +10,7 @@ module;
 export module tm.move.call_move;
 
 import tm.move.actual_damage;
-import tm.move.other_move;
+import tm.move.other_action;
 import tm.move.used_move;
 
 import tm.any_team;
@@ -21,10 +21,10 @@ import tm.team;
 namespace technicalmachine {
 
 export template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void;
+auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void;
 
 #define EXTERN_INSTANTIATION_ONE(UserTeam) \
-	extern template auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void
+	extern template auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void
 
 #define EXTERN_INSTANTIATION_ALL(generation) \
 	EXTERN_INSTANTIATION_ONE(Team<generation>); \

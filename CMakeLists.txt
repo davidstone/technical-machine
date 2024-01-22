@@ -129,7 +129,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/move_names.cpp
 		source/tm/move/move_result.cpp
 		source/tm/move/no_effect_function.cpp
-		source/tm/move/other_move.cpp
+		source/tm/move/other_action.cpp
 		source/tm/move/power.cpp
 		source/tm/move/pp.cpp
 		source/tm/move/priority.cpp
