@@ -743,9 +743,6 @@ public:
 	constexpr auto activate_power_trick() const {
 		this->m_flags.power_trick_is_active = !this->m_flags.power_trick_is_active;
 	}
-	constexpr auto protect() const {
-		this->m_flags.last_used_move.protect();
-	}
 	constexpr auto break_protect() const {
 		this->m_flags.last_used_move.break_protect();
 	}

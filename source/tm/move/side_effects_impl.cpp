@@ -1535,11 +1535,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 				environment.deactivate_fog();
 				other.pokemon().stages()[BoostableStat::eva] -= 1_bi;
 			});
-		case MoveName::Detect:
-		case MoveName::Protect:
-			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				user.pokemon().protect();
-			});
 		case MoveName::Disable:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & environment, auto) {
 				auto pokemon = other.pokemon();
@@ -1850,6 +1845,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Crush_Grip:
 		case MoveName::Cut:
 		case MoveName::Destiny_Bond:
+		case MoveName::Detect:
 		case MoveName::Double_Hit:
 		case MoveName::Double_Kick:
 		case MoveName::Double_Slap:
@@ -1983,6 +1979,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Psystrike:
 		case MoveName::Punishment:
 		case MoveName::Pursuit:
+		case MoveName::Protect:
 		case MoveName::Quash:
 		case MoveName::Quick_Attack:
 		case MoveName::Quick_Guard:

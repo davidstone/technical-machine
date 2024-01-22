@@ -67,6 +67,17 @@ export struct LastUsedMove {
 		}
 		m_moved_this_turn = true;
 		switch (move) {
+			case MoveName::Detect:
+			case MoveName::Protect:
+				tv::visit(m_effects, tv::overload(
+					[&](Empty) {
+						m_effects = Protecting();
+					},
+					[](auto) {
+						throw std::runtime_error("Tried to use Protect while locked into another move");
+					}
+				));
+				break;
 			case MoveName::Outrage:
 			case MoveName::Petal_Dance:
 			case MoveName::Thrash:
@@ -212,10 +223,6 @@ export struct LastUsedMove {
 
 	constexpr auto is_protecting() const -> bool {
 		return m_effects.index() == bounded::type<Protecting>;
-	}
-	constexpr auto protect() & -> void {
-		BOUNDED_ASSERT(!locked_in_by_move());
-		m_effects = Protecting();
 	}
 	constexpr auto break_protect() & -> void {
 		if (is_protecting()) {
