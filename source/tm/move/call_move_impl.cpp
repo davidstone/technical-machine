@@ -15,6 +15,7 @@ module tm.move.call_move;
 import tm.move.activate_when_hit_item;
 import tm.move.actual_damage;
 import tm.move.category;
+import tm.move.end_of_attack;
 import tm.move.executed_move;
 import tm.move.is_switch;
 import tm.move.known_move;
@@ -292,14 +293,6 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		}
 	}
 	user_pokemon.successfully_use_move(move.executed);
-}
-
-template<any_mutable_active_pokemon UserPokemon>
-void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<UserPokemon> const other_pokemon, Environment const environment) {
-	if constexpr (generation_from<UserPokemon> <= Generation::two) {
-		user_pokemon.status_and_leech_seed_effects(other_pokemon, environment);
-		handle_curse(user_pokemon, environment);
-	}
 }
 
 template<any_team UserTeam>
