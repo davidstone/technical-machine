@@ -130,6 +130,10 @@ struct ClientBattleImpl final : ClientBattle {
 		m_battle.use_move(ai_is_user, move_result, status_clears);
 	}
 
+	auto use_switch(bool const ai_is_user, MoveName const switch_) & -> void final {
+		m_battle.use_switch(ai_is_user, switch_);
+	}
+
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.end_turn(ai_went_first, first_flags, last_flags);
 	}

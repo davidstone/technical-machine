@@ -165,16 +165,8 @@ TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
 
 	CHECK(battle->is_end_of_turn());
 
-	battle->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-	battle->use_move(
-		false,
-		Used(MoveName::Switch1),
-		false
-	);
+	battle->use_switch(true, MoveName::Switch1);
+	battle->use_switch(false, MoveName::Switch1);
 
 	CHECK(!battle->is_end_of_turn());
 }
