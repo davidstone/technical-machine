@@ -62,7 +62,7 @@ export struct OtherAction {
 		));
 	}
 
-	constexpr auto future_move_is_damaging() const {
+	constexpr auto future_action_is_damaging() const {
 		return tv::visit(m_move, tv::overload(
 			[](KnownMove) { return false; },
 			[](FutureAction const action) { return action.is_damaging; }

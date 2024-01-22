@@ -52,7 +52,7 @@ constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability 
 		case MoveName::Focus_Punch:
 			return user_damaged;
 		case MoveName::Sucker_Punch:
-			return !other_action.future_move_is_damaging();
+			return !other_action.future_action_is_damaging();
 		default:
 			return false;
 	}
