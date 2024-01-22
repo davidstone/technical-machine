@@ -110,6 +110,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/category.cpp
 		source/tm/move/causes_recoil.cpp
 		source/tm/move/damage_type.cpp
+		source/tm/move/do_switch.cpp
 		source/tm/move/end_of_attack.cpp
 		source/tm/move/executed_move.cpp
 		source/tm/move/future_action.cpp

@@ -8,6 +8,7 @@ export module tm.battle;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.causes_recoil;
+import tm.move.do_switch;
 import tm.move.future_action;
 import tm.move.known_move;
 import tm.move.move;
@@ -273,18 +274,8 @@ struct Battle {
 	}
 
 	auto use_switch(bool const ai_is_user, MoveName const switch_) & -> void {
-		constexpr auto damage = ActualDamage::Known(0_bi);
 		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
-			call_move(
-				user_team,
-				to_used_move(Used(switch_), user_team, other_team, m_environment),
-				other_team,
-				other_action(other_team.pokemon(), damage),
-				m_environment,
-				false,
-				damage,
-				false
-			);
+			do_switch(user_team, switch_, other_team, m_environment);
 		});
 	}
 

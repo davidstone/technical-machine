@@ -8,6 +8,7 @@
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.do_switch;
 import tm.move.future_action;
 import tm.move.legal_selections;
 import tm.move.move_name;
@@ -140,22 +141,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		LegalSelections({MoveName::Switch1})
 	);
 
-	{
-		auto const side_effects = possible_side_effects(MoveName::Switch1, attacker.pokemon().as_const(), defender, environment);
-		CHECK(containers::size(side_effects) == 1_bi);
-		auto const & side_effect = containers::front(side_effects);
-		CHECK(side_effect.probability == 1.0);
-		call_move(
-			attacker,
-			UsedMove<Team<generation>>(MoveName::Switch1, side_effect.function),
-			defender,
-			FutureAction(false),
-			environment,
-			false,
-			damage,
-			false
-		);
-	}
+	do_switch(attacker, MoveName::Switch1, defender, environment);
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(attacker.pokemon().species() == Species::Alakazam);
 	CHECK(!switch_decision_required(attacker));
