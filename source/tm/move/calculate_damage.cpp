@@ -12,6 +12,7 @@ export module tm.move.calculate_damage;
 import tm.move.category;
 import tm.move.damage_type;
 import tm.move.executed_move;
+import tm.move.is_self_ko;
 import tm.move.known_move;
 import tm.move.move_name;
 import tm.move.other_move;
@@ -169,7 +170,7 @@ constexpr auto physical_vs_special_modifier(UserPokemon const attacker, Executed
 	return BOUNDED_CONDITIONAL(is_physical(generation, executed.move),
 		rational(
 			calculate_attack(attacker, executed.move.type, defender_ability, environment, executed.critical_hit),
-			50_bi * calculate_defense(defender, executed.move.name, environment, executed.critical_hit) * weakening_from_status(attacker)
+			50_bi * calculate_defense(defender, environment, is_self_KO(executed.move.name), executed.critical_hit) * weakening_from_status(attacker)
 		),
 		rational(
 			calculate_special_attack(attacker, executed.move.type, defender_ability, environment, executed.critical_hit),

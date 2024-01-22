@@ -31,10 +31,9 @@ constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutab
 	auto const switcher_ability = switcher.ability();
 	switch (switcher_ability) {
 		case Ability::Download: {
-			// Move is irrelevant here
-			constexpr auto move = MoveName::Switch0;
 			// TODO: Should not take into account items, abilities, or Wonder Room
-			auto const defense = calculate_defense(other.as_const(), move, environment);
+			constexpr auto is_self_ko = false;
+			auto const defense = calculate_defense(other.as_const(), environment, is_self_ko);
 			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, environment);
 			auto const boosted_stat = defense >= special_defense ? BoostableStat::spa : BoostableStat::atk;
 			switcher.stages()[boosted_stat] += 1_bi;

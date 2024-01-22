@@ -39,8 +39,8 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 
+constexpr auto is_self_ko = false;
 constexpr auto critical_hit = false;
-constexpr auto physical_move = MoveName::Tackle;
 
 // Calculate max Attack
 static_assert([]{
@@ -140,7 +140,7 @@ static_assert([]{
 
 	defender.pokemon().set_status(StatusName::burn, environment);
 
-	return calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == 3684_bi;
+	return calculate_defense(defender.pokemon().as_const(), environment, is_self_ko, critical_hit) == 3684_bi;
 }());
 
 // Calculate min Defense
@@ -164,7 +164,7 @@ static_assert([]{
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 
-	return calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == 1_bi;
+	return calculate_defense(defender.pokemon().as_const(), environment, is_self_ko, critical_hit) == 1_bi;
 }());
 
 // Calculate max Special Defense

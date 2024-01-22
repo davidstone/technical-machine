@@ -318,17 +318,7 @@ export constexpr auto calculate_special_attack(any_active_pokemon auto const att
 }
 
 
-constexpr auto is_self_KO(MoveName const move) {
-	switch (move) {
-		case MoveName::Explosion:
-		case MoveName::Self_Destruct:
-			return true;
-		default:
-			return false;
-	}
-}
-
-export constexpr auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Environment const environment, bool const critical_hit = false) {
+export constexpr auto calculate_defense(any_active_pokemon auto const defender, Environment const environment, bool const is_self_ko, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
@@ -340,7 +330,7 @@ export constexpr auto calculate_defense(any_active_pokemon auto const defender, 
 	// Metal Powder, but because of the restriction on the attacker being Ditto,
 	// it is better to use a Shuckle with no boosting item available.
 	return bounded::assume_in_range(
-		bounded::max(BOUNDED_CONDITIONAL(is_self_KO(move), defense / 2_bi, defense), 1_bi),
+		bounded::max(BOUNDED_CONDITIONAL(is_self_ko, defense / 2_bi, defense), 1_bi),
 		1_bi,
 		3684_bi
 	);
