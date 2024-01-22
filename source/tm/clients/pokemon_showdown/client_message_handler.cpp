@@ -113,10 +113,6 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 	stream << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 }
 
-using MoveResponse = tv::variant<
-	MoveName,
-	BattleResponseSwitch
->;
 auto determine_action(
 	GenerationGeneric<VisibleState> const & generic_state,
 	std::ostream & stream,
