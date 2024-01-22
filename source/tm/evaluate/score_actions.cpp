@@ -11,7 +11,7 @@ export module tm.evaluate.score_actions;
 
 import tm.evaluate.evaluate;
 import tm.evaluate.action_probability;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.state;
 
 import tm.move.legal_selections;
@@ -21,10 +21,10 @@ import tm.generation;
 namespace technicalmachine {
 
 export template<Generation generation>
-auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_selections, Evaluate<generation>) -> ScoredMoves;
+auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_selections, Evaluate<generation>) -> ScoredActions;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_moves, Evaluate<generation>) -> ScoredMoves
+	extern template auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_moves, Evaluate<generation>) -> ScoredActions
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 

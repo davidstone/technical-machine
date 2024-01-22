@@ -13,7 +13,7 @@ import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.expectiminimax;
 import tm.evaluate.action_probability;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.state;
 
 import tm.move.legal_selections;
@@ -50,7 +50,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const selecti
 		evaluate
 	);
 	// TODO: this is not the right way to weight move scores
-	auto const score_only = containers::transform(scores, &ScoredMove::score);
+	auto const score_only = containers::transform(scores, &ScoredAction::score);
 	auto const min_value = *containers::min_element(score_only);
 	auto adjust_score = [=](double const score) {
 		return std::pow(score - min_value, 3.0);
@@ -62,8 +62,8 @@ auto predict_action(Team<generation> const & team, LegalSelections const selecti
 	return ActionProbabilities(containers::filter(
 		containers::transform(
 			scores,
-			[=](ScoredMove const move) {
-				return ActionProbability(move.name, adjust_score(move.score) / total_score);
+			[=](ScoredAction const sa) {
+				return ActionProbability(sa.name, adjust_score(sa.score) / total_score);
 			}
 		),
 		[](ActionProbability const ap) { return ap.probability > 0.0; }

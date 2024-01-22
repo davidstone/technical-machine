@@ -94,7 +94,7 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/predict_action.cpp
 		source/tm/evaluate/random_selection.cpp
 		source/tm/evaluate/score_actions.cpp
-		source/tm/evaluate/scored_move.cpp
+		source/tm/evaluate/scored_action.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
 		source/tm/evaluate/transposition.cpp

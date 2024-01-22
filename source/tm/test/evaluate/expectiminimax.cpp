@@ -12,7 +12,7 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
 import tm.evaluate.expectiminimax;
 import tm.evaluate.predict_action;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.score_actions;
 import tm.evaluate.state;
 import tm.evaluate.victory;
@@ -75,7 +75,7 @@ auto determine_best_move(Team<generation> const & ai, Team<generation> const & f
 		get_legal_selections(foe, ai, environment),
 		evaluate
 	);
-	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
+	return *containers::max_element(moves, [](ScoredAction const lhs, ScoredAction const rhs) {
 		return lhs.score > rhs.score;
 	});
 }
@@ -705,7 +705,7 @@ auto determine_best_move2(Team<generation> const & ai, Team<generation> const & 
 		),
 		evaluate
 	);
-	return *containers::max_element(actions, [](ScoredMove const lhs, ScoredMove const rhs) {
+	return *containers::max_element(actions, [](ScoredAction const lhs, ScoredAction const rhs) {
 		return lhs.score > rhs.score;
 	});
 }

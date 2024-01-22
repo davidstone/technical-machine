@@ -14,7 +14,7 @@ export module tm.evaluate.evaluator;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.possible_executed_moves;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.selector;
 import tm.evaluate.state;
 import tm.evaluate.transposition;
@@ -222,7 +222,7 @@ struct Evaluator {
 	{
 	}
 
-	auto select_type_of_move(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredMoves {
+	auto select_type_of_move(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredActions {
 		BOUNDED_ASSERT(!team_is_empty(state.ai));
 		BOUNDED_ASSERT(!team_is_empty(state.foe));
 
@@ -244,7 +244,7 @@ struct Evaluator {
 	}
 
 private:
-	auto select_type_of_move(State<generation> const & state) -> ScoredMoves {
+	auto select_type_of_move(State<generation> const & state) -> ScoredActions {
 		return select_type_of_move(
 			state,
 			get_legal_selections(state.ai, state.foe, state.environment),

@@ -14,7 +14,7 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.action_probability;
 import tm.evaluate.predict_action;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.state;
 import tm.evaluate.win;
 
@@ -42,9 +42,9 @@ auto parallel_sum(auto && range) {
 
 template<Generation generation>
 struct ScoreMovesEvaluator {
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation>, auto const function) -> ScoredMoves {
-		return ScoredMoves(containers::transform(ai_selections, [&](MoveName const ai_move) {
-			return ScoredMove{
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation>, auto const function) -> ScoredActions {
+		return ScoredActions(containers::transform(ai_selections, [&](MoveName const ai_move) {
+			return ScoredAction(
 				ai_move,
 				parallel_sum(containers::transform(
 					foe_actions,
@@ -52,10 +52,10 @@ struct ScoreMovesEvaluator {
 						return foe_action.probability * function(state, ai_move, foe_action.name);
 					}
 				))
-			};
+			);
 		}));
 	}
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredMoves {
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredActions {
 		return ScoreMovesEvaluator()(
 			state,
 			ai_selections,
@@ -75,9 +75,9 @@ struct ScoreMovesEvaluator {
 };
 
 template<Generation generation>
-auto score_actions(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation> const evaluate) -> ScoredMoves {
+auto score_actions(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation> const evaluate) -> ScoredActions {
 	if (auto const score = win(state.ai, state.foe)) {
-		return ScoredMoves({ScoredMove(MoveName::Pass, *score)});
+		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
 	auto const moves = evaluator.select_type_of_move(
@@ -89,7 +89,7 @@ auto score_actions(State<generation> const & state, LegalSelections const ai_sel
 }
 
 #define INSTANTIATE(generation) \
-	template auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_actions, Evaluate<generation>) -> ScoredMoves
+	template auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_actions, Evaluate<generation>) -> ScoredActions
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

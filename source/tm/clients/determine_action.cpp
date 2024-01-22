@@ -9,7 +9,7 @@ import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.action_probability;
 import tm.evaluate.score_actions;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.state;
 
 import tm.move.move_name;
@@ -39,16 +39,16 @@ using namespace bounded::literal;
 template<Generation generation>
 auto log_move_scores(
 	std::ostream & stream,
-	ScoredMoves const moves,
+	ScoredActions const scored_actions,
 	Team<generation> const & ai
 ) -> void {
-	for (auto const move : moves) {
-		if (is_switch(move.name)) {
-			stream << "Switch to " << to_string(ai.pokemon(to_replacement(move.name)).species());
+	for (auto const sa : scored_actions) {
+		if (is_switch(sa.name)) {
+			stream << "Switch to " << to_string(ai.pokemon(to_replacement(sa.name)).species());
 		} else {
-			stream << "Use " << to_string(move.name);
+			stream << "Use " << to_string(sa.name);
 		}
-		stream << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
+		stream << " for an expected score of " << static_cast<std::int64_t>(sa.score) << '\n';
 	}
 }
 
@@ -126,7 +126,7 @@ auto determine_action(
 	);
 	auto const finish = std::chrono::steady_clock::now();
 	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-	containers::sort(scored_actions, [](ScoredMove const lhs, ScoredMove const rhs) {
+	containers::sort(scored_actions, [](ScoredAction const lhs, ScoredAction const rhs) {
 		return lhs.score > rhs.score;
 	});
 	log_move_scores(stream, scored_actions, state.ai);

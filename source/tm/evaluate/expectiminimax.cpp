@@ -9,7 +9,7 @@ import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.extreme_element_value;
-import tm.evaluate.scored_move;
+import tm.evaluate.scored_action;
 import tm.evaluate.state;
 import tm.evaluate.victory;
 import tm.evaluate.win;
@@ -28,8 +28,8 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct ExpectiminimaxEvaluator {
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredMoves {
-		auto scored_moves_shallower = state.depth.general > 1_bi ?
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredActions {
+		auto scored_actions_shallower = state.depth.general > 1_bi ?
 			ExpectiminimaxEvaluator()(
 				State<generation>(state.ai, state.foe, state.environment, one_level_deeper(state.depth)),
 				ai_selections,
@@ -37,24 +37,24 @@ struct ExpectiminimaxEvaluator {
 				evaluate,
 				function
 			) :
-			ScoredMoves(containers::transform(ai_selections, [](MoveName const move) {
-				return ScoredMove{move, 0.0};
+			ScoredActions(containers::transform(ai_selections, [](MoveName const move) {
+				return ScoredAction(move, 0.0);
 			}));
-		auto is_winner = [](ScoredMove const move) { return move.score >= victory<generation>; };
-		if (auto const winner = containers::maybe_find_if(scored_moves_shallower, is_winner)) {
-			return ScoredMoves({*winner});
+		auto is_winner = [](ScoredAction const sa) { return sa.score >= victory<generation>; };
+		if (auto const winner = containers::maybe_find_if(scored_actions_shallower, is_winner)) {
+			return ScoredActions({*winner});
 		}
-		return ScoredMoves(containers::transform(
+		return ScoredActions(containers::transform(
 			ai_selections,
 			[&](MoveName const ai_move) {
-				return ScoredMove{
+				return ScoredAction(
 					ai_move,
 					min_element_value(
 						containers::transform(foe_selections, [&](MoveName const foe_move) {
 							return function(state, ai_move, foe_move);
 						})
 					)
-				};
+				);
 			}
 		));
 	}
@@ -62,9 +62,9 @@ struct ExpectiminimaxEvaluator {
 
 
 export template<Generation generation>
-auto expectiminimax(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredMoves {
+auto expectiminimax(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredActions {
 	if (auto const score = win(state.ai, state.foe)) {
-		return ScoredMoves({ScoredMove(MoveName::Pass, *score)});
+		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
 	return evaluator.select_type_of_move(state, ai_selections, foe_selections);
