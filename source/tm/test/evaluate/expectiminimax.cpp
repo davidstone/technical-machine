@@ -22,7 +22,6 @@ import tm.move.call_move;
 import tm.move.future_action;
 import tm.move.move_name;
 import tm.move.no_effect_function;
-import tm.move.other_action;
 import tm.move.side_effects;
 import tm.move.used_move;
 
@@ -68,7 +67,7 @@ constexpr auto make_depth(DepthInt const depth) {
 }
 
 template<Generation generation>
-auto determine_best_move(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
+auto determine_best_action(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
 	auto const moves = expectiminimax(
 		State<generation>(ai, foe, environment, depth),
 		get_legal_selections(ai, foe, environment),
@@ -117,9 +116,9 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team2.pokemon().switch_in(environment, true);
 
 	{
-		auto const best_move = determine_best_move(team1, team2, environment, evaluate, depth);
-		CHECK(best_move.name == MoveName::Thunderbolt);
-		CHECK(best_move.score == victory<generation>);
+		auto const best = determine_best_action(team1, team2, environment, evaluate, depth);
+		CHECK(best.name == MoveName::Thunderbolt);
+		CHECK(best.score == victory<generation>);
 	}
 	
 	auto team3 = Team<generation>({{
@@ -138,9 +137,9 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team3.pokemon().switch_in(environment, true);
 	
 	{
-		auto const best_move = determine_best_move(team1, team3, environment, evaluate, depth);
-		CHECK(best_move.name == MoveName::Shadow_Ball);
-		CHECK(best_move.score == victory<generation>);
+		auto const best = determine_best_action(team1, team3, environment, evaluate, depth);
+		CHECK(best.name == MoveName::Shadow_Ball);
+		CHECK(best.score == victory<generation>);
 	}
 }
 
@@ -178,8 +177,8 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Shadow_Ball);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Shadow_Ball);
 }
 
 TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
@@ -215,9 +214,9 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Belly_Drum);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Belly_Drum);
+	CHECK(best.score == victory<generation>);
 }
 
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
@@ -276,9 +275,9 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Curse);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Curse);
+	CHECK(best.score == victory<generation>);
 }
 
 
@@ -358,8 +357,8 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 		);
 	}
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Switch1);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Switch1);
 }
 
 
@@ -397,9 +396,9 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Belly_Drum);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Belly_Drum);
+	CHECK(best.score == victory<generation>);
 }
 
 
@@ -474,8 +473,8 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	attacker.reset_end_of_turn();
 	defender.reset_end_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Switch2);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Switch2);
 }
 
 
@@ -534,8 +533,8 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Calm_Mind);
+	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Calm_Mind);
 }
 
 TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
@@ -591,7 +590,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
@@ -606,7 +605,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	jolteon.set_status(StatusName::sleep, environment);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -620,7 +619,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -634,7 +633,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -650,7 +649,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == ?);
+		CHECK(determine_best_action(attacker, defender, environment, evaluate, depth).name == ?);
 	#endif
 }
 
@@ -683,12 +682,12 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	defender.pokemon().set_hp(environment, 12_bi);
 	defender.pokemon().switch_in(environment, true);
 
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
-	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_action(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
 template<Generation generation>
-auto determine_best_move2(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
+auto determine_best_action2(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
 	auto const ai_selections = get_legal_selections(ai, foe, environment);
 	auto const foe_selections = get_legal_selections(foe, ai, environment);
 	auto const actions = score_actions(
@@ -747,9 +746,9 @@ TEST_CASE("expectiminimax OHKO", "[score_actions]") {
 	team2.pokemon().switch_in(environment, true);
 
 	{
-		auto const best_move = determine_best_move2(team1, team2, environment, evaluate, depth);
-		CHECK(best_move.name == MoveName::Thunderbolt);
-		CHECK(best_move.score == Catch::Approx(victory<generation>));
+		auto const best = determine_best_action2(team1, team2, environment, evaluate, depth);
+		CHECK(best.name == MoveName::Thunderbolt);
+		CHECK(best.score == Catch::Approx(victory<generation>));
 	}
 	
 	auto team3 = Team<generation>({{
@@ -768,9 +767,9 @@ TEST_CASE("expectiminimax OHKO", "[score_actions]") {
 	team3.pokemon().switch_in(environment, true);
 	
 	{
-		auto const best_move = determine_best_move2(team1, team3, environment, evaluate, depth);
-		CHECK(best_move.name == MoveName::Shadow_Ball);
-		CHECK(best_move.score == victory<generation>);
+		auto const best = determine_best_action2(team1, team3, environment, evaluate, depth);
+		CHECK(best.name == MoveName::Shadow_Ball);
+		CHECK(best.score == victory<generation>);
 	}
 }
 
@@ -808,8 +807,8 @@ TEST_CASE("expectiminimax one-turn damage", "[score_actions]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Shadow_Ball);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Shadow_Ball);
 }
 
 TEST_CASE("expectiminimax BellyZard", "[score_actions]") {
@@ -845,9 +844,9 @@ TEST_CASE("expectiminimax BellyZard", "[score_actions]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Belly_Drum);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Belly_Drum);
+	CHECK(best.score == victory<generation>);
 }
 
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_actions]") {
@@ -906,9 +905,9 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_actions]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Curse);
-	CHECK(best_move.score == victory<generation> + 5.0);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Curse);
+	CHECK(best.score == victory<generation> + 5.0);
 }
 
 
@@ -946,9 +945,9 @@ TEST_CASE("expectiminimax Baton Pass", "[score_actions]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Belly_Drum);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Belly_Drum);
+	CHECK(best.score == victory<generation>);
 }
 
 
@@ -1020,9 +1019,9 @@ TEST_CASE("expectiminimax replace fainted", "[score_actions]") {
 		);
 	}
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Switch2);
-	CHECK(best_move.score == victory<generation>);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Switch2);
+	CHECK(best.score == victory<generation>);
 }
 
 
@@ -1081,8 +1080,8 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_actions]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
-	CHECK(best_move.name == MoveName::Calm_Mind);
+	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
+	CHECK(best.name == MoveName::Calm_Mind);
 }
 
 TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
@@ -1138,7 +1137,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
@@ -1153,7 +1152,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 	jolteon.set_status(StatusName::sleep, environment);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -1167,7 +1166,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -1181,7 +1180,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -1197,7 +1196,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == ?);
+		CHECK(determine_best_action2(attacker, defender, environment, evaluate, depth).name == ?);
 	#endif
 }
 
@@ -1230,8 +1229,8 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_actions]") {
 	defender.pokemon().set_hp(environment, 12_bi);
 	defender.pokemon().switch_in(environment, true);
 
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
-	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_action2(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
 } // namespace
