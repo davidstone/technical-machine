@@ -37,17 +37,22 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
+auto log_action(std::ostream & stream, MoveName const action, Team<generation> const & team) {
+	if (!is_switch(action)) {
+		stream << "Use " << to_string(action);
+	} else {
+		stream << "Switch to " << to_string(team.pokemon(to_replacement(action)).species());
+	}
+}
+
+template<Generation generation>
 auto log_move_scores(
 	std::ostream & stream,
 	ScoredActions const scored_actions,
 	Team<generation> const & ai
 ) -> void {
 	for (auto const sa : scored_actions) {
-		if (is_switch(sa.name)) {
-			stream << "Switch to " << to_string(ai.pokemon(to_replacement(sa.name)).species());
-		} else {
-			stream << "Use " << to_string(sa.name);
-		}
+		log_action(stream, sa.name, ai);
 		stream << " for an expected score of " << static_cast<std::int64_t>(sa.score) << '\n';
 	}
 }
@@ -59,12 +64,8 @@ auto log_foe_move_probabilities(
 	Team<generation> const & foe
 ) -> void {
 	for (auto const ap : action_probabilities) {
-		stream << "Predicted " << ap.probability * 100.0 << "% chance of ";
-		if (is_switch(ap.name)) {
-			stream << "switching to " << to_string(foe.pokemon(to_replacement(ap.name)).species());
-		} else {
-			stream << "using " << to_string(ap.name);
-		}
+		stream << "Predicted " << ap.probability * 100.0 << "% chance: ";
+		log_action(stream, ap.name, foe);
 		stream << '\n';
 	}
 }
