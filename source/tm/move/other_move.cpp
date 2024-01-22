@@ -6,6 +6,7 @@
 export module tm.move.other_move;
 
 import tm.move.category;
+import tm.move.future_action;
 import tm.move.known_move;
 import tm.move.move_name;
 
@@ -18,17 +19,13 @@ import tv;
 
 namespace technicalmachine {
 
-export struct FutureMove {
-	bool is_damaging;
-};
-
 export struct OtherMove {
 	constexpr OtherMove(KnownMove const move):
 		m_move(move)
 	{
 	}
-	constexpr OtherMove(FutureMove const move):
-		m_move(move)
+	constexpr OtherMove(FutureAction const action):
+		m_move(action)
 	{
 	}
 
@@ -53,7 +50,7 @@ export struct OtherMove {
 				}
 				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? true : is_physical(generation, move);
 			},
-			[](FutureMove) { return false; }
+			[](FutureAction) { return false; }
 		));
 	}
 	constexpr auto is_mirror_coatable(Generation const generation) const {
@@ -61,19 +58,19 @@ export struct OtherMove {
 			[=](KnownMove const move) {
 				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? false : is_special(generation, move);
 			},
-			[](FutureMove) { return false; }
+			[](FutureAction) { return false; }
 		));
 	}
 
 	constexpr auto future_move_is_damaging() const {
 		return tv::visit(m_move, tv::overload(
 			[](KnownMove) { return false; },
-			[](FutureMove const move) { return move.is_damaging; }
+			[](FutureAction const action) { return action.is_damaging; }
 		));
 	}
 
 private:
-	tv::variant<KnownMove, FutureMove> m_move;
+	tv::variant<KnownMove, FutureAction> m_move;
 };
 
 } // namespace technicalmachine

@@ -19,6 +19,7 @@ import tm.evaluate.victory;
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.future_action;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;
@@ -331,7 +332,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 				containers::front(side_effects).function
 			),
 			attacker,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			ActualDamage::Unknown{},
@@ -349,7 +350,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 				containers::front(side_effects).function
 			),
 			defender,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			ActualDamage::Unknown{},
@@ -462,7 +463,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 				side_effect.function
 			),
 			attacker,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			ActualDamage::Unknown{},
@@ -578,7 +579,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		MoveName::Thunderbolt,
 		no_effect_function
 	);
-	constexpr auto other_move = FutureMove{false};
+	constexpr auto other_action = FutureAction(false);
 
 	auto next_turn = [&] {
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
@@ -596,7 +597,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		attacker,
 		sleep_talk,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -611,7 +612,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		attacker,
 		thunderbolt,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -625,7 +626,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		attacker,
 		thunderbolt,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -641,7 +642,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			attacker,
 			thunderbolt,
 			defender,
-			other_move,
+			other_action,
 			environment,
 			keep_status,
 			unknown_damage,
@@ -1011,7 +1012,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 				side_effect.function
 			),
 			attacker,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			ActualDamage::Unknown{},
@@ -1125,7 +1126,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 		MoveName::Thunderbolt,
 		no_effect_function
 	);
-	constexpr auto other_move = FutureMove{false};
+	constexpr auto other_action = FutureAction(false);
 
 	auto next_turn = [&] {
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
@@ -1143,7 +1144,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 		attacker,
 		sleep_talk,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -1158,7 +1159,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 		attacker,
 		thunderbolt,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -1172,7 +1173,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 		attacker,
 		thunderbolt,
 		defender,
-		other_move,
+		other_action,
 		environment,
 		keep_status,
 		unknown_damage,
@@ -1188,7 +1189,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			attacker,
 			thunderbolt,
 			defender,
-			other_move,
+			other_action,
 			environment,
 			keep_status,
 			unknown_damage,

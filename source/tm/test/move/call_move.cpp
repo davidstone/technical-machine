@@ -8,6 +8,7 @@
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.future_action;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.no_effect_function;
@@ -101,7 +102,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			attacker,
 			UsedMove<Team<generation>>(MoveName::Belly_Drum, side_effect.function),
 			defender,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,
@@ -126,7 +127,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		attacker,
 		UsedMove<Team<generation>>(MoveName::Baton_Pass, no_effect_function),
 		defender,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -148,7 +149,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			attacker,
 			UsedMove<Team<generation>>(MoveName::Switch1, side_effect.function),
 			defender,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,
@@ -203,7 +204,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		attacker,
 		UsedMove<Team<generation>>(MoveName::Thunderbolt, no_effect_function),
 		defender,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -215,7 +216,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		attacker,
 		UsedMove<Team<generation>>(MoveName::Shadow_Ball, no_effect_function),
 		defender,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -263,7 +264,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			attacker_copy,
 			UsedMove<Team<generation>>(move_name, side_effects[0_bi].function),
 			defender_copy,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,
@@ -277,7 +278,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		attacker,
 		UsedMove<Team<generation>>(move_name, side_effects[1_bi].function),
 		defender,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -328,7 +329,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			containers::front(side_effects).function
 		),
 		other,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -373,7 +374,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 			no_effect_function
 		),
 		other,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -422,7 +423,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 				containers::front(side_effects).function
 			),
 			user,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,
@@ -441,7 +442,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			containers::front(side_effects).function
 		),
 		other,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -496,7 +497,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 				containers::front(side_effects).function
 			),
 			other,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,
@@ -513,7 +514,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 				containers::front(side_effects).function
 			),
 			user,
-			FutureMove{false},
+			FutureAction(false),
 			environment,
 			false,
 			damage,

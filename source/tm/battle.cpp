@@ -8,6 +8,7 @@ export module tm.battle;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.causes_recoil;
+import tm.move.future_action;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;
@@ -120,7 +121,7 @@ constexpr auto other_move(PokemonType const other_pokemon, ActualDamage const da
 			);
 			return KnownMove{move_name, type};
 		}()) :
-		OtherMove(FutureMove(damage.did_any_damage()));
+		OtherMove(FutureAction(damage.did_any_damage()));
 }
 
 export template<Generation generation>

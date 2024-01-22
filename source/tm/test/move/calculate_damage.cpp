@@ -7,6 +7,7 @@ export module tm.test.move.calculate_damage;
 
 import tm.move.calculate_damage;
 import tm.move.executed_move;
+import tm.move.future_action;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
@@ -118,7 +119,7 @@ constexpr auto calculated_damage = calculate_damage(
 	make_executed_move(move, Type::Rock),
 	resistance_berry_activated,
 	defender(),
-	FutureMove{false},
+	FutureAction(false),
 	Environment()
 );
 static_assert(calculated_damage == 95064912_bi);
@@ -197,7 +198,7 @@ constexpr auto calculated_damage = calculate_damage(
 	make_executed_move(move, Type::Fire),
 	resistance_berry_activated,
 	defender(),
-	FutureMove{false},
+	FutureAction(false),
 	environment()
 );
 

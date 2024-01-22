@@ -24,6 +24,7 @@ import tm.evaluate.win;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.category;
+import tm.move.future_action;
 import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.legal_selections;
@@ -311,7 +312,7 @@ private:
 				ai_move,
 				foe_move
 			);
-			return score_executed_moves(state, select, first_move, FutureMove{is_damaging(last_move)}, [&](State<generation> const & pre_updated) {
+			return score_executed_moves(state, select, first_move, FutureAction(is_damaging(last_move)), [&](State<generation> const & pre_updated) {
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
 				auto const actual_last_move = is_same_pokemon ? last_move : MoveName::Pass;
@@ -386,7 +387,7 @@ private:
 			state,
 			select,
 			first_move,
-			FutureMove{is_damaging(last_move)},
+			FutureAction(is_damaging(last_move)),
 			function
 		);
 	}

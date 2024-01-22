@@ -8,6 +8,7 @@
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.future_action;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;
@@ -78,7 +79,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			no_effect_function
 		),
 		defender,
-		FutureMove{false},
+		FutureAction(false),
 		environment,
 		false,
 		damage,
@@ -112,7 +113,7 @@ struct Sleeper {
 				side_effect.function
 			),
 			m_other,
-			FutureMove{false},
+			FutureAction(false),
 			m_environment,
 			probability_of_awakening == 1.0,
 			ActualDamage::Unknown(),
@@ -131,7 +132,7 @@ struct Sleeper {
 				no_effect_function
 			),
 			m_sleeper,
-			FutureMove{false},
+			FutureAction(false),
 			m_environment,
 			false,
 			ActualDamage::Unknown(),
