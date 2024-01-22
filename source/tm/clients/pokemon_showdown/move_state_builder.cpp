@@ -259,15 +259,11 @@ export struct MoveStateBuilder {
 		insert(m_party, party);
 		m_status_change = StatusChange::still_asleep;
 	}
-	auto switch_index() const -> tv::optional<TeamIndex> {
-		constexpr auto type = bounded::type<Used>;
-		if (m_move.index() != type) {
-			return tv::none;
-		}
-		auto & move = m_move[type];
-		return
-			is_switch(move.executed) ? to_replacement(move.executed) :
-			move.phaze_index;
+	auto phaze_index() const -> tv::optional<TeamIndex> {
+		return tv::visit(m_move, tv::overload(
+			[](Used const used) -> tv::optional<TeamIndex> { return used.phaze_index; },
+			[](auto const &) -> tv::optional<TeamIndex> { return tv::none; }
+		));
 	}
 
 	auto complete() -> tv::optional<MoveState> {

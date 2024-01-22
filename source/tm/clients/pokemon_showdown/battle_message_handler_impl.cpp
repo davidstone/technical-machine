@@ -55,19 +55,12 @@ BattleMessageHandler::BattleMessageHandler(Party party, GenerationGeneric<Teams>
 struct Nothing {
 };
 
-struct Switch {
-	Party party;
-	TeamIndex index;
-	StatusName status;
-	VisibleHP hp;
-};
-
 // Double switches first report that both Pokemon are switching, then it gives
 // information about each switch.
-using Switches = containers::static_vector<Switch, 2_bi>;
+using Switches = containers::static_vector<SwitchState, 2_bi>;
 
 constexpr auto find_switch(auto & switches, Party const party) {
-	return containers::maybe_find_if(switches, [=](Switch const s) {
+	return containers::maybe_find_if(switches, [=](SwitchState const s) {
 		return s.party == party;
 	});
 }
@@ -89,7 +82,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				return tv::none;
 			},
 			[](MoveStateBuilder const & move_builder) -> tv::optional<TeamIndex> {
-				return move_builder.switch_index();
+				return move_builder.phaze_index();
 			},
 			[=](Switches const switches) -> tv::optional<TeamIndex> {
 				auto const ptr = find_switch(switches, party);
@@ -110,12 +103,8 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 	};
 	auto use_previous_switches = [&](Switches const switches) {
 		// TODO: Timing for both sides replacing a fainting Pokemon
-		for (auto const s : containers::reversed(switches)) {
-			auto builder = MoveStateBuilder();
-			builder.use_move(s.party, to_switch(s.index));
-			builder.set_expected(s.party, s.status);
-			builder.set_expected(s.party, s.hp);
-			use_move(*builder.complete());
+		for (auto const switch_ : containers::reversed(switches)) {
+			use_switch(switch_);
 		}
 	};
 	auto use_previous_action = [&] -> void {
@@ -497,6 +486,12 @@ auto BattleMessageHandler::use_move(MoveState const data) -> void {
 	m_client_battle->use_move(data_is_for_ai, data.move, data.user_status_was_cleared); 
 	try_correct_hp_and_status(data_is_for_ai, data.user.hp, data.user.status);
 	try_correct_hp_and_status(!data_is_for_ai, data.other.hp, data.other.status);
+}
+
+auto BattleMessageHandler::use_switch(SwitchState const data) -> void {
+	auto const data_is_for_ai = data.party == m_party;
+	m_client_battle->use_switch(data_is_for_ai, to_switch(data.index)); 
+	try_correct_hp_and_status(data_is_for_ai, data.hp, data.status);
 }
 
 auto BattleMessageHandler::handle_switch_message(SwitchMessage const message) -> TeamIndex {

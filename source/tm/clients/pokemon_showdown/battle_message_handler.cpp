@@ -34,6 +34,13 @@ import std_module;
 
 namespace technicalmachine::ps {
 
+struct SwitchState {
+	Party party;
+	TeamIndex index;
+	StatusName status;
+	VisibleHP hp;
+};
+
 export struct BattleMessageHandler {
 	BattleMessageHandler(Party party, GenerationGeneric<Teams> teams);
 
@@ -53,6 +60,7 @@ export struct BattleMessageHandler {
 	}
 private:
 	auto use_move(MoveState) -> void;
+	auto use_switch(SwitchState) -> void;
 	auto handle_switch_message(SwitchMessage) -> TeamIndex;
 
 	auto handle_end_of_turn(EndOfTurnState) -> void;
