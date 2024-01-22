@@ -11,7 +11,7 @@ export module tm.evaluate.predict_action;
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 
 import tm.move.legal_selections;
 
@@ -22,10 +22,10 @@ import tm.team;
 namespace technicalmachine {
 
 export template<Generation generation>
-auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> evaluate, Depth const depth) -> MoveProbabilities;
+auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> evaluate, Depth const depth) -> ActionProbabilities;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities
+	extern template auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ActionProbabilities
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 

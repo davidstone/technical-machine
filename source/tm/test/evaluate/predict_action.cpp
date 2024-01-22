@@ -10,7 +10,7 @@
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.state;
 
@@ -85,7 +85,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
-	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
+	CHECK(moves == ActionProbabilities({ActionProbability(MoveName::Thunderbolt, 1.0)}));
 }
 
 TEST_CASE("predict_action winning and losing move", "[predict_action]") {
@@ -117,7 +117,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
-	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
+	CHECK(moves == ActionProbabilities({ActionProbability(MoveName::Thunderbolt, 1.0)}));
 }
 
 TEST_CASE("predict_action good and bad move", "[predict_action]") {
@@ -150,8 +150,8 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
-		return move.name == MoveName::Ice_Beam;
+	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
+		return ap.name == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
@@ -188,8 +188,8 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
-		return move.name == MoveName::Ice_Beam;
+	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
+		return ap.name == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
@@ -260,8 +260,8 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 	team2.pokemon().switch_in(environment, true);
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
-		return move.name == MoveName::Thunderbolt;
+	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
+		return ap.name == MoveName::Thunderbolt;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);

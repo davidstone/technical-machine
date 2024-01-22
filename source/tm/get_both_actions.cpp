@@ -11,7 +11,7 @@ export module tm.get_both_actions;
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.predict_action;
 
 import tm.move.legal_selections;
@@ -28,7 +28,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct BothActions {
-	MoveProbabilities predicted;
+	ActionProbabilities predicted;
 	LegalSelections other;
 };
 

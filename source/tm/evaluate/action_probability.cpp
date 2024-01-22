@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.evaluate.move_probability;
+export module tm.evaluate.action_probability;
 
 import tm.move.legal_selections;
 import tm.move.move_name;
@@ -12,11 +12,11 @@ import containers;
 
 namespace technicalmachine {
 
-export struct MoveProbability {
+export struct ActionProbability {
 	MoveName name;
 	double probability;
-	friend auto operator==(MoveProbability, MoveProbability) -> bool = default;
+	friend auto operator==(ActionProbability, ActionProbability) -> bool = default;
 };
-export using MoveProbabilities = containers::static_vector<MoveProbability, maximum_possible_selections>;
+export using ActionProbabilities = containers::static_vector<ActionProbability, maximum_possible_selections>;
 
 } // namespace technicalmachine

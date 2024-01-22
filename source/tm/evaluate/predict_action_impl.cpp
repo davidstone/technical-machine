@@ -12,7 +12,7 @@ module tm.evaluate.predict_action;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.expectiminimax;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
 
@@ -32,12 +32,12 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities {
+auto predict_action(Team<generation> const & team, LegalSelections const selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ActionProbabilities {
 	auto all_equally_likely = [&] {
 		auto const possible_moves = double(containers::size(selections));
-		return MoveProbabilities(containers::transform(
+		return ActionProbabilities(containers::transform(
 			selections,
-			[=](MoveName const move) { return MoveProbability{move, 1.0 / possible_moves}; }
+			[=](MoveName const move) { return ActionProbability(move, 1.0 / possible_moves); }
 		));
 	};
 	if (containers::size(selections) == 1_bi) {
@@ -59,19 +59,19 @@ auto predict_action(Team<generation> const & team, LegalSelections const selecti
 	if (total_score == 0.0) {
 		return all_equally_likely();
 	}
-	return MoveProbabilities(containers::filter(
+	return ActionProbabilities(containers::filter(
 		containers::transform(
 			scores,
 			[=](ScoredMove const move) {
-				return MoveProbability{move.name, adjust_score(move.score) / total_score};
+				return ActionProbability(move.name, adjust_score(move.score) / total_score);
 			}
 		),
-		[](MoveProbability const move) { return move.probability > 0.0; }
+		[](ActionProbability const ap) { return ap.probability > 0.0; }
 	));
 }
 
 #define INSTANTIATION(generation) \
-	template auto predict_action(Team<generation> const & team, LegalSelections selections, Team<generation> const & other, LegalSelections other_selections, Environment environment, Evaluate<generation> evaluate, Depth depth) -> MoveProbabilities
+	template auto predict_action(Team<generation> const & team, LegalSelections selections, Team<generation> const & other, LegalSelections other_selections, Environment environment, Evaluate<generation> evaluate, Depth depth) -> ActionProbabilities
 
 TM_FOR_EACH_GENERATION(INSTANTIATION);
 

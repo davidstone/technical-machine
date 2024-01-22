@@ -17,7 +17,7 @@ import tm.clients.ps.slot_memory;
 import tm.clients.party;
 
 import tm.evaluate.all_evaluate;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.predict_action;
 
 import tm.move.move_name;
@@ -81,7 +81,7 @@ constexpr auto is_input_for(Party const party) {
 }
 
 struct PredictedAction {
-	MoveProbabilities predicted;
+	ActionProbabilities predicted;
 	SlotMemory slot_memory;
 };
 
@@ -113,7 +113,7 @@ auto get_predicted_action(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
-				if (action.predicted == MoveProbabilities({{MoveName::Pass, 1.0}})) {
+				if (action.predicted == ActionProbabilities({{MoveName::Pass, 1.0}})) {
 					return tv::none;
 				}
 				return action;
@@ -134,9 +134,9 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 			return to_switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
-	auto score_prediction = [&](MoveProbability const move) {
-		auto const actual_probability = actual == move.name ? 1.0 : 0.0;
-		auto const value = move.probability - actual_probability;
+	auto score_prediction = [&](ActionProbability const ap) {
+		auto const actual_probability = actual == ap.name ? 1.0 : 0.0;
+		auto const value = ap.probability - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));

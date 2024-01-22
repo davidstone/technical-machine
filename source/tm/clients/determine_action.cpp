@@ -7,7 +7,7 @@ export module tm.clients.determine_action;
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.score_moves;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
@@ -55,15 +55,15 @@ auto log_move_scores(
 template<Generation generation>
 auto log_foe_move_probabilities(
 	std::ostream & stream,
-	MoveProbabilities const moves,
+	ActionProbabilities const action_probabilities,
 	Team<generation> const & foe
 ) -> void {
-	for (auto const move : moves) {
-		stream << "Predicted " << move.probability * 100.0 << "% chance of ";
-		if (is_switch(move.name)) {
-			stream << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
+	for (auto const ap : action_probabilities) {
+		stream << "Predicted " << ap.probability * 100.0 << "% chance of ";
+		if (is_switch(ap.name)) {
+			stream << "switching to " << to_string(foe.pokemon(to_replacement(ap.name)).species());
 		} else {
-			stream << "using " << to_string(move.name);
+			stream << "using " << to_string(ap.name);
 		}
 		stream << '\n';
 	}
@@ -112,7 +112,7 @@ auto determine_action(
 		state.environment,
 		evaluate
 	);
-	containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
+	containers::sort(foe_moves, [](ActionProbability const lhs, ActionProbability const rhs) {
 		return lhs.probability > rhs.probability;
 	});
 	log_foe_move_probabilities(stream, foe_moves, state.foe);

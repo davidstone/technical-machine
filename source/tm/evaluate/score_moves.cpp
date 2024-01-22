@@ -10,7 +10,7 @@ module;
 export module tm.evaluate.score_moves;
 
 import tm.evaluate.evaluate;
-import tm.evaluate.move_probability;
+import tm.evaluate.action_probability;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
 
@@ -21,10 +21,10 @@ import tm.generation;
 namespace technicalmachine {
 
 export template<Generation generation>
-auto score_moves(State<generation> const &, LegalSelections ai_selections, MoveProbabilities foe_selections, Evaluate<generation>) -> ScoredMoves;
+auto score_moves(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_selections, Evaluate<generation>) -> ScoredMoves;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto score_moves(State<generation> const &, LegalSelections ai_selections, MoveProbabilities foe_moves, Evaluate<generation>) -> ScoredMoves
+	extern template auto score_moves(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_moves, Evaluate<generation>) -> ScoredMoves
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 
