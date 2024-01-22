@@ -13,7 +13,7 @@ import tm.evaluate.evaluate_settings;
 import tm.evaluate.expectiminimax;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
-import tm.evaluate.score_moves;
+import tm.evaluate.score_actions;
 import tm.evaluate.state;
 import tm.evaluate.victory;
 
@@ -691,7 +691,7 @@ template<Generation generation>
 auto determine_best_move2(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
 	auto const ai_selections = get_legal_selections(ai, foe, environment);
 	auto const foe_selections = get_legal_selections(foe, ai, environment);
-	auto const moves = score_moves(
+	auto const actions = score_actions(
 		State<generation>(ai, foe, environment, depth),
 		ai_selections,
 		predict_action(
@@ -705,12 +705,12 @@ auto determine_best_move2(Team<generation> const & ai, Team<generation> const & 
 		),
 		evaluate
 	);
-	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
+	return *containers::max_element(actions, [](ScoredMove const lhs, ScoredMove const rhs) {
 		return lhs.score > rhs.score;
 	});
 }
 
-TEST_CASE("expectiminimax OHKO", "[score_moves]") {
+TEST_CASE("expectiminimax OHKO", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -774,7 +774,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 	}
 }
 
-TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
+TEST_CASE("expectiminimax one-turn damage", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -812,7 +812,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 	CHECK(best_move.name == MoveName::Shadow_Ball);
 }
 
-TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
+TEST_CASE("expectiminimax BellyZard", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -850,7 +850,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 	CHECK(best_move.score == victory<generation>);
 }
 
-TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
+TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -912,7 +912,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 }
 
 
-TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
+TEST_CASE("expectiminimax Baton Pass", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -952,7 +952,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 }
 
 
-TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
+TEST_CASE("expectiminimax replace fainted", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
@@ -1026,7 +1026,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 }
 
 
-TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
+TEST_CASE("expectiminimax Latias vs Suicune", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -1085,7 +1085,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 	CHECK(best_move.name == MoveName::Calm_Mind);
 }
 
-TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
+TEST_CASE("expectiminimax Sleep Talk", "[score_actions]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
@@ -1201,7 +1201,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	#endif
 }
 
-TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
+TEST_CASE("Generation 1 frozen last Pokemon", "[score_actions]") {
 	constexpr auto generation = Generation::one;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();

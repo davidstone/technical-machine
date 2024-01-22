@@ -8,7 +8,7 @@ export module tm.clients.determine_action;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.action_probability;
-import tm.evaluate.score_moves;
+import tm.evaluate.score_actions;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
 
@@ -118,7 +118,7 @@ auto determine_action(
 	log_foe_move_probabilities(stream, foe_moves, state.foe);
 	stream << std::flush;
 
-	auto scored_moves = score_moves(
+	auto scored_actions = score_actions(
 		state,
 		ai_selections,
 		foe_moves,
@@ -126,12 +126,12 @@ auto determine_action(
 	);
 	auto const finish = std::chrono::steady_clock::now();
 	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-	containers::sort(scored_moves, [](ScoredMove const lhs, ScoredMove const rhs) {
+	containers::sort(scored_actions, [](ScoredMove const lhs, ScoredMove const rhs) {
 		return lhs.score > rhs.score;
 	});
-	log_move_scores(stream, scored_moves, state.ai);
+	log_move_scores(stream, scored_actions, state.ai);
 	stream << std::flush;
-	return containers::front(scored_moves).name;
+	return containers::front(scored_actions).name;
 }
 
 export auto determine_action(

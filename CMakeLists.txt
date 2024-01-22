@@ -93,7 +93,7 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/possible_executed_moves.cpp
 		source/tm/evaluate/predict_action.cpp
 		source/tm/evaluate/random_selection.cpp
-		source/tm/evaluate/score_moves.cpp
+		source/tm/evaluate/score_actions.cpp
 		source/tm/evaluate/scored_move.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
@@ -334,7 +334,7 @@ target_sources(tm_common PUBLIC
 )
 target_sources(tm_common PRIVATE
 	source/tm/evaluate/predict_action_impl.cpp
-	source/tm/evaluate/score_moves_impl.cpp
+	source/tm/evaluate/score_actions_impl.cpp
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
 	source/tm/string_conversions/team_impl.cpp

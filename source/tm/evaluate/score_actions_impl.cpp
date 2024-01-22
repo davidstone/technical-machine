@@ -7,7 +7,7 @@ module;
 
 #include <tm/for_each_generation.hpp>
 
-module tm.evaluate.score_moves;
+module tm.evaluate.score_actions;
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
@@ -75,7 +75,7 @@ struct ScoreMovesEvaluator {
 };
 
 template<Generation generation>
-auto score_moves(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation> const evaluate) -> ScoredMoves {
+auto score_actions(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation> const evaluate) -> ScoredMoves {
 	if (auto const score = win(state.ai, state.foe)) {
 		return ScoredMoves({ScoredMove(MoveName::Pass, *score)});
 	}
@@ -89,7 +89,7 @@ auto score_moves(State<generation> const & state, LegalSelections const ai_selec
 }
 
 #define INSTANTIATE(generation) \
-	template auto score_moves(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_actions, Evaluate<generation>) -> ScoredMoves
+	template auto score_actions(State<generation> const &, LegalSelections ai_selections, ActionProbabilities foe_actions, Evaluate<generation>) -> ScoredMoves
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 
