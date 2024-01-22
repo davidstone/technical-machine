@@ -356,14 +356,12 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 					}
 				));
 				auto const index = handle_switch_message(message);
-				containers::push_back(
+				containers::emplace_back(
 					switches,
-					Switch(
-						message.party,
-						index,
-						message.status,
-						message.hp
-					)
+					message.party,
+					index,
+					message.status,
+					message.hp
 				);
 			},
 			[&](PhazeMessage const message) {
