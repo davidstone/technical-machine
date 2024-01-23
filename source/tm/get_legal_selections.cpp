@@ -78,7 +78,7 @@ constexpr auto is_blocked_by_torment(any_active_pokemon auto const user, MoveNam
 	return user.is_tormented() and user.last_used_move().name() == move;
 }
 
-constexpr auto is_legal_regular_move(
+constexpr auto is_legal_move(
 	any_active_pokemon auto const user_pokemon,
 	any_active_pokemon auto const other_pokemon,
 	Environment const environment
@@ -100,7 +100,7 @@ constexpr auto potential_regular(
 	return containers::make_static_vector(containers::transform(
 		containers::filter(
 			user_pokemon.regular_moves(),
-			is_legal_regular_move(user_pokemon, other_pokemon, environment)
+			is_legal_move(user_pokemon, other_pokemon, environment)
 		),
 		&Move::name
 	));
