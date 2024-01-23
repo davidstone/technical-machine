@@ -247,6 +247,8 @@ private:
 			m_depth
 		);
 		tv::visit(action, tv::overload(
+			[](UnusedSwitch) {
+			},
 			[&](MoveName const move) {
 				if (move == MoveName::Pass) {
 				} else if (is_switch(move)) {

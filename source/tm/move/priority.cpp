@@ -364,6 +364,7 @@ constexpr auto priority_impl(constant_gen_t<Generation::eight>, MoveName const m
 
 constexpr auto get_priority(Generation const generation, Action const action) {
 	return tv::visit(action, tv::overload(
+		[](UnusedSwitch) -> PriorityInteger { return 6_bi; },
 		[&](MoveName const move) {
 			return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
 		}

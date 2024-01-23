@@ -12,6 +12,11 @@ import tv;
 
 namespace technicalmachine {
 
-export using Action = tv::variant<MoveName>;
+export struct UnusedSwitch {
+	UnusedSwitch() = delete;
+	friend constexpr auto operator==(UnusedSwitch, UnusedSwitch) -> bool = default;
+};
+
+export using Action = tv::variant<MoveName, UnusedSwitch>;
 
 } // namespace technicalmachine
