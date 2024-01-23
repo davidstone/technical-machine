@@ -266,7 +266,7 @@ private:
 		auto is_ai = team_matcher(state.ai);
 		return !ordered ?
 			(use_move_branch(state, Selector<generation>(true), ai_move, foe_move) + use_move_branch(state, Selector<generation>(false), foe_move, ai_move)) / 2.0 :
-			use_move_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.move, ordered->second.move);
+			use_move_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.action, ordered->second.action);
 	}
 
 	auto use_move_branch_inner(KnownMove const first_used_move, Selector<generation> const select) {

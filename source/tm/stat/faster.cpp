@@ -96,7 +96,7 @@ struct Order : operators::arrow<Order<generation>> {
 private:
 	struct Element {
 		Team<generation> const & team;
-		MoveName move;
+		MoveName action;
 	};
 	using pair = std::pair<Element, Element>;
 
