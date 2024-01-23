@@ -8,7 +8,6 @@ export module tm.blocks_selection_and_execution;
 import tm.move.category;
 import tm.move.is_blocked_by_gravity;
 import tm.move.is_healing;
-import tm.move.is_switch;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.pp;
@@ -41,10 +40,9 @@ constexpr  auto is_blocked_by_taunt(MoveName const move) {
 }
 
 export constexpr auto blocks_selection_and_execution(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
-	return !is_switch(move) and (
+	return 
 		(user.is_taunted() and is_blocked_by_taunt(move)) or
-		(environment.gravity() and is_blocked_by_gravity(move))
-	);
+		(environment.gravity() and is_blocked_by_gravity(move));
 }
 
 } // namespace technicalmachine
