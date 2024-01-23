@@ -40,6 +40,7 @@ import tm.clients.turn_count;
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
+import tm.move.action;
 import tm.move.is_switch;
 import tm.move.move_name;
 
@@ -119,10 +120,10 @@ auto determine_action(
 	AllEvaluate const all_evaluate,
 	AllUsageStats const & all_usage_stats,
 	Depth const depth
-) -> MoveName {
+) -> Action {
 	return tv::visit(
 		generic_state,
-		[&]<Generation generation>(VisibleState<generation> const & state) -> MoveName {
+		[&]<Generation generation>(VisibleState<generation> const & state) -> Action {
 			return determine_action(
 				state,
 				stream,
@@ -245,20 +246,24 @@ private:
 			m_all_usage_stats,
 			m_depth
 		);
-		if (action == MoveName::Pass) {
-		} else if (is_switch(action)) {
-			m_send_message(containers::concatenate<containers::string>(
-				room,
-				"|/choose switch "sv,
-				containers::to_string(slot_memory[to_replacement(action)])
-			));
-		} else {
-			m_send_message(containers::concatenate<containers::string>(
-				room,
-				"|/choose move "sv,
-				to_string(action)
-			));
-		}
+		tv::visit(action, tv::overload(
+			[&](MoveName const move) {
+				if (move == MoveName::Pass) {
+				} else if (is_switch(move)) {
+					m_send_message(containers::concatenate<containers::string>(
+						room,
+						"|/choose switch "sv,
+						containers::to_string(slot_memory[to_replacement(move)])
+					));
+				} else {
+					m_send_message(containers::concatenate<containers::string>(
+						room,
+						"|/choose move "sv,
+						to_string(move)
+					));
+				}
+			}
+		));
 	}
 
 	auto handle_message(Room const room, InMessage message) -> void {

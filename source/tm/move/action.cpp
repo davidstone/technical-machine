@@ -12,6 +12,6 @@ import tv;
 
 namespace technicalmachine {
 
-export using Action = tv::variant<MoveName, Switch>;
+export using Action = tv::variant<MoveName>;
 
 } // namespace technicalmachine

@@ -12,6 +12,7 @@ import tm.evaluate.score_actions;
 import tm.evaluate.scored_action;
 import tm.evaluate.state;
 
+import tm.move.action;
 import tm.move.move_name;
 import tm.move.is_switch;
 
@@ -91,7 +92,7 @@ auto determine_action(
 	UsageStats const & usage_stats,
 	Evaluate<generation> const evaluate,
 	Depth const depth
-) -> MoveName {
+) -> Action {
 	if (visible.ai.size() == 0_bi or visible.foe.size() == 0_bi) {
 		throw std::runtime_error("Tried to determine an action with an empty team.");
 	}
@@ -141,9 +142,9 @@ export auto determine_action(
 	UsageStats const & usage_stats,
 	GenerationGeneric<Evaluate> const generic_evaluate,
 	Depth const depth
-) -> MoveName {
+) -> Action {
 	return tv::visit(generic_state, generic_evaluate, tv::overload(
-		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> MoveName {
+		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> Action {
 			return determine_action(
 				state,
 				stream,
@@ -152,7 +153,7 @@ export auto determine_action(
 				depth
 			);
 		},
-		[](auto const &, auto) -> MoveName {
+		[](auto const &, auto) -> Action {
 			std::unreachable();
 		}
 	));
