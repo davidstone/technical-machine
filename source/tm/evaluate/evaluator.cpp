@@ -276,7 +276,7 @@ private:
 				foe_move,
 				ai_move
 			);
-			BOUNDED_ASSERT(first_action == MoveName::Pass);
+			BOUNDED_ASSERT(first_move == MoveName::Pass);
 			return score_executed_moves(state, select, last_move, first_used_move, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
