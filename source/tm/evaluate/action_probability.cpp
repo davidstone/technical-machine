@@ -13,7 +13,7 @@ import containers;
 namespace technicalmachine {
 
 export struct ActionProbability {
-	MoveName name;
+	MoveName action;
 	double probability;
 	friend auto operator==(ActionProbability, ActionProbability) -> bool = default;
 };

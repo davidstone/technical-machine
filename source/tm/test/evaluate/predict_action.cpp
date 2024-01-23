@@ -151,7 +151,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.name == MoveName::Ice_Beam;
+		return ap.action == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
@@ -189,7 +189,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.name == MoveName::Ice_Beam;
+		return ap.action == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
@@ -261,7 +261,7 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 
 	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.name == MoveName::Thunderbolt;
+		return ap.action == MoveName::Thunderbolt;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);

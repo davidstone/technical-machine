@@ -48,8 +48,8 @@ struct ScoreMovesEvaluator {
 				ai_move,
 				parallel_sum(containers::transform(
 					foe_actions,
-					[&](ActionProbability const foe_action) {
-						return foe_action.probability * function(state, ai_move, foe_action.name);
+					[&](ActionProbability const foe_ap) {
+						return foe_ap.probability * function(state, ai_move, foe_ap.action);
 					}
 				))
 			);

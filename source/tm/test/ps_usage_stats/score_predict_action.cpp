@@ -135,7 +135,7 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 		}
 	));
 	auto score_prediction = [&](ActionProbability const ap) {
-		auto const actual_probability = actual == ap.name ? 1.0 : 0.0;
+		auto const actual_probability = actual == ap.action ? 1.0 : 0.0;
 		auto const value = ap.probability - actual_probability;
 		return value * value;
 	};

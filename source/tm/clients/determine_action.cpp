@@ -65,7 +65,7 @@ auto log_foe_move_probabilities(
 ) -> void {
 	for (auto const ap : action_probabilities) {
 		stream << "Predicted " << ap.probability * 100.0 << "% chance: ";
-		log_action(stream, ap.name, foe);
+		log_action(stream, ap.action, foe);
 		stream << '\n';
 	}
 }
