@@ -442,12 +442,13 @@ private:
 			ai_move,
 			foe_move
 		);
-		if (first_move != MoveName::Pass) {
-			selected.team.switch_pokemon(selected.other.pokemon(), state.environment, to_replacement(first_move));
-		}
-		if (last_move != MoveName::Pass) {
-			selected.other.switch_pokemon(selected.team.pokemon(), state.environment, to_replacement(last_move));
-		}
+		auto switch_one_side = [&](MoveName const move, Team<generation> & switcher, Team<generation> & other) {
+			if (move != MoveName::Pass) {
+				switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(move));
+			}
+		};
+		switch_one_side(first_move, selected.team, selected.other);
+		switch_one_side(last_move, selected.other, selected.team);
 		if (auto const won = win(state.ai, state.foe)) {
 			return *won + double(state.depth.general);
 		}
