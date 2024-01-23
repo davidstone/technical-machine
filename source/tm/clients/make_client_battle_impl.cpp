@@ -13,6 +13,7 @@ import tm.move.known_move;
 import tm.move.move_cures_target_status;
 import tm.move.move_name;
 import tm.move.move_result;
+import tm.move.switch_;
 
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
@@ -130,7 +131,7 @@ struct ClientBattleImpl final : ClientBattle {
 		m_battle.use_move(ai_is_user, move_result, status_clears);
 	}
 
-	auto use_switch(bool const ai_is_user, MoveName const switch_) & -> void final {
+	auto use_switch(bool const ai_is_user, Switch const switch_) & -> void final {
 		m_battle.use_switch(ai_is_user, switch_);
 	}
 

@@ -9,6 +9,7 @@
 import tm.move.actual_damage;
 import tm.move.move_name;
 import tm.move.move_result;
+import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.level;
@@ -184,7 +185,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 		CHECK(hp.max() == 243_bi);
 	}
 
-	battle.use_switch(true, MoveName::Switch1);
+	battle.use_switch(true, Switch(1_bi));
 
 	battle.use_move(
 		false,
@@ -192,7 +193,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 		false
 	);
 
-	battle.use_switch(true, MoveName::Switch0);
+	battle.use_switch(true, Switch(0_bi));
 
 	{
 		auto const hp = battle.ai().pokemon().hp();

@@ -11,6 +11,7 @@ import tm.clients.teams;
 
 import tm.move.move_name;
 import tm.move.move_result;
+import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.species;
@@ -165,8 +166,8 @@ TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
 
 	CHECK(battle->is_end_of_turn());
 
-	battle->use_switch(true, MoveName::Switch1);
-	battle->use_switch(false, MoveName::Switch1);
+	battle->use_switch(true, Switch(1_bi));
+	battle->use_switch(false, Switch(1_bi));
 
 	CHECK(!battle->is_end_of_turn());
 }

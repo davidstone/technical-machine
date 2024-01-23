@@ -40,7 +40,7 @@ constexpr  auto is_blocked_by_taunt(MoveName const move) {
 }
 
 export constexpr auto blocks_selection_and_execution(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
-	return 
+	return
 		(user.is_taunted() and is_blocked_by_taunt(move)) or
 		(environment.gravity() and is_blocked_by_gravity(move));
 }

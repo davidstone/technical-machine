@@ -9,6 +9,7 @@ import tm.clients.turn_count;
 
 import tm.move.move_name;
 import tm.move.move_result;
+import tm.move.switch_;
 
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
@@ -63,7 +64,7 @@ export struct ClientBattle {
 
 	virtual auto end_turn(bool ai_went_first, EndOfTurnFlags first_flags, EndOfTurnFlags last_flags) & -> void = 0;
 	virtual auto use_move(bool ai_is_user, MoveResult, bool user_status_was_cleared) & -> void = 0;
-	virtual auto use_switch(bool ai_is_user, MoveName) & -> void = 0;
+	virtual auto use_switch(bool ai_is_user, Switch) & -> void = 0;
 
 	// TODO: Delete this function
 	virtual auto cures_target_status(bool is_ai, MoveName) const -> bool = 0;

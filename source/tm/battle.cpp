@@ -15,6 +15,7 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_result;
 import tm.move.other_action;
+import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.any_pokemon;
@@ -272,7 +273,7 @@ struct Battle {
 		});
 	}
 
-	auto use_switch(bool const ai_is_user, MoveName const switch_) & -> void {
+	auto use_switch(bool const ai_is_user, Switch const switch_) & -> void {
 		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
 			do_switch(user_team, switch_, other_team, m_environment);
 		});

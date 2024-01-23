@@ -29,6 +29,7 @@ import tm.move.actual_damage;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.move_result;
+import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
@@ -334,7 +335,7 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::TurnMessage(3_bi),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		expected->use_move(
 			false,
@@ -484,7 +485,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			ps::TurnMessage(2_bi),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}
@@ -550,7 +551,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			),
 			ps::TurnMessage(2_bi),
 		}));
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}
@@ -653,7 +654,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		check_state(result, expected->state());
 	}
@@ -674,7 +675,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::TurnMessage(3_bi),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		check_state(result, expected->state(), TurnCount(3_bi));
 	}
@@ -774,8 +775,8 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			ps::TurnMessage(2_bi),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
-		expected->use_switch(false, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
+		expected->use_switch(false, Switch(1_bi));
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}
@@ -1093,7 +1094,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
 
-		expected->use_switch(true, MoveName::Switch1);
+		expected->use_switch(true, Switch(1_bi));
 
 		check_state(result, expected->state());
 	}
@@ -1116,7 +1117,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::TurnMessage(3_bi),
 		}));
 
-		expected->use_switch(true, MoveName::Switch0);
+		expected->use_switch(true, Switch(0_bi));
 
 		handle_end_turn(*expected);
 

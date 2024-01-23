@@ -24,8 +24,8 @@ import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.turn_count;
 
-import tm.move.is_switch;
 import tm.move.move_name;
+import tm.move.switch_;
 
 import tm.pokemon.max_pokemon_per_team;
 
@@ -490,7 +490,7 @@ auto BattleMessageHandler::use_move(MoveState const data) -> void {
 
 auto BattleMessageHandler::use_switch(SwitchState const data) -> void {
 	auto const data_is_for_ai = data.party == m_party;
-	m_client_battle->use_switch(data_is_for_ai, to_switch(data.index)); 
+	m_client_battle->use_switch(data_is_for_ai, Switch(data.index)); 
 	try_correct_hp_and_status(data_is_for_ai, data.hp, data.status);
 }
 

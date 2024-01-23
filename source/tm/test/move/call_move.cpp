@@ -15,6 +15,7 @@ import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_action;
 import tm.move.side_effects;
+import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.level;
@@ -141,7 +142,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		LegalSelections({MoveName::Switch1})
 	);
 
-	do_switch(attacker, MoveName::Switch1, defender, environment);
+	do_switch(attacker, Switch(1_bi), defender, environment);
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(attacker.pokemon().species() == Species::Alakazam);
 	CHECK(!switch_decision_required(attacker));
