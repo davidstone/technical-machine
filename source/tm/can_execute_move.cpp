@@ -57,9 +57,8 @@ export constexpr auto can_attempt_move_execution(any_active_pokemon auto const u
 }
 
 export constexpr auto can_execute_move(any_active_pokemon auto const user, Move const move, Environment const environment, bool const is_recharging, bool const is_fully_paralyzed) -> bool {
-	auto const switching = is_switch(move.name());
-	if (switching or move.name() == MoveName::Hit_Self) {
-		BOUNDED_ASSERT(!is_recharging or (switching and user.hp().current() == 0_bi));
+	if (move.name() == MoveName::Hit_Self) {
+		BOUNDED_ASSERT(!is_recharging);
 		return true;
 	}
 	return !user.flinched() and !blocks_selection_and_execution(user, move.name(), environment) and !is_fully_paralyzed and !is_recharging;
