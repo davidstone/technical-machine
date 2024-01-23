@@ -8,6 +8,7 @@ export module tm.move.action;
 import tm.move.move_name;
 import tm.move.switch_;
 
+import std_module;
 import tv;
 
 namespace technicalmachine {
@@ -18,5 +19,12 @@ export struct UnusedSwitch {
 };
 
 export using Action = tv::variant<MoveName, UnusedSwitch>;
+
+export constexpr auto get_move(Action const action) -> MoveName {
+	return tv::visit(action, tv::overload(
+		[](MoveName const move) -> MoveName { return move; },
+		[](UnusedSwitch) -> MoveName { std::unreachable(); }
+	));
+}
 
 } // namespace technicalmachine

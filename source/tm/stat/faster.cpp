@@ -67,12 +67,8 @@ struct Order : operators::arrow<Order<generation>> {
 			auto const priority1 = Priority(generation, action1);
 			auto const priority2 = Priority(generation, action2);
 
-			auto get_move = tv::overload(
-				[](MoveName const move) -> MoveName { return move; },
-				[](UnusedSwitch) -> MoveName { std::unreachable(); }
-			);
-			auto const lhs = Element(team1, tv::visit(action1, get_move));
-			auto const rhs = Element(team2, tv::visit(action2, get_move));
+			auto const lhs = Element(team1, get_move(action1));
+			auto const rhs = Element(team2, get_move(action2));
 
 			auto const lhs_first = Order(lhs, rhs);
 			auto const rhs_first = Order(rhs, lhs);
