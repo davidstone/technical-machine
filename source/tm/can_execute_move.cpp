@@ -9,7 +9,6 @@ module;
 
 export module tm.can_execute_move;
 
-import tm.move.is_switch;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.usable_while_sleeping;
@@ -21,7 +20,6 @@ import tm.status.status;
 import tm.blocks_selection_and_execution;
 import tm.environment;
 import tm.generation;
-
 
 import bounded;
 
@@ -42,9 +40,6 @@ constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, Move
 }
 
 export constexpr auto can_attempt_move_execution(any_active_pokemon auto const user, Move const move, any_active_pokemon auto const other, bool const user_was_asleep) -> bool {
-	if (is_switch(move.name())) {
-		return true;
-	}
 	if (user.hp().current() == 0_bi) {
 		return false;
 	}
