@@ -63,7 +63,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const selecti
 		containers::transform(
 			scores,
 			[=](ScoredAction const sa) {
-				return ActionProbability(sa.name, adjust_score(sa.score) / total_score);
+				return ActionProbability(sa.action, adjust_score(sa.score) / total_score);
 			}
 		),
 		[](ActionProbability const ap) { return ap.probability > 0.0; }

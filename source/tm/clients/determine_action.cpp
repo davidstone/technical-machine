@@ -52,7 +52,7 @@ auto log_move_scores(
 	Team<generation> const & ai
 ) -> void {
 	for (auto const sa : scored_actions) {
-		log_action(stream, sa.name, ai);
+		log_action(stream, sa.action, ai);
 		stream << " for an expected score of " << static_cast<std::int64_t>(sa.score) << '\n';
 	}
 }
@@ -132,7 +132,7 @@ auto determine_action(
 	});
 	log_move_scores(stream, scored_actions, state.ai);
 	stream << std::flush;
-	return containers::front(scored_actions).name;
+	return containers::front(scored_actions).action;
 }
 
 export auto determine_action(

@@ -15,7 +15,7 @@ import containers;
 namespace technicalmachine {
 
 export struct ScoredAction {
-	MoveName name;
+	MoveName action;
 	double score;
 };
 export using ScoredActions = containers::static_vector<ScoredAction, maximum_possible_selections>;
