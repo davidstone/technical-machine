@@ -13,7 +13,6 @@ import tm.move.future_action;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.no_effect_function;
-import tm.move.other_action;
 import tm.move.side_effects;
 import tm.move.switch_;
 import tm.move.used_move;
