@@ -37,9 +37,7 @@ struct ExpectiminimaxEvaluator {
 				evaluate,
 				function
 			) :
-			ScoredActions(containers::transform(ai_selections, [](MoveName const move) {
-				return ScoredAction(move, 0.0);
-			}));
+			ScoredActions();
 		auto is_winner = [](ScoredAction const sa) { return sa.score >= victory<generation>; };
 		if (auto const winner = containers::maybe_find_if(scored_actions_shallower, is_winner)) {
 			return ScoredActions({*winner});
