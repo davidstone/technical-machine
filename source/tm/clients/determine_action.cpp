@@ -31,19 +31,25 @@ import tm.visible_state;
 
 import bounded;
 import containers;
-import tv;
 import std_module;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-auto log_action(std::ostream & stream, MoveName const action, Team<generation> const & team) {
-	if (!is_switch(action)) {
-		stream << "Use " << to_string(action);
-	} else {
-		stream << "Switch to " << to_string(team.pokemon(to_replacement(action)).species());
-	}
+auto log_action(std::ostream & stream, Action const action, Team<generation> const & team) {
+	tv::visit(action, tv::overload(
+		[&](MoveName const move) {
+			if (!is_switch(move)) {
+				stream << "Use " << to_string(move);
+			} else {
+				stream << "Switch to " << to_string(team.pokemon(to_replacement(move)).species());
+			}
+		},
+		[](UnusedSwitch) {
+		}
+	));
 }
 
 template<Generation generation>
