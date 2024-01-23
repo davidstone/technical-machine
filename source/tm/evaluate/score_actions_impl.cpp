@@ -80,12 +80,11 @@ auto score_actions(State<generation> const & state, LegalSelections const ai_sel
 		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
-	auto const moves = evaluator.select_type_of_move(
+	return evaluator.select_type_of_move(
 		state,
 		ai_selections,
 		foe_actions
 	);
-	return moves;
 }
 
 #define INSTANTIATE(generation) \
