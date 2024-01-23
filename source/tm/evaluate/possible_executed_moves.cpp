@@ -5,15 +5,10 @@
 
 export module tm.evaluate.possible_executed_moves;
 
-import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;
 
-import tm.pokemon.get_hidden_power_type;
-
 import tm.status.status;
-
-import tm.type.move_type;
 
 import tm.any_team;
 import tm.generation;
@@ -25,8 +20,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 constexpr auto can_be_selected_by_sleep_talk(Generation const generation) {
-	return [=](KnownMove const move) {
-		switch (move.name) {
+	return [=](MoveName const move) {
+		switch (move) {
 			case MoveName::Assist:
 			case MoveName::Beak_Blast:
 			case MoveName::Belch:
@@ -76,31 +71,23 @@ constexpr auto can_be_selected_by_sleep_talk(Generation const generation) {
 	};
 }
 
-export using PossibleExecutedMoves = containers::static_vector<KnownMove, 3_bi>;
+using PossibleExecutedMoves = containers::static_vector<MoveName, 3_bi>;
 
 export template<any_team UserTeam>
-auto possible_executed_moves(MoveName const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
+auto possible_executed_moves(MoveName const selected, UserTeam const & user_team) -> PossibleExecutedMoves {
 	auto const user_pokemon = user_team.pokemon();
-	auto type = [=](MoveName const move) {
-		return move_type(generation_from<UserTeam>, move, get_hidden_power_type(user_pokemon));
-	};
-	auto known = [=](Move const move) {
-		return KnownMove{move.name(), type(move.name())};
-	};
-	using containers::filter;
-	using containers::transform;
-	switch (selected_move) {
+	switch (selected) {
 		case MoveName::Sleep_Talk:
 			return is_sleeping(user_pokemon.status()) ?
 				PossibleExecutedMoves(
-					filter(
-						transform(user_pokemon.regular_moves(), known),
+					containers::filter(
+						containers::transform(user_pokemon.regular_moves(), &Move::name),
 						can_be_selected_by_sleep_talk(generation_from<UserTeam>)
 					)
 				) :
-				PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
+				PossibleExecutedMoves({selected});
 		default:
-			return PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
+			return PossibleExecutedMoves({selected});
 	}
 }
 

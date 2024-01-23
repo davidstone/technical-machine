@@ -111,7 +111,7 @@ constexpr double generic_flag_branch(double const basic_probability, auto const 
 
 struct SelectedAndExecuted {
 	MoveName selected;
-	KnownMove executed;
+	MoveName executed;
 };
 
 constexpr auto paralysis_probability(StatusName const status) -> double {
@@ -123,11 +123,20 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 	auto const selected = select(state);
 	auto const user_pokemon = selected.team.pokemon();
 	auto const other_pokemon = selected.other.pokemon();
-	auto const side_effects = possible_side_effects(move.executed.name, user_pokemon, selected.other, state.environment);
+	auto const side_effects = possible_side_effects(move.executed, user_pokemon, selected.other, state.environment);
 	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
-	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, state.environment, other_pokemon.last_used_move().moved_this_turn());
-	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed.name, other_pokemon.ability(), state.environment);
+	auto const specific_chance_to_hit = chance_to_hit(
+		user_pokemon,
+		KnownMove(
+			move.executed,
+			move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
+		),
+		other_pokemon,
+		state.environment,
+		other_pokemon.last_used_move().moved_this_turn()
+	);
+	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed, other_pokemon.ability(), state.environment);
 	auto const chance_to_be_paralyzed = paralysis_probability(user_pokemon.status().name());
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
@@ -145,7 +154,7 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 								selected_copy.team,
 								UsedMove<Team<generation>>(
 									move.selected,
-									move.executed.name,
+									move.executed,
 									critical_hit,
 									!hits,
 									contact_ability_effect,
