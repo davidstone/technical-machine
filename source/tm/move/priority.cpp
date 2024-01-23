@@ -5,12 +5,14 @@
 
 export module tm.move.priority;
 
+import tm.move.action;
 import tm.move.move_name;
 
 import tm.constant_generation;
 import tm.generation;
 
 import bounded;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -360,13 +362,17 @@ constexpr auto priority_impl(constant_gen_t<Generation::eight>, MoveName const m
 	return priority_impl(constant_gen<Generation::seven>, move);
 }
 
-constexpr auto get_priority(Generation const generation, MoveName const move) {
-	return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
+constexpr auto get_priority(Generation const generation, Action const action) {
+	return tv::visit(action, tv::overload(
+		[&](MoveName const move) {
+			return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
+		}
+	));
 }
 
 export struct Priority {
-	explicit constexpr Priority(Generation const generation, MoveName const move):
-		priority(get_priority(generation, move)) {
+	explicit constexpr Priority(Generation const generation, Action const action):
+		priority(get_priority(generation, action)) {
 	}
 
 	friend auto operator<=>(Priority, Priority) = default;
