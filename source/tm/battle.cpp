@@ -112,17 +112,16 @@ constexpr auto ability_from_recoil(
 template<typename PokemonType>
 constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const damage) -> OtherAction {
 	auto const last_used_move = other_pokemon.last_used_move();
-	return last_used_move.moved_this_turn() ?
-		OtherAction([&]{
-			auto const move_name = last_used_move.name();
-			auto const type = move_type(
-				generation_from<PokemonType>,
-				move_name,
-				get_hidden_power_type(other_pokemon)
-			);
-			return KnownMove{move_name, type};
-		}()) :
-		OtherAction(FutureAction(damage.did_any_damage()));
+	if (!last_used_move.moved_this_turn()) {
+		return FutureAction(damage.did_any_damage());
+	}
+	auto const move_name = last_used_move.name();
+	auto const type = move_type(
+		generation_from<PokemonType>,
+		move_name,
+		get_hidden_power_type(other_pokemon)
+	);
+	return KnownMove(move_name, type);
 }
 
 export template<Generation generation>
