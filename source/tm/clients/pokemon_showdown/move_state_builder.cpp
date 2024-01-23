@@ -14,7 +14,6 @@ import tm.clients.ps.optional_hp_and_status;
 
 import tm.clients.party;
 
-import tm.move.is_switch;
 import tm.move.move_name;
 import tm.move.move_result;
 import tm.move.usable_while_sleeping;
@@ -205,7 +204,7 @@ export struct MoveStateBuilder {
 		if (move.status) {
 			throw std::runtime_error("Tried to status a Pokemon twice");
 		}
-		if (is_switch(move.executed) or move.executed == MoveName::Rest) {
+		if (move.executed == MoveName::Rest) {
 			if (party != *m_party) {
 				throw error();
 			}
