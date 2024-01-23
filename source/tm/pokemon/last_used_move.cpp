@@ -96,6 +96,18 @@ export struct LastUsedMove {
 					}
 				));
 				break;
+			case MoveName::Uproar:
+				tv::visit(m_effects, tv::overload(
+					[&](Empty) {
+						// TODO: Have it be active when it is constructed
+						auto counter = UproarCounter();
+						counter.advance_one_turn();
+						m_effects = counter;
+					},
+					[](UproarCounter & uproar) { uproar.advance_one_turn(); },
+					[](auto) { std::unreachable(); }
+				));
+				break;
 			default:
 				break;
 		}
@@ -258,18 +270,6 @@ export struct LastUsedMove {
 
 	constexpr auto is_uproaring() const -> bool {
 		return m_effects.index() == bounded::type<UproarCounter>;
-	}
-	constexpr auto use_uproar() & -> void {
-		tv::visit(m_effects, tv::overload(
-			[&](Empty) {
-				// TODO: Have it be active when it is constructed
-				auto counter = UproarCounter();
-				counter.advance_one_turn();
-				m_effects = counter;
-			},
-			[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-			[](auto) { std::unreachable(); }
-		));
 	}
 
 	constexpr auto vanish_doubles_power(Generation const generation, MoveName const move_name) const -> bool {

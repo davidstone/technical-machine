@@ -890,9 +890,6 @@ public:
 	constexpr auto set_type(Type const type) const {
 		this->m_flags.types = PokemonTypes(type);
 	}
-	constexpr auto use_uproar() const -> void {
-		this->m_flags.last_used_move.use_uproar();
-	}
 	constexpr auto activate_water_sport() const {
 		this->m_flags.water_sport = true;
 	}

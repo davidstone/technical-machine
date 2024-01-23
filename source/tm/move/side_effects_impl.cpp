@@ -1789,10 +1789,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 			});
 		case MoveName::Transform:
 			return no_effect<UserTeam>;
-		case MoveName::Uproar:
-			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				user.pokemon().use_uproar();
-			});
 		case MoveName::Worry_Seed:
 			return no_effect<UserTeam>;
 
@@ -2043,6 +2039,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Triple_Kick:
 		case MoveName::Trump_Card:
 		case MoveName::U_turn:
+		case MoveName::Uproar:
 		case MoveName::Vacuum_Wave:
 		case MoveName::Venoshock:
 		case MoveName::Vine_Whip:
