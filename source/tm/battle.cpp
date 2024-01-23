@@ -10,6 +10,7 @@ import tm.move.call_move;
 import tm.move.causes_recoil;
 import tm.move.do_switch;
 import tm.move.future_action;
+import tm.move.irrelevant_action;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;
@@ -117,12 +118,15 @@ constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const 
 		return FutureAction(damage.did_any_damage());
 	}
 	auto const move_name = last_used_move.name();
+	if (!move_name) {
+		return IrrelevantAction();
+	}
 	auto const type = move_type(
 		generation_from<PokemonType>,
-		move_name,
+		*move_name,
 		get_hidden_power_type(other_pokemon)
 	);
-	return KnownMove(move_name, type);
+	return KnownMove(*move_name, type);
 }
 
 export template<Generation generation>
@@ -230,7 +234,11 @@ struct Battle {
 					return used;
 				},
 				[&](Recharging) {
-					return Used(user_pokemon.last_used_move().name());
+					auto const last_move = user_pokemon.last_used_move().name();
+					if (!last_move) {
+						throw std::runtime_error("Tried to recharge without having just used a move");
+					}
+					return Used(*last_move);
 				},
 				[](auto) {
 					return Used(MoveName::Struggle);

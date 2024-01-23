@@ -472,7 +472,9 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 template<auto reduction>
 constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Environment & environment, auto) {
 	auto const pokemon = user.pokemon();
-	pokemon.reduce_pp(pokemon.last_used_move().name(), environment, reduction);
+	if (auto const last_move = pokemon.last_used_move().name()) {
+		pokemon.reduce_pp(*last_move, environment, reduction);
+	}
 };
 
 template<int, typename>
@@ -1538,7 +1540,9 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Disable:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & environment, auto) {
 				auto pokemon = other.pokemon();
-				pokemon.disable(pokemon.last_used_move().name(), environment);
+				if (auto const last_move = pokemon.last_used_move().name()) {
+					pokemon.disable(*last_move, environment);
+				}
 			});
 		case MoveName::Doom_Desire:
 		case MoveName::Future_Sight:
@@ -1714,8 +1718,12 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Snatch:
 			return no_effect<UserTeam>;
 		case MoveName::Spite: {
+			auto const last_move = original_user.last_used_move().name();
+			if (!last_move) {
+				return no_effect<UserTeam>;
+			}
 			// TODO: Spite fails if the last used move has no PP
-			auto const regular_move = containers::maybe_find(original_user.regular_moves(), original_user.last_used_move().name());
+			auto const regular_move = containers::maybe_find(original_user.regular_moves(), *last_move);
 			if (!regular_move) {
 				return no_effect<UserTeam>;
 			}

@@ -69,8 +69,8 @@ constexpr auto must_repeat(any_active_pokemon auto const user, Environment const
 constexpr auto must_repeat_different_move(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
 	auto const last_move = user.last_used_move().name();
 	return
-		!is_switch(last_move) and
-		last_move != move and
+		last_move and
+		*last_move != move and
 		must_repeat(user, environment);
 }
 

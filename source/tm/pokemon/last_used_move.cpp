@@ -15,9 +15,8 @@ import tm.pokemon.uproar;
 
 import tm.bide.bide;
 
-import tm.move.move_name;
 import tm.move.is_delayed_switch;
-import tm.move.is_switch;
+import tm.move.move_name;
 
 import tm.stat.current_hp;
 
@@ -39,7 +38,7 @@ using namespace bounded::literal;
 export enum class VanishOutcome { vanishes, attacks, consumes_item };
 
 export struct LastUsedMove {
-	constexpr auto name() const {
+	constexpr auto name() const -> tv::optional<MoveName> {
 		return m_move;
 	}
 
@@ -114,7 +113,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto use_switch(bool const replacing_fainted_or_initial_switch) & {
-		m_move = MoveName::Switch0;
+		m_move = tv::none;
 		if (!replacing_fainted_or_initial_switch) {
 			m_moved_this_turn = true;
 		}
@@ -160,7 +159,8 @@ export struct LastUsedMove {
 	constexpr auto is_delayed_switching() const -> bool {
 		return
 			moved_this_turn() and
-			is_delayed_switch(m_move) and
+			m_move and
+			is_delayed_switch(*m_move) and
 			m_consecutive_successes >= 1_bi;
 	}
 
@@ -183,7 +183,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto locked_in_by_move() const -> tv::optional<MoveName> {
-		return m_effects.index() != bounded::type<Empty> ? tv::optional(m_move) : tv::none;
+		return m_effects.index() != bounded::type<Empty> ? m_move : tv::none;
 	}
 	// Returns whether the use should get confused
 	constexpr auto advance_lock_in(bool const ending) & -> bool {
@@ -213,7 +213,9 @@ export struct LastUsedMove {
 
 
 	constexpr auto locked_on() const {
-		return successful_last_move(MoveName::Lock_On) or successful_last_move(MoveName::Mind_Reader);
+		return
+			successful_last_move(MoveName::Lock_On) or
+			successful_last_move(MoveName::Mind_Reader);
 	}
 
 	// TODO: Does Metronome boost Struggle?
@@ -258,7 +260,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto switched_in_this_turn() const {
-		return moved_this_turn() and m_consecutive_successes != 0_bi and is_switch(m_move);
+		return moved_this_turn() and !m_move;
 	}
 
 	constexpr auto triple_kick_power() const {
@@ -279,15 +281,16 @@ export struct LastUsedMove {
 		if (m_effects.index() != bounded::type<Vanishing>) {
 			return false;
 		}
+		BOUNDED_ASSERT(m_move);
 		switch (move_name) {
 			case MoveName::Earthquake:
 			case MoveName::Magnitude:
-				return m_move == MoveName::Dig;
+				return *m_move == MoveName::Dig;
 			case MoveName::Gust:
 			case MoveName::Twister:
-				return m_move == MoveName::Bounce or m_move == MoveName::Fly;
+				return *m_move == MoveName::Bounce or *m_move == MoveName::Fly;
 			case MoveName::Surf:
-				return m_move == MoveName::Dive;
+				return *m_move == MoveName::Dive;
 			default:
 				return false;
 		}
@@ -354,7 +357,7 @@ private:
 		return m_move == move and m_consecutive_successes >= 1_bi;
 	}
 
-	MoveName m_move = MoveName::Switch0;
+	tv::optional<MoveName> m_move = tv::none;
 	bounded::integer<0, 10> m_consecutive_successes = 0_bi;
 	bool m_moved_this_turn = false;
 
