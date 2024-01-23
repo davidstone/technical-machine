@@ -5,6 +5,7 @@
 
 export module tm.stat.faster;
 
+import tm.move.action;
 import tm.move.move_name;
 import tm.move.priority;
 
@@ -61,13 +62,17 @@ private:
 
 export template<Generation generation>
 struct Order : operators::arrow<Order<generation>> {
-	Order(Team<generation> const & team1, MoveName const move1, Team<generation> const & team2, MoveName const move2, Environment const environment):
+	Order(Team<generation> const & team1, Action const action1, Team<generation> const & team2, Action const action2, Environment const environment):
 		Order([&] {
-			auto const priority1 = Priority(generation, move1);
-			auto const priority2 = Priority(generation, move2);
+			auto const priority1 = Priority(generation, action1);
+			auto const priority2 = Priority(generation, action2);
 
-			auto const lhs = Element{team1, move1};
-			auto const rhs = Element{team2, move2};
+			auto get_move = tv::overload(
+				[](MoveName const move) -> MoveName { return move; },
+				[](UnusedSwitch) -> MoveName { std::unreachable(); }
+			);
+			auto const lhs = Element(team1, tv::visit(action1, get_move));
+			auto const rhs = Element(team2, tv::visit(action2, get_move));
 
 			auto const lhs_first = Order(lhs, rhs);
 			auto const rhs_first = Order(rhs, lhs);
