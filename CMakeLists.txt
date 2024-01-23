@@ -102,6 +102,7 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/win.cpp
 	
 		source/tm/move/accuracy.cpp
+		source/tm/move/action.cpp
 		source/tm/move/activate_when_hit_item.cpp
 		source/tm/move/actual_damage.cpp
 		source/tm/move/base_power.cpp
