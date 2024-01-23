@@ -7,6 +7,7 @@ export module tm.move.other_action;
 
 import tm.move.category;
 import tm.move.future_action;
+import tm.move.irrelevant_action;
 import tm.move.known_move;
 import tm.move.move_name;
 
@@ -21,16 +22,20 @@ namespace technicalmachine {
 
 export struct OtherAction {
 	constexpr OtherAction(KnownMove const move):
-		m_move(move)
+		m_action(move)
 	{
 	}
 	constexpr OtherAction(FutureAction const action):
-		m_move(action)
+		m_action(action)
+	{
+	}
+	constexpr OtherAction(IrrelevantAction const action):
+		m_action(action)
 	{
 	}
 
 	constexpr auto is_counterable(Generation const generation) const {
-		return tv::visit(m_move, tv::overload(
+		return tv::visit(m_action, tv::overload(
 			[=](KnownMove const move) {
 				switch (generation) {
 					case Generation::one:
@@ -50,27 +55,27 @@ export struct OtherAction {
 				}
 				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? true : is_physical(generation, move);
 			},
-			[](FutureAction) { return false; }
+			[](auto) { return false; }
 		));
 	}
 	constexpr auto is_mirror_coatable(Generation const generation) const {
-		return tv::visit(m_move, tv::overload(
+		return tv::visit(m_action, tv::overload(
 			[=](KnownMove const move) {
 				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? false : is_special(generation, move);
 			},
-			[](FutureAction) { return false; }
+			[](auto) { return false; }
 		));
 	}
 
 	constexpr auto future_action_is_damaging() const {
-		return tv::visit(m_move, tv::overload(
-			[](KnownMove) { return false; },
-			[](FutureAction const action) { return action.is_damaging; }
+		return tv::visit(m_action, tv::overload(
+			[](FutureAction const action) { return action.is_damaging; },
+			[](auto) { return false; }
 		));
 	}
 
 private:
-	tv::variant<KnownMove, FutureAction> m_move;
+	tv::variant<KnownMove, FutureAction, IrrelevantAction> m_action;
 };
 
 } // namespace technicalmachine
