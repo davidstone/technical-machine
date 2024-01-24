@@ -14,6 +14,7 @@ import tm.evaluate.state;
 import tm.evaluate.victory;
 import tm.evaluate.win;
 
+import tm.move.action;
 import tm.move.legal_selections;
 import tm.move.move_name;
 
@@ -44,12 +45,12 @@ struct ExpectiminimaxEvaluator {
 		}
 		return ScoredActions(containers::transform(
 			ai_selections,
-			[&](MoveName const ai_move) {
+			[&](Action const ai_action) {
 				return ScoredAction(
-					ai_move,
+					ai_action,
 					min_element_value(
-						containers::transform(foe_selections, [&](MoveName const foe_move) {
-							return function(state, ai_move, foe_move);
+						containers::transform(foe_selections, [&](Action const foe_action) {
+							return function(state, ai_action, foe_action);
 						})
 					)
 				);
