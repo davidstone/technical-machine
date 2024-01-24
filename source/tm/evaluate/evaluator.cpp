@@ -372,7 +372,7 @@ private:
 		};
 	}
 
-	auto use_action_branch(State<generation> const & state, Selector<generation> const select, MoveName const first_action, MoveName const last_action) -> double {
+	auto use_action_branch(State<generation> const & state, Selector<generation> const select, Action const first_action, Action const last_action) -> double {
 		// For U-turn and Baton Pass, the user needs to make a new selection and
 		// execute it before the other Pokemon acts. During that selection, the
 		// other team's only legal selection at this point is Pass. We store the
@@ -401,7 +401,7 @@ private:
 						updated.environment
 					) :
 					LegalSelections({MoveName::Pass});
-			auto const last_selections = LegalSelections({last_action});
+			auto const last_selections = LegalSelections({get_move(last_action)});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
 			return max_score(m_repond_to_foe_actions(
