@@ -291,7 +291,7 @@ private:
 	}
 
 	auto use_action_branch_inner(OtherAction const first_used_action, Selector<generation> const select) {
-		return [=, this](State<generation> const & state, MoveName const ai_action, MoveName const foe_action) {
+		return [=, this](State<generation> const & state, Action const ai_action, Action const foe_action) {
 			auto const [first_action, last_action] = sort_two(
 				team_matcher(state.ai)(select(state).team),
 				foe_action,
