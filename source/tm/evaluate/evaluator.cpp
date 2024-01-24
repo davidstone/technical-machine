@@ -448,17 +448,23 @@ private:
 		return finish_end_of_turn(state);
 	}
 
-	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, MoveName const ai_action, MoveName const foe_action) -> double {
+	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, Action const ai_action, Action const foe_action) -> double {
 		auto selected = select(state);
 		auto const [first_action, last_action] = sort_two(
 			team_matcher(state.ai)(selected.team),
 			ai_action,
 			foe_action
 		);
-		auto switch_one_side = [&](MoveName const action, Team<generation> & switcher, Team<generation> & other) {
-			if (action != MoveName::Pass) {
-				switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(action));
-			}
+		auto switch_one_side = [&](Action const action, Team<generation> & switcher, Team<generation> & other) {
+			tv::visit(action, tv::overload(
+				[&](MoveName const move) {
+					if (move != MoveName::Pass) {
+						switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(move));
+					}
+				},
+				[](UnusedSwitch) {
+				}
+			));
 		};
 		switch_one_side(first_action, selected.team, selected.other);
 		switch_one_side(last_action, selected.other, selected.team);
