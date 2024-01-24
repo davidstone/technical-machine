@@ -21,10 +21,12 @@ import tm.evaluate.transposition;
 import tm.evaluate.victory;
 import tm.evaluate.win;
 
+import tm.move.action;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.category;
 import tm.move.future_action;
+import tm.move.irrelevant_action;
 import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.legal_selections;
@@ -67,6 +69,7 @@ import tm.team_is_empty;
 import bounded;
 import containers;
 import std_module;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -182,25 +185,36 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 
 struct OriginalPokemon {
 	template<any_active_pokemon ActivePokemonType>
-	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, MoveName const other_move):
+	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Action const other_action):
 		m_species(pokemon.species()),
-		m_other_move{
-			other_move,
-			move_type(generation_from<ActivePokemonType>, other_move, get_hidden_power_type(other_pokemon))
-		}
+		m_other_action(tv::visit(other_action, tv::overload(
+			[&](MoveName const move) -> OtherAction {
+				return KnownMove(
+					move,
+					move_type(
+						generation_from<ActivePokemonType>,
+						move,
+						get_hidden_power_type(other_pokemon)
+					)
+				);
+			},
+			[](UnusedSwitch) -> OtherAction {
+				return IrrelevantAction();
+			}
+		)))
 	{
 	}
 	
-	auto is_same_pokemon(Species const species) const {
+	auto is_same_pokemon(Species const species) const -> bool {
 		return species == m_species;
 	}
-	auto other_move() const {
-		return m_other_move;
+	auto other_action() const -> OtherAction {
+		return m_other_action;
 	}
 
 private:
 	Species m_species;
-	KnownMove m_other_move;
+	OtherAction m_other_action;
 };
 
 template<Generation generation>
@@ -269,7 +283,7 @@ private:
 			use_move_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.action, ordered->second.action);
 	}
 
-	auto use_move_branch_inner(KnownMove const first_used_move, Selector<generation> const select) {
+	auto use_move_branch_inner(OtherAction const first_used_action, Selector<generation> const select) {
 		return [=, this](State<generation> const & state, MoveName const ai_move, MoveName const foe_move) {
 			auto const [first_move, last_move] = sort_two(
 				team_matcher(state.ai)(select(state).team),
@@ -277,7 +291,7 @@ private:
 				ai_move
 			);
 			BOUNDED_ASSERT(first_move == MoveName::Pass);
-			return score_executed_moves(state, select, last_move, first_used_move, [&](State<generation> const & updated) {
+			return score_executed_moves(state, select, last_move, first_used_action, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
 					return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
@@ -325,8 +339,8 @@ private:
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
 				auto const actual_last_move = is_same_pokemon ? last_move : MoveName::Pass;
-				auto const first_used_move = original_last_pokemon.other_move();
-				return score_executed_moves(pre_updated, select.invert(), actual_last_move, first_used_move, [&](State<generation> const & updated) {
+				auto const first_used_action = original_last_pokemon.other_action();
+				return score_executed_moves(pre_updated, select.invert(), actual_last_move, first_used_action, [&](State<generation> const & updated) {
 					constexpr auto first_selections = LegalSelections({MoveName::Pass});
 					auto const ordered = select(updated);
 					auto const last_selections = get_legal_selections(
@@ -344,7 +358,7 @@ private:
 						ai_selections,
 						foe_selections,
 						m_evaluate,
-						use_move_branch_inner(first_used_move, select.invert())
+						use_move_branch_inner(first_used_action, select.invert())
 					));
 				});
 			});
