@@ -18,6 +18,7 @@ import tm.evaluate.scored_action;
 import tm.evaluate.state;
 import tm.evaluate.win;
 
+import tm.move.action;
 import tm.move.legal_selections;
 import tm.move.move_name;
 
@@ -43,13 +44,13 @@ auto parallel_sum(auto && range) {
 template<Generation generation>
 struct ScoreMovesEvaluator {
 	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation>, auto const function) -> ScoredActions {
-		return ScoredActions(containers::transform(ai_selections, [&](MoveName const ai_move) {
+		return ScoredActions(containers::transform(ai_selections, [&](Action const ai_action) {
 			return ScoredAction(
-				ai_move,
+				ai_action,
 				parallel_sum(containers::transform(
 					foe_actions,
 					[&](ActionProbability const foe_ap) {
-						return foe_ap.probability * function(state, ai_move, foe_ap.action);
+						return foe_ap.probability * function(state, ai_action, foe_ap.action);
 					}
 				))
 			);
