@@ -366,19 +366,18 @@ private:
 	}
 
 	auto use_move_branch(State<generation> const & state, Selector<generation> const select, MoveName const first_move, MoveName const last_move) -> double {
-		// This complicated section of code is designed to handle U-turn and Baton
-		// Pass: The user of the move needs to go again before the other Pokemon
-		// moves and make a new selection. During that selection, the opponent
-		// cannot choose a move (which is why we say the only legal selection at
-		// this point is Pass). We store the original selected move and execute it
-		// after the Pokemon has moved again. In the event that the original move
-		// used was not U-turn or Baton Pass, the only legal selection will be Pass
-		// and nothing will happen.
+		// For U-turn and Baton Pass, the user needs to make a new selection and
+		// execute it before the other Pokemon acts. During that selection, the
+		// other team's only legal selection at this point is Pass. We store the
+		// original selected action and execute it after the Pokemon has acted
+		// again. If the original action used was not U-turn or Baton Pass, the
+		// only legal selection will be Pass and nothing will happen.
 		//
-		// We also need to do the right thing when the first Pokemon to move phazes
-		// out the second Pokemon (for instance, because it was also using a phaze
-		// move). To detect this case, we see if the Pokemon is the same before and
-		// after the move, and if so, the second Pokemon can only execute Pass.
+		// We also need to do the right thing when the first Pokemon to act
+		// phazes out the second Pokemon (for instance, because it was also
+		// using a phaze move). To detect this case, we see if the Pokemon is
+		// the same before and after the action, and if not, the second Pokemon
+		// can only execute Pass.
 
 		auto const ordering = select(state);
 		auto const first_pokemon = ordering.team.pokemon();
