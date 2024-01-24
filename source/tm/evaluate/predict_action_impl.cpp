@@ -16,8 +16,8 @@ import tm.evaluate.action_probability;
 import tm.evaluate.scored_action;
 import tm.evaluate.state;
 
+import tm.move.action;
 import tm.move.legal_selections;
-import tm.move.move_name;
 
 import tm.environment;
 import tm.generation;
@@ -37,7 +37,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const selecti
 		auto const possible_moves = double(containers::size(selections));
 		return ActionProbabilities(containers::transform(
 			selections,
-			[=](MoveName const move) { return ActionProbability(move, 1.0 / possible_moves); }
+			[=](Action const action) { return ActionProbability(action, 1.0 / possible_moves); }
 		));
 	};
 	if (containers::size(selections) == 1_bi) {
