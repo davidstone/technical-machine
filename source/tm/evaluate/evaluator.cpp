@@ -282,7 +282,7 @@ private:
 		);
 	}
 
-	auto order_branch(State<generation> const & state, MoveName const ai_action, MoveName const foe_action) -> double {
+	auto order_branch(State<generation> const & state, Action const ai_action, Action const foe_action) -> double {
 		auto ordered = Order(state.ai, ai_action, state.foe, foe_action, state.environment);
 		auto is_ai = team_matcher(state.ai);
 		return !ordered ?
