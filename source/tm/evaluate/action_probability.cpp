@@ -5,15 +5,15 @@
 
 export module tm.evaluate.action_probability;
 
+import tm.move.action;
 import tm.move.legal_selections;
-import tm.move.move_name;
 
 import containers;
 
 namespace technicalmachine {
 
 export struct ActionProbability {
-	MoveName action;
+	Action action;
 	double probability;
 	friend auto operator==(ActionProbability, ActionProbability) -> bool = default;
 };

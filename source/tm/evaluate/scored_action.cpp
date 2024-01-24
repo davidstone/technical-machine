@@ -7,15 +7,15 @@ export module tm.evaluate.scored_action;
 
 import tm.evaluate.extreme_element_value;
 
+import tm.move.action;
 import tm.move.legal_selections;
-import tm.move.move_name;
 
 import containers;
 
 namespace technicalmachine {
 
 export struct ScoredAction {
-	MoveName action;
+	Action action;
 	double score;
 };
 export using ScoredActions = containers::static_vector<ScoredAction, maximum_possible_selections>;
