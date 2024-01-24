@@ -508,19 +508,26 @@ private:
 	}
 
 
-	auto score_executed_actions(State<generation> const & state, Selector<generation> const select, MoveName const selected_action, OtherAction const other_action, auto const continuation) const -> double {
-		double score = 0.0;
-		auto const executed_moves = possible_executed_moves(selected_action, select(state).team);
-		for (auto const executed_move : executed_moves) {
-			score += execute_move(
-				state,
-				select,
-				SelectedAndExecuted(selected_action, executed_move),
-				other_action,
-				continuation
-			);
-		}
-		return score / static_cast<double>(containers::size(executed_moves));
+	auto score_executed_actions(State<generation> const & state, Selector<generation> const select, Action const selected_action, OtherAction const other_action, auto const continuation) const -> double {
+		return tv::visit(selected_action, tv::overload(
+			[&](MoveName const selected) {
+				double score = 0.0;
+				auto const executed_moves = possible_executed_moves(selected, select(state).team);
+				for (auto const executed : executed_moves) {
+					score += execute_move(
+						state,
+						select,
+						SelectedAndExecuted(selected, executed),
+						other_action,
+						continuation
+					);
+				}
+				return score / static_cast<double>(containers::size(executed_moves));
+			},
+			[](UnusedSwitch) -> double {
+				std::unreachable();
+			}
+		));
 	}
 
 	Evaluate<generation> m_evaluate;
