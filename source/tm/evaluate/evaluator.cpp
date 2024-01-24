@@ -239,13 +239,13 @@ constexpr auto sort_two(bool const condition, T arg1, T arg2) {
 
 export template<Generation generation, typename Function>
 struct Evaluator {
-	explicit Evaluator(Evaluate<generation> const evaluate, Function respond_to_foe_moves):
+	explicit Evaluator(Evaluate<generation> const evaluate, Function repond_to_foe_actions):
 		m_evaluate(evaluate),
-		m_respond_to_foe_moves(std::move(respond_to_foe_moves))
+		m_repond_to_foe_actions(std::move(repond_to_foe_actions))
 	{
 	}
 
-	auto select_type_of_move(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredActions {
+	auto select_type_of_action(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredActions {
 		BOUNDED_ASSERT(!team_is_empty(state.ai));
 		BOUNDED_ASSERT(!team_is_empty(state.foe));
 
@@ -253,7 +253,7 @@ struct Evaluator {
 			return *score;
 		}
 
-		auto const moves = m_respond_to_foe_moves(
+		auto const actions = m_repond_to_foe_actions(
 			state,
 			ai_selections,
 			foe_selections,
@@ -262,36 +262,36 @@ struct Evaluator {
 				return order_branch(OPERATORS_FORWARD(args)...);
 			}
 		);
-		m_transposition_table.add_score(state, moves);
-		return moves;
+		m_transposition_table.add_score(state, actions);
+		return actions;
 	}
 
 private:
-	auto select_type_of_move(State<generation> const & state) -> ScoredActions {
-		return select_type_of_move(
+	auto select_type_of_action(State<generation> const & state) -> ScoredActions {
+		return select_type_of_action(
 			state,
 			get_legal_selections(state.ai, state.foe, state.environment),
 			get_legal_selections(state.foe, state.ai, state.environment)
 		);
 	}
 
-	auto order_branch(State<generation> const & state, MoveName const ai_move, MoveName const foe_move) -> double {
-		auto ordered = Order(state.ai, ai_move, state.foe, foe_move, state.environment);
+	auto order_branch(State<generation> const & state, MoveName const ai_action, MoveName const foe_action) -> double {
+		auto ordered = Order(state.ai, ai_action, state.foe, foe_action, state.environment);
 		auto is_ai = team_matcher(state.ai);
 		return !ordered ?
-			(use_move_branch(state, Selector<generation>(true), ai_move, foe_move) + use_move_branch(state, Selector<generation>(false), foe_move, ai_move)) / 2.0 :
-			use_move_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.action, ordered->second.action);
+			(use_action_branch(state, Selector<generation>(true), ai_action, foe_action) + use_action_branch(state, Selector<generation>(false), foe_action, ai_action)) / 2.0 :
+			use_action_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.action, ordered->second.action);
 	}
 
-	auto use_move_branch_inner(OtherAction const first_used_action, Selector<generation> const select) {
-		return [=, this](State<generation> const & state, MoveName const ai_move, MoveName const foe_move) {
-			auto const [first_move, last_move] = sort_two(
+	auto use_action_branch_inner(OtherAction const first_used_action, Selector<generation> const select) {
+		return [=, this](State<generation> const & state, MoveName const ai_action, MoveName const foe_action) {
+			auto const [first_action, last_action] = sort_two(
 				team_matcher(state.ai)(select(state).team),
-				foe_move,
-				ai_move
+				foe_action,
+				ai_action
 			);
-			BOUNDED_ASSERT(first_move == MoveName::Pass);
-			return score_executed_actions(state, select, last_move, first_used_action, [&](State<generation> const & updated) {
+			BOUNDED_ASSERT(first_action == MoveName::Pass);
+			return score_executed_actions(state, select, last_action, first_used_action, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
 					return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
@@ -328,19 +328,19 @@ private:
 		};
 	}
 
-	auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Selector<generation> const select) {
-		return [=, this](State<generation> const & state, MoveName const ai_move, MoveName const foe_move) {
-			auto const [first_move, last_move] = sort_two(
+	auto use_action_branch_outer(OriginalPokemon const original_last_pokemon, Selector<generation> const select) {
+		return [=, this](State<generation> const & state, MoveName const ai_action, MoveName const foe_action) {
+			auto const [first_action, last_action] = sort_two(
 				team_matcher(state.ai)(select(state).team),
-				ai_move,
-				foe_move
+				ai_action,
+				foe_action
 			);
-			return score_executed_actions(state, select, first_move, FutureAction(is_damaging(last_move)), [&](State<generation> const & pre_updated) {
+			return score_executed_actions(state, select, first_action, FutureAction(is_damaging(last_action)), [&](State<generation> const & pre_updated) {
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
-				auto const actual_last_move = is_same_pokemon ? last_move : MoveName::Pass;
+				auto const actual_last_action = is_same_pokemon ? last_action : MoveName::Pass;
 				auto const first_used_action = original_last_pokemon.other_action();
-				return score_executed_actions(pre_updated, select.invert(), actual_last_move, first_used_action, [&](State<generation> const & updated) {
+				return score_executed_actions(pre_updated, select.invert(), actual_last_action, first_used_action, [&](State<generation> const & updated) {
 					constexpr auto first_selections = LegalSelections({MoveName::Pass});
 					auto const ordered = select(updated);
 					auto const last_selections = get_legal_selections(
@@ -353,19 +353,19 @@ private:
 						first_selections,
 						last_selections
 					);
-					return max_score(m_respond_to_foe_moves(
+					return max_score(m_repond_to_foe_actions(
 						updated,
 						ai_selections,
 						foe_selections,
 						m_evaluate,
-						use_move_branch_inner(first_used_action, select.invert())
+						use_action_branch_inner(first_used_action, select.invert())
 					));
 				});
 			});
 		};
 	}
 
-	auto use_move_branch(State<generation> const & state, Selector<generation> const select, MoveName const first_move, MoveName const last_move) -> double {
+	auto use_action_branch(State<generation> const & state, Selector<generation> const select, MoveName const first_action, MoveName const last_action) -> double {
 		// For U-turn and Baton Pass, the user needs to make a new selection and
 		// execute it before the other Pokemon acts. During that selection, the
 		// other team's only legal selection at this point is Pass. We store the
@@ -382,7 +382,7 @@ private:
 		auto const ordering = select(state);
 		auto const first_pokemon = ordering.team.pokemon();
 		auto const last_pokemon = ordering.other.pokemon();
-		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_move);
+		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_action);
 
 		auto function = [&](State<generation> const & updated) {
 			auto const updated_ordering = select(updated);
@@ -394,22 +394,22 @@ private:
 						updated.environment
 					) :
 					LegalSelections({MoveName::Pass});
-			auto const last_selections = LegalSelections({last_move});
+			auto const last_selections = LegalSelections({last_action});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
-			return max_score(m_respond_to_foe_moves(
+			return max_score(m_repond_to_foe_actions(
 				updated,
 				ai_selections,
 				foe_selections,
 				m_evaluate,
-				use_move_branch_outer(original_last_pokemon, select)
+				use_action_branch_outer(original_last_pokemon, select)
 			));
 		};
 		return score_executed_actions(
 			state,
 			select,
-			first_move,
-			FutureAction(is_damaging(last_move)),
+			first_action,
+			FutureAction(is_damaging(last_action)),
 			function
 		);
 	}
@@ -435,33 +435,33 @@ private:
 			return team.pokemon().hp().current() == 0_bi;
 		};
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
-			return max_score(m_respond_to_foe_moves(
+			return max_score(m_repond_to_foe_actions(
 				state,
 				get_legal_selections(state.ai, state.foe, state.environment),
 				get_legal_selections(state.foe, state.ai, state.environment),
 				m_evaluate,
-				[&](State<generation> const & updated, MoveName const ai_move, MoveName const foe_move) {
-					return handle_end_of_turn_replacing(updated, select, ai_move, foe_move);
+				[&](State<generation> const & updated, MoveName const ai_action, MoveName const foe_action) {
+					return handle_end_of_turn_replacing(updated, select, ai_action, foe_action);
 				}
 			));
 		}
 		return finish_end_of_turn(state);
 	}
 
-	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, MoveName const ai_move, MoveName const foe_move) -> double {
+	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, MoveName const ai_action, MoveName const foe_action) -> double {
 		auto selected = select(state);
-		auto const [first_move, last_move] = sort_two(
+		auto const [first_action, last_action] = sort_two(
 			team_matcher(state.ai)(selected.team),
-			ai_move,
-			foe_move
+			ai_action,
+			foe_action
 		);
-		auto switch_one_side = [&](MoveName const move, Team<generation> & switcher, Team<generation> & other) {
-			if (move != MoveName::Pass) {
-				switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(move));
+		auto switch_one_side = [&](MoveName const action, Team<generation> & switcher, Team<generation> & other) {
+			if (action != MoveName::Pass) {
+				switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(action));
 			}
 		};
-		switch_one_side(first_move, selected.team, selected.other);
-		switch_one_side(last_move, selected.other, selected.team);
+		switch_one_side(first_action, selected.team, selected.other);
+		switch_one_side(last_action, selected.other, selected.team);
 		if (auto const won = win(state.ai, state.foe)) {
 			return *won + double(state.depth.general);
 		}
@@ -470,7 +470,7 @@ private:
 
 	auto finish_end_of_turn(State<generation> const & state) -> double {
 		if (state.depth.general > 0_bi) {
-			return max_score(select_type_of_move(state));
+			return max_score(select_type_of_action(state));
 		} else if (state.depth.single > 0_bi) {
 			return generate_single_matchups(state);
 		} else {
@@ -504,7 +504,7 @@ private:
 		if (auto const won = win(state.ai, state.foe)) {
 			return *won + double(state.depth.general - 1_bi);
 		}
-		return max_score(select_type_of_move(state));
+		return max_score(select_type_of_action(state));
 	}
 
 
@@ -531,7 +531,7 @@ private:
 	}
 
 	Evaluate<generation> m_evaluate;
-	[[no_unique_address]] Function m_respond_to_foe_moves;
+	[[no_unique_address]] Function m_repond_to_foe_actions;
 	TranspositionTable<generation> m_transposition_table;
 };
 

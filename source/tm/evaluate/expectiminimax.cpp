@@ -65,7 +65,7 @@ auto expectiminimax(State<generation> const & state, LegalSelections const ai_se
 		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
-	return evaluator.select_type_of_move(state, ai_selections, foe_selections);
+	return evaluator.select_type_of_action(state, ai_selections, foe_selections);
 }
 
 } // namespace technicalmachine

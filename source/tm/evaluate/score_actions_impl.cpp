@@ -80,7 +80,7 @@ auto score_actions(State<generation> const & state, LegalSelections const ai_sel
 		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
-	return evaluator.select_type_of_move(
+	return evaluator.select_type_of_action(
 		state,
 		ai_selections,
 		foe_actions
