@@ -6,7 +6,6 @@
 export module tm.stat.faster;
 
 import tm.move.action;
-import tm.move.move_name;
 import tm.move.priority;
 
 import tm.stat.calculate_speed;
@@ -67,8 +66,8 @@ struct Order : operators::arrow<Order<generation>> {
 			auto const priority1 = Priority(generation, action1);
 			auto const priority2 = Priority(generation, action2);
 
-			auto const lhs = Element(team1, get_move(action1));
-			auto const rhs = Element(team2, get_move(action2));
+			auto const lhs = Element(team1, action1);
+			auto const rhs = Element(team2, action2);
 
 			auto const lhs_first = Order(lhs, rhs);
 			auto const rhs_first = Order(rhs, lhs);
@@ -97,7 +96,7 @@ struct Order : operators::arrow<Order<generation>> {
 private:
 	struct Element {
 		Team<generation> const & team;
-		MoveName action;
+		Action action;
 	};
 	using pair = std::pair<Element, Element>;
 
