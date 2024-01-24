@@ -440,7 +440,7 @@ private:
 				get_legal_selections(state.ai, state.foe, state.environment),
 				get_legal_selections(state.foe, state.ai, state.environment),
 				m_evaluate,
-				[&](State<generation> const & updated, MoveName const ai_action, MoveName const foe_action) {
+				[&](State<generation> const & updated, Action const ai_action, Action const foe_action) {
 					return handle_end_of_turn_replacing(updated, select, ai_action, foe_action);
 				}
 			));
