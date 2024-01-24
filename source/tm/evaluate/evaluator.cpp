@@ -291,7 +291,7 @@ private:
 				ai_move
 			);
 			BOUNDED_ASSERT(first_move == MoveName::Pass);
-			return score_executed_moves(state, select, last_move, first_used_action, [&](State<generation> const & updated) {
+			return score_executed_actions(state, select, last_move, first_used_action, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
 					return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
@@ -335,12 +335,12 @@ private:
 				ai_move,
 				foe_move
 			);
-			return score_executed_moves(state, select, first_move, FutureAction(is_damaging(last_move)), [&](State<generation> const & pre_updated) {
+			return score_executed_actions(state, select, first_move, FutureAction(is_damaging(last_move)), [&](State<generation> const & pre_updated) {
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
 				auto const actual_last_move = is_same_pokemon ? last_move : MoveName::Pass;
 				auto const first_used_action = original_last_pokemon.other_action();
-				return score_executed_moves(pre_updated, select.invert(), actual_last_move, first_used_action, [&](State<generation> const & updated) {
+				return score_executed_actions(pre_updated, select.invert(), actual_last_move, first_used_action, [&](State<generation> const & updated) {
 					constexpr auto first_selections = LegalSelections({MoveName::Pass});
 					auto const ordered = select(updated);
 					auto const last_selections = get_legal_selections(
@@ -406,7 +406,7 @@ private:
 				use_move_branch_outer(original_last_pokemon, select)
 			));
 		};
-		return score_executed_moves(
+		return score_executed_actions(
 			state,
 			select,
 			first_move,
@@ -509,14 +509,14 @@ private:
 	}
 
 
-	auto score_executed_moves(State<generation> const & state, Selector<generation> const select, MoveName const selected_move, OtherAction const other_action, auto const continuation) const -> double {
+	auto score_executed_actions(State<generation> const & state, Selector<generation> const select, MoveName const selected_action, OtherAction const other_action, auto const continuation) const -> double {
 		double score = 0.0;
-		auto const executed_moves = possible_executed_moves(selected_move, select(state).team);
+		auto const executed_moves = possible_executed_moves(selected_action, select(state).team);
 		for (auto const executed_move : executed_moves) {
 			score += execute_move(
 				state,
 				select,
-				SelectedAndExecuted{selected_move, executed_move},
+				SelectedAndExecuted(selected_action, executed_move),
 				other_action,
 				continuation
 			);
