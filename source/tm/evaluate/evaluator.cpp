@@ -192,9 +192,9 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 
 struct OriginalPokemon {
 	template<any_active_pokemon ActivePokemonType>
-	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Action const other_action):
+	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Action const other_action_):
 		m_species(pokemon.species()),
-		m_other_action(tv::visit(other_action, tv::overload(
+		m_other_action(tv::visit(other_action_, tv::overload(
 			[&](MoveName const move) -> OtherAction {
 				return KnownMove(
 					move,
