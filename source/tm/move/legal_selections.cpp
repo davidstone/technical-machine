@@ -5,8 +5,8 @@
 
 export module tm.move.legal_selections;
 
+import tm.move.action;
 import tm.move.max_moves_per_pokemon;
-import tm.move.move_name;
 
 import tm.pokemon.max_pokemon_per_team;
 
@@ -24,7 +24,7 @@ using namespace bounded::literal;
 export constexpr auto maximum_possible_selections = max_moves_per_pokemon + max_pokemon_per_team - 1_bi;
 
 export using LegalSelections = containers::static_vector<
-	MoveName,
+	Action,
 	maximum_possible_selections
 >;
 

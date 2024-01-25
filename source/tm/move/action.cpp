@@ -70,14 +70,3 @@ private:
 template<>
 struct bounded::tombstone_traits<technicalmachine::Action> : bounded::tombstone_traits_composer<&technicalmachine::Action::m_value> {
 };
-
-namespace technicalmachine {
-
-export constexpr auto get_move(Action const action) -> MoveName {
-	return tv::visit(action, tv::overload(
-		[](MoveName const move) -> MoveName { return move; },
-		[](UnusedSwitch) -> MoveName { std::unreachable(); }
-	));
-}
-
-} // namespace technicalmachine

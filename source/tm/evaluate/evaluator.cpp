@@ -401,7 +401,7 @@ private:
 						updated.environment
 					) :
 					LegalSelections({MoveName::Pass});
-			auto const last_selections = LegalSelections({get_move(last_action)});
+			auto const last_selections = LegalSelections({last_action});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
 			return max_score(m_repond_to_foe_actions(
