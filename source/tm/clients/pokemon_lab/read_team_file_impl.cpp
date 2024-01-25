@@ -54,7 +54,7 @@ using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 constexpr auto parse_species(std::string_view const str) -> Species {
-	constexpr auto converter = containers::basic_flat_map(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Species>>({
 			{ "Deoxys", Species::Deoxys_Normal },
