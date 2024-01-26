@@ -41,12 +41,6 @@ constexpr auto move_critical_hit(Generation const generation, MoveName const mov
 	switch (move_name) {
 		// Weird moves
 		case MoveName::Pass: return MoveCriticalHit::never;
-		case MoveName::Switch0: return MoveCriticalHit::never;
-		case MoveName::Switch1: return MoveCriticalHit::never;
-		case MoveName::Switch2: return MoveCriticalHit::never;
-		case MoveName::Switch3: return MoveCriticalHit::never;
-		case MoveName::Switch4: return MoveCriticalHit::never;
-		case MoveName::Switch5: return MoveCriticalHit::never;
 		case MoveName::Hit_Self: return MoveCriticalHit::never;
 
 		// Generation 1

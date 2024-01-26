@@ -122,7 +122,6 @@ target_sources(tm_common PUBLIC
 		source/tm/move/is_delayed_switch.cpp
 		source/tm/move/is_healing.cpp
 		source/tm/move/is_self_ko.cpp
-		source/tm/move/is_switch.cpp
 		source/tm/move/known_move.cpp
 		source/tm/move/legal_selections.cpp
 		source/tm/move/max_moves_per_pokemon.cpp
@@ -534,6 +533,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/rating.cpp
 		source/tm/ps_usage_stats/serialize.cpp
 		source/tm/ps_usage_stats/thread_count.cpp
+		source/tm/ps_usage_stats/to_index.cpp
 		source/tm/ps_usage_stats/usage_stats.cpp
 		source/tm/ps_usage_stats/worker.cpp
 )

@@ -14,7 +14,7 @@ import tm.evaluate.state;
 
 import tm.move.action;
 import tm.move.move_name;
-import tm.move.is_switch;
+import tm.move.switch_;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;
@@ -41,13 +41,10 @@ template<Generation generation>
 auto log_action(std::ostream & stream, Action const action, Team<generation> const & team) {
 	tv::visit(action, tv::overload(
 		[&](MoveName const move) {
-			if (!is_switch(move)) {
-				stream << "Use " << to_string(move);
-			} else {
-				stream << "Switch to " << to_string(team.pokemon(to_replacement(move)).species());
-			}
+			stream << "Use " << to_string(move);
 		},
-		[](UnusedSwitch) {
+		[&](Switch const switch_) {
+			stream << "Switch to " << to_string(team.pokemon(switch_.value()).species());
 		}
 	));
 }

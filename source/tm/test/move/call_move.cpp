@@ -90,7 +90,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
-		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
+		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, Switch(1_bi)})
 	);
 
 	{
@@ -121,7 +121,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
-		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
+		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, Switch(1_bi)})
 	);
 
 	call_move(
@@ -138,7 +138,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(switch_decision_required(attacker));
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
-		LegalSelections({MoveName::Switch1})
+		LegalSelections({Switch(1_bi)})
 	);
 
 	do_switch(attacker, Switch(1_bi), defender, environment);

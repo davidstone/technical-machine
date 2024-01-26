@@ -17,7 +17,6 @@ import tm.move.actual_damage;
 import tm.move.category;
 import tm.move.end_of_attack;
 import tm.move.executed_move;
-import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_is_unsuccessful;
@@ -49,7 +48,6 @@ import tm.can_execute_move;
 import tm.contact_ability_effect;
 import tm.environment;
 import tm.generation;
-import tm.handle_curse;
 import tm.heal;
 import tm.item;
 import tm.other_team;
@@ -208,13 +206,6 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, En
 
 template<any_team UserTeam>
 auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
-	if (is_switch(move.selected)) {
-		BOUNDED_ASSERT(move.executed == move.selected);
-		// TODO: !recharging?
-		user.switch_pokemon(other.pokemon(), environment, to_replacement(move.selected));
-		return;
-	}
-	BOUNDED_ASSERT(!is_switch(move.executed));
 	constexpr auto generation = generation_from<UserTeam>;
 	auto user_pokemon = user.pokemon();
 
@@ -300,11 +291,8 @@ auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTea
 	if (move.selected == MoveName::Pass) {
 		return;
 	}
-	auto const replacing_fainted = user.pokemon().hp().current() == 0_bi;
 	try_use_move(user, move, other, other_action, environment, clear_status, actual_damage, is_fully_paralyzed);
-	if (!replacing_fainted) {
-		end_of_attack(user.pokemon(), other.pokemon(), environment);
-	}
+	end_of_attack(user.pokemon(), other.pokemon(), environment);
 }
 
 #define INSTANTIATE_ONE(UserTeam) \

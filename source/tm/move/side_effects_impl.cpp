@@ -504,11 +504,6 @@ constexpr auto random_spite = [] {
 	return result;
 }();
 
-template<any_team UserTeam, int index>
-constexpr auto switch_effect = guaranteed_effect<UserTeam>([](UserTeam & user, OtherTeam<UserTeam> & other, Environment & environment, auto) {
-	user.switch_pokemon(other.pokemon(), environment, bounded::constant<index>);
-});
-
 template<any_active_pokemon UserPokemon>
 constexpr auto charge_up_move(
 	MoveName const move_name,
@@ -1767,18 +1762,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & environment, auto) {
 				user.pokemon().use_substitute(environment);
 			});
-		case MoveName::Switch0:
-			return switch_effect<UserTeam, 0>;
-		case MoveName::Switch1:
-			return switch_effect<UserTeam, 1>;
-		case MoveName::Switch2:
-			return switch_effect<UserTeam, 2>;
-		case MoveName::Switch3:
-			return switch_effect<UserTeam, 3>;
-		case MoveName::Switch4:
-			return switch_effect<UserTeam, 4>;
-		case MoveName::Switch5:
-			return switch_effect<UserTeam, 5>;
 		case MoveName::Switcheroo:
 		case MoveName::Trick:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {

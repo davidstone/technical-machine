@@ -41,8 +41,8 @@ import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
 import tm.move.action;
-import tm.move.is_switch;
 import tm.move.move_name;
+import tm.move.switch_;
 
 import tm.string_conversions.move_name;
 
@@ -247,16 +247,15 @@ private:
 			m_depth
 		);
 		tv::visit(action, tv::overload(
-			[](UnusedSwitch) {
+			[&](Switch const switch_) {
+				m_send_message(containers::concatenate<containers::string>(
+					room,
+					"|/choose switch "sv,
+					containers::to_string(slot_memory[switch_.value()])
+				));
 			},
 			[&](MoveName const move) {
 				if (move == MoveName::Pass) {
-				} else if (is_switch(move)) {
-					m_send_message(containers::concatenate<containers::string>(
-						room,
-						"|/choose switch "sv,
-						containers::to_string(slot_memory[to_replacement(move)])
-					));
 				} else {
 					m_send_message(containers::concatenate<containers::string>(
 						room,

@@ -8,6 +8,8 @@ export module tm.move.action;
 import tm.move.move_name;
 import tm.move.switch_;
 
+import tm.pokemon.max_pokemon_per_team;
+
 import bounded;
 import numeric_traits;
 import std_module;
@@ -17,40 +19,39 @@ using namespace bounded::literal;
 
 namespace technicalmachine {
 
-export struct UnusedSwitch {
-	UnusedSwitch() = delete;
-	friend constexpr auto operator==(UnusedSwitch, UnusedSwitch) -> bool = default;
-};
+using Index = tv::variant_index<MoveName, Switch>;
 
 export struct Action {
 	constexpr Action(MoveName const move):
 		m_value(move)
 	{
 	}
-	[[noreturn]] Action(UnusedSwitch) {
-		std::unreachable();
+	constexpr Action(Switch const switch_):
+		m_value(switch_.value())
+	{
 	}
 
-	constexpr auto index() const -> tv::variant_index<MoveName, UnusedSwitch> {
-		return tv::variant_index<MoveName, UnusedSwitch>(0_bi);
+	constexpr auto index() const -> Index {
+		return m_value <= numeric_traits::max_value<TeamIndex> ? Index(1_bi) : Index(0_bi);
 	}
 
-	constexpr auto operator[](bounded::constant_t<0>) const -> MoveName {
+	constexpr auto operator[](bounded::type_t<MoveName>) const -> MoveName {
 		return MoveName(m_value);
 	}
-	constexpr auto operator[](bounded::type_t<MoveName>) const -> MoveName {
-		return (*this)[0_bi];
+	constexpr auto operator[](bounded::constant_t<0>) const -> MoveName {
+		return (*this)[bounded::type<MoveName>];
 	}
-	auto operator[](bounded::constant_t<1>) const -> UnusedSwitch {
-		std::unreachable();
+	constexpr auto operator[](bounded::type_t<Switch>) const -> Switch {
+		return Switch(bounded::assume_in_range<TeamIndex>(m_value));
 	}
-	constexpr auto operator[](bounded::type_t<UnusedSwitch>) const -> UnusedSwitch {
-		return (*this)[1_bi];
+	constexpr auto operator[](bounded::constant_t<1>) const -> Switch {
+		return (*this)[bounded::type<Switch>];
 	}
 
 	friend constexpr auto operator==(Action, Action) -> bool = default;
 
 private:
+	static_assert(bounded::constant<numeric_traits::min_value<MoveName>> == numeric_traits::max_value<TeamIndex> + 1_bi);
 	using Integer = bounded::integer<
 		0,
 		bounded::normalize<numeric_traits::max_value<MoveName>>

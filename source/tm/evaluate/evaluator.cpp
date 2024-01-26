@@ -25,14 +25,15 @@ import tm.move.action;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.category;
+import tm.move.do_switch;
 import tm.move.future_action;
 import tm.move.irrelevant_action;
-import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.other_action;
 import tm.move.side_effects;
+import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.any_pokemon;
@@ -77,7 +78,7 @@ using namespace bounded::literal;
 constexpr auto is_damaging(Action const action) -> bool {
 	return tv::visit(action, tv::overload(
 		[](MoveName const move) { return is_damaging(move); },
-		[](UnusedSwitch) { return false; }
+		[](Switch) { return false; }
 	));
 }
 
@@ -190,6 +191,21 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 	});
 }
 
+template<Generation generation>
+auto execute_switch(State<generation> state, Selector<generation> const select, Switch const switch_, auto const continuation) -> double {
+	auto const selected = select(state);
+	do_switch(
+		selected.team,
+		switch_,
+		selected.other,
+		state.environment
+	);
+	if (auto const won = win(state.ai, state.foe)) {
+		return *won + double(state.depth.general - 1_bi);
+	}
+	return continuation(state);
+}
+
 struct OriginalPokemon {
 	template<any_active_pokemon ActivePokemonType>
 	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Action const other_action_):
@@ -205,7 +221,7 @@ struct OriginalPokemon {
 					)
 				);
 			},
-			[](UnusedSwitch) -> OtherAction {
+			[](Switch) -> OtherAction {
 				return IrrelevantAction();
 			}
 		)))
@@ -464,12 +480,11 @@ private:
 		);
 		auto switch_one_side = [&](Action const action, Team<generation> & switcher, Team<generation> & other) {
 			tv::visit(action, tv::overload(
-				[&](MoveName const move) {
-					if (move != MoveName::Pass) {
-						switcher.switch_pokemon(other.pokemon(), state.environment, to_replacement(move));
-					}
+				[](MoveName const move) {
+					BOUNDED_ASSERT(move == MoveName::Pass);
 				},
-				[](UnusedSwitch) {
+				[&](Switch const switch_) {
+					switcher.switch_pokemon(other.pokemon(), state.environment, switch_.value());
 				}
 			));
 		};
@@ -537,8 +552,8 @@ private:
 				}
 				return score / static_cast<double>(containers::size(executed_moves));
 			},
-			[](UnusedSwitch) -> double {
-				std::unreachable();
+			[&](Switch const switch_) {
+				return execute_switch(state, select, switch_, continuation);
 			}
 		));
 	}

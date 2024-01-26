@@ -12,6 +12,7 @@ export module tm.ps_usage_stats.serialize;
 import tm.move.move_name;
 
 import tm.ps_usage_stats.header;
+import tm.ps_usage_stats.to_index;
 import tm.ps_usage_stats.usage_stats;
 
 import tm.pokemon.species;
@@ -64,12 +65,21 @@ constexpr auto get_used(auto const get) {
 	return get_used_impl<Key>(containers::enum_range<Key>(), get);
 }
 
+template<typename Key, typename Source>
+constexpr auto used_to_map(Source const & source) {
+	static_assert(bounded::number_of<Key> == Source::size());
+	return get_used_impl<Key>(
+		containers::enum_range<Key>(),
+		[&](Key const key) { return source[to_index(key)]; }
+	);
+}
+
 template<typename Source>
 constexpr auto used_to_map(Source const & source) {
 	using Key = containers::index_type<Source>;
 	return get_used_impl<Key>(
 		containers::integer_range(containers::size(source)),
-		[&](Key const key) { return source[key]; }
+		[&](Key const key) { return source[to_index(key)]; }
 	);
 }
 
@@ -97,7 +107,7 @@ auto serialize_speed(std::ostream & stream, SpeedDistribution const & distributi
 };
 
 auto serialize_teammates(std::ostream & stream, Correlations::Teammates const & source, double const total) -> void {
-	auto const used = used_to_map(source);
+	auto const used = used_to_map<Species>(source);
 	write_bytes(stream, containers::linear_size(used), 2_bi);
 	for (auto const & related : used) {
 		write_bytes(stream, related.key, 2_bi);
@@ -118,12 +128,12 @@ auto serialize_moves(std::ostream & stream, Generation const generation, UsageSt
 		auto serialize_all = [&](Correlations::MoveData const & data) {
 			serialize_speed(stream, data.speed, move.mapped);
 			serialize_teammates(stream, data.teammates, move.mapped);
-			serialize_simple_correlations(stream, used_to_map(data.moves), move.mapped);
+			serialize_simple_correlations(stream, used_to_map<MoveName>(data.moves), move.mapped);
 			if (generation >= Generation::two) {
-				serialize_simple_correlations(stream, used_to_map(data.items), move.mapped);
+				serialize_simple_correlations(stream, used_to_map<Item>(data.items), move.mapped);
 			}
 			if (generation >= Generation::three) {
-				serialize_simple_correlations(stream, used_to_map(data.abilities), move.mapped);
+				serialize_simple_correlations(stream, used_to_map<Ability>(data.abilities), move.mapped);
 			}
 		};
 		if (auto const top_move = containers::lookup(top_moves, move.key)) {

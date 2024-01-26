@@ -41,12 +41,6 @@ constexpr auto base_pp(Generation const generation, MoveName const move) -> tv::
 	using tv::none;
 	switch (move) {
 		case MoveName::Pass: return none;
-		case MoveName::Switch0: return none;
-		case MoveName::Switch1: return none;
-		case MoveName::Switch2: return none;
-		case MoveName::Switch3: return none;
-		case MoveName::Switch4: return none;
-		case MoveName::Switch5: return none;
 		case MoveName::Hit_Self: return none;
 		case MoveName::Pound: return 35_bi;
 		case MoveName::Karate_Chop: return 25_bi;

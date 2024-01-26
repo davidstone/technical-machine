@@ -11,6 +11,7 @@ import tm.move.initial_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.move_names;
+import tm.move.switch_;
 
 import tm.pokemon.faint;
 import tm.pokemon.level;
@@ -178,7 +179,7 @@ static_assert([]{
 	faint(team.pokemon());
 
 	auto const selections = get_legal_selections(team, other, environment);
-	return selections == LegalSelections({MoveName::Switch1});
+	return selections == LegalSelections({Switch(1_bi)});
 }());
 
 } // namespace

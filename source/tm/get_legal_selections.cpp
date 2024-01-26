@@ -9,10 +9,10 @@ module;
 
 export module tm.get_legal_selections;
 
-import tm.move.is_switch;
 import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.switch_;
 
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
@@ -49,7 +49,7 @@ private:
 };
 
 // If switching at all is legal, these are the legal switches
-using PotentialSwitches = containers::static_vector<MoveName, max_pokemon_per_team - 1_bi>;
+using PotentialSwitches = containers::static_vector<Switch, max_pokemon_per_team - 1_bi>;
 constexpr auto potential_switches(TeamSize const team_size, TeamIndex const active) {
 	return team_size > 1_bi ?
 		PotentialSwitches(containers::transform(
@@ -57,7 +57,7 @@ constexpr auto potential_switches(TeamSize const team_size, TeamIndex const acti
 				containers::integer_range(team_size),
 				not_fn(bounded::equal_to(active))
 			),
-			to_switch
+			bounded::construct<Switch>
 		)) :
 		PotentialSwitches();
 }

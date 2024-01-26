@@ -7,6 +7,7 @@ export module tm.move.priority;
 
 import tm.move.action;
 import tm.move.move_name;
+import tm.move.switch_;
 
 import tm.constant_generation;
 import tm.generation;
@@ -21,13 +22,6 @@ using PriorityInteger = bounded::integer<-6, 6>;
 
 constexpr auto priority_impl(constant_gen_t<Generation::one>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Quick_Attack:
 			return 1_bi;
 		case MoveName::Counter:
@@ -39,13 +33,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::one>, MoveName const mov
 
 constexpr auto priority_impl(constant_gen_t<Generation::two>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Detect:
 		case MoveName::Endure:
 		case MoveName::Protect:
@@ -67,13 +54,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::two>, MoveName const mov
 
 constexpr auto priority_impl(constant_gen_t<Generation::three>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Helping_Hand:
 			return 5_bi;
 		case MoveName::Magic_Coat:
@@ -108,13 +88,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::three>, MoveName const m
 
 constexpr auto priority_impl(constant_gen_t<Generation::four>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Helping_Hand:
 			return 5_bi;
 		case MoveName::Magic_Coat:
@@ -161,13 +134,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::four>, MoveName const mo
 
 constexpr auto priority_impl(constant_gen_t<Generation::five>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Helping_Hand:
 			return 5_bi;
 		case MoveName::Detect:
@@ -222,13 +188,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::five>, MoveName const mo
 
 constexpr auto priority_impl(constant_gen_t<Generation::six>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Helping_Hand:
 			return 5_bi;
 		case MoveName::Detect:
@@ -288,13 +247,6 @@ constexpr auto priority_impl(constant_gen_t<Generation::six>, MoveName const mov
 
 constexpr auto priority_impl(constant_gen_t<Generation::seven>, MoveName const move) -> PriorityInteger {
 	switch (move) {
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
-			return 6_bi;
 		case MoveName::Helping_Hand:
 			return 5_bi;
 		case MoveName::Baneful_Bunker:
@@ -364,7 +316,7 @@ constexpr auto priority_impl(constant_gen_t<Generation::eight>, MoveName const m
 
 constexpr auto get_priority(Generation const generation, Action const action) {
 	return tv::visit(action, tv::overload(
-		[](UnusedSwitch) -> PriorityInteger { return 6_bi; },
+		[](Switch) -> PriorityInteger { return 6_bi; },
 		[&](MoveName const move) {
 			return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
 		}

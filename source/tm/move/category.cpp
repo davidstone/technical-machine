@@ -603,12 +603,6 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 				type_based_category(move.type) :
 				MoveCategory::special;
 		case MoveName::Pass:
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
 		case MoveName::Swords_Dance:
 		case MoveName::Whirlwind:
 		case MoveName::Sand_Attack:

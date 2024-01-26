@@ -17,6 +17,7 @@ import tm.move.move_names;
 import tm.pokemon.species;
 
 import tm.ps_usage_stats.header;
+import tm.ps_usage_stats.to_index;
 
 import tm.stat.calculate_speed;
 import tm.stat.stage;
@@ -29,6 +30,7 @@ import tm.item;
 import bounded;
 import concurrent;
 import containers;
+import numeric_traits;
 import tv;
 import std_module;
 
@@ -72,7 +74,7 @@ export struct UsageStats {
 			per_species.abilities[bounded::integer(pokemon.ability)] += weight;
 			per_species.items[bounded::integer(pokemon.item)] += weight;
 			for (auto const move : pokemon.moves) {
-				per_species.moves[bounded::integer(move)] += weight;
+				per_species.moves[to_index(move)] += weight;
 			}
 			auto const calculated_speed = calculate_speed(pokemon);
 			containers::at(per_species.speed, calculated_speed) += weight;
@@ -95,7 +97,7 @@ export struct UsageStats {
 		return m_all[bounded::integer(species)].moves;
 	}
 	constexpr auto get(Species const species, MoveName const move_name) const {
-		return moves(species)[bounded::integer(move_name)];
+		return moves(species)[to_index(move_name)];
 	}
 	constexpr auto const & speed_distribution(Species const species) const {
 		return m_all[bounded::integer(species)].speed;
@@ -129,7 +131,7 @@ auto get_most_used(UsageFor<MoveName> const & moves, double const percent_thresh
 	auto const usage_threshold = percent_threshold * total_sum;
 	auto top_moves = containers::vector<LocalTopMoves>(containers::transform(
 		containers::enum_range<MoveName>(),
-		[&](MoveName const move) { return LocalTopMoves{move, moves[bounded::integer(move)]}; }
+		[&](MoveName const move) { return LocalTopMoves{move, moves[to_index(move)]}; }
 	));
 	auto current_sum = 0.0;
 	containers::ska_sort(top_moves, [](LocalTopMoves const x) { return -x.value; });
@@ -182,7 +184,7 @@ auto populate_teammate_correlations(Teammates & teammates, ps::ParsedTeam const 
 auto populate_move_correlations(UsageFor<MoveName> & correlations, MoveNames const moves, MoveName const move1, double const weight) -> void {
 	auto is_different = [=](MoveName const move2) { return move2 != move1; };
 	for (auto const move2 : containers::filter(moves, is_different)) {
-		correlations[bounded::integer(move2)] += weight;
+		correlations[to_index(move2)] += weight;
 	}
 }
 

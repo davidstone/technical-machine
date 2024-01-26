@@ -20,8 +20,9 @@ import tm.evaluate.all_evaluate;
 import tm.evaluate.action_probability;
 import tm.evaluate.predict_action;
 
+import tm.move.action;
 import tm.move.move_name;
-import tm.move.is_switch;
+import tm.move.switch_;
 
 import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_log_to_messages;
@@ -127,11 +128,11 @@ auto get_predicted_action(
 constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 	auto const & [evaluated, reported] = tuple;
 	auto const actual = tv::visit(reported.action, tv::overload(
-		[](MoveName const move) -> MoveName {
+		[](MoveName const move) -> Action {
 			return move;
 		},
-		[&](BattleResponseSwitch const response) -> MoveName {
-			return to_switch(evaluated.slot_memory.reverse_lookup(response));
+		[&](BattleResponseSwitch const response) -> Action {
+			return Switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
 	auto score_prediction = [&](ActionProbability const ap) {

@@ -28,12 +28,6 @@ export constexpr auto to_string(MoveName const move) -> std::string_view {
 	switch (move) {
 		// Weird moves
 		case MoveName::Pass: return "Pass";
-		case MoveName::Switch0: return "Switch0";
-		case MoveName::Switch1: return "Switch1";
-		case MoveName::Switch2: return "Switch2";
-		case MoveName::Switch3: return "Switch3";
-		case MoveName::Switch4: return "Switch4";
-		case MoveName::Switch5: return "Switch5";
 		case MoveName::Hit_Self: return "Hit self in confusion";
 
 		case MoveName::Pound: return "Pound";
@@ -1690,12 +1684,6 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"sweetkiss", MoveName::Sweet_Kiss},
 			{"sweetscent", MoveName::Sweet_Scent},
 			{"swift", MoveName::Swift},
-			{"switch0", MoveName::Switch0},
-			{"switch1", MoveName::Switch1},
-			{"switch2", MoveName::Switch2},
-			{"switch3", MoveName::Switch3},
-			{"switch4", MoveName::Switch4},
-			{"switch5", MoveName::Switch5},
 			{"switcheroo", MoveName::Switcheroo},
 			{"swordsdance", MoveName::Swords_Dance},
 			{"synchronoise", MoveName::Synchronoise},

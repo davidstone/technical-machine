@@ -1092,12 +1092,6 @@ constexpr auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 	auto const & defender = defender_team.pokemon();
 	switch (executed.move.name) {
 		case MoveName::Pass: return 0_bi;
-		case MoveName::Switch0: return 0_bi;
-		case MoveName::Switch1: return 0_bi;
-		case MoveName::Switch2: return 0_bi;
-		case MoveName::Switch3: return 0_bi;
-		case MoveName::Switch4: return 0_bi;
-		case MoveName::Switch5: return 0_bi;
 		case MoveName::Hit_Self: return 40_bi;
 		case MoveName::Pound: return 40_bi;
 		case MoveName::Karate_Chop: return 50_bi;

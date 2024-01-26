@@ -23,6 +23,7 @@ import tm.move.future_action;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.side_effects;
+import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.level;
@@ -358,7 +359,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	}
 
 	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
-	CHECK(best.action == MoveName::Switch1);
+	CHECK(best.action == Switch(1_bi));
 }
 
 
@@ -474,7 +475,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	defender.reset_end_of_turn();
 
 	auto const best = determine_best_action(attacker, defender, environment, evaluate, depth);
-	CHECK(best.action == MoveName::Switch2);
+	CHECK(best.action == Switch(2_bi));
 }
 
 
@@ -1020,7 +1021,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_actions]") {
 	}
 
 	auto const best = determine_best_action2(attacker, defender, environment, evaluate, depth);
-	CHECK(best.action == MoveName::Switch2);
+	CHECK(best.action == Switch(2_bi));
 	CHECK(best.score == victory<generation>);
 }
 

@@ -320,12 +320,6 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Stuff_Cheeks:
 		case MoveName::Substitute:
 		case MoveName::Swallow:
-		case MoveName::Switch0:
-		case MoveName::Switch1:
-		case MoveName::Switch2:
-		case MoveName::Switch3:
-		case MoveName::Switch4:
-		case MoveName::Switch5:
 		case MoveName::Swords_Dance:
 		case MoveName::Synthesis:
 		case MoveName::Tail_Glow:
