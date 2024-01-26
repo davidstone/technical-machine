@@ -34,7 +34,10 @@ import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 
-export using SpeedDistribution = containers::array<double, bounded::number_of<InitialSpeed>>;
+template<typename Key, typename Mapped = double>
+using UsageFor = containers::array<Mapped, bounded::number_of<Key>>;
+
+export using SpeedDistribution = UsageFor<InitialSpeed>;
 
 constexpr auto calculate_speed(ps::ParsedPokemon const pokemon) {
 	constexpr auto is_unburdened = false;
@@ -104,12 +107,12 @@ export struct UsageStats {
 private:
 	struct PerSpecies {
 		double total = 0.0;
-		containers::array<double, bounded::number_of<Ability>> abilities{};
-		containers::array<double, bounded::number_of<Item>> items{};
-		containers::array<double, bounded::number_of<MoveName>> moves{};
+		UsageFor<Ability> abilities{};
+		UsageFor<Item> items{};
+		UsageFor<MoveName> moves{};
 		SpeedDistribution speed{};
 	};
-	containers::array<PerSpecies, bounded::number_of<Species>> m_all;
+	UsageFor<Species, PerSpecies> m_all;
 	double m_total_teams = 0.0;
 };
 
@@ -118,7 +121,7 @@ struct LocalTopMoves {
 	double value;
 };
 
-auto get_most_used(containers::array<double, bounded::number_of<MoveName>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
+auto get_most_used(UsageFor<MoveName> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
 	auto const total_sum = containers::sum(moves);
 	if (total_sum == 0.0) {
 		return {};
@@ -148,17 +151,17 @@ struct PerTeammate {
 	containers::flat_map<MoveName, double> other_moves;
 };
 
-using Teammates = containers::array<PerTeammate, bounded::number_of<Species>>;
+using Teammates = UsageFor<Species, PerTeammate>;
 
 struct MoveData {
 	Teammates teammates;
-	containers::array<double, bounded::number_of<MoveName>> moves = {};
-	containers::array<double, bounded::number_of<Item>> items = {};
-	containers::array<double, bounded::number_of<Ability>> abilities = {};
+	UsageFor<MoveName> moves = {};
+	UsageFor<Item> items = {};
+	UsageFor<Ability> abilities = {};
 	SpeedDistribution speed = {};
 };
 
-auto populate_correlation(auto & correlations, auto const key, double const weight) {
+auto populate_correlation(containers::flat_map<MoveName, double> & correlations, MoveName const key, double const weight) {
 	auto & mapped = containers::keyed_insert(correlations, key, 0.0).iterator->mapped;
 	mapped += weight;
 }
@@ -176,7 +179,7 @@ auto populate_teammate_correlations(Teammates & teammates, ps::ParsedTeam const 
 	}
 }
 
-auto populate_move_correlations(auto & correlations, MoveNames const moves, MoveName const move1, double const weight) -> void {
+auto populate_move_correlations(UsageFor<MoveName> & correlations, MoveNames const moves, MoveName const move1, double const weight) -> void {
 	auto is_different = [=](MoveName const move2) { return move2 != move1; };
 	for (auto const move2 : containers::filter(moves, is_different)) {
 		correlations[bounded::integer(move2)] += weight;
@@ -243,7 +246,7 @@ export struct Correlations {
 	}
 
 private:
-	containers::array<PerSpecies, bounded::number_of<Species>> m_data;
+	UsageFor<Species, PerSpecies> m_data;
 };
 
 } // namespace technicalmachine::ps_usage_stats
