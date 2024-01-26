@@ -12,6 +12,7 @@ export module tm.get_legal_selections;
 import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.pokemon.active_pokemon;
@@ -121,7 +122,7 @@ constexpr auto get_legal_selections(
 	Environment const environment
 ) -> LegalSelections {
 	if (team_is_empty(user) or team_is_empty(other)) {
-		return LegalSelections({MoveName::Pass});
+		return LegalSelections({pass});
 	}
 	auto replacement_switches = [&] {
 		return potential_switches(
@@ -133,12 +134,12 @@ constexpr auto get_legal_selections(
 		return LegalSelections(replacement_switches());
 	}
 	if (switch_decision_required(other)) {
-		return LegalSelections({MoveName::Pass});
+		return LegalSelections({pass});
 	}
 	auto const user_pokemon = user.pokemon();
 	auto const last_used_move = user_pokemon.last_used_move();
 	if (last_used_move.moved_this_turn()) {
-		return LegalSelections({MoveName::Pass});
+		return LegalSelections({pass});
 	}
 	if (auto const move = last_used_move.locked_in_by_move()) {
 		return LegalSelections({*move});

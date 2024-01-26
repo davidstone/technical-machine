@@ -1950,7 +1950,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Obstruct:
 		case MoveName::Overdrive:
 		case MoveName::Outrage:
-		case MoveName::Pass:
 		case MoveName::Pay_Day:
 		case MoveName::Payback:
 		case MoveName::Peck:

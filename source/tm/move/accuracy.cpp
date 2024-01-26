@@ -25,7 +25,6 @@ export using BaseAccuracy = tv::optional<bounded::integer<30, 100>>;
 export constexpr auto accuracy(Generation const generation, MoveName const move, Environment const environment, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
 	using tv::none;
 	switch (move) {
-		case MoveName::Pass: return none;
 		case MoveName::Hit_Self: return none;
 		case MoveName::Pound: return 100_bi;
 		case MoveName::Karate_Chop: return 100_bi;

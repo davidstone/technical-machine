@@ -13,6 +13,7 @@ import tm.move.future_action;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.no_effect_function;
+import tm.move.pass;
 import tm.move.side_effects;
 import tm.move.switch_;
 import tm.move.used_move;
@@ -114,7 +115,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
-		LegalSelections({MoveName::Pass})
+		LegalSelections({pass})
 	);
 
 	attacker.reset_end_of_turn();
@@ -147,7 +148,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
-		LegalSelections({MoveName::Pass})
+		LegalSelections({pass})
 	);
 }
 

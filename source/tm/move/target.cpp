@@ -291,7 +291,6 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::No_Retreat:
 		case MoveName::Obstruct:
 		case MoveName::Outrage:
-		case MoveName::Pass:
 		case MoveName::Petal_Dance:
 		case MoveName::Power_Trick:
 		case MoveName::Protect:

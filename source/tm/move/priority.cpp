@@ -7,6 +7,7 @@ export module tm.move.priority;
 
 import tm.move.action;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.constant_generation;
@@ -319,7 +320,8 @@ constexpr auto get_priority(Generation const generation, Action const action) {
 		[](Switch) -> PriorityInteger { return 6_bi; },
 		[&](MoveName const move) {
 			return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
-		}
+		},
+		[](Pass) -> PriorityInteger { return 0_bi; }
 	));
 }
 

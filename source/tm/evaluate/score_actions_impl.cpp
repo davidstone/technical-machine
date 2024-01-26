@@ -21,6 +21,7 @@ import tm.evaluate.win;
 import tm.move.action;
 import tm.move.legal_selections;
 import tm.move.move_name;
+import tm.move.pass;
 
 import tm.environment;
 import tm.generation;
@@ -78,7 +79,7 @@ struct ScoreMovesEvaluator {
 template<Generation generation>
 auto score_actions(State<generation> const & state, LegalSelections const ai_selections, ActionProbabilities const foe_actions, Evaluate<generation> const evaluate) -> ScoredActions {
 	if (auto const score = win(state.ai, state.foe)) {
-		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
+		return ScoredActions({ScoredAction(pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
 	return evaluator.select_type_of_action(

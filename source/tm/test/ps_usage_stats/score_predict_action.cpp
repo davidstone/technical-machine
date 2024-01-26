@@ -22,6 +22,7 @@ import tm.evaluate.predict_action;
 
 import tm.move.action;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.ps_usage_stats.add_to_workers;
@@ -114,7 +115,7 @@ auto get_predicted_action(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
-				if (action.predicted == ActionProbabilities({{MoveName::Pass, 1.0}})) {
+				if (action.predicted == ActionProbabilities({{pass, 1.0}})) {
 					return tv::none;
 				}
 				return action;

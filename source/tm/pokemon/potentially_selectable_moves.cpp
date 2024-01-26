@@ -24,7 +24,6 @@ using namespace bounded::literal;
 
 constexpr auto weird_moves(Generation const generation) {
 	return containers::array({
-		Move(generation, MoveName::Pass),
 		Move(generation, MoveName::Struggle)
 	});
 }
@@ -50,7 +49,6 @@ static_assert(containers::equal(
 	),
 	containers::array({
 		MoveName::Tackle,
-		MoveName::Pass,
 		MoveName::Struggle
 	})
 ));
@@ -61,7 +59,6 @@ static_assert(containers::equal(
 	),
 	containers::array({
 		MoveName::Tackle,
-		MoveName::Pass,
 		MoveName::Struggle,
 	})
 ));
@@ -78,7 +75,6 @@ static_assert(containers::equal(
 		MoveName::Thunder,
 		MoveName::Psychic,
 		MoveName::Body_Slam,
-		MoveName::Pass,
 		MoveName::Struggle,
 	})
 ));

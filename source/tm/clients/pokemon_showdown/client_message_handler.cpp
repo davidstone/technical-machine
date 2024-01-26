@@ -42,6 +42,7 @@ import tm.evaluate.depth;
 
 import tm.move.action;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.string_conversions.move_name;
@@ -255,14 +256,13 @@ private:
 				));
 			},
 			[&](MoveName const move) {
-				if (move == MoveName::Pass) {
-				} else {
-					m_send_message(containers::concatenate<containers::string>(
-						room,
-						"|/choose move "sv,
-						to_string(move)
-					));
-				}
+				m_send_message(containers::concatenate<containers::string>(
+					room,
+					"|/choose move "sv,
+					to_string(move)
+				));
+			},
+			[](Pass) {
 			}
 		));
 	}

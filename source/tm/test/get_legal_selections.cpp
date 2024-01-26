@@ -7,6 +7,7 @@ export module tm.test.get_legal_selections;
 
 import tm.move.legal_selections;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
@@ -171,7 +172,7 @@ namespace already_acted {
 
 	static_assert(
 		get_legal_selections(user, other, environment) ==
-		LegalSelections({MoveName::Pass})
+		LegalSelections({pass})
 	);
 }
 
@@ -214,7 +215,7 @@ namespace using_baton_pass {
 	);
 	static_assert(
 		get_legal_selections(other, user, environment) ==
-		LegalSelections({MoveName::Pass})
+		LegalSelections({pass})
 	);
 }
 
@@ -263,7 +264,7 @@ static_assert([]{
 		LegalSelections({Switch(1_bi)});
 	auto const other_can_pass =
 		get_legal_selections(other, user, environment) ==
-		LegalSelections({MoveName::Pass});
+		LegalSelections({pass});
 	return user_can_switch and other_can_pass;
 }());
 

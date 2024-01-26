@@ -32,6 +32,7 @@ import tm.move.known_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.other_action;
+import tm.move.pass;
 import tm.move.side_effects;
 import tm.move.switch_;
 import tm.move.used_move;
@@ -77,8 +78,9 @@ using namespace bounded::literal;
 
 constexpr auto is_damaging(Action const action) -> bool {
 	return tv::visit(action, tv::overload(
+		[](Switch) { return false; },
 		[](MoveName const move) { return is_damaging(move); },
-		[](Switch) { return false; }
+		[](Pass) { return false; }
 	));
 }
 
@@ -211,6 +213,9 @@ struct OriginalPokemon {
 	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Action const other_action_):
 		m_species(pokemon.species()),
 		m_other_action(tv::visit(other_action_, tv::overload(
+			[](Switch) -> OtherAction {
+				return IrrelevantAction();
+			},
 			[&](MoveName const move) -> OtherAction {
 				return KnownMove(
 					move,
@@ -221,7 +226,8 @@ struct OriginalPokemon {
 					)
 				);
 			},
-			[](Switch) -> OtherAction {
+			[](Pass) -> OtherAction {
+				// TODO: unreachable()?
 				return IrrelevantAction();
 			}
 		)))
@@ -313,7 +319,7 @@ private:
 				foe_action,
 				ai_action
 			);
-			BOUNDED_ASSERT(first_action == MoveName::Pass);
+			BOUNDED_ASSERT(first_action == pass);
 			return score_executed_actions(state, select, last_action, first_used_action, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
@@ -361,10 +367,10 @@ private:
 			return score_executed_actions(state, select, first_action, FutureAction(is_damaging(last_action)), [&](State<generation> const & pre_updated) {
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
-				auto const actual_last_action = is_same_pokemon ? last_action : MoveName::Pass;
+				auto const actual_last_action = is_same_pokemon ? last_action : pass;
 				auto const first_used_action = original_last_pokemon.other_action();
 				return score_executed_actions(pre_updated, select.invert(), actual_last_action, first_used_action, [&](State<generation> const & updated) {
-					constexpr auto first_selections = LegalSelections({MoveName::Pass});
+					constexpr auto first_selections = LegalSelections({pass});
 					auto const ordered = select(updated);
 					auto const last_selections = get_legal_selections(
 						ordered.other,
@@ -416,7 +422,7 @@ private:
 						updated_ordering.other,
 						updated.environment
 					) :
-					LegalSelections({MoveName::Pass});
+					LegalSelections({pass});
 			auto const last_selections = LegalSelections({last_action});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
@@ -480,11 +486,13 @@ private:
 		);
 		auto switch_one_side = [&](Action const action, Team<generation> & switcher, Team<generation> & other) {
 			tv::visit(action, tv::overload(
-				[](MoveName const move) {
-					BOUNDED_ASSERT(move == MoveName::Pass);
-				},
 				[&](Switch const switch_) {
 					switcher.switch_pokemon(other.pokemon(), state.environment, switch_.value());
+				},
+				[](MoveName) {
+					std::unreachable();
+				},
+				[](Pass) {
 				}
 			));
 		};
@@ -538,6 +546,9 @@ private:
 
 	auto score_executed_actions(State<generation> const & state, Selector<generation> const select, Action const selected_action, OtherAction const other_action, auto const continuation) const -> double {
 		return tv::visit(selected_action, tv::overload(
+			[&](Switch const switch_) {
+				return execute_switch(state, select, switch_, continuation);
+			},
 			[&](MoveName const selected) {
 				double score = 0.0;
 				auto const executed_moves = possible_executed_moves(selected, select(state).team);
@@ -552,8 +563,8 @@ private:
 				}
 				return score / static_cast<double>(containers::size(executed_moves));
 			},
-			[&](Switch const switch_) {
-				return execute_switch(state, select, switch_, continuation);
+			[&](Pass) {
+				return continuation(state);
 			}
 		));
 	}

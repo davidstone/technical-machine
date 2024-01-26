@@ -17,6 +17,7 @@ import tm.evaluate.win;
 import tm.move.action;
 import tm.move.legal_selections;
 import tm.move.move_name;
+import tm.move.pass;
 
 import tm.environment;
 import tm.generation;
@@ -63,7 +64,7 @@ struct ExpectiminimaxEvaluator {
 export template<Generation generation>
 auto expectiminimax(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredActions {
 	if (auto const score = win(state.ai, state.foe)) {
-		return ScoredActions({ScoredAction(MoveName::Pass, *score)});
+		return ScoredActions({ScoredAction(pass, *score)});
 	}
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
 	return evaluator.select_type_of_action(state, ai_selections, foe_selections);

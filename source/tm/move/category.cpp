@@ -602,7 +602,6 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 			return generation <= Generation::three ?
 				type_based_category(move.type) :
 				MoveCategory::special;
-		case MoveName::Pass:
 		case MoveName::Swords_Dance:
 		case MoveName::Whirlwind:
 		case MoveName::Sand_Attack:

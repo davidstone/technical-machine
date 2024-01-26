@@ -3,9 +3,14 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <bounded/assert.hpp>
+
 export module tm.move.action;
 
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.pokemon.max_pokemon_per_team;
@@ -19,7 +24,9 @@ using namespace bounded::literal;
 
 namespace technicalmachine {
 
-using Index = tv::variant_index<MoveName, Switch>;
+using Index = tv::variant_index<MoveName, Switch, Pass>;
+
+constexpr auto pass_index = bounded::constant<numeric_traits::max_value<MoveName>> + 1_bi;
 
 export struct Action {
 	constexpr Action(MoveName const move):
@@ -30,12 +37,20 @@ export struct Action {
 		m_value(switch_.value())
 	{
 	}
-
-	constexpr auto index() const -> Index {
-		return m_value <= numeric_traits::max_value<TeamIndex> ? Index(1_bi) : Index(0_bi);
+	constexpr Action(Pass):
+		m_value(pass_index)
+	{
 	}
 
-	constexpr auto operator[](bounded::type_t<MoveName>) const -> MoveName {
+	constexpr auto index() const -> Index {
+		return
+			m_value <= numeric_traits::max_value<TeamIndex> ? Index(1_bi) :
+			m_value <= bounded::constant<numeric_traits::max_value<MoveName>> ? Index(0_bi) :
+			Index(2_bi);
+	}
+
+	constexpr auto operator[](bounded::type_t<MoveName> index_) const -> MoveName {
+		BOUNDED_ASSERT(index() == index_);
 		return MoveName(m_value);
 	}
 	constexpr auto operator[](bounded::constant_t<0>) const -> MoveName {
@@ -47,6 +62,13 @@ export struct Action {
 	constexpr auto operator[](bounded::constant_t<1>) const -> Switch {
 		return (*this)[bounded::type<Switch>];
 	}
+	constexpr auto operator[](bounded::type_t<Pass> index_) const -> Pass {
+		BOUNDED_ASSERT(index() == index_);
+		return pass;
+	}
+	constexpr auto operator[](bounded::constant_t<2>) const -> Pass {
+		return (*this)[bounded::type<Pass>];
+	}
 
 	friend constexpr auto operator==(Action, Action) -> bool = default;
 
@@ -54,7 +76,7 @@ private:
 	static_assert(bounded::constant<numeric_traits::min_value<MoveName>> == numeric_traits::max_value<TeamIndex> + 1_bi);
 	using Integer = bounded::integer<
 		0,
-		bounded::normalize<numeric_traits::max_value<MoveName>>
+		bounded::normalize<pass_index>
 	>;
 	[[no_unique_address]] Integer m_value;
 

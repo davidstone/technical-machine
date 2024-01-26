@@ -40,7 +40,6 @@ enum class MoveCriticalHit {
 constexpr auto move_critical_hit(Generation const generation, MoveName const move_name) {
 	switch (move_name) {
 		// Weird moves
-		case MoveName::Pass: return MoveCriticalHit::never;
 		case MoveName::Hit_Self: return MoveCriticalHit::never;
 
 		// Generation 1

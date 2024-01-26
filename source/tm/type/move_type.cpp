@@ -18,7 +18,6 @@ namespace technicalmachine {
 // If `move` is Hidden Power, type must not be `none`
 export constexpr auto move_type(Generation const generation, MoveName const move, tv::optional<Type> const hidden_power) -> Type {
 	switch (move) {
-		case MoveName::Pass: return Type::Typeless;
 		case MoveName::Hit_Self: return Type::Typeless;
 		case MoveName::Pound: return Type::Normal;
 		case MoveName::Karate_Chop: return generation == Generation::one ? Type::Normal : Type::Fighting;

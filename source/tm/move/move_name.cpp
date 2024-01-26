@@ -12,8 +12,7 @@ namespace technicalmachine {
 
 export enum class MoveName : std::uint16_t {
 	// Weird moves
-	Pass = 6,
-	Hit_Self,
+	Hit_Self = 6,
 
 	// Generation 1
 	Regular_Begin,
@@ -892,7 +891,7 @@ export enum class MoveName : std::uint16_t {
 } // namespace technicalmachine
 
 template<>
-constexpr auto numeric_traits::min_value<technicalmachine::MoveName> = technicalmachine::MoveName::Pass;
+constexpr auto numeric_traits::min_value<technicalmachine::MoveName> = technicalmachine::MoveName::Hit_Self;
 
 template<>
 constexpr auto numeric_traits::max_value<technicalmachine::MoveName> = technicalmachine::MoveName::Eerie_Spell;
@@ -901,7 +900,6 @@ namespace technicalmachine {
 
 export constexpr auto is_regular(MoveName const move) -> bool {
 	switch (move) {
-		case MoveName::Pass:
 		case MoveName::Hit_Self:
 		case MoveName::Struggle:
 			return false;

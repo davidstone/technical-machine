@@ -14,6 +14,7 @@ import tm.evaluate.state;
 
 import tm.move.action;
 import tm.move.move_name;
+import tm.move.pass;
 import tm.move.switch_;
 
 import tm.string_conversions.move_name;
@@ -40,11 +41,14 @@ using namespace bounded::literal;
 template<Generation generation>
 auto log_action(std::ostream & stream, Action const action, Team<generation> const & team) {
 	tv::visit(action, tv::overload(
+		[&](Switch const switch_) {
+			stream << "Switch to " << to_string(team.pokemon(switch_.value()).species());
+		},
 		[&](MoveName const move) {
 			stream << "Use " << to_string(move);
 		},
-		[&](Switch const switch_) {
-			stream << "Switch to " << to_string(team.pokemon(switch_.value()).species());
+		[&](Pass) {
+			stream << "Pass";
 		}
 	));
 }

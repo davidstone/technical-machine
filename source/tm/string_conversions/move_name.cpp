@@ -27,7 +27,6 @@ using namespace bounded::literal;
 export constexpr auto to_string(MoveName const move) -> std::string_view {
 	switch (move) {
 		// Weird moves
-		case MoveName::Pass: return "Pass";
 		case MoveName::Hit_Self: return "Hit self in confusion";
 
 		case MoveName::Pound: return "Pound";
@@ -1447,7 +1446,6 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"painsplit", MoveName::Pain_Split},
 			{"paraboliccharge", MoveName::Parabolic_Charge},
 			{"partingshot", MoveName::Parting_Shot},
-			{"pass", MoveName::Pass},
 			{"payback", MoveName::Payback},
 			{"payday", MoveName::Pay_Day},
 			{"peck", MoveName::Peck},
