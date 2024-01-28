@@ -159,7 +159,7 @@ struct WeightedScore {
 constexpr auto weighted_score(std::span<double const> const scores) -> WeightedScore {
 	auto const weight = static_cast<double>(containers::size(scores));
 	return WeightedScore(
-		weight * containers::sum(scores),
+		containers::sum(scores),
 		weight
 	);
 }
