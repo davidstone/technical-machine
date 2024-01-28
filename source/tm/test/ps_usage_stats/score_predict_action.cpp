@@ -136,9 +136,9 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 			return Switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
-	auto score_prediction = [&](ActionProbability const ap) {
-		auto const actual_probability = actual == ap.action ? 1.0 : 0.0;
-		auto const value = ap.probability - actual_probability;
+	auto score_prediction = [&](ActionProbability const predicted) {
+		auto const actual_probability = actual == predicted.action ? 1.0 : 0.0;
+		auto const value = predicted.probability - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));
