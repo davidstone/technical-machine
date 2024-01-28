@@ -55,6 +55,8 @@ import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 
+using namespace bounded::literal;
+
 template<typename T>
 auto parse_stats(nlohmann::json const & stats) {
 	auto read = [&](std::string_view const key) {
@@ -151,6 +153,61 @@ auto parse_rating(nlohmann::json const & json) -> tv::optional<Rating> {
 	);
 }
 
+enum class Anonymization {
+	full,
+	hashed,
+	integer,
+	none
+};
+
+constexpr auto hex_digit(char const c) -> bounded::integer<0, 15> {
+	switch (c) {
+		case '0': return 0_bi;
+		case '1': return 1_bi;
+		case '2': return 2_bi;
+		case '3': return 3_bi;
+		case '4': return 4_bi;
+		case '5': return 5_bi;
+		case '6': return 6_bi;
+		case '7': return 7_bi;
+		case '8': return 8_bi;
+		case '9': return 9_bi;
+		case 'a': return 10_bi;
+		case 'b': return 11_bi;
+		case 'c': return 12_bi;
+		case 'd': return 13_bi;
+		case 'e': return 14_bi;
+		case 'f': return 15_bi;
+		default: throw std::runtime_error("Invalid hex digit");
+	}
+}
+
+constexpr auto hex_to_integer(std::string_view const str) {
+	auto result = BattleResult::Side::ID(0_bi);
+	for (auto const c : str) {
+		result *= 16_bi;
+		result += hex_digit(c);
+	}
+	return result;
+}
+
+constexpr auto to_player_id(std::string_view const str) {
+	constexpr auto anonymization = Anonymization::hashed;
+	switch (anonymization) {
+		case Anonymization::full:
+			return
+				str == "Player 1" ? BattleResult::Side::ID(1_bi) :
+				str == "Player 2" ? BattleResult::Side::ID(2_bi) :
+				throw std::runtime_error("Invalid fully anonymized username");
+		case Anonymization::hashed:
+			return hex_to_integer(str);
+		case Anonymization::integer:
+			return bounded::to_integer<BattleResult::Side::ID>(str);
+		case Anonymization::none:
+			throw std::runtime_error("Implement this");
+	}
+}
+
 export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult> {
 	if (json.at("turns").get<nlohmann::json::number_integer_t>() < 3) {
 		return tv::none;
@@ -169,13 +226,13 @@ export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult>
 	return BattleResult{
 		BattleResult::Side{
 			parse_team(generation, json.at("p1team")),
-			bounded::to_integer<BattleResult::Side::ID>(p1),
+			to_player_id(p1),
 			// Arr
 			parse_rating(json.at("p1rating"))
 		},
 		BattleResult::Side{
 			parse_team(generation, json.at("p2team")),
-			bounded::to_integer<BattleResult::Side::ID>(p2),
+			to_player_id(p2),
 			parse_rating(json.at("p2rating"))
 		},
 		winner
