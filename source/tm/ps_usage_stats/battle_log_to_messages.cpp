@@ -46,8 +46,11 @@ constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage con
 	return true;
 };
 
-constexpr auto is_not_chat_or_error_message = [](InMessage const message) {
-	return !is_chat_message(message) and message.type() != "error";
+constexpr auto is_potentially_useful = [](InMessage const message) {
+	return
+		!is_chat_message(message) and
+		message.type() != "error" and
+		message.type() != "gametype";
 };
 
 export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dynamic_array<BattleMessage> {
@@ -58,7 +61,7 @@ export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dy
 					containers::transform(log, [](nlohmann::json const & message) {
 						return InMessage(message.get<std::string_view>());
 					}),
-					is_not_chat_or_error_message
+					is_potentially_useful
 				),
 				is_part_of_previous_chunk
 			),
