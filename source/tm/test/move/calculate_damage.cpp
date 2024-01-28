@@ -85,7 +85,7 @@ constexpr auto attacker() {
 	pokemon.switch_in(Environment(), true);
 
 	pokemon.defense_curl();
-	for (auto const _ [[maybe_unused]] : containers::integer_range(10_bi)) {
+	for (auto const _ : containers::integer_range(10_bi)) {
 		pokemon.successfully_use_move(move);
 	}
 
@@ -107,7 +107,7 @@ constexpr auto defender() {
 	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment(), true);
-	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
+	for (auto const _ : containers::integer_range(3_bi)) {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 	return team;
@@ -165,7 +165,7 @@ constexpr auto attacker() {
 
 	pokemon.stages()[BoostableStat::spa] += 6_bi;
 
-	for (auto const _ [[maybe_unused]] : containers::integer_range(10_bi)) {
+	for (auto const _ : containers::integer_range(10_bi)) {
 		pokemon.successfully_use_move(move);
 	}
 
@@ -186,7 +186,7 @@ constexpr auto defender() {
 	}});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(environment(), true);
-	for (auto const _ [[maybe_unused]] : containers::integer_range(3_bi)) {
+	for (auto const _ : containers::integer_range(3_bi)) {
 		pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
 	return team;

@@ -162,7 +162,6 @@ auto check_state(
 	));
 }
 
-[[maybe_unused]] constexpr auto missed = true;
 constexpr auto did_not_miss = false;
 
 TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown]") {

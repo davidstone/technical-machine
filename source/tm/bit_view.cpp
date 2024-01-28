@@ -95,7 +95,7 @@ namespace {
 static_assert([] {
 	constexpr auto all_zeros = containers::array{std::byte(0x00), std::byte(0x00)};
 	auto view = BitView(all_zeros);
-	for ([[maybe_unused]] auto const n : containers::integer_range(16_bi)) {
+	for (auto const _ : containers::integer_range(16_bi)) {
 		BOUNDED_ASSERT(view.pop_integer(1_bi) == 0_bi);
 	}
 	BOUNDED_ASSERT(view.remaining_bits() == 0_bi);
@@ -105,7 +105,7 @@ static_assert([] {
 static_assert([] {
 	constexpr auto all_ones = containers::array{std::byte(0xFF), std::byte(0xFF)};
 	auto view = BitView(all_ones);
-	for ([[maybe_unused]] auto const n : containers::integer_range(16_bi)) {
+	for (auto const _ : containers::integer_range(16_bi)) {
 		BOUNDED_ASSERT(view.pop_integer(1_bi) == 1_bi);
 	}
 	BOUNDED_ASSERT(view.remaining_bits() == 0_bi);
@@ -115,7 +115,7 @@ static_assert([] {
 static_assert([] {
 	constexpr auto alternating_two_bit = containers::array{std::byte(0b10011001), std::byte(0b10011001)};
 	auto view = BitView(alternating_two_bit);
-	for ([[maybe_unused]] auto const n : containers::integer_range(4_bi)) {
+	for (auto const _ : containers::integer_range(4_bi)) {
 		BOUNDED_ASSERT(view.pop_integer(2_bi) == 2_bi);
 		BOUNDED_ASSERT(view.pop_integer(2_bi) == 1_bi);
 	}

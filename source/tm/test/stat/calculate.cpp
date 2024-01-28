@@ -160,7 +160,7 @@ static_assert([]{
 
 	pokemon.switch_in(environment, true);
 
-	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
+	for (auto const _ : containers::integer_range(3_bi)) {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 

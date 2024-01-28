@@ -27,7 +27,7 @@ static_assert(!PerishSong<Generation::three>().is_active());
 constexpr auto perish_song_is_active_after(auto const turns) {
 	auto perish_song = PerishSong<Generation::three>();
 	perish_song.activate();
-	for ([[maybe_unused]] auto const n : containers::integer_range(turns)) {
+	for (auto const _ : containers::integer_range(turns)) {
 		perish_song.advance_one_turn();
 	}
 	return perish_song.is_active();
@@ -44,7 +44,7 @@ static_assert([]{
 	perish_song.activate();
 	perish_song.advance_one_turn();
 	perish_song.activate();
-	for ([[maybe_unused]] auto const n : containers::integer_range(3_bi)) {
+	for (auto const _ : containers::integer_range(3_bi)) {
 		perish_song.advance_one_turn();
 	}
 	return !perish_song.is_active();

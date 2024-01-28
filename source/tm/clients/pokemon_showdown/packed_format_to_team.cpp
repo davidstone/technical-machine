@@ -58,7 +58,7 @@ constexpr auto parse_species(std::string_view const species_str, Nickname const 
 	return from_string<Species>(species_str.empty() ? nickname.str() : species_str);
 }
 
-constexpr auto parse_ability(std::string_view const ability_str, Species const species [[maybe_unused]]) {
+constexpr auto parse_ability(std::string_view const ability_str, [[maybe_unused]] Species const species) {
 	// TODO: Get the correct values for this
 	return
 		ability_str == "" ? Ability::Honey_Gather :
@@ -161,12 +161,12 @@ constexpr auto parse_pokemon(std::string_view const str) {
 	auto const evs = parse_evs<generation>(buffer.pop());
 	auto const gender = parse_gender(buffer.pop());
 	auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(buffer.pop());
-	auto const shiny [[maybe_unused]] = parse_shiny(buffer.pop());
+	[[maybe_unused]] auto const shiny = parse_shiny(buffer.pop());
 	auto const level = parse_integer_wrapper<Level>(buffer.pop());
 	auto const happiness = parse_integer_wrapper<Happiness>(buffer.pop(','));
-	auto const pokeball [[maybe_unused]] = buffer.pop(',');
+	[[maybe_unused]] auto const pokeball = buffer.pop(',');
 	// TODO: Support Hyper Training
-	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
+	[[maybe_unused]] auto const hidden_power_type = buffer.remainder();
 	auto pokemon = KnownPokemon<generation>(
 		species,
 		nickname,

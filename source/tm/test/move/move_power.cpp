@@ -82,7 +82,7 @@ constexpr auto attacker() {
 	pokemon.switch_in(Environment(), true);
 
 	pokemon.defense_curl();
-	for (auto const _ [[maybe_unused]] : containers::integer_range(4_bi)) {
+	for (auto const _ : containers::integer_range(4_bi)) {
 		pokemon.successfully_use_move(move);
 	}
 

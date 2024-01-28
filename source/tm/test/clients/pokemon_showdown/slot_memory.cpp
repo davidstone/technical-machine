@@ -141,7 +141,7 @@ TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
 	auto size = random_size();
 	auto slot_memory = ps::SlotMemory(size);
 
-	for ([[maybe_unused]] auto const _ : containers::integer_range(iterations)) {
+	for (auto const _ : containers::integer_range(iterations)) {
 		try {
 			switch (action_distribution(random_engine)) {
 				case 0:

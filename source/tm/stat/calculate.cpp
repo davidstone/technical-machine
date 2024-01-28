@@ -199,7 +199,7 @@ template<SplitSpecialRegularStat stat, any_active_pokemon PokemonType>
 constexpr auto item_modifier(PokemonType const pokemon, Environment const environment) {
 	constexpr auto generation = generation_from<PokemonType>;
 	constexpr auto denominator = 2_bi;
-	auto const species [[maybe_unused]] = pokemon.species();
+	[[maybe_unused]] auto const species = pokemon.species();
 	auto const item = pokemon.item(environment);
 	auto const numerator = [&] {
 		if constexpr (stat == SplitSpecialRegularStat::atk) {
