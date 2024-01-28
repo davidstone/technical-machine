@@ -251,7 +251,9 @@ export struct LastUsedMove {
 		));
 	}
 	constexpr auto use_recharge_move() & -> void {
-		BOUNDED_ASSERT(!locked_in_by_move());
+		if (locked_in_by_move()) {
+			throw std::runtime_error("Used Recharge move while locked in by move");
+		}
 		m_effects = Recharging();
 	}
 
