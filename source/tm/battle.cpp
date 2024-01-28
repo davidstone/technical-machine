@@ -80,35 +80,51 @@ constexpr auto get_actual_damage(
 	);
 }
 
+constexpr auto move_should_have_recoil(
+	Generation const generation,
+	Used const move,
+	auto const user_pokemon,
+	auto const other_pokemon
+) -> bool {
+	if (move.miss) {
+		return false;
+	}
+	if (generation == Generation::one and move.damage.index() == bounded::type<SubstituteBroke>) {
+		return false;
+	}
+	auto const user_hidden_power_type = get_hidden_power_type(user_pokemon);
+	auto const type = move_type(generation, move.executed, user_hidden_power_type);
+	auto const other_types = other_pokemon.types();
+	if (Effectiveness(generation, type, other_types).has_no_effect()) {
+		return false;
+	}
+	if (ability_blocks_move(
+		generation,
+		other_pokemon.ability(),
+		KnownMove(move.executed, type),
+		other_pokemon.status().name(),
+		other_types
+	)) {
+		return false;
+	}
+	return causes_recoil(move.executed);
+}
+
 constexpr auto ability_from_recoil(
 	Generation const generation,
-	MoveName const executed,
-	bool const recoil,
+	Used const move,
 	auto const user_pokemon,
 	auto const other_pokemon
 ) -> tv::optional<Ability> {
-	auto const user_hidden_power_type = get_hidden_power_type(user_pokemon);
-	auto const type = move_type(generation, executed, user_hidden_power_type);
-	auto const ability_blocks_recoil =
-		causes_recoil(executed) and
-		!recoil and
-		!Effectiveness(generation, type, other_pokemon.types()).has_no_effect() and
-		!ability_blocks_move(
-			generation,
-			other_pokemon.ability(),
-			KnownMove{
-				executed,
-				type
-			},
-			other_pokemon.status().name(),
-			other_pokemon.types()
-		);
-	if (ability_blocks_recoil) {
-		// TODO: Could be Magic Guard
-		return Ability::Rock_Head;
-	} else {
+	if (move.recoil) {
+		// TODO: This can let you know they don't have Rock Head
 		return tv::none;
 	}
+	if (!move_should_have_recoil(generation, move, user_pokemon, other_pokemon)) {
+		return tv::none;
+	}
+	// TODO: Could be Magic Guard
+	return Ability::Rock_Head;
 }
 
 template<typename PokemonType>
@@ -252,8 +268,7 @@ struct Battle {
 
 			auto const recoil_ability = ability_from_recoil(
 				generation,
-				move.executed,
-				move.recoil,
+				move,
 				user_pokemon,
 				other_pokemon
 			);
