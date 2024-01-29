@@ -3,26 +3,13 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
-cmake_policy(VERSION 3.27...3.28)
+cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 project(technical_machine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
-
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "aa1f7df0-828a-4fcd-9afc-2dc80491aca7")
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
-	"<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> -E -x c++ <SOURCE>"
-	" -MT <DYNDEP_FILE> -MD -MF <DEP_FILE>"
-	" -fmodules-ts -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT> -fdep-format=trtbd"
-	" -o <PREPROCESSED_SOURCE>")
-	set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FORMAT "gcc")
-	set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FLAG "-fmodules-ts -fmodule-mapper=<MODULE_MAP_FILE> -fdep-format=trtbd -x c++")
-endif()
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 if(NOT CMAKE_BUILD_TYPE)
