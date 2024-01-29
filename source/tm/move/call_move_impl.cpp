@@ -14,6 +14,7 @@ module tm.move.call_move;
 
 import tm.move.activate_when_hit_item;
 import tm.move.actual_damage;
+import tm.move.affects_target;
 import tm.move.category;
 import tm.move.end_of_attack;
 import tm.move.executed_move;

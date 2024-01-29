@@ -92,6 +92,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/action.cpp
 		source/tm/move/activate_when_hit_item.cpp
 		source/tm/move/actual_damage.cpp
+		source/tm/move/affects_target.cpp
 		source/tm/move/base_power.cpp
 		source/tm/move/calculate_damage.cpp
 		source/tm/move/call_move.cpp

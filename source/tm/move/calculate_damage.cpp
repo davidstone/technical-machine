@@ -9,6 +9,7 @@ module;
 
 export module tm.move.calculate_damage;
 
+import tm.move.affects_target;
 import tm.move.category;
 import tm.move.damage_type;
 import tm.move.executed_move;

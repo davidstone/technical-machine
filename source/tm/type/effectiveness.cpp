@@ -10,17 +10,8 @@ module;
 export module tm.type.effectiveness;
 
 import tm.type.pokemon_types;
-
-import tm.move.category;
-import tm.move.known_move;
-import tm.move.move_name;
-
-import tm.pokemon.any_pokemon;
-import tm.pokemon.grounded;
-
 import tm.type.type;
 
-import tm.environment;
 import tm.generation;
 import tm.rational;
 
@@ -466,7 +457,6 @@ public:
 		return product() == no_effect;
 	}
 
-private:
 	friend constexpr auto operator*(Effectiveness const lhs, auto const rhs) {
 		return rhs * lhs.product();
 	}
@@ -474,42 +464,10 @@ private:
 		return rhs * lhs;
 	}
 
+private:
 	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	SingleType m_first;
 	SingleType m_second;
 };
-
-constexpr auto always_affects_target(Generation const generation, MoveName const move) {
-	switch (generation) {
-		case Generation::one:
-			switch (move) {
-				case MoveName::Night_Shade:
-				case MoveName::Seismic_Toss:
-				case MoveName::Sonic_Boom:
-				case MoveName::Super_Fang:
-					return true;
-				default:
-					return false;
-			}
-		case Generation::two:
-		case Generation::three:
-		case Generation::four:
-		case Generation::five:
-		case Generation::six:
-		case Generation::seven:
-		case Generation::eight:
-			return false;
-	}
-}
-
-export template<any_active_pokemon TargetPokemon>
-constexpr auto affects_target(KnownMove const move, TargetPokemon const target, Environment const environment) -> bool {
-	constexpr auto generation = generation_from<TargetPokemon>;
-	auto const effectiveness = Effectiveness(generation, move.type, target.types());
-	if (!is_damaging(move.name) or always_affects_target(generation, move.name)) {
-		return true;
-	}
-	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, environment));
-}
 
 } // namespace technicalmachine
