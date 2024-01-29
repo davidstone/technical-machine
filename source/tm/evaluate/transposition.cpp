@@ -7,7 +7,7 @@ export module tm.evaluate.transposition;
 
 import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
-import tm.evaluate.scored_action;
+import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 
 import tm.move.move_name;
@@ -38,21 +38,21 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 
 export template<Generation generation>
 struct TranspositionTable {
-	auto add_score(State<generation> const & state, ScoredActions actions) -> void {
+	auto add_score(State<generation> const & state, ScoredSelections selections) -> void {
 		auto const compressed_battle = compress_battle(state);
 		auto _ = std::scoped_lock(m_mutex);
 		auto & value = m_data[index(compressed_battle)];
 		value.compressed_battle = compressed_battle;
 		value.depth = state.depth;
-		value.actions = actions;
+		value.selections = selections;
 	}
 
-	auto get_score(State<generation> const & state) const -> tv::optional<ScoredActions> {
+	auto get_score(State<generation> const & state) const -> tv::optional<ScoredSelections> {
 		auto const compressed_battle = compress_battle(state);
 		auto _ = std::scoped_lock(m_mutex);
 		auto const & value = m_data[index(compressed_battle)];
 		if (value.depth >= state.depth and value.compressed_battle == compressed_battle) {
-			return value.actions;
+			return value.selections;
 		}
 		return tv::none;
 	}
@@ -74,7 +74,7 @@ private:
 	struct Value {
 		CompressedBattle<generation> compressed_battle = {};
 		Depth depth = Depth(0_bi, 0_bi);
-		ScoredActions actions;
+		ScoredSelections selections;
 	};
 	using Data = containers::array<Value, table_size>;
 	static_assert(std::same_as<TableIndex, containers::index_type<Data>>);

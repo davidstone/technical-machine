@@ -5,9 +5,9 @@
 
 export module tm.move.priority;
 
-import tm.move.action;
 import tm.move.move_name;
 import tm.move.pass;
+import tm.move.selection;
 import tm.move.switch_;
 
 import tm.constant_generation;
@@ -315,8 +315,8 @@ constexpr auto priority_impl(constant_gen_t<Generation::eight>, MoveName const m
 	return priority_impl(constant_gen<Generation::seven>, move);
 }
 
-constexpr auto get_priority(Generation const generation, Action const action) {
-	return tv::visit(action, tv::overload(
+constexpr auto get_priority(Generation const generation, Selection const selection) {
+	return tv::visit(selection, tv::overload(
 		[](Switch) -> PriorityInteger { return 6_bi; },
 		[&](MoveName const move) {
 			return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
@@ -326,8 +326,8 @@ constexpr auto get_priority(Generation const generation, Action const action) {
 }
 
 export struct Priority {
-	explicit constexpr Priority(Generation const generation, Action const action):
-		priority(get_priority(generation, action)) {
+	explicit constexpr Priority(Generation const generation, Selection const selection):
+		priority(get_priority(generation, selection)) {
 	}
 
 	friend auto operator<=>(Priority, Priority) = default;

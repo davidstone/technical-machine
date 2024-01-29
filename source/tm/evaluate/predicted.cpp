@@ -3,20 +3,20 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.evaluate.action_probability;
+export module tm.evaluate.predicted;
 
-import tm.move.action;
 import tm.move.legal_selections;
+import tm.move.selection;
 
 import containers;
 
 namespace technicalmachine {
 
-export struct ActionProbability {
-	Action action;
+export struct Predicted {
+	Selection selection;
 	double probability;
-	friend auto operator==(ActionProbability, ActionProbability) -> bool = default;
+	friend auto operator==(Predicted, Predicted) -> bool = default;
 };
-export using ActionProbabilities = containers::static_vector<ActionProbability, maximum_possible_selections>;
+export using AllPredicted = containers::static_vector<Predicted, maximum_possible_selections>;
 
 } // namespace technicalmachine

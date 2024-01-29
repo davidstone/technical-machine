@@ -76,12 +76,12 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/expectiminimax.cpp
 		source/tm/evaluate/extreme_element_value.cpp
 		source/tm/evaluate/load_evaluate.cpp
-		source/tm/evaluate/action_probability.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
-		source/tm/evaluate/predict_action.cpp
+		source/tm/evaluate/predict_selection.cpp
+		source/tm/evaluate/predicted.cpp
 		source/tm/evaluate/random_selection.cpp
-		source/tm/evaluate/score_actions.cpp
-		source/tm/evaluate/scored_action.cpp
+		source/tm/evaluate/score_selections.cpp
+		source/tm/evaluate/scored_selection.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
 		source/tm/evaluate/transposition.cpp
@@ -89,7 +89,6 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/win.cpp
 	
 		source/tm/move/accuracy.cpp
-		source/tm/move/action.cpp
 		source/tm/move/activate_when_hit_item.cpp
 		source/tm/move/actual_damage.cpp
 		source/tm/move/affects_target.cpp
@@ -102,7 +101,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/do_switch.cpp
 		source/tm/move/end_of_attack.cpp
 		source/tm/move/executed_move.cpp
-		source/tm/move/future_action.cpp
+		source/tm/move/future_selection.cpp
 		source/tm/move/healing_move_fails_in_generation_1.cpp
 		source/tm/move/initial_move.cpp
 		source/tm/move/irrelevant_action.cpp
@@ -126,6 +125,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/pp.cpp
 		source/tm/move/priority.cpp
 		source/tm/move/regular_moves.cpp
+		source/tm/move/selection.cpp
 		source/tm/move/side_effect_function.cpp
 		source/tm/move/side_effects.cpp
 		source/tm/move/switch.cpp
@@ -298,7 +298,7 @@ target_sources(tm_common PUBLIC
 		source/tm/held_item.cpp
 		source/tm/initial_team.cpp
 		source/tm/item.cpp
-		source/tm/get_both_actions.cpp
+		source/tm/get_both_selections.cpp
 		source/tm/get_legal_selections.cpp
 		source/tm/nlohmann_json.cpp
 		source/tm/load_json_from_file.cpp
@@ -326,8 +326,8 @@ target_sources(tm_common PUBLIC
 		source/tm/wish.cpp
 )
 target_sources(tm_common PRIVATE
-	source/tm/evaluate/predict_action_impl.cpp
-	source/tm/evaluate/score_actions_impl.cpp
+	source/tm/evaluate/predict_selection_impl.cpp
+	source/tm/evaluate/score_selections_impl.cpp
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
 	source/tm/string_conversions/team_impl.cpp
@@ -427,7 +427,7 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/battle_response_error.cpp
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
-		source/tm/clients/determine_action.cpp
+		source/tm/clients/determine_selection.cpp
 		source/tm/clients/get_team.cpp
 		source/tm/clients/invalid_team_file_format.cpp
 		source/tm/clients/load_team_from_file.cpp
@@ -661,7 +661,7 @@ target_sources(tm_test PRIVATE
 
 	source/tm/test/evaluate/evaluate.cpp
 	source/tm/test/evaluate/expectiminimax.cpp
-	source/tm/test/evaluate/predict_action.cpp
+	source/tm/test/evaluate/predict_selection.cpp
 
 	source/tm/test/move/call_move.cpp
 

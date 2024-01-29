@@ -10,8 +10,8 @@
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
-import tm.evaluate.action_probability;
-import tm.evaluate.predict_action;
+import tm.evaluate.predicted;
+import tm.evaluate.predict_selection;
 import tm.evaluate.state;
 
 import tm.move.move_name;
@@ -44,8 +44,8 @@ constexpr auto evaluate_settings = EvaluateSettings{
 };
 
 template<Generation generation>
-auto predict_action(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate) {
-	return predict_action(
+auto predict_selection(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate) {
+	return predict_selection(
 		ai,
 		get_legal_selections(ai, foe, environment),
 		foe,
@@ -57,7 +57,7 @@ auto predict_action(Team<generation> const & ai, Team<generation> const & foe, E
 }
 
 
-TEST_CASE("predict_action one move", "[predict_action]") {
+TEST_CASE("predict_selection one move", "[predict_selection]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -84,11 +84,11 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 	}});
 	team2.pokemon().switch_in(environment, true);
 
-	auto const moves = predict_action(team1, team2, environment, evaluate);
-	CHECK(moves == ActionProbabilities({ActionProbability(MoveName::Thunderbolt, 1.0)}));
+	auto const predicted = predict_selection(team1, team2, environment, evaluate);
+	CHECK(predicted == AllPredicted({Predicted(MoveName::Thunderbolt, 1.0)}));
 }
 
-TEST_CASE("predict_action winning and losing move", "[predict_action]") {
+TEST_CASE("predict_selection winning and losing move", "[predict_selection]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -116,11 +116,11 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	}});
 	team2.pokemon().switch_in(environment, true);
 
-	auto const moves = predict_action(team1, team2, environment, evaluate);
-	CHECK(moves == ActionProbabilities({ActionProbability(MoveName::Thunderbolt, 1.0)}));
+	auto const predicted = predict_selection(team1, team2, environment, evaluate);
+	CHECK(predicted == AllPredicted({Predicted(MoveName::Thunderbolt, 1.0)}));
 }
 
-TEST_CASE("predict_action good and bad move", "[predict_action]") {
+TEST_CASE("predict_selection good and bad move", "[predict_selection]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -149,15 +149,15 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	}});
 	team2.pokemon().switch_in(environment, true);
 
-	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.action == MoveName::Ice_Beam;
+	auto const moves = predict_selection(team1, team2, environment, evaluate);
+	auto const ptr = containers::maybe_find_if(moves, [](Predicted const predicted) {
+		return predicted.selection == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
 }
 
-TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
+TEST_CASE("predict_selection good bad and useless move", "[predict_selection]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -187,15 +187,15 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	}});
 	team2.pokemon().switch_in(environment, true);
 
-	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.action == MoveName::Ice_Beam;
+	auto const moves = predict_selection(team1, team2, environment, evaluate);
+	auto const ptr = containers::maybe_find_if(moves, [](Predicted const predicted) {
+		return predicted.selection == MoveName::Ice_Beam;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
 }
 
-TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
+TEST_CASE("Magneton vs Skarmory big team", "[predict_selection]") {
 	constexpr auto generation = Generation::three;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
@@ -259,9 +259,9 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 	}});
 	team2.pokemon().switch_in(environment, true);
 
-	auto const moves = predict_action(team1, team2, environment, evaluate);
-	auto const ptr = containers::maybe_find_if(moves, [](ActionProbability const ap) {
-		return ap.action == MoveName::Thunderbolt;
+	auto const moves = predict_selection(team1, team2, environment, evaluate);
+	auto const ptr = containers::maybe_find_if(moves, [](Predicted const predicted) {
+		return predicted.selection == MoveName::Thunderbolt;
 	});
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);

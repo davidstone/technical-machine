@@ -32,7 +32,7 @@ import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
-import tm.clients.determine_action;
+import tm.clients.determine_selection;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 import tm.clients.turn_count;
@@ -40,9 +40,9 @@ import tm.clients.turn_count;
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
-import tm.move.action;
 import tm.move.move_name;
 import tm.move.pass;
+import tm.move.selection;
 import tm.move.switch_;
 
 import tm.string_conversions.move_name;
@@ -115,17 +115,17 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 	stream << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 }
 
-auto determine_action(
+auto determine_selection(
 	GenerationGeneric<VisibleState> const & generic_state,
 	std::ostream & stream,
 	AllEvaluate const all_evaluate,
 	AllUsageStats const & all_usage_stats,
 	Depth const depth
-) -> Action {
+) -> Selection {
 	return tv::visit(
 		generic_state,
-		[&]<Generation generation>(VisibleState<generation> const & state) -> Action {
-			return determine_action(
+		[&]<Generation generation>(VisibleState<generation> const & state) -> Selection {
+			return determine_selection(
 				state,
 				stream,
 				all_usage_stats[generation],
@@ -240,7 +240,7 @@ private:
 		SlotMemory const slot_memory,
 		std::ostream & analysis_logger
 	) -> void {
-		auto const action = determine_action(
+		auto const action = determine_selection(
 			state,
 			analysis_logger,
 			m_evaluate,

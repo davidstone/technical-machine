@@ -3,18 +3,18 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.determine_action;
+export module tm.clients.determine_selection;
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.action_probability;
-import tm.evaluate.score_actions;
-import tm.evaluate.scored_action;
+import tm.evaluate.predicted;
+import tm.evaluate.score_selections;
+import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 
-import tm.move.action;
 import tm.move.move_name;
 import tm.move.pass;
+import tm.move.selection;
 import tm.move.switch_;
 
 import tm.string_conversions.move_name;
@@ -26,7 +26,7 @@ import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.generation_generic;
-import tm.get_both_actions;
+import tm.get_both_selections;
 import tm.team;
 import tm.visible_state;
 
@@ -39,8 +39,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-auto log_action(std::ostream & stream, Action const action, Team<generation> const & team) {
-	tv::visit(action, tv::overload(
+auto log_selection(std::ostream & stream, Selection const selection, Team<generation> const & team) {
+	tv::visit(selection, tv::overload(
 		[&](Switch const switch_) {
 			stream << "Switch to " << to_string(team.pokemon(switch_.value()).species());
 		},
@@ -56,24 +56,24 @@ auto log_action(std::ostream & stream, Action const action, Team<generation> con
 template<Generation generation>
 auto log_move_scores(
 	std::ostream & stream,
-	ScoredActions const scored_actions,
+	ScoredSelections const scored_selections,
 	Team<generation> const & ai
 ) -> void {
-	for (auto const sa : scored_actions) {
-		log_action(stream, sa.action, ai);
-		stream << " for an expected score of " << static_cast<std::int64_t>(sa.score) << '\n';
+	for (auto const scored : scored_selections) {
+		log_selection(stream, scored.selection, ai);
+		stream << " for an expected score of " << static_cast<std::int64_t>(scored.score) << '\n';
 	}
 }
 
 template<Generation generation>
 auto log_foe_move_probabilities(
 	std::ostream & stream,
-	ActionProbabilities const action_probabilities,
+	AllPredicted const all_predicted,
 	Team<generation> const & foe
 ) -> void {
-	for (auto const ap : action_probabilities) {
-		stream << "Predicted " << ap.probability * 100.0 << "% chance: ";
-		log_action(stream, ap.action, foe);
+	for (auto const predicted : all_predicted) {
+		stream << "Predicted " << predicted.probability * 100.0 << "% chance: ";
+		log_selection(stream, predicted.selection, foe);
 		stream << '\n';
 	}
 }
@@ -93,15 +93,15 @@ auto predicted_state(
 }
 
 template<Generation generation>
-auto determine_action(
+auto determine_selection(
 	VisibleState<generation> const & visible,
 	std::ostream & stream,
 	UsageStats const & usage_stats,
 	Evaluate<generation> const evaluate,
 	Depth const depth
-) -> Action {
+) -> Selection {
 	if (visible.ai.size() == 0_bi or visible.foe.size() == 0_bi) {
-		throw std::runtime_error("Tried to determine an action with an empty team.");
+		throw std::runtime_error("Tried to determine a selection with an empty team.");
 	}
 	auto const state = predicted_state(visible, usage_stats, depth);
 
@@ -115,19 +115,19 @@ auto determine_action(
 	stream << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
 	auto const start = std::chrono::steady_clock::now();
 
-	auto [foe_moves, ai_selections] = get_both_actions(
+	auto [foe_moves, ai_selections] = get_both_selections(
 		state.foe,
 		state.ai,
 		state.environment,
 		evaluate
 	);
-	containers::sort(foe_moves, [](ActionProbability const lhs, ActionProbability const rhs) {
+	containers::sort(foe_moves, [](Predicted const lhs, Predicted const rhs) {
 		return lhs.probability > rhs.probability;
 	});
 	log_foe_move_probabilities(stream, foe_moves, state.foe);
 	stream << std::flush;
 
-	auto scored_actions = score_actions(
+	auto scored_selections = score_selections(
 		state,
 		ai_selections,
 		foe_moves,
@@ -135,24 +135,24 @@ auto determine_action(
 	);
 	auto const finish = std::chrono::steady_clock::now();
 	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-	containers::sort(scored_actions, [](ScoredAction const lhs, ScoredAction const rhs) {
+	containers::sort(scored_selections, [](ScoredSelection const lhs, ScoredSelection const rhs) {
 		return lhs.score > rhs.score;
 	});
-	log_move_scores(stream, scored_actions, state.ai);
+	log_move_scores(stream, scored_selections, state.ai);
 	stream << std::flush;
-	return containers::front(scored_actions).action;
+	return containers::front(scored_selections).selection;
 }
 
-export auto determine_action(
+export auto determine_selection(
 	GenerationGeneric<VisibleState> const & generic_state,
 	std::ostream & stream,
 	UsageStats const & usage_stats,
 	GenerationGeneric<Evaluate> const generic_evaluate,
 	Depth const depth
-) -> Action {
+) -> Selection {
 	return tv::visit(generic_state, generic_evaluate, tv::overload(
-		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> Action {
-			return determine_action(
+		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> Selection {
+			return determine_selection(
 				state,
 				stream,
 				usage_stats,
@@ -160,7 +160,7 @@ export auto determine_action(
 				depth
 			);
 		},
-		[](auto const &, auto) -> Action {
+		[](auto const &, auto) -> Selection {
 			std::unreachable();
 		}
 	));

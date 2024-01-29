@@ -7,7 +7,7 @@ module;
 
 #include <bounded/assert.hpp>
 
-export module tm.move.action;
+export module tm.move.selection;
 
 import tm.move.move_name;
 import tm.move.pass;
@@ -28,16 +28,17 @@ using Index = tv::variant_index<MoveName, Switch, Pass>;
 
 constexpr auto pass_index = bounded::constant<numeric_traits::max_value<MoveName>> + 1_bi;
 
-export struct Action {
-	constexpr Action(MoveName const move):
+export struct Selection {
+	constexpr Selection(MoveName const move):
 		m_value(move)
 	{
+		BOUNDED_ASSERT(move != MoveName::Hit_Self);
 	}
-	constexpr Action(Switch const switch_):
+	constexpr Selection(Switch const switch_):
 		m_value(switch_.value())
 	{
 	}
-	constexpr Action(Pass):
+	constexpr Selection(Pass):
 		m_value(pass_index)
 	{
 	}
@@ -70,7 +71,7 @@ export struct Action {
 		return (*this)[bounded::type<Pass>];
 	}
 
-	friend constexpr auto operator==(Action, Action) -> bool = default;
+	friend constexpr auto operator==(Selection, Selection) -> bool = default;
 
 private:
 	static_assert(bounded::constant<numeric_traits::min_value<MoveName>> == numeric_traits::max_value<TeamIndex> + 1_bi);
@@ -80,16 +81,16 @@ private:
 	>;
 	[[no_unique_address]] Integer m_value;
 
-	constexpr explicit Action(bounded::tombstone_tag, auto const make):
+	constexpr explicit Selection(bounded::tombstone_tag, auto const make):
 		m_value(make())
 	{
 	}
-	friend bounded::tombstone_traits<Action>;
-	friend bounded::tombstone_traits_composer<&Action::m_value>;
+	friend bounded::tombstone_traits<Selection>;
+	friend bounded::tombstone_traits_composer<&Selection::m_value>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::Action> : bounded::tombstone_traits_composer<&technicalmachine::Action::m_value> {
+struct bounded::tombstone_traits<technicalmachine::Selection> : bounded::tombstone_traits_composer<&technicalmachine::Selection::m_value> {
 };

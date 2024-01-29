@@ -9,7 +9,7 @@ module;
 
 export module tm.evaluate.random_selection;
 
-import tm.evaluate.scored_action;
+import tm.evaluate.scored_selection;
 
 import tm.move.legal_selections;
 
@@ -26,12 +26,12 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export template<Generation generation>
-constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Environment const environment, std::mt19937 & random_engine) -> ScoredAction {
+constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Environment const environment, std::mt19937 & random_engine) -> ScoredSelection {
 	auto const possible = get_legal_selections(user, other, environment);
 	BOUNDED_ASSERT(!containers::is_empty(possible));
 	auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(containers::size(possible) - 1_bi));
 	auto const index = bounded::assume_in_range<containers::index_type<LegalSelections>>(distribution(random_engine));
-	return ScoredAction(possible[index], 0.0);
+	return ScoredSelection(possible[index], 0.0);
 }
 
 } // namespace technicalmachine

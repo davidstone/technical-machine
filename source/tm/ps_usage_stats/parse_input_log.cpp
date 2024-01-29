@@ -33,7 +33,7 @@ using namespace ps;
 
 export struct PlayerInput {
 	Party party;
-	tv::variant<MoveName, BattleResponseSwitch> action;
+	tv::variant<MoveName, BattleResponseSwitch> selection;
 	friend auto operator==(PlayerInput, PlayerInput) -> bool = default;
 };
 
@@ -41,7 +41,7 @@ constexpr auto parse_input = [](nlohmann::json const & json) -> tv::optional<Pla
 	auto const str = json.get<std::string_view>();
 	if (str.empty() or str.front() != '>') {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Action string "sv,
+			"Selection string "sv,
 			str,
 			" does not start with >"sv
 		));

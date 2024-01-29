@@ -9,7 +9,7 @@ import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.causes_recoil;
 import tm.move.do_switch;
-import tm.move.future_action;
+import tm.move.future_selection;
 import tm.move.irrelevant_action;
 import tm.move.known_move;
 import tm.move.move;
@@ -131,7 +131,7 @@ template<typename PokemonType>
 constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const damage) -> OtherAction {
 	auto const last_used_move = other_pokemon.last_used_move();
 	if (!last_used_move.moved_this_turn()) {
-		return FutureAction(damage.did_any_damage());
+		return FutureSelection(damage.did_any_damage());
 	}
 	auto const move_name = last_used_move.name();
 	if (!move_name) {

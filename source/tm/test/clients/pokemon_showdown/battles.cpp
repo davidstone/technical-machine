@@ -16,7 +16,7 @@ import tm.clients.ps.make_battle_message;
 import tm.clients.ps.message_block;
 import tm.clients.ps.room_message_block;
 
-import tm.clients.determine_action;
+import tm.clients.determine_selection;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
@@ -54,7 +54,7 @@ struct Evaluator {
 	auto operator()(T const & value, std::ostream & logger) const {
 		if constexpr (bounded::convertible_to<T, ps::ActionRequired>) {
 			tv::visit(value.state, [&]<Generation generation>(VisibleState<generation> const & state) {
-				determine_action(
+				determine_selection(
 					state,
 					logger,
 					m_all_usage_stats[generation],

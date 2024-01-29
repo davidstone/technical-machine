@@ -6,7 +6,7 @@
 export module tm.move.other_action;
 
 import tm.move.category;
-import tm.move.future_action;
+import tm.move.future_selection;
 import tm.move.irrelevant_action;
 import tm.move.known_move;
 import tm.move.move_name;
@@ -25,8 +25,8 @@ export struct OtherAction {
 		m_action(move)
 	{
 	}
-	constexpr OtherAction(FutureAction const action):
-		m_action(action)
+	constexpr OtherAction(FutureSelection const selection):
+		m_action(selection)
 	{
 	}
 	constexpr OtherAction(IrrelevantAction const action):
@@ -67,15 +67,15 @@ export struct OtherAction {
 		));
 	}
 
-	constexpr auto future_action_is_damaging() const {
+	constexpr auto future_selection_is_damaging() const {
 		return tv::visit(m_action, tv::overload(
-			[](FutureAction const action) { return action.is_damaging; },
+			[](FutureSelection const selection) { return selection.is_damaging; },
 			[](auto) { return false; }
 		));
 	}
 
 private:
-	tv::variant<KnownMove, FutureAction, IrrelevantAction> m_action;
+	tv::variant<KnownMove, FutureSelection, IrrelevantAction> m_action;
 };
 
 } // namespace technicalmachine
