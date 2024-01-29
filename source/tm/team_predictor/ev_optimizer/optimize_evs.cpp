@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.team_predictor.ev_optimizer.ev_optimizer;
+export module tm.team_predictor.ev_optimizer.optimize_evs;
 
 import tm.team_predictor.ev_optimizer.compute_minimal_spread;
 import tm.team_predictor.ev_optimizer.pad_evs;

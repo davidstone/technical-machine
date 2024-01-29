@@ -19,8 +19,9 @@ import tm.pokemon.max_pokemon_per_team;
 
 import tm.stat.calculate_ivs_and_evs;
 
+import tm.team_predictor.ev_optimizer.optimize_evs;
+
 import tm.team_predictor.estimate;
-import tm.team_predictor.ev_optimizer.ev_optimizer;
 import tm.team_predictor.stats_user;
 import tm.team_predictor.usage_stats;
 

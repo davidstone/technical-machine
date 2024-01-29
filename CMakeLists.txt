@@ -244,8 +244,8 @@ target_sources(tm_common PUBLIC
 		source/tm/team_predictor/ev_optimizer/compute_minimal_spread.cpp
 		source/tm/team_predictor/ev_optimizer/data_point.cpp
 		source/tm/team_predictor/ev_optimizer/defensive.cpp
-		source/tm/team_predictor/ev_optimizer/ev_optimizer.cpp
 		source/tm/team_predictor/ev_optimizer/offensive.cpp
+		source/tm/team_predictor/ev_optimizer/optimize_evs.cpp
 		source/tm/team_predictor/ev_optimizer/pad_evs.cpp
 		source/tm/team_predictor/ev_optimizer/possible_optimized_ivs.cpp
 		source/tm/team_predictor/ev_optimizer/speed.cpp
@@ -676,7 +676,7 @@ target_sources(tm_test PRIVATE
 	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/battle.cpp
-	source/tm/test/ev_optimizer.cpp
+	source/tm/test/optimize_evs.cpp
 	source/tm/test/files_in_path.cpp
 	source/tm/test/get_directory.cpp
 	source/tm/test/sleep.cpp
