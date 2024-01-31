@@ -23,10 +23,16 @@ jobs:
 
     - name: Print stuff
       run: |
+        echo Printing working directory
         ls
-        ls boost
-        ls boost/include
-        ls boost/include/boost
+        echo Printing ./boost_1_84_0/
+        ls boost_1_84_0/
+        echo Printing ./boost/
+        ls boost/
+        echo Printing ./boost/include/
+        ls boost/include/
+        echo Printing ./boost/include/boost/
+        ls boost/include/boost/
     
     - name: Install clang dependencies
       run: |
