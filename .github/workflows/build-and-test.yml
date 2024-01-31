@@ -52,10 +52,16 @@ jobs:
 
     - name: Print stuff again
       run: |
+        echo Printing working directory
         ls
-        ls boost
-        ls boost/include
-        ls boost/include/boost
+        echo Printing ./boost_1_84_0/
+        ls boost_1_84_0/
+        echo Printing ./boost/
+        ls boost/
+        echo Printing ./boost/include/
+        ls boost/include/
+        echo Printing ./boost/include/boost/
+        ls boost/include/boost/
     
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="boost"
