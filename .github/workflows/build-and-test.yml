@@ -8,13 +8,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  tmate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up tmate
-        uses: mxschmitt/action-tmate@v3
   build:
-    needs: tmate
-    uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
-    with:
-      dependencies: 'libboost-all-dev libtbb-dev'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get boost
+      run: |
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
+        tar xvf boost_1_84_0.tar.bz2
+        mkdir -p boost/include
+        ln -s boost_1_84_0/boost boost/include/boost
+    
+    - name: Install clang dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install mold libtbb-dev
+
+    - name: Install clang
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod u+x llvm.sh
+        sudo ./llvm.sh 18 all
+
+    - uses: lukka/get-cmake@latest
+    
+    - name: Pull dependencies
+      run: git submodule update --init
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="../boost"
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config Debug
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest -C Debug
