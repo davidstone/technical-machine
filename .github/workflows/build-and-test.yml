@@ -17,7 +17,7 @@ jobs:
     - name: Get boost
       run: |
         wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
-        tar xvf boost_1_84_0.tar.bz2
+        tar xf boost_1_84_0.tar.bz2
         mkdir -p boost/include
         ln -s boost_1_84_0/boost boost/include/boost
     
@@ -38,7 +38,7 @@ jobs:
       run: git submodule update --init
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="../boost"
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="boost"
 
     - name: Build
       # Build your program with the given configuration
