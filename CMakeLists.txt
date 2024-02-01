@@ -707,6 +707,10 @@ target_link_libraries(ps_regression_test
 	TBB::tbb
 )
 
+if (NOT DEFINED ENV{TM_TEST_DIRECTORY})
+	set(ENV{TM_TEST_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/test")
+endif()
+
 add_executable(score_predict_action
 	source/tm/test/ps_usage_stats/score_predict_action.cpp
 )
