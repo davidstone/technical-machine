@@ -775,11 +775,3 @@ endif()
 
 add_test(tm_test tm_test)
 add_test(ps_regression_test ps_regression_test)
-
-if (NOT DEFINED ENV{TM_SETTINGS_DIRECTORY})
-	set(ENV{TM_SETTINGS_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/settings")
-endif()
-
-if (NOT DEFINED ENV{TM_TEST_DIRECTORY})
-	set(ENV{TM_TEST_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/test")
-endif()
