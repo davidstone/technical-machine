@@ -28,7 +28,6 @@ import tm.ability;
 import tm.gender;
 import tm.generation;
 import tm.generation_generic;
-import tm.get_directory;
 import tm.item;
 import tm.visible_hp;
 
@@ -174,7 +173,7 @@ auto make_result() {
 }
 
 TEST_CASE("Minimal team file", "[Minimal]") {
-	auto const path = get_test_directory() / "teams" / "test.tmmt";
+	auto const path = std::filesystem::temp_directory_path() / "teams" / "test.tmmt";
 	auto const original = make_result();
 	{
 		auto writer = ps_usage_stats::BattleResultWriter(path);
