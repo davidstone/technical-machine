@@ -21,19 +21,6 @@ jobs:
         mkdir -p boost/include
         ln -s $PWD/boost_1_84_0/boost boost/include/boost
 
-    - name: Print stuff
-      run: |
-        echo Printing working directory
-        ls
-        echo Printing ./boost_1_84_0/
-        ls boost_1_84_0/
-        echo Printing ./boost/
-        ls boost/
-        echo Printing ./boost/include/
-        ls boost/include/
-        echo Printing ./boost/include/boost/
-        ls boost/include/boost/
-    
     - name: Install clang dependencies
       run: |
         sudo apt-get update
@@ -50,28 +37,15 @@ jobs:
     - name: Pull dependencies
       run: git submodule update --init
 
-    - name: Print stuff again
-      run: |
-        echo Printing working directory
-        ls
-        echo Printing ./boost_1_84_0/
-        ls boost_1_84_0/
-        echo Printing ./boost/
-        ls boost/
-        echo Printing ./boost/include/
-        ls boost/include/
-        echo Printing ./boost/include/boost/
-        ls boost/include/boost/
-    
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="boost"
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config Debug
+      run: cmake --build ${{github.workspace}}/build
 
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C Debug
+      run: ctest -C Debug --output-on-failure
