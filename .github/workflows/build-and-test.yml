@@ -14,6 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set test environment variables
+      run: |
+        echo "TM_SETTINGS_DIRECTORY=$PWD/settings" >> "$GITHUB_ENV"
+        echo "TM_TEST_DIRECTORY=$PWD/test" >> "$GITHUB_ENV"
+
     - name: Get boost
       run: |
         wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
