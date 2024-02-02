@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-
     - name: Get usage stats
       run: |
         git clone --depth 1 https://github.com/davidstone/pokemon-usage-stats.git
@@ -32,28 +30,7 @@ jobs:
         mkdir -p boost/include
         ln -s $PWD/boost_1_84_0/boost boost/include/boost
 
-    - name: Install clang dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install mold libtbb-dev
-
-    - name: Install clang
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod u+x llvm.sh
-        sudo ./llvm.sh 18 all
-
-    - uses: lukka/get-cmake@latest
-    
-    - name: Pull dependencies
-      run: git submodule update --init
-
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="boost"
-
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config Debug
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -C Debug --output-on-failure
+    - uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
+      with:
+        dependencies: 'libtbb-dev'
+        cmake_args: '-DBOOST_ROOT="boost"'
