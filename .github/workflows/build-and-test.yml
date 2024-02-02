@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,8 +29,9 @@ jobs:
         tar xf boost_1_84_0.tar.bz2
         mkdir -p boost/include
         ln -s $PWD/boost_1_84_0/boost boost/include/boost
-
-    - uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
-      with:
-        dependencies: 'libtbb-dev'
-        cmake_args: '-DBOOST_ROOT="boost"'
+  build:
+    needs: setup
+    uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
+    with:
+      dependencies: 'libtbb-dev'
+      cmake_args: '-DBOOST_ROOT="boost"'
