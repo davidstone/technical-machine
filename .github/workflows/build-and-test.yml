@@ -16,7 +16,7 @@ jobs:
 
     - name: Get usage stats
       run: |
-        git clone --depth 0 https://github.com/davidstone/pokemon-usage-stats.git
+        git clone --depth 1 https://github.com/davidstone/pokemon-usage-stats.git
         echo "TM_USAGE_STATS_DIRECTORY=$PWD/pokemon-usage-stats" >> "$GITHUB_ENV"
 
     - name: Set settings directory environment variable
