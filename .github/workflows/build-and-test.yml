@@ -14,10 +14,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set test environment variables
+    - name: Get usage stats
       run: |
-        echo "TM_SETTINGS_DIRECTORY=$PWD/settings" >> "$GITHUB_ENV"
-        echo "TM_TEST_DIRECTORY=$PWD/test" >> "$GITHUB_ENV"
+        git clone --depth 0 https://github.com/davidstone/pokemon-usage-stats.git
+        echo "TM_USAGE_STATS_DIRECTORY=$PWD/pokemon-usage-stats" >> "$GITHUB_ENV"
+
+    - name: Set settings directory environment variable
+      run: echo "TM_SETTINGS_DIRECTORY=$PWD/settings" >> "$GITHUB_ENV"
+
+    - name: Set test directory environment variable
+      run: echo "TM_TEST_DIRECTORY=$PWD/test" >> "$GITHUB_ENV"
 
     - name: Get boost
       run: |
