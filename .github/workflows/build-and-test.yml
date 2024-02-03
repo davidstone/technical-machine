@@ -11,6 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Avoid work being overwritten
+      run: cd ..
     - name: Get usage stats
       run: |
         git clone --depth 1 https://github.com/davidstone/pokemon-usage-stats.git
@@ -28,4 +30,4 @@ jobs:
     - uses: davidstone/cmake_strict_defaults@main
       with:
         dependencies: 'libtbb-dev'
-        cmake_args: '-DBOOST_ROOT="${{github.workspace}}/boost"'
+        cmake_args: '-DBOOST_ROOT="${{github.workspace}}/../boost"'
