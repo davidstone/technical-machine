@@ -8,6 +8,16 @@ cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 project(technical_machine LANGUAGES CXX)
 
 execute_process (
+    COMMAND bash -c "ls -l /home/runner/work/technical-machine"
+    OUTPUT_VARIABLE outVar
+)
+message($outVar)
+execute_process (
+    COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine"
+    OUTPUT_VARIABLE outVar0
+)
+message($outVar0)
+execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine/boost"
     OUTPUT_VARIABLE outVar1
 )
