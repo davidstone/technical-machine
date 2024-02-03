@@ -36,7 +36,6 @@ import tm.associated_team;
 import tm.environment;
 import tm.generation;
 import tm.item;
-import tm.random_damage;
 import tm.rational;
 
 import bounded;
@@ -229,7 +228,7 @@ constexpr auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserT
 		critical_hit_multiplier(generation, attacker_ability, executed.critical_hit) *
 		calculate_item_modifier(attacker, environment) *
 		calculate_me_first_modifier(attacker) *
-		RandomDamage()() *
+		// random_damage *
 		calculate_stab_modifier(attacker, executed.move.type) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *

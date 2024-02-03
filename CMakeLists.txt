@@ -307,7 +307,6 @@ target_sources(tm_common PUBLIC
 		source/tm/operators.cpp
 		source/tm/other_team.cpp
 		source/tm/property_tree.cpp
-		source/tm/random_damage.cpp
 		source/tm/rational.cpp
 		source/tm/saturating_add.cpp
 		source/tm/screen.cpp
