@@ -1,0 +1,33 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get usage stats
+      run: |
+        cd ..
+        git clone --depth 1 https://github.com/davidstone/pokemon-usage-stats.git
+        echo "TM_USAGE_STATS_DIRECTORY=$PWD/pokemon-usage-stats" >> "$GITHUB_ENV"
+    - name: Set settings directory environment variable
+      run: echo "TM_SETTINGS_DIRECTORY=$PWD/settings" >> "$GITHUB_ENV"
+    - name: Set test directory environment variable
+      run: echo "TM_TEST_DIRECTORY=$PWD/test" >> "$GITHUB_ENV"
+    - name: Get boost
+      run: |
+        cd ..
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
+        tar xf boost_1_84_0.tar.bz2
+        mkdir -p boost/include
+        ln -s $PWD/boost_1_84_0/boost boost/include/boost
+    - uses: davidstone/cmake_strict_defaults@main
+      with:
+        dependencies: 'libtbb-dev'
+        cmake_args: '-DBOOST_ROOT="${{github.workspace}}/../boost"'
