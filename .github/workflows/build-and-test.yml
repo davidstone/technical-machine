@@ -28,4 +28,4 @@ jobs:
     - uses: davidstone/cmake_strict_defaults@main
       with:
         dependencies: 'libtbb-dev'
-        cmake_args: '-DBOOST_ROOT="${GITHUB_WORKSPACE}/boost"'
+        cmake_args: '-DBOOST_ROOT="${{github.workspace}}/boost"'
