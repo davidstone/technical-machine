@@ -11,27 +11,27 @@ execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine"
     OUTPUT_VARIABLE outVar
 )
-message($outVar)
+message(${outVar})
 execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine"
     OUTPUT_VARIABLE outVar0
 )
-message($outVar0)
+message(${outVar0})
 execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine/boost"
     OUTPUT_VARIABLE outVar1
 )
-message($outVar1)
+message(${outVar1})
 execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine/boost/include"
     OUTPUT_VARIABLE outVar2
 )
-message($outVar2)
+message(${outVar2})
 execute_process (
     COMMAND bash -c "ls -l /home/runner/work/technical-machine/technical-machine/boost/include/boost"
     OUTPUT_VARIABLE outVar3
 )
-message($outVar3)
+message(${outVar3})
 
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
