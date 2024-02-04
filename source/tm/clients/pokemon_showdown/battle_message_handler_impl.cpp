@@ -298,11 +298,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](HPMessage const message) {
 				tv::visit(action_builder, tv::overload(
-					[&](Nothing) {
-						require_is_end_of_turn();
-						end_of_turn_state.set_expected(message.party, message.status);
-						end_of_turn_state.set_expected(message.party, message.hp);
-					},
 					[&](MoveStateBuilder & builder) {
 						builder.set_expected(message.party, message.status);
 						builder.set_expected(message.party, message.hp);
@@ -315,8 +310,11 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						ptr->status = message.status;
 						ptr->hp = message.hp;
 					},
-					[](HitSelf) {
-						throw std::runtime_error("Got multiple HP messages for hitting self in confusion");
+					[&](auto const previous) {
+						do_action(previous);
+						require_is_end_of_turn();
+						end_of_turn_state.set_expected(message.party, message.status);
+						end_of_turn_state.set_expected(message.party, message.hp);
 					}
 				));
 			},
