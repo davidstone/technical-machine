@@ -34,7 +34,10 @@ constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage con
 	auto matches = [&](InMessage const message, auto const... strs) {
 		return (... or (message.type() == strs));
 	};
-	if (matches(rhs, "player"sv, "inactive"sv, "inactiveoff"sv)) {
+	if (matches(lhs, "teamsize"sv)) {
+		return true;
+	}
+	if (matches(rhs, "teamsize"sv, "inactive"sv, "inactiveoff"sv)) {
 		return false;
 	}
 	if (matches(lhs, "turn"sv)) {
@@ -50,7 +53,8 @@ constexpr auto is_potentially_useful = [](InMessage const message) {
 	return
 		!is_chat_message(message) and
 		message.type() != "error" and
-		message.type() != "gametype";
+		message.type() != "gametype" and
+		message.type() != "player";
 };
 
 export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dynamic_array<BattleMessage> {

@@ -58,6 +58,12 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 			return tv::none;
 		}
 		return parse_team_from_request(json_str);
+	} else if (matches("teamsize"sv)) {
+		// This never starts a block in the real stream. However, we have to
+		// filter out all the "player" messages when parsing PS logs due to bugs
+		// on the PS side. That makes "teamsize" the beginning of the block when
+		// parsing those files.
+		return make_battle_init_message(messages);
 	} else if (matches(""sv)) {
 		if (first_message.remainder() == ladder_timeout) {
 			return tv::none;
