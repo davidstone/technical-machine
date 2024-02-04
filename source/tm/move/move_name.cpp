@@ -11,12 +11,8 @@ import std_module;
 namespace technicalmachine {
 
 export enum class MoveName : std::uint16_t {
-	// Weird moves
-	Hit_Self = 6,
-
 	// Generation 1
-	Regular_Begin,
-	Pound = Regular_Begin,
+	Pound = 6,
 	Karate_Chop,
 	Double_Slap,
 	Comet_Punch,
@@ -891,7 +887,7 @@ export enum class MoveName : std::uint16_t {
 } // namespace technicalmachine
 
 template<>
-constexpr auto numeric_traits::min_value<technicalmachine::MoveName> = technicalmachine::MoveName::Hit_Self;
+constexpr auto numeric_traits::min_value<technicalmachine::MoveName> = technicalmachine::MoveName::Pound;
 
 template<>
 constexpr auto numeric_traits::max_value<technicalmachine::MoveName> = technicalmachine::MoveName::Eerie_Spell;
@@ -900,7 +896,6 @@ namespace technicalmachine {
 
 export constexpr auto is_regular(MoveName const move) -> bool {
 	switch (move) {
-		case MoveName::Hit_Self:
 		case MoveName::Struggle:
 			return false;
 		default:

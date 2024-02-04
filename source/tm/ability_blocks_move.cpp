@@ -53,7 +53,6 @@ export constexpr auto ability_blocks_move(Generation const generation, Ability c
 					return generation >= Generation::five;
 				case MoveName::Fire_Fang:
 					return generation != Generation::four;
-				case MoveName::Hit_Self:
 				case MoveName::Struggle:
 					return false;
 				default:

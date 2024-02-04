@@ -18,6 +18,7 @@ import tm.move.regular_moves;
 
 import tm.pokemon.active_status;
 import tm.pokemon.any_pokemon;
+import tm.pokemon.applied_damage;
 import tm.pokemon.change_hp;
 import tm.pokemon.confusion;
 import tm.pokemon.disable;
@@ -488,10 +489,6 @@ constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, En
 	pokemon.remove_item();
 }
 
-constexpr bool cannot_ko(MoveName const move) {
-	return move == MoveName::False_Swipe;
-}
-
 constexpr auto yawn_can_apply(any_active_pokemon auto const target, Environment const environment, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
@@ -589,7 +586,7 @@ public:
 			this->m_flags.confusion.activate();
 		}
 	}
-	constexpr auto handle_confusion() const {
+	constexpr auto advance_confusion() const {
 		this->m_flags.confusion.do_turn();
 	}
 	constexpr auto curse() const {
@@ -681,8 +678,6 @@ public:
 			other.m_pokemon.set_item(user_item);
 		}
 	}
-
-
 
 	constexpr auto hit_with_leech_seed() const {
 		this->m_flags.leech_seeded = true;
@@ -947,21 +942,18 @@ public:
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
 			return this->m_flags.substitute.damage(damage);
 		}
-		auto const original_hp = this->hp().current();
-		auto const block_ko = original_hp <= damage and handle_ko(move, environment);
-		auto const applied_damage = block_ko ?
-			bounded::assume_in_range<CurrentHP>(original_hp - 1_bi) :
-			bounded::min(damage, original_hp);
-
-		indirect_damage(environment, applied_damage);
-		this->m_flags.direct_damage_received = applied_damage;
-		this->m_flags.last_used_move.direct_damage(applied_damage);
-
+		auto const applied = applied_damage(this->as_const(), move, damage, environment);
+		indirect_damage(environment, applied.damage);
+		this->m_flags.direct_damage_received = applied.damage;
+		this->m_flags.last_used_move.direct_damage(applied.damage);
+		if (applied.consume_item) {
+			remove_item();
+		}
 		// TODO: Resolve ties properly
-		if (this->last_used_move().is_destiny_bonded() and applied_damage == original_hp) {
+		if (this->last_used_move().is_destiny_bonded() and this->hp().current() == 0_bi) {
 			faint(user);
 		}
-		return applied_damage;
+		return applied.damage;
 	}
 
 	constexpr auto successfully_use_move(MoveName const move) const {
@@ -970,26 +962,11 @@ public:
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);
 	}
-
-private:
-	constexpr auto handle_ko(MoveName const move, Environment const environment) const {
-		if (cannot_ko(move) or this->last_used_move().is_enduring()) {
-			return true;
-		}
-		auto const hp = this->hp();
-		if (hp.current() != hp.max()) {
-			return false;
-		}
-		if (generation >= Generation::five and this->ability() == Ability::Sturdy) {
-			return true;
-		}
-		if (this->item(environment) == Item::Focus_Sash) {
-			remove_item();
-			return true;
-		}
-		return false;
+	constexpr auto hit_self() const {
+		this->m_flags.last_used_move.hit_self();
 	}
 
+private:
 	constexpr auto activate_pinch_item(Environment const environment) const -> void {
 		// TODO: Confusion damage does not activate healing berries in Generation 5+
 		auto consume = [&] { remove_item(); };

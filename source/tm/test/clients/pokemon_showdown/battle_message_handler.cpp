@@ -1032,6 +1032,44 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 	}
 }
 
+TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::one;
+	auto [expected, handler] = make_init<generation>(
+		{
+			{
+				.species = Species::Exeggutor,
+				.moves = {{MoveName::Psychic}}
+			},
+		},
+		{
+			{.species = Species::Gengar},
+		}
+	);
+
+	auto const result = handler.handle_message(ps::EventBlock({
+		ps::SeparatorMessage(),
+		ps::MoveMessage(Party(1_bi), MoveName::Confuse_Ray, did_not_miss),
+		ps::StartConfusionMessage(Party(0_bi)),
+		ps::HitSelfMessage(Party(0_bi), StatusName::clear, visible_hp(355_bi, 393_bi)),
+		ps::SeparatorMessage(),
+		ps::EndOfTurnMessage(),
+		ps::TurnMessage(2_bi),
+	}));
+
+	expected->use_move(
+		false,
+		Used(MoveName::Confuse_Ray),
+		false
+	);
+	expected->hit_self_in_confusion(
+		true,
+		visible_hp(355_bi, 393_bi)
+	);
+	handle_end_turn(*expected);
+
+	check_state(result, expected->state(), TurnCount(2_bi));
+}
+
 #if 0
 
 // TODO: Figure out how to handle this case

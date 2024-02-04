@@ -32,7 +32,6 @@ export struct Selection {
 	constexpr Selection(MoveName const move):
 		m_value(move)
 	{
-		BOUNDED_ASSERT(move != MoveName::Hit_Self);
 	}
 	constexpr Selection(Switch const switch_):
 		m_value(switch_.value())

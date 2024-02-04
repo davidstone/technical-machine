@@ -119,6 +119,11 @@ export struct LastUsedMove {
 		}
 	}
 
+	constexpr auto hit_self() & -> void {
+		m_move = tv::none;
+		m_moved_this_turn = true;
+	}
+
 	constexpr auto moved_this_turn() const {
 		return m_moved_this_turn;
 	}

@@ -42,7 +42,6 @@ constexpr auto type_based_category(Type const type) {
 
 constexpr auto move_category(Generation const generation, KnownMove const move) {
 	switch (move.name) {
-		case MoveName::Hit_Self:
 		case MoveName::Pound:
 		case MoveName::Karate_Chop:
 		case MoveName::Double_Slap:

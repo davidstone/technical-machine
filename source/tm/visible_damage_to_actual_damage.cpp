@@ -48,6 +48,18 @@ private:
 };
 
 export constexpr auto visible_damage_to_actual_damage(
+	VisibleHP const damage,
+	bool const damaged_has_exact_hp,
+	HP const old_hp
+) -> ActualDamage::Known {
+	auto const new_hp = damaged_has_exact_hp ?
+		damage.current.value() :
+		to_real_hp(old_hp.max(), damage).value;
+	auto const value = bounded::check_in_range<CurrentHP>(old_hp.current() - new_hp);
+	return ActualDamage::Known(value);
+}
+
+export constexpr auto visible_damage_to_actual_damage(
 	Damage const damage,
 	bool const damaged_has_exact_hp,
 	HP const old_hp,
@@ -56,11 +68,7 @@ export constexpr auto visible_damage_to_actual_damage(
 	return tv::visit(damage, tv::overload(
 		no_damage_function,
 		[&](VisibleHP const hp) -> ActualDamage {
-			auto const new_hp = damaged_has_exact_hp ?
-				hp.current.value() :
-				to_real_hp(old_hp.max(), hp).value;
-			auto const value = bounded::check_in_range<CurrentHP>(old_hp.current() - new_hp);
-			return ActualDamage::Known(value);
+			return visible_damage_to_actual_damage(hp, damaged_has_exact_hp, old_hp);
 		},
 		MoveHitSubstitute(other_substitute)
 	));

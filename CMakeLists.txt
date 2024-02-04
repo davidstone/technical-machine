@@ -103,6 +103,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/executed_move.cpp
 		source/tm/move/future_selection.cpp
 		source/tm/move/healing_move_fails_in_generation_1.cpp
+		source/tm/move/hit_self.cpp
 		source/tm/move/initial_move.cpp
 		source/tm/move/irrelevant_action.cpp
 		source/tm/move/is_blocked_by_gravity.cpp
@@ -137,6 +138,8 @@ target_sources(tm_common PUBLIC
 		source/tm/pokemon/active_pokemon.cpp
 		source/tm/pokemon/active_status.cpp
 		source/tm/pokemon/any_pokemon.cpp
+		source/tm/pokemon/applied_damage.cpp
+		source/tm/pokemon/can_be_koed.cpp
 		source/tm/pokemon/change_hp.cpp
 		source/tm/pokemon/confusion.cpp
 		source/tm/pokemon/disable.cpp

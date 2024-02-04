@@ -121,8 +121,8 @@ constexpr auto activate_target_ability(any_mutable_active_pokemon auto const use
 	}
 }
 
-template<any_team UserTeam, any_team OtherTeamType>
-auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherAction const other_action, Environment & environment, ActualDamage const actual_damage) -> void {
+template<any_team UserTeam>
+auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
@@ -153,12 +153,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	if (effects == Substitute::absorbs) {
 		return;
 	}
-	constexpr auto hit_self_combination = std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>;
-	if constexpr (hit_self_combination) {
-		BOUNDED_ASSERT(executed.move.name == MoveName::Hit_Self);
-	} else {
-		executed.side_effect(user, other, environment, damage_done);
-	}
+	executed.side_effect(user, other, environment, damage_done);
 
 	// Should this check if we did any damage or if the move is damaging?
 	if (damage_done != 0_bi) {
@@ -171,11 +166,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 		}
 
 		// TODO: When do target abilities activate?
-		if constexpr (hit_self_combination) {
-			BOUNDED_ASSERT(executed.contact_ability_effect == ContactAbilityEffect::nothing);
-		} else {
-			activate_target_ability(user_pokemon, other_pokemon, environment, executed.contact_ability_effect);
-		}
+		activate_target_ability(user_pokemon, other_pokemon, environment, executed.contact_ability_effect);
 	}
 }
 
@@ -227,20 +218,21 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		unsuccessfully_use_move();
 		return;
 	}
-	user_pokemon.handle_confusion();
-	if (move.executed != MoveName::Hit_Self and user_pokemon.flinched()) {
+	if (user_pokemon.flinched()) {
 		if (boosts_speed_when_flinched(user_pokemon.ability())) {
 			user_pokemon.stages()[BoostableStat::spe] += 1_bi;
 		}
+		return;
 	}
 	if (!can_execute_move(user_pokemon.as_const(), found_move, environment, is_recharging, is_fully_paralyzed)) {
 		unsuccessfully_use_move();
 		return;
 	}
+	user_pokemon.advance_confusion();
 
 	auto const other_ability = other_pokemon.ability();
 
-	if (move.executed != MoveName::Hit_Self and !user_pokemon.last_used_move().locked_in_by_move()) {
+	if (!user_pokemon.last_used_move().locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
 		user_pokemon.reduce_pp(move.selected, environment, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
@@ -278,11 +270,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			move.critical_hit,
 			move.contact_ability_effect
 		};
-		if (executed_move.move.name == MoveName::Hit_Self) {
-			use_move(user, executed_move, target, user, other_action, environment, actual_damage);
-		} else {
-			use_move(user, executed_move, target, other, other_action, environment, actual_damage);
-		}
+		use_move(user, executed_move, target, other, other_action, environment, actual_damage);
 	}
 	user_pokemon.successfully_use_move(move.executed);
 }

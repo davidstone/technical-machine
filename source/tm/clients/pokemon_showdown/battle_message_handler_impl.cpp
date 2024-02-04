@@ -70,7 +70,8 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 	using ActionBuilder = tv::variant<
 		Nothing,
 		MoveStateBuilder,
-		Switches
+		Switches,
+		HitSelf
 	>;
 	auto action_builder = ActionBuilder(Nothing());
 	auto end_of_turn_state = EndOfTurnStateBuilder();
@@ -78,15 +79,15 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 	auto set_value_on_pokemon = [&](Party const party, auto const value) -> void {
 		auto const for_ai = party == m_party;
 		auto const index = tv::visit(action_builder, tv::overload(
-			[](Nothing) -> tv::optional<TeamIndex> {
-				return tv::none;
-			},
 			[](MoveStateBuilder const & move_builder) -> tv::optional<TeamIndex> {
 				return move_builder.phaze_index();
 			},
 			[=](Switches const switches) -> tv::optional<TeamIndex> {
 				auto const ptr = find_switch(switches, party);
 				return BOUNDED_CONDITIONAL(ptr, ptr->index, tv::none);
+			},
+			[](auto) -> tv::optional<TeamIndex> {
+				return tv::none;
 			}
 		));
 		if (index) {
@@ -96,23 +97,25 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 		}
 	};
 
-	auto use_previous_move = [&](MoveStateBuilder & builder) -> void {
-		if (auto const move_state = builder.complete()) {
-			use_move(*move_state);
+	auto const do_action = tv::overload(
+		[](Nothing) {},
+		[&](MoveStateBuilder & builder) -> void {
+			if (auto const move_state = builder.complete()) {
+				use_move(*move_state);
+			}
+		},
+		[&](Switches const switches) {
+			// TODO: Timing for both sides replacing a fainting Pokemon
+			for (auto const switch_ : containers::reversed(switches)) {
+				use_switch(switch_);
+			}
+		},
+		[&](HitSelf const hit_self) {
+			hit_self_in_confusion(hit_self);
 		}
-	};
-	auto use_previous_switches = [&](Switches const switches) {
-		// TODO: Timing for both sides replacing a fainting Pokemon
-		for (auto const switch_ : containers::reversed(switches)) {
-			use_switch(switch_);
-		}
-	};
+	);
 	auto use_previous_action = [&] -> void {
-		tv::visit(action_builder, tv::overload(
-			[](Nothing) {},
-			use_previous_move,
-			use_previous_switches
-		));
+		tv::visit(action_builder, do_action);
 		action_builder = Nothing();
 	};
 
@@ -226,9 +229,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						}
 					};
 					tv::visit(action_builder, tv::overload(
-						[&](Nothing) {
-							natural_status_recovery();
-						},
 						[&](MoveStateBuilder & builder) {
 							auto const move_name = builder.executed_move();
 							auto const move_cured_status = move_name and (
@@ -238,12 +238,12 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 							if (move_cured_status) {
 								builder.status_from_move(party, StatusName::clear);
 							} else {
-								use_previous_move(builder);
+								do_action(builder);
 								natural_status_recovery();
 							}
 						},
-						[&](Switches & switches) {
-							use_previous_switches(switches);
+						[&](auto const previous) {
+							do_action(previous);
 							natural_status_recovery();
 						}
 					));
@@ -267,17 +267,16 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](HitSelfMessage const message) {
 				use_previous_action();
-				auto const party = message.party;
-				// TODO: You cannot select Hit Self, you just execute it. This
-				// matters for things like priority or determining whether
-				// Sucker Punch succeeds. As a workaround for now, say the user
-				// selected Struggle.
-				auto & builder = make_move_builder();
-				builder.use_move(party, MoveName::Struggle);
-				builder.use_move(party, MoveName::Hit_Self);
-				builder.damage(party, message.hp);
-				builder.set_expected(party, message.status);
-				builder.set_expected(party, message.hp);
+				tv::visit(action_builder, tv::overload(
+					[&](Nothing) {
+						action_builder.emplace([&] {
+							return HitSelf(message.party, message.status, message.hp);
+						});
+					},
+					[](auto) {
+						throw std::runtime_error("Tried to hit self and take another action");
+					}
+				));
 			},
 			[&](RecoilMessage const message) {
 				tv::visit(action_builder, tv::overload(
@@ -315,6 +314,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						}
 						ptr->status = message.status;
 						ptr->hp = message.hp;
+					},
+					[](HitSelf) {
+						throw std::runtime_error("Got multiple HP messages for hitting self in confusion");
 					}
 				));
 			},
@@ -330,18 +332,15 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](SwitchMessage const message) {
 				auto & switches = tv::visit(action_builder, tv::overload(
-					[&](Nothing) -> Switches & {
-						return action_builder.emplace(bounded::construct<Switches>);
-					},
-					[&](MoveStateBuilder & move_builder) -> Switches & {
-						use_previous_move(move_builder);
-						return action_builder.emplace(bounded::construct<Switches>);
-					},
 					[&](Switches & s) -> Switches & {
 						if (find_switch(s, message.party)) {
 							throw std::runtime_error("Tried to switch in the same Pokemon twice");
 						}
 						return s;
+					},
+					[&](auto & previous) -> Switches & {
+						do_action(previous);
+						return action_builder.emplace(bounded::construct<Switches>);
 					}
 				));
 				auto const index = handle_switch_message(message);
@@ -373,6 +372,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			[&](StartConfusionMessage const message) {
 				tv::visit(action_builder, tv::overload(
 					[&](MoveStateBuilder & builder) {
+						// TODO: Rampage moves?
 						builder.confuse(other(message.party));
 					},
 					[](auto) {
@@ -382,9 +382,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](MoveStatus const message) {
 				tv::visit(action_builder, tv::overload(
-					[](Nothing) {
-						throw std::runtime_error("Move status without a move");
-					},
 					[&](MoveStateBuilder & builder) {
 						builder.status_from_move(message.party, message.status);
 					},
@@ -400,6 +397,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 							throw std::runtime_error("Toxic poison changed to poison from switching in later generations");
 						}
 						ptr->status = message.status;
+					},
+					[](auto) {
+						throw std::runtime_error("Move status without a move");
 					}
 				));
 			},
@@ -428,15 +428,18 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 							throw std::runtime_error("End of turn did not complete");
 						}
 					},
-					[&](MoveStateBuilder) {
+					[](MoveStateBuilder) {
 						throw std::runtime_error("Should not have a move state builder at the start of a turn");
 					},
 					[&](Switches const switches) {
-						use_previous_switches(switches);
+						do_action(switches);
 						if (m_client_battle->is_end_of_turn()) {
 							throw std::runtime_error("Should not have pending switches before we handle the end of turn");
 						}
 						action_builder = Nothing();
+					},
+					[](HitSelf) {
+						throw std::runtime_error("Should not be hitting self at the start of a turn");
 					}
 				));
 				action_builder = Nothing();
@@ -491,6 +494,12 @@ auto BattleMessageHandler::use_move(MoveState const data) -> void {
 auto BattleMessageHandler::use_switch(SwitchState const data) -> void {
 	auto const data_is_for_ai = data.party == m_party;
 	m_client_battle->use_switch(data_is_for_ai, Switch(data.index)); 
+	try_correct_hp_and_status(data_is_for_ai, data.hp, data.status);
+}
+
+auto BattleMessageHandler::hit_self_in_confusion(HitSelf const data) -> void {
+	auto const data_is_for_ai = data.party == m_party;
+	m_client_battle->hit_self_in_confusion(data_is_for_ai, data.hp); 
 	try_correct_hp_and_status(data_is_for_ai, data.hp, data.status);
 }
 

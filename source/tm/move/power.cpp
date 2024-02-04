@@ -325,7 +325,7 @@ constexpr auto attacker_ability_power_modifier(AttackerPokemon const attacker, K
 	};
 	switch (attacker.ability()) {
 		case Ability::Technician:
-			return rational(BOUNDED_CONDITIONAL(base <= 60_bi and move.name != MoveName::Hit_Self, 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(base <= 60_bi, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
 			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Fire), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:

@@ -40,7 +40,6 @@ constexpr auto calculate_max(tv::optional<base_type> const base, pp_ups_type con
 constexpr auto base_pp(Generation const generation, MoveName const move) -> tv::optional<base_type> {
 	using tv::none;
 	switch (move) {
-		case MoveName::Hit_Self: return none;
 		case MoveName::Pound: return 35_bi;
 		case MoveName::Karate_Chop: return 25_bi;
 		case MoveName::Double_Slap: return 10_bi;

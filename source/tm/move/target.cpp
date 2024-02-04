@@ -268,7 +268,6 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Harden:
 		case MoveName::Heal_Order:
 		case MoveName::Healing_Wish:
-		case MoveName::Hit_Self:
 		case MoveName::Hone_Claws:
 		case MoveName::Imprison:
 		case MoveName::Ingrain:

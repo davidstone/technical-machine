@@ -202,5 +202,39 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 	}
 }
 
+TEST_CASE("Handle hitting self in confusion", "[Battle]") {
+	constexpr auto generation = Generation::one;
+	auto battle = Battle<generation>(
+		KnownTeam<generation>({{
+			{
+				.species = Species::Exeggutor,
+				.moves = {{
+					MoveName::Psychic,
+				}}
+			},
+		}}),
+		make_seen_team<generation>({
+			{.species = Species::Gengar},
+		})
+	);
+
+	battle.use_move(
+		false,
+		Used(MoveName::Confuse_Ray),
+		false
+	);
+
+	battle.hit_self_in_confusion(
+		true,
+		visible_hp(355_bi, 393_bi)
+	);
+
+	auto const hp = battle.ai().pokemon().hp();
+	CHECK(hp.current() == 355_bi);
+	CHECK(hp.max() == 393_bi);
+
+	
+}
+
 } // namespace
 } // namespace technicalmachine

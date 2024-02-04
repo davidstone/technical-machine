@@ -39,9 +39,6 @@ enum class MoveCriticalHit {
 
 constexpr auto move_critical_hit(Generation const generation, MoveName const move_name) {
 	switch (move_name) {
-		// Weird moves
-		case MoveName::Hit_Self: return MoveCriticalHit::never;
-
 		// Generation 1
 		case MoveName::Pound: return MoveCriticalHit::normal;
 		case MoveName::Karate_Chop: return MoveCriticalHit::high;

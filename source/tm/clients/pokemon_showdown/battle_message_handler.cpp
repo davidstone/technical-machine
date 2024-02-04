@@ -41,6 +41,12 @@ struct SwitchState {
 	VisibleHP hp;
 };
 
+struct HitSelf {
+	Party party;
+	StatusName status;
+	VisibleHP hp;
+};
+
 export struct BattleMessageHandler {
 	BattleMessageHandler(Party party, GenerationGeneric<Teams> teams);
 
@@ -61,6 +67,7 @@ export struct BattleMessageHandler {
 private:
 	auto use_move(MoveState) -> void;
 	auto use_switch(SwitchState) -> void;
+	auto hit_self_in_confusion(HitSelf) -> void;
 	auto handle_switch_message(SwitchMessage) -> TeamIndex;
 
 	auto handle_end_of_turn(EndOfTurnState) -> void;

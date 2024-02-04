@@ -1887,14 +1887,21 @@ export constexpr auto item_to_id(Item const item) -> ItemID {
 	}
 }
 
-export using MoveID = bounded::integer<1, bounded::normalize<bounded::constant<numeric_traits::max_value<MoveName>> - bounded::integer(MoveName::Regular_Begin) + 1_bi>>;
+export using MoveID = bounded::integer<
+	1,
+	bounded::normalize<
+		bounded::constant<numeric_traits::max_value<MoveName>> -
+		bounded::constant<numeric_traits::min_value<MoveName>> +
+		1_bi
+	>
+>;
 
 export constexpr auto id_to_move(MoveID const id) -> MoveName {
-	return static_cast<MoveName>(id + bounded::integer(MoveName::Regular_Begin) - 1_bi);
+	return static_cast<MoveName>(id + bounded::constant<numeric_traits::min_value<MoveName>> - 1_bi);
 }
 
 export constexpr auto move_to_id(MoveName const move) -> MoveID {
-	auto const move_id = bounded::integer(move) - bounded::integer(MoveName::Regular_Begin) + 1_bi;
+	auto const move_id = bounded::integer(move) - bounded::constant<numeric_traits::min_value<MoveName>> + 1_bi;
 	BOUNDED_ASSERT(move_id > 0_bi);
 	return ::bounded::assume_in_range<MoveID>(move_id);
 }

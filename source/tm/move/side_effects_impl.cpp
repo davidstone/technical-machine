@@ -1897,7 +1897,6 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Helping_Hand:
 		case MoveName::Hex:
 		case MoveName::Hidden_Power:
-		case MoveName::Hit_Self:
 		case MoveName::Hone_Claws:
 		case MoveName::Horn_Attack:
 		case MoveName::Horn_Drill:

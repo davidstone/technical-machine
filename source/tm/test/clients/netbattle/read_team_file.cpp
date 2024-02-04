@@ -217,7 +217,6 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialStyle::com
 	},
 });
 
-// std::embed(get_test_directory() / "teams/netbattle.pnb")
 constexpr auto netbattle_bytes = containers::array{
 	std::byte(0x20), std::byte(0x50), std::byte(0x4E), std::byte(0x42),
 	std::byte(0x34), std::byte(0x2E), std::byte(0x31), std::byte(0x0A),

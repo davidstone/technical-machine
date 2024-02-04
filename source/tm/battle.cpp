@@ -10,6 +10,7 @@ import tm.move.call_move;
 import tm.move.causes_recoil;
 import tm.move.do_switch;
 import tm.move.future_selection;
+import tm.move.hit_self;
 import tm.move.irrelevant_action;
 import tm.move.known_move;
 import tm.move.move;
@@ -61,24 +62,6 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
-
-constexpr auto get_actual_damage(
-	bool const ai_is_user,
-	MoveName const executed,
-	Damage const damage,
-	auto const user_pokemon,
-	auto const other_pokemon
-) -> ActualDamage {
-	auto const damaged_is_user = executed == MoveName::Hit_Self;
-	auto const damaged_is_ai = !ai_is_user xor damaged_is_user;
-	auto const old_hp = damaged_is_user ? user_pokemon.hp() : other_pokemon.hp();
-	return visible_damage_to_actual_damage(
-		damage,
-		damaged_is_ai,
-		old_hp,
-		other_pokemon.substitute()
-	);
-}
 
 constexpr auto move_should_have_recoil(
 	Generation const generation,
@@ -276,12 +259,11 @@ struct Battle {
 				user_pokemon.set_base_ability(*recoil_ability);
 			}
 
-			auto const damage = get_actual_damage(
-				ai_is_user,
-				move.executed,
+			auto const damage = visible_damage_to_actual_damage(
 				move.damage,
-				user_pokemon,
-				other_pokemon
+				!ai_is_user,
+				other_pokemon.hp(),
+				other_pokemon.substitute()
 			);
 			call_move(
 				user_team,
@@ -299,6 +281,21 @@ struct Battle {
 	auto use_switch(bool const ai_is_user, Switch const switch_) & -> void {
 		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
 			do_switch(user_team, switch_, other_team, m_environment);
+		});
+	}
+
+	auto hit_self_in_confusion(bool const ai_is_user, VisibleHP const damage) & -> void {
+		apply_to_teams(ai_is_user, [&](auto & user_team, auto const &) {
+			auto const actual_damage = visible_damage_to_actual_damage(
+				damage,
+				ai_is_user,
+				user_team.pokemon().hp()
+			);
+			hit_self(
+				user_team,
+				actual_damage.value,
+				environment()
+			);
 		});
 	}
 
