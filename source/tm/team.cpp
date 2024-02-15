@@ -11,6 +11,8 @@ module;
 
 export module tm.team;
 
+import tm.move.end_of_attack;
+
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.known_pokemon;
@@ -151,6 +153,9 @@ struct TeamImpl {
 		apply(m_entry_hazards, replacement_pokemon, environment);
 		if (replacement_pokemon.hp().current() != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other, environment);
+		}
+		if (!replacing_fainted) {
+			end_of_attack(replacement_pokemon, other, environment);
 		}
 	}
 

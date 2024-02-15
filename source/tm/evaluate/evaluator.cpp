@@ -24,7 +24,6 @@ import tm.evaluate.win;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.category;
-import tm.move.do_switch;
 import tm.move.future_selection;
 import tm.move.irrelevant_action;
 import tm.move.known_move;
@@ -196,11 +195,10 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 template<Generation generation>
 auto execute_switch(State<generation> state, Selector<generation> const select, Switch const switch_, auto const continuation) -> double {
 	auto const selected = select(state);
-	do_switch(
-		selected.team,
-		switch_,
-		selected.other,
-		state.environment
+	selected.team.switch_pokemon(
+		selected.other.pokemon(),
+		state.environment,
+		switch_.value()
 	);
 	if (auto const won = win(state.ai, state.foe)) {
 		return *won + double(state.depth.general - 1_bi);

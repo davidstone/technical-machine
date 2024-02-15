@@ -8,7 +8,6 @@ export module tm.battle;
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.causes_recoil;
-import tm.move.do_switch;
 import tm.move.future_selection;
 import tm.move.hit_self;
 import tm.move.irrelevant_action;
@@ -280,7 +279,11 @@ struct Battle {
 
 	auto use_switch(bool const ai_is_user, Switch const switch_) & -> void {
 		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
-			do_switch(user_team, switch_, other_team, m_environment);
+			user_team.switch_pokemon(
+				other_team.pokemon(),
+				m_environment,
+				switch_.value()
+			);
 		});
 	}
 
