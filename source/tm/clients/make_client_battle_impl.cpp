@@ -51,14 +51,9 @@ using namespace std::string_view_literals;
 
 constexpr auto is_done_moving(any_team auto const & team) -> bool {
 	auto const pokemon = team.pokemon();
-	auto const is_fainted = pokemon.hp().current() == 0_bi;
-	if (is_fainted) {
-		return true;
-	}
 	auto const last_move = pokemon.last_used_move();
-	auto const started_moving = last_move.moved_this_turn();
 	return
-		started_moving and
+		last_move.moved_this_turn() and
 		(!last_move.is_delayed_switching() or team.size() == 1_bi);
 }
 

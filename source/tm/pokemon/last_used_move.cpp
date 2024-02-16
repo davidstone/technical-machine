@@ -112,14 +112,18 @@ export struct LastUsedMove {
 		}
 	}
 
-	constexpr auto use_switch(bool const replacing_fainted_or_initial_switch) & {
+	// Not for the initial switch in or replacing fainted
+	constexpr auto use_switch() & {
 		m_move = tv::none;
-		if (!replacing_fainted_or_initial_switch) {
-			m_moved_this_turn = true;
-		}
+		m_moved_this_turn = true;
 	}
 
 	constexpr auto hit_self() & -> void {
+		m_move = tv::none;
+		m_moved_this_turn = true;
+	}
+
+	constexpr auto faint() & -> void {
 		m_move = tv::none;
 		m_moved_this_turn = true;
 	}

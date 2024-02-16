@@ -816,7 +816,9 @@ public:
 		if (this->item(environment) == Item::Berserk_Gene) {
 			activate_berserk_gene(*this, environment);
 		}
-		this->m_flags.last_used_move.use_switch(replacing_fainted_or_initial_switch);
+		if (!replacing_fainted_or_initial_switch) {
+			this->m_flags.last_used_move.use_switch();
+		}
 	}
 
 	constexpr auto switch_out() const -> void {
@@ -929,6 +931,8 @@ public:
 		this->m_pokemon.set_hp(new_hp);
 		if (new_hp != 0_bi) {
 			activate_pinch_item(environment);
+		} else {
+			this->m_flags.last_used_move.faint();
 		}
 	}
 	constexpr auto indirect_damage(Environment const environment, auto const damage) const -> void {

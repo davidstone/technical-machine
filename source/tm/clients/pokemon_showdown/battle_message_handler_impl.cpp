@@ -422,18 +422,12 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						if (m_client_battle->is_end_of_turn()) {
 							handle_end_of_turn(end_of_turn_state.complete());
 						}
-						if (m_client_battle->is_end_of_turn()) {
-							throw std::runtime_error("End of turn did not complete");
-						}
 					},
 					[](MoveStateBuilder) {
 						throw std::runtime_error("Should not have a move state builder at the start of a turn");
 					},
 					[&](Switches const switches) {
 						do_action(switches);
-						if (m_client_battle->is_end_of_turn()) {
-							throw std::runtime_error("Should not have pending switches before we handle the end of turn");
-						}
 						action_builder = Nothing();
 					},
 					[](HitSelf) {
