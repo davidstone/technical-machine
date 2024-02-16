@@ -49,8 +49,15 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto is_done_moving(any_team auto const & team) -> bool {
+template<any_team TeamType>
+constexpr auto is_done_moving(TeamType const & team) -> bool {
 	auto const pokemon = team.pokemon();
+	if constexpr (generation_from<TeamType> <= Generation::three) {
+		auto const is_fainted = pokemon.hp().current() == 0_bi;
+		if (is_fainted) {
+			return false;
+		}
+	}
 	auto const last_move = pokemon.last_used_move();
 	return
 		last_move.moved_this_turn() and

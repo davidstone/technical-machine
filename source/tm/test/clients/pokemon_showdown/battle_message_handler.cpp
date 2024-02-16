@@ -464,8 +464,6 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			false
 		);
 
-		handle_end_turn(*expected);
-
 		check_state(result, expected->state());
 	}
 
@@ -485,6 +483,8 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 		}));
 
 		expected->use_switch(true, Switch(1_bi));
+
+		handle_end_turn(*expected);
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}
@@ -745,8 +745,6 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			false
 		);
 
-		handle_end_turn(*expected);
-
 		check_state(result, expected->state());
 	}
 
@@ -776,6 +774,8 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 
 		expected->use_switch(true, Switch(1_bi));
 		expected->use_switch(false, Switch(1_bi));
+
+		handle_end_turn(*expected);
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}

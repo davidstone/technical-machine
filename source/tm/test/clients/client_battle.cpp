@@ -128,8 +128,52 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 	CHECK(!battle->is_end_of_turn());
 }
 
-TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
+TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]") {
 	constexpr auto generation = Generation::one;
+	auto battle = make_battle<generation>(
+		{
+			{
+				.species = Species::Bulbasaur,
+				.moves = {{
+					MoveName::Tackle,
+				}}
+			},
+			{
+				.species = Species::Jynx,
+				.moves = {{
+					MoveName::Tackle,
+				}}
+			},
+		},
+		{
+			{.species = Species::Gengar},
+			{.species = Species::Pikachu},
+		}
+	);
+
+	CHECK(!battle->is_end_of_turn());
+
+	battle->use_move(
+		false,
+		damaging_move(MoveName::Explosion, visible_hp(0_bi, 1_bi)),
+		false
+	);
+
+	CHECK(!battle->is_end_of_turn());
+
+	battle->use_switch(true, Switch(1_bi));
+	battle->use_switch(false, Switch(1_bi));
+
+	CHECK(battle->is_end_of_turn());
+
+	constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
+	battle->end_turn(true, end_of_turn_flags, end_of_turn_flags);
+
+	CHECK(!battle->is_end_of_turn());
+}
+
+TEST_CASE("Handle replacing two fainted Pokemon new generation", "[ClientBattle]") {
+	constexpr auto generation = Generation::four;
 	auto battle = make_battle<generation>(
 		{
 			{

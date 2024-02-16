@@ -857,7 +857,6 @@ public:
 		this->m_flags.heal_block = {};
 		this->m_flags.identified = false;
 		this->m_flags.used_imprison = false;
-		this->m_flags.last_used_move = {};
 		this->m_flags.is_loafing_turn = true;
 		this->m_flags.minimized = false;
 		this->m_flags.me_first_is_active = false;
