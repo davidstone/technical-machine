@@ -32,26 +32,19 @@ jobs:
       with:
         submodules: true
   
-    - name: Install clang dependencies
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install mold libtbb-dev
-  
-    - uses: lukka/get-cmake@latest
-  
     - name: Install clang
       shell: bash
       run: |
-        cd ..
-        git clone --depth 1 https://github.com/llvm/llvm-project.git llvm
-        cd llvm
-        cmake -G Ninja -B build -S llvm -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_USE_LINKER=mold -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DLIBCXX_ABI_UNSTABLE=On -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;polly" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"
-        cmake --build build
+        deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main
+        sudo apt-get update
+        sudo apt-get install mold libtbb-dev clang++
+        clang++ --version
+  
+    - uses: lukka/get-cmake@latest
   
     - name: Configure CMake
       shell: bash
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="${{github.workspace}}/../boost"
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="${{github.workspace}}/../boost"
   
     - name: Build
       shell: bash
