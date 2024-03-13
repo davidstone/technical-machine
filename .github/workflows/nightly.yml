@@ -35,6 +35,7 @@ jobs:
     - name: Install clang
       shell: bash
       run: |
+        clang++ --version
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb https://apt.llvm.org/$(lsb_release -sc)/ llvm-toolchain-$(lsb_release -sc) main"
         sudo apt-get update
