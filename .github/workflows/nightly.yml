@@ -46,7 +46,7 @@ jobs:
         cd ..
         git clone --depth 1 https://github.com/llvm/llvm-project.git llvm
         cd llvm
-        cmake -G Ninja -B build -S llvm -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_USE_LINKER=mold -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DLIBCXX_ABI_UNSTABLE=On -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;polly" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" -DLLVM_BINUTILS_INCDIR="/usr/include"
+        cmake -G Ninja -B build -S llvm -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_USE_LINKER=mold -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DLIBCXX_ABI_UNSTABLE=On -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;polly" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"
         cmake --build build
   
     - name: Configure CMake
