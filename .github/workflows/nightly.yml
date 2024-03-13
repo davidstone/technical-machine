@@ -1,0 +1,61 @@
+name: Build and test against clang trunk
+
+on:
+  schedule:
+    - cron: '27 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get usage stats
+      run: |
+        cd ..
+        git clone --depth 1 https://github.com/davidstone/pokemon-usage-stats.git
+        echo "TM_USAGE_STATS_DIRECTORY=$PWD/pokemon-usage-stats" >> "$GITHUB_ENV"
+    - name: Set settings directory environment variable
+      run: echo "TM_SETTINGS_DIRECTORY=$PWD/settings" >> "$GITHUB_ENV"
+    - name: Set test directory environment variable
+      run: echo "TM_TEST_DIRECTORY=$PWD/test" >> "$GITHUB_ENV"
+    - name: Get boost
+      run: |
+        cd ..
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
+        tar xf boost_1_84_0.tar.bz2
+        mkdir -p boost/include
+        ln -s $PWD/boost_1_84_0/boost boost/include/boost
+
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+  
+    - name: Install clang dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install mold libtbb-dev
+  
+    - name: Install clang
+      shell: bash
+      run: |
+        cd ..
+        git clone --depth 1 https://github.com/llvm/llvm-project.git llvm
+        cd llvm
+        cmake -G Ninja -B build -S llvm -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_USE_LINKER=mold -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DLIBCXX_ABI_UNSTABLE=On -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;polly" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" -DLLVM_BINUTILS_INCDIR="/usr/include"
+        cmake --build build
+  
+    - uses: lukka/get-cmake@latest
+  
+    - name: Configure CMake
+      shell: bash
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++-18" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="${{github.workspace}}/../boost"
+  
+    - name: Build
+      shell: bash
+      run: cmake --build ${{github.workspace}}/build --config Debug
+  
+    - name: Test
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C Debug --output-on-failure
