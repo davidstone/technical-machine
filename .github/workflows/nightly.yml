@@ -39,7 +39,7 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb https://apt.llvm.org/$(lsb_release -sc)/ llvm-toolchain-$(lsb_release -sc) main"
         sudo apt-get update
-        sudo apt-get install mold libtbb-dev clang++
+        sudo apt-get install mold libtbb-dev clang
         clang++ --version
   
     - uses: lukka/get-cmake@latest
