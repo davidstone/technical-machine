@@ -40,6 +40,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install mold libtbb-dev clang
         clang++ --version
+        sudo apt-get install clang-tools-$(clang++ --version | head -n 1 | cut -f 4 -d ' ' | cut -f 1 -d '.')
   
     - uses: lukka/get-cmake@latest
   
