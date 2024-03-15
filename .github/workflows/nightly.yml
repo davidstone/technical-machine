@@ -40,13 +40,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install mold libtbb-dev clang
         clang++ --version
-        sudo ln -s /usr/bin/clang-scan-deps$(clang++ --version | head -n 1 | cut -f 4 -d ' ' | cut -f 1 -d '.') /usr/bin/clang-scan-deps
   
     - uses: lukka/get-cmake@latest
   
     - name: Configure CMake
       shell: bash
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="${{github.workspace}}/../boost"
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -G"Ninja" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS="/usr/bin/clang-scan-deps$(clang++ --version | head -n 1 | cut -f 4 -d ' ' | cut -f 1 -d '.')" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DBOOST_ROOT="${{github.workspace}}/../boost"
   
     - name: Build
       shell: bash
