@@ -35,12 +35,12 @@ jobs:
     - name: Install clang
       shell: bash
       run: |
-        clang++ --version
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb https://apt.llvm.org/$(lsb_release -sc)/ llvm-toolchain-$(lsb_release -sc) main"
         sudo apt-get update
         sudo apt-get install mold libtbb-dev clang
         clang++ --version
+        sudo ln -s /usr/bin/clang-scan-deps$(clang++ --version | head -n 1 | cut -f 4 -d ' ' | cut -f 1 -d '.') /usr/bin/clang-scan-deps
   
     - uses: lukka/get-cmake@latest
   
