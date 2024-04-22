@@ -50,7 +50,7 @@ constexpr auto enumerate = containers::inclusive_integer_range(
 	numeric_traits::max_value<T>
 );
 
-auto test_indexes_consistent(ps::SlotMemory memory, auto const size) -> void {
+auto test_indexes_consistent(ps::SlotMemory const memory, auto const size) -> void {
 	for (auto const index : enumerate<TeamIndex>) {
 		if (index < size) {
 			CHECK(memory.reverse_lookup(memory[index]) == index);
