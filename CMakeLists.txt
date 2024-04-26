@@ -200,6 +200,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/iv.cpp
 		source/tm/stat/iv_and_ev.cpp
 		source/tm/stat/max_hp.cpp
+		source/tm/stat/nature_effect.cpp
 		source/tm/stat/nature.cpp
 		source/tm/stat/possible_dvs_or_ivs.cpp
 		source/tm/stat/stage.cpp
