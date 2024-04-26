@@ -9,6 +9,7 @@ module;
 
 export module tm.stat.nature;
 
+import tm.stat.nature_effect;
 import tm.stat.stat_names;
 
 import tm.rational;
@@ -136,13 +137,15 @@ export constexpr auto lowers_defending_stat(Nature const nature) -> bool {
 	return lowers_stat(nature, SplitSpecialRegularStat::def) or lowers_stat(nature, SplitSpecialRegularStat::spd);
 }
 
+export constexpr auto to_nature_effect(Nature const nature, SplitSpecialRegularStat const stat) -> NatureEffect {
+	return 
+		boosts_stat(nature, stat) ? NatureEffect::positive :
+		lowers_stat(nature, stat) ? NatureEffect::negative :
+		NatureEffect::neutral;
+}
+
 export constexpr auto boost(Nature const nature, SplitSpecialRegularStat const stat) {
-	auto const numerator =
-		BOUNDED_CONDITIONAL(boosts_stat(nature, stat), 11_bi,
-		BOUNDED_CONDITIONAL(lowers_stat(nature, stat), 9_bi,
-		10_bi
-	));
-	return rational(numerator, 10_bi);
+	return boost(to_nature_effect(nature, stat));
 }
 
 } // namespace technicalmachine
