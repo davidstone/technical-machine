@@ -16,12 +16,6 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	add_compile_options($<$<CONFIG:Debug>:-Og>)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	add_compile_options($<$<CONFIG:Debug>:-Og>)
-endif()
-
 enable_testing()
 
 find_package(Boost REQUIRED)
