@@ -8,6 +8,8 @@ export module tm.stat.iv_and_ev;
 import tm.stat.ev;
 import tm.stat.iv;
 
+import bounded;
+
 namespace technicalmachine {
 
 export struct IVAndEV {
@@ -25,3 +27,33 @@ export struct DVAndEV {
 };
 
 } // namespace technicalmachine
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::IVAndEV>  {
+	static constexpr auto spare_representations = tombstone_traits<technicalmachine::IV>::spare_representations;
+
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::IVAndEV {
+		return technicalmachine::IVAndEV(
+			tombstone_traits<technicalmachine::IV>::make(index),
+			technicalmachine::EV()
+		);
+	}
+	static constexpr auto index(technicalmachine::IVAndEV const & value) noexcept {
+		return tombstone_traits<technicalmachine::IV>::index(value.iv);
+	}
+};
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::DVAndEV>  {
+	static constexpr auto spare_representations = tombstone_traits<technicalmachine::DV>::spare_representations;
+
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::DVAndEV {
+		return technicalmachine::DVAndEV(
+			tombstone_traits<technicalmachine::DV>::make(index),
+			technicalmachine::EV()
+		);
+	}
+	static constexpr auto index(technicalmachine::DVAndEV const & value) noexcept {
+		return tombstone_traits<technicalmachine::DV>::index(value.dv);
+	}
+};
