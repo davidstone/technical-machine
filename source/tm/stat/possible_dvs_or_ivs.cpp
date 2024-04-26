@@ -24,7 +24,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<typename T>
-using Possible = containers::static_vector<T, numeric_traits::max_value<typename T::value_type> + 1_bi>;
+using Possible = containers::static_vector<T, bounded::number_of<typename T::value_type>>;
 
 template<typename T>
 constexpr auto all_possible = Possible<T>(
