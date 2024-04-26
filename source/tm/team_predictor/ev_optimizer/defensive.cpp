@@ -6,28 +6,29 @@
 module;
 
 #include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
 
 export module tm.team_predictor.ev_optimizer.defensive;
 
-import tm.team_predictor.ev_optimizer.data_point;
+import tm.team_predictor.ev_optimizer.individual;
+import tm.team_predictor.ev_optimizer.nature_effects;
 import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
 
 import tm.pokemon.level;
 
 import tm.stat.base_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.hp;
-import tm.stat.iv;
-import tm.stat.nature;
 import tm.stat.initial_stat;
+import tm.stat.iv;
 import tm.stat.iv_and_ev;
 import tm.stat.max_hp;
-import tm.stat.stat_names;
-import tm.stat.stat_to_ev;
+import tm.stat.nature_effect;
 import tm.stat.stat_style;
 
 import bounded;
-import containers;
+export import containers;
 import tv;
 
 namespace technicalmachine {
@@ -49,12 +50,21 @@ export using DefensiveEVDef = DefensiveEVStat<BaseStats::Def>;
 
 export using DefensiveEVSpD = DefensiveEVStat<BaseStats::SpD>;
 
+struct DataPoint {
+	IVAndEV hp;
+	Individual def;
+	Individual spd;
+	friend auto operator==(DataPoint, DataPoint) -> bool = default;
+};
+
 constexpr auto ev_sum(DataPoint const data) {
-	return data.hp.ev.value() + data.defense.ev.value() + data.special_defense.ev.value();
+	return data.hp.ev.value() + data.def.ev.value() + data.spd.ev.value();
 }
 
-constexpr auto ev_range() {
-	return containers::transform(containers::inclusive_integer_range(0_bi, EV::useful_max, 4_bi), bounded::construct<EV>);
+constexpr auto ev_range = containers::transform(containers::inclusive_integer_range(0_bi, EV::useful_max, 4_bi), bounded::construct<EV>);
+
+constexpr auto to_index(IV const iv) {
+	return bounded::assume_in_range(iv.value() - 30_bi, 0_bi, 1_bi);
 }
 
 export struct DefensiveEVs {
@@ -64,51 +74,73 @@ export struct DefensiveEVs {
 
 		auto defensive_product = [=](DataPoint const value) {
 			auto const hp = HP(original_hp.base, level, value.hp.iv, value.hp.ev).max();
-			auto single_product = [=](SplitSpecialRegularStat const name, auto const base_stat, IVAndEV const generated) {
-				return hp * initial_stat<SpecialStyle::split>(name, base_stat, level, value.nature, generated.iv, generated.ev);
+			auto single_product = [=](auto const base_stat, Individual const generated) {
+				return hp * initial_stat<SpecialStyle::split>(base_stat, level, generated.nature_effect, generated.iv, generated.ev);
 			};
-
-			return single_product(SplitSpecialRegularStat::def, def.base, value.defense) * single_product(SplitSpecialRegularStat::spd, spd.base, value.special_defense);
+			return
+				single_product(def.base, value.def) *
+				single_product(spd.base, value.spd);
 		};
 
-		for (auto const nature : containers::enum_range<Nature>()) {
-			for (auto const hp_iv : original_hp.ivs) {
-				for (auto const def_iv : def.ivs) {
-					for (auto const spd_iv : spd.ivs) {
-						auto best_per_nature_and_iv = tv::optional<DataPoint>();
-						for (auto const hp_ev : ev_range()) {
-							auto const hp = HP(original_hp.base, level, hp_iv, hp_ev);
-							auto find_minimum_matching = [=](SplitSpecialRegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
-								auto const target_stat = round_up_divide(original_product, hp.max());
-								return stat_to_ev_at_least(target_stat, stat_name, base, level, nature, iv);
-							};
+		auto is_better = [=](DataPoint const candidate, DataPoint const current) -> bool {
+			auto const cmp = ev_sum(candidate) <=> ev_sum(current);
+			if (cmp < 0) {
+				return true;
+			} else if (cmp > 0) {
+				return false;
+			}
+			auto const candidate_product = defensive_product(candidate);
+			auto const current_product = defensive_product(current);
+			return candidate_product > current_product;
+		};
 
-							auto const defense_ev = find_minimum_matching(SplitSpecialRegularStat::def, def.base, def_iv, def_product);
-							if (!defense_ev) {
+		constexpr auto is_expected = [](IV const iv) { return iv == IV(30_bi) or iv == IV(31_bi); };
+		BOUNDED_ASSERT(containers::all(def.ivs, is_expected));
+		BOUNDED_ASSERT(containers::all(spd.ivs, is_expected));
+		for (auto const hp_iv : original_hp.ivs) {
+			static_assert(max_possible_optimized_ivs == 2_bi);
+			auto possibilities = containers::array<tv::optional<DataPoint>, containers::size(nature_effects), 2_bi, 2_bi>();
+			for (auto const hp_ev : ev_range) {
+				auto const hp = HP(original_hp.base, level, hp_iv, hp_ev).max();
+				for (auto const nature_effect_index : containers::integer_range(containers::size(nature_effects))) {
+					auto const nature_effect = nature_effects[nature_effect_index];
+					auto const all_def = possible(
+						level,
+						def,
+						nature_effect.physical,
+						round_up_divide(def_product, hp)
+					);
+					auto const all_spd = possible(
+						level,
+						spd,
+						nature_effect.special,
+						round_up_divide(spd_product, hp)
+					);
+					auto & nature_possibilities = possibilities[nature_effect_index];
+					for (auto const specific_def : all_def) {
+						auto & def_possibilities = nature_possibilities[to_index(specific_def.iv)];
+						for (auto const specific_spd : all_spd) {
+							auto const candidate = DataPoint(
+								{hp_iv, hp_ev},
+								specific_def,
+								specific_spd
+							);
+							if (ev_sum(candidate) > max_total_evs(SpecialStyle::split)) {
 								continue;
 							}
-							auto const special_defense_ev = find_minimum_matching(SplitSpecialRegularStat::spd, spd.base, spd_iv, spd_product);
-							if (!special_defense_ev) {
-								continue;
-							}
-							auto is_better = [=](DataPoint const candidate, DataPoint const current) {
-								auto const cmp = ev_sum(candidate) <=> ev_sum(current);
-								if (cmp < 0) {
-									return true;
-								} else if (cmp > 0) {
-									return false;
-								}
-								auto const candidate_product = defensive_product(candidate);
-								auto const current_product = defensive_product(current);
-								return candidate_product > current_product;
-							};
-							auto const candidate = DataPoint{nature, {hp_iv, hp_ev}, {def_iv, *defense_ev}, {spd_iv, *special_defense_ev}};
-							if (!best_per_nature_and_iv or is_better(candidate, *best_per_nature_and_iv)) {
-								insert(best_per_nature_and_iv, candidate);
+							auto & result = def_possibilities[to_index(specific_spd.iv)];
+							if (!result or is_better(candidate, *result)) {
+								insert(result, candidate);
 							}
 						}
-						if (best_per_nature_and_iv) {
-							containers::push_back_into_capacity(m_container, *best_per_nature_and_iv);
+					}
+				}
+			}
+			for (auto const p0 : possibilities) {
+				for (auto const p1 : p0) {
+					for (auto const p2 : p1) {
+						if (p2) {
+							containers::push_back_into_capacity(m_container, *p2);
 						}
 					}
 				}
@@ -123,13 +155,12 @@ export struct DefensiveEVs {
 	constexpr auto end() const {
 		return containers::end(m_container);
 	}
-	constexpr auto find(Nature const nature) const {
-		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });
-	}
 
 private:
-	static constexpr auto maximum_natures = containers::size(containers::enum_range<Nature>());
-	containers::static_vector<DataPoint, maximum_natures * bounded::pow(max_possible_optimized_ivs, 3_bi)> m_container;
+	static constexpr auto capacity =
+		containers::size(nature_effects) *
+		bounded::pow(max_possible_optimized_ivs, 3_bi);
+	containers::static_vector<DataPoint, capacity> m_container;
 };
 
 } // namespace technicalmachine

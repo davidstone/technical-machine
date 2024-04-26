@@ -239,8 +239,9 @@ target_sources(tm_common PUBLIC
 		source/tm/string_conversions/weather.cpp
 	
 		source/tm/team_predictor/ev_optimizer/compute_minimal_spread.cpp
-		source/tm/team_predictor/ev_optimizer/data_point.cpp
 		source/tm/team_predictor/ev_optimizer/defensive.cpp
+		source/tm/team_predictor/ev_optimizer/individual.cpp
+		source/tm/team_predictor/ev_optimizer/nature_effects.cpp
 		source/tm/team_predictor/ev_optimizer/offensive.cpp
 		source/tm/team_predictor/ev_optimizer/optimize_evs.cpp
 		source/tm/team_predictor/ev_optimizer/pad_evs.cpp
@@ -640,7 +641,9 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/status/status.cpp
 		
+		source/tm/test/team_predictor/ev_optimizer/defensive.cpp
 		source/tm/test/team_predictor/ev_optimizer/pad_evs.cpp
+		source/tm/test/team_predictor/ev_optimizer/speed.cpp
 
 		source/tm/test/can_execute_move.cpp
 		source/tm/test/critical_hit_probability.cpp

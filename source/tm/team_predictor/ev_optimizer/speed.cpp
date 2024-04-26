@@ -12,14 +12,11 @@ export module tm.team_predictor.ev_optimizer.speed;
 import tm.pokemon.level;
 
 import tm.stat.base_stats;
-import tm.stat.ev;
 import tm.stat.initial_stat;
-import tm.stat.iv;
-import tm.stat.stat_to_ev;
-import tm.stat.nature;
-import tm.stat.stat_names;
+import tm.stat.nature_effect;
 import tm.stat.stat_style;
 
+import tm.team_predictor.ev_optimizer.individual;
 import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
 
 import bounded;
@@ -31,16 +28,16 @@ using namespace bounded::literal;
 
 export struct SpeedEVs {
 	struct Input {
-		InitialStat<SpecialStyle::split> stat;
+		BaseStats::Spe base;
+		PossibleOptimizedIVs ivs;
+		InitialStat<SpecialStyle::split> target;
 	};
-	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, PossibleOptimizedIVs const ivs, Input const target) {
-		for (auto const nature : containers::enum_range<Nature>()) {
-			for (auto const iv : ivs) {
-				auto const ev = stat_to_ev_at_least(target.stat, SplitSpecialRegularStat::spe, base, level, nature, iv);
-				if (ev) {
-					containers::emplace_back(m_container, nature, iv, *ev);
-				}
-			}
+	constexpr SpeedEVs(Level const level, Input const input) {
+		for (auto const nature_effect : containers::enum_range<NatureEffect>()) {
+			containers::append_into_capacity(
+				m_container,
+				possible(level, input, nature_effect, input.target)
+			);
 		}
 		BOUNDED_ASSERT(!containers::is_empty(m_container));
 	}
@@ -53,13 +50,7 @@ export struct SpeedEVs {
 	}
 
 private:
-	struct Mapped {
-		Nature nature;
-		IV iv;
-		EV ev;
-	};
-	static constexpr auto maximum_natures = bounded::integer(numeric_traits::max_value<Nature>) + 1_bi;
-	containers::static_vector<Mapped, maximum_natures * max_possible_optimized_ivs> m_container;
+	containers::static_vector<Individual, bounded::number_of<NatureEffect> * max_possible_optimized_ivs> m_container;
 };
 
 } // namespace technicalmachine

@@ -24,6 +24,7 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.iv_and_ev;
 import tm.stat.nature;
+import tm.stat.nature_effect;
 import tm.stat.possible_dvs_or_ivs;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
@@ -58,7 +59,13 @@ constexpr auto calculate_ivs_and_evs(
 	auto const base = BaseStats(generation, species);
 	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
 	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
-		return stat_to_ev<special_style_for(generation)>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv_or_iv));
+		return stat_to_ev<special_style_for(generation)>(
+			stats[stat_name],
+			base[stat_name],
+			level,
+			to_nature_effect(nature, stat_name),
+			IV(dv_or_iv)
+		);
 	};
 	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::type_t<DVOrIV>, auto const to_ev) {
 		struct WithOptionalEV {
