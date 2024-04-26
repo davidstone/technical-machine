@@ -906,6 +906,71 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 	}
 }
 
+TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::one;
+
+	auto [expected, handler] = make_init<generation>(
+		{
+			{
+				.species = Species::Jynx,
+				.moves = {{MoveName::Blizzard}}
+			},
+		},
+		{
+			{.species = Species::Starmie},
+		}
+	);
+
+	auto const result = handler.handle_message(ps::EventBlock({
+		ps::SeparatorMessage(),
+		ps::MoveMessage(Party(1_bi), MoveName::Hydro_Pump, did_not_miss),
+		ps::DamageMessage(
+			Party(0_bi),
+			StatusName::clear,
+			visible_hp(188_bi, 333_bi)
+		),
+		ps::MoveMessage(Party(0_bi), MoveName::Blizzard, did_not_miss),
+		ps::EffectivenessMessage(Party(1_bi), ps::EffectivenessMessage::not_very),
+		ps::DamageMessage(
+			Party(1_bi),
+			StatusName::clear,
+			visible_hp(77_bi, 100_bi)
+		),
+		ps::MoveStatus(Party(1_bi), StatusName::freeze),
+		ps::SeparatorMessage(),
+		ps::EndOfTurnMessage(),
+		ps::TurnMessage(2_bi),
+	}));
+
+	expected->use_move(
+		false,
+		damaging_move(MoveName::Hydro_Pump, visible_hp(188_bi, 333_bi)),
+		false
+	);
+	{
+		auto move = Used(MoveName::Blizzard);
+		move.damage = visible_hp(77_bi, 100_bi);
+		move.status = StatusName::freeze;
+		expected->use_move(
+			true,
+			move,
+			false
+		);
+		expected->correct_hp(
+			false,
+			visible_hp(77_bi, 100_bi)
+		);
+	}
+
+	expected->end_turn(
+		true,
+		{false, false, true},
+		{false, false, false}
+	);
+
+	check_state(result, expected->state(), TurnCount(2_bi));
+}
+
 TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 	constexpr auto generation = Generation::two;
 
