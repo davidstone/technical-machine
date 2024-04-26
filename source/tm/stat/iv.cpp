@@ -42,6 +42,13 @@ export struct IV {
 
 private:
 	value_type m_value;
+
+	constexpr explicit IV(bounded::tombstone_tag, auto const make):
+		m_value(make())
+	{
+	}
+	friend bounded::tombstone_traits<IV>;
+	friend bounded::tombstone_traits_composer<&IV::m_value>;
 };
 
 export constexpr auto default_iv(Generation const generation) {
@@ -75,6 +82,13 @@ export struct DV {
 
 private:
 	value_type m_value;
+
+	constexpr explicit DV(bounded::tombstone_tag, auto const make):
+		m_value(make())
+	{
+	}
+	friend bounded::tombstone_traits<DV>;
+	friend bounded::tombstone_traits_composer<&DV::m_value>;
 };
 
 export struct DVs {
@@ -189,3 +203,11 @@ static_assert(DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)).hp() == DV(15_bi))
 static_assert(DVs(DV(14_bi), DV(14_bi), DV(14_bi), DV(14_bi)).hp() == DV(0_bi));
 
 } // namespace technicalmachine
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::IV> : bounded::tombstone_traits_composer<&technicalmachine::IV::m_value> {
+};
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::DV> : bounded::tombstone_traits_composer<&technicalmachine::DV::m_value> {
+};
