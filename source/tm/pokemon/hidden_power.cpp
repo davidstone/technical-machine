@@ -135,12 +135,16 @@ constexpr auto iv_power_generation(Generation const generation) -> bool {
 }
 constexpr auto fixed_power_generation(Generation const generation) -> bool {
 	switch (generation) {
+		case Generation::one:
+		case Generation::two:
+		case Generation::three:
+		case Generation::four:
+		case Generation::five:
+			return false;
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
 			return true;
-		default:
-			return false;
 	}
 }
 
