@@ -724,7 +724,6 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		},
 		{
 			{.species = Species::Gengar},
-			{.species = Species::Pikachu},
 		}
 	);
 
@@ -773,6 +772,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		}));
 
 		expected->use_switch(true, Switch(1_bi));
+		expected->foe_has(Species::Pikachu, "Pikachu"sv, Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
 
 		handle_end_turn(*expected);
