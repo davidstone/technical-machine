@@ -100,6 +100,11 @@ struct PokemonCollection {
 	}
 
 	constexpr auto add(PokemonType pokemon) -> PokemonType & requires any_seen_pokemon<PokemonType> {
+		if constexpr (any_seen_pokemon<PokemonType>) {
+			if (m_real_size == containers::size(m_container)) {
+				throw std::runtime_error("Tried to add too many Pokemon to a SeenTeam");
+			}
+		}
 		return containers::push_back(m_container, std::move(pokemon));
 	}
 
