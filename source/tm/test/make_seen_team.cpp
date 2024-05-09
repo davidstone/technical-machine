@@ -6,6 +6,7 @@
 export module tm.test.make_seen_team;
 
 import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
@@ -17,30 +18,28 @@ import tm.generation;
 import tm.team;
 
 import bounded;
-import containers;
 import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
 export struct SeenPokemonInit {
+	TeamSize team_size;
 	Species species;
 	Nickname nickname = to_string(species);
 	Level level = Level(100_bi);
 	Gender gender = Gender::genderless;
 };
 
-export template<Generation generation, std::size_t size>
-constexpr auto make_seen_team(containers::c_array<SeenPokemonInit, size> const & init) {
-	auto team = SeenTeam<generation>(bounded::constant<size>);
-	for (SeenPokemonInit const pokemon : init) {
-		team.add_pokemon(SeenPokemon<generation>(
-			pokemon.species,
-			pokemon.nickname,
-			pokemon.level,
-			pokemon.gender
-		));
-	}
+export template<Generation generation>
+constexpr auto make_seen_team(SeenPokemonInit const seen) {
+	auto team = SeenTeam<generation>(seen.team_size);
+	team.add_pokemon(SeenPokemon<generation>(
+		seen.species,
+		seen.nickname,
+		seen.level,
+		seen.gender
+	));
 	return team;
 }
 

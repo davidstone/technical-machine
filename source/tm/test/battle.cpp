@@ -64,7 +64,8 @@ TEST_CASE("Perish Song", "[Battle]") {
 			},
 		}}),
 		make_seen_team<generation>({
-			{.species = Species::Starmie},
+			.team_size = 1_bi,
+			.species = Species::Starmie,
 		})
 	);
 
@@ -109,9 +110,8 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 			},
 		}}),
 		make_seen_team<generation>({
-			{
-				.species = Species::Bulbasaur,
-			},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur,
 		})
 	);
 
@@ -153,9 +153,8 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 			},
 		}}),
 		make_seen_team<generation>({
-			{
-				.species = Species::Jolteon,
-			},
+			.team_size = 1_bi,
+			.species = Species::Jolteon,
 		})
 	);
 
@@ -214,7 +213,8 @@ TEST_CASE("Handle hitting self in confusion", "[Battle]") {
 			},
 		}}),
 		make_seen_team<generation>({
-			{.species = Species::Gengar},
+			.team_size = 1_bi,
+			.species = Species::Gengar,
 		})
 	);
 

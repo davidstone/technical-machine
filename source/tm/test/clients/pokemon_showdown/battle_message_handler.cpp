@@ -62,10 +62,10 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-template<Generation generation, std::size_t known_size, std::size_t seen_size>
+template<Generation generation, std::size_t known_size>
 auto make_init(
 	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> && known,
-	containers::c_array<SeenPokemonInit, seen_size> const & seen
+	SeenPokemonInit const seen
 ) {
 	auto teams = [&] {
 		return Teams<generation>{
@@ -172,7 +172,8 @@ TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemo
 			{.species = Species::Eevee, .moves = {{MoveName::Tackle}}},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur,
 		}
 	);
 
@@ -190,7 +191,8 @@ TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur
 		}
 	);
 
@@ -227,7 +229,8 @@ TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur
 		}
 	);
 
@@ -284,7 +287,8 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			},
 		},
 		{
-			{.species = Species::Smeargle},
+			.team_size = 1_bi,
+			.species = Species::Smeargle
 		}
 	);
 
@@ -363,7 +367,8 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur
 		}
 	);
 
@@ -392,7 +397,8 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 			},
 		},
 		{
-			{.species = Species::Magikarp},
+			.team_size = 1_bi,
+			.species = Species::Magikarp
 		}
 	);
 
@@ -434,7 +440,8 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			},
 		},
 		{
-			{.species = Species::Golem},
+			.team_size = 1_bi,
+			.species = Species::Golem
 		}
 	);
 
@@ -504,7 +511,8 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			},
 		},
 		{
-			{.species = Species::Dugtrio},
+			.team_size = 1_bi,
+			.species = Species::Dugtrio
 		}
 	);
 
@@ -575,7 +583,8 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			},
 		},
 		{
-			{.species = Species::Smeargle},
+			.team_size = 1_bi,
+			.species = Species::Smeargle
 		}
 	);
 
@@ -690,7 +699,8 @@ TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Dugtrio},
+			.team_size = 1_bi,
+			.species = Species::Dugtrio
 		}
 	);
 
@@ -723,7 +733,8 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			},
 		},
 		{
-			{.species = Species::Gengar},
+			.team_size = 2_bi,
+			.species = Species::Gengar
 		}
 	);
 
@@ -793,10 +804,9 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{
-				.species = Species::Blissey,
-				.level = Level(68_bi),
-			},
+			.team_size = 1_bi,
+			.species = Species::Blissey,
+			.level = Level(68_bi),
 		}
 	);
 
@@ -847,7 +857,8 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Blissey},
+			.team_size = 1_bi,
+			.species = Species::Blissey
 		}
 	);
 
@@ -917,7 +928,8 @@ TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Starmie},
+			.team_size = 1_bi,
+			.species = Species::Starmie
 		}
 	);
 
@@ -982,7 +994,8 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Blissey},
+			.team_size = 1_bi,
+			.species = Species::Blissey
 		}
 	);
 
@@ -1035,7 +1048,8 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Smeargle},
+			.team_size = 1_bi,
+			.species = Species::Smeargle
 		}
 	);
 
@@ -1107,7 +1121,8 @@ TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
 			},
 		},
 		{
-			{.species = Species::Gengar},
+			.team_size = 1_bi,
+			.species = Species::Gengar
 		}
 	);
 
@@ -1152,7 +1167,8 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			},
 		},
 		{
-			{.species = Species::Smeargle},
+			.team_size = 1_bi,
+			.species = Species::Smeargle
 		}
 	);
 

@@ -14,6 +14,7 @@ import tm.move.move_result;
 import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
+import tm.pokemon.level;
 import tm.pokemon.species;
 
 import tm.stat.stat_style;
@@ -22,6 +23,7 @@ import tm.test.make_seen_team;
 import tm.test.usage_bytes;
 
 import tm.end_of_turn_flags;
+import tm.gender;
 import tm.generation;
 import tm.team;
 import tm.visible_hp;
@@ -33,12 +35,13 @@ import tv;
 
 namespace technicalmachine {
 namespace {
+using namespace std::string_view_literals;
 using namespace bounded::literal;
 
-template<Generation generation, std::size_t known_size, std::size_t seen_size>
+template<Generation generation, std::size_t known_size>
 auto make_battle(
 	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> && known,
-	containers::c_array<SeenPokemonInit, seen_size> const & seen
+	SeenPokemonInit const seen
 ) {
 	auto battle = make_client_battle(
 		Teams<generation>{
@@ -69,7 +72,8 @@ TEST_CASE("Accurate HP after move", "[ClientBattle]") {
 			},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur,
 		}
 	);
 
@@ -100,7 +104,8 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 			},
 		},
 		{
-			{.species = Species::Bulbasaur},
+			.team_size = 1_bi,
+			.species = Species::Bulbasaur,
 		}
 	);
 
@@ -146,8 +151,8 @@ TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]
 			},
 		},
 		{
-			{.species = Species::Gengar},
-			{.species = Species::Pikachu},
+			.team_size = 2_bi,
+			.species = Species::Gengar,
 		}
 	);
 
@@ -162,6 +167,13 @@ TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]
 	CHECK(!battle->is_end_of_turn());
 
 	battle->use_switch(true, Switch(1_bi));
+	battle->foe_has(
+		Species::Pikachu,
+		"Pikachu"sv,
+		Level(100_bi),
+		Gender::genderless,
+		MaxVisibleHP(100_bi)
+	);
 	battle->use_switch(false, Switch(1_bi));
 
 	CHECK(battle->is_end_of_turn());
@@ -190,8 +202,8 @@ TEST_CASE("Handle replacing two fainted Pokemon new generation", "[ClientBattle]
 			},
 		},
 		{
-			{.species = Species::Gengar},
-			{.species = Species::Pikachu},
+			.team_size = 2_bi,
+			.species = Species::Gengar,
 		}
 	);
 
@@ -211,6 +223,13 @@ TEST_CASE("Handle replacing two fainted Pokemon new generation", "[ClientBattle]
 	CHECK(!battle->is_end_of_turn());
 
 	battle->use_switch(true, Switch(1_bi));
+	battle->foe_has(
+		Species::Pikachu,
+		"Pikachu"sv,
+		Level(100_bi),
+		Gender::genderless,
+		MaxVisibleHP(100_bi)
+	);
 	battle->use_switch(false, Switch(1_bi));
 
 	CHECK(!battle->is_end_of_turn());
