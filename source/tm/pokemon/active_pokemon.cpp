@@ -928,7 +928,7 @@ public:
 
 	constexpr auto set_hp(Environment const environment, auto const new_hp) const -> void {
 		this->m_pokemon.set_hp(new_hp);
-		if (new_hp != 0_bi) {
+		if (new_hp > 0_bi) {
 			activate_pinch_item(environment);
 		} else {
 			this->m_flags.last_used_move.faint();
