@@ -20,7 +20,6 @@ import tm.move.switch_;
 import tm.move.used_move;
 
 import tm.pokemon.any_pokemon;
-import tm.pokemon.faint;
 import tm.pokemon.find_required_pokemon_index;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
