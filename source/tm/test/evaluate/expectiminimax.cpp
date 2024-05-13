@@ -51,6 +51,9 @@ import bounded;
 import containers;
 import std_module;
 
+
+import tm.move.legal_selections;
+
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
@@ -708,6 +711,55 @@ auto determine_best_selection2(Team<generation> const & ai, Team<generation> con
 	return *containers::max_element(selections, [](ScoredSelection const lhs, ScoredSelection const rhs) {
 		return lhs.score > rhs.score;
 	});
+}
+
+TEST_CASE("Pokemon might get locked into move and faint in same turn", "[expectiminimax]") {
+	constexpr auto generation = Generation::one;
+	constexpr auto evaluate = Evaluate<generation>({
+		0_bi,
+		0_bi,
+		0_bi,
+		0_bi,
+		0_bi
+	});
+	auto environment = Environment();
+	auto ai = Team<generation>({{
+		{
+			.species = Species::Tauros,
+			.moves = {{
+				MoveName::Hyper_Beam,
+			}}
+		},
+		{
+			.species = Species::Magikarp,
+			.moves = {{
+				MoveName::Splash,
+			}}
+		},
+	}});
+	ai.pokemon().switch_in(environment, true);
+
+	auto foe = Team<generation>({{
+		{
+			.species = Species::Snorlax,
+			.moves = {{
+				MoveName::Body_Slam,
+			}}
+		},
+	}});
+	foe.pokemon().switch_in(environment, true);
+	
+	ai.pokemon().set_hp(environment, 52_bi);
+
+	constexpr auto ai_selections = LegalSelections({MoveName::Hyper_Beam});
+	constexpr auto foe_selections = LegalSelections({MoveName::Body_Slam});
+
+	expectiminimax(
+		State<generation>(foe, ai, environment, Depth(1_bi, 1_bi)),
+		foe_selections,
+		ai_selections,
+		evaluate
+	);
 }
 
 TEST_CASE("expectiminimax OHKO", "[score_selections]") {
