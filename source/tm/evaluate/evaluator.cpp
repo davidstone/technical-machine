@@ -75,6 +75,11 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
+template<Generation generation>
+constexpr auto is_fainted(Team<generation> const & team) -> bool {
+	return team.pokemon().hp().current() == 0_bi;
+}
+
 constexpr auto is_damaging(Selection const selection) -> bool {
 	return tv::visit(selection, tv::overload(
 		[](Switch) { return false; },
@@ -458,9 +463,6 @@ private:
 		if (auto const won = win(state.ai, state.foe)) {
 			return *won + double(state.depth.general);
 		}
-		auto is_fainted = [](Team<generation> const & team) {
-			return team.pokemon().hp().current() == 0_bi;
-		};
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
 			return max_score(m_repond_to_foe_actions(
 				state,
