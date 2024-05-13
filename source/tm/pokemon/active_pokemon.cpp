@@ -960,7 +960,10 @@ public:
 	}
 
 	constexpr auto successfully_use_move(MoveName const move) const {
-		this->m_flags.last_used_move.successful_move(move);
+		BOUNDED_ASSERT(move == MoveName::Struggle or containers::any_equal(this->regular_moves(), move));
+		if (this->hp().current() != 0_bi) {
+			this->m_flags.last_used_move.successful_move(move);
+		}
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);
