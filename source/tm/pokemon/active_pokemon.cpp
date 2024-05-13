@@ -813,11 +813,11 @@ public:
 			this->m_pokemon.set_status(StatusName::poison);
 		}
 		this->m_flags.status.set(this->m_pokemon.status().name());
-		if (this->item(environment) == Item::Berserk_Gene) {
-			activate_berserk_gene(*this, environment);
-		}
 		if (!replacing_fainted_or_initial_switch) {
 			this->m_flags.last_used_move.use_switch();
+		}
+		if (this->item(environment) == Item::Berserk_Gene) {
+			activate_berserk_gene(*this, environment);
 		}
 	}
 
