@@ -44,20 +44,63 @@ export struct LastUsedMove {
 
 	constexpr auto reset_end_of_turn() & -> void {
 		m_moved_this_turn = false;
-		tv::visit(m_effects, [&]<typename T>(T) {
-			if constexpr (std::same_as<T, Protecting>) {
-				m_effects = Empty();
-			}
-		});
 	}
 
 	constexpr auto unsuccessful_move(MoveName const move) & -> void {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
 		m_moved_this_turn = true;
+		m_effects = Empty();
 	}
 
 	constexpr auto successful_move(MoveName const move) & -> void {
+		tv::visit(m_effects, tv::overload(
+			[&](Empty) {
+				switch (move) {
+					case MoveName::Blast_Burn:
+					case MoveName::Eternabeam:
+					case MoveName::Frenzy_Plant:
+					case MoveName::Giga_Impact:
+					case MoveName::Hydro_Cannon:
+					case MoveName::Hyper_Beam:
+					case MoveName::Meteor_Assault:
+					case MoveName::Roar_of_Time:
+					case MoveName::Rock_Wrecker:
+						m_effects = Recharging();
+						break;
+					case MoveName::Outrage:
+					case MoveName::Petal_Dance:
+					case MoveName::Thrash: {
+						// TODO: Have it be active when it is constructed
+						auto rampage = Rampage();
+						rampage.activate();
+						m_effects = rampage;
+						break;
+					}
+					case MoveName::Uproar: {
+						// TODO: Have it be active when it is constructed
+						auto counter = UproarCounter();
+						counter.advance_one_turn();
+						m_effects = counter;
+						break;
+					}
+					default:
+						break;
+				}
+			},
+			[&](UproarCounter & uproar) {
+				if (!successful_last_move(move)) {
+					throw std::runtime_error("Tried to use a move while locked into Uproar");
+				}
+				uproar.advance_one_turn();
+			},
+			[&](auto) {
+				if (!successful_last_move(move)) {
+					throw std::runtime_error("Tried to use a move while locked into another move");
+				}
+			}
+		));
+
 		if (m_move == move) {
 			saturating_increment(m_consecutive_successes);
 		} else {
@@ -65,67 +108,25 @@ export struct LastUsedMove {
 			m_consecutive_successes = 1_bi;
 		}
 		m_moved_this_turn = true;
-		switch (move) {
-			case MoveName::Detect:
-			case MoveName::Protect:
-				tv::visit(m_effects, tv::overload(
-					[&](Empty) {
-						m_effects = Protecting();
-					},
-					[](auto) {
-						throw std::runtime_error("Tried to use Protect while locked into another move");
-					}
-				));
-				break;
-			case MoveName::Outrage:
-			case MoveName::Petal_Dance:
-			case MoveName::Thrash:
-				tv::visit(m_effects, tv::overload(
-					[&](Empty) {
-						// TODO: Have it be active when it is constructed
-						auto rampage = Rampage();
-						rampage.activate();
-						m_effects = rampage;
-					},
-					[](Rampage) {
-					},
-					[](auto) {
-						// TODO: Assert instead?
-						throw std::runtime_error("Tried to use a rampage move while locked into another move");
-					}
-				));
-				break;
-			case MoveName::Uproar:
-				tv::visit(m_effects, tv::overload(
-					[&](Empty) {
-						// TODO: Have it be active when it is constructed
-						auto counter = UproarCounter();
-						counter.advance_one_turn();
-						m_effects = counter;
-					},
-					[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-					[](auto) { std::unreachable(); }
-				));
-				break;
-			default:
-				break;
-		}
 	}
 
 	// Not for the initial switch in or replacing fainted
 	constexpr auto use_switch() & {
 		m_move = tv::none;
 		m_moved_this_turn = true;
+		m_effects = Empty();
 	}
 
 	constexpr auto hit_self() & -> void {
 		m_move = tv::none;
 		m_moved_this_turn = true;
+		m_effects = Empty();
 	}
 
 	constexpr auto faint() & -> void {
 		m_move = tv::none;
 		m_moved_this_turn = true;
+		m_effects = Empty();
 	}
 
 	constexpr auto moved_this_turn() const {
@@ -144,7 +145,7 @@ export struct LastUsedMove {
 				return tv::optional<CurrentHP>(result);
 			},
 			[&](auto) {
-				m_effects = Bide{};
+				m_effects = Bide();
 				return tv::optional<CurrentHP>();
 			}
 		));
@@ -162,7 +163,7 @@ export struct LastUsedMove {
 	}
 	constexpr auto use_charge_up_move() & -> void {
 		BOUNDED_ASSERT(!locked_in_by_move());
-		m_effects = ChargingUp{};
+		m_effects = ChargingUp();
 	}
 
 	constexpr auto is_delayed_switching() const -> bool {
@@ -220,7 +221,6 @@ export struct LastUsedMove {
 		));
 	}
 
-
 	constexpr auto locked_on() const {
 		return
 			successful_last_move(MoveName::Lock_On) or
@@ -245,7 +245,10 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto is_protecting() const -> bool {
-		return m_effects.index() == bounded::type<Protecting>;
+		return moved_this_turn() and (
+			successful_last_move(MoveName::Detect) or
+			successful_last_move(MoveName::Protect)
+		);
 	}
 	constexpr auto break_protect() & -> void {
 		if (is_protecting()) {
@@ -258,12 +261,6 @@ export struct LastUsedMove {
 			[&](Recharging) { m_effects = Empty(); return true; },
 			[](auto const &) { return false; }
 		));
-	}
-	constexpr auto use_recharge_move() & -> void {
-		if (locked_in_by_move()) {
-			throw std::runtime_error("Used Recharge move while locked in by move");
-		}
-		m_effects = Recharging();
 	}
 
 	constexpr auto is_roosting() const {
@@ -345,12 +342,6 @@ private:
 			return 0_bi;
 		}
 	};
-	struct Protecting {
-		friend auto operator==(Protecting, Protecting) -> bool = default;
-		friend constexpr auto compress(Protecting) -> bounded::constant_t<0> {
-			return 0_bi;
-		}
-	};
 	struct Recharging {
 		friend auto operator==(Recharging, Recharging) -> bool = default;
 		friend constexpr auto compress(Recharging) -> bounded::constant_t<0> {
@@ -376,7 +367,6 @@ private:
 		Empty,
 		Bide,
 		ChargingUp,
-		Protecting,
 		Rampage,
 		Recharging,
 		UproarCounter,

@@ -1470,18 +1470,10 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().fully_trap();
 			});
-		case MoveName::Blast_Burn:
-		case MoveName::Eternabeam:
-		case MoveName::Frenzy_Plant:
-		case MoveName::Giga_Impact:
-		case MoveName::Hydro_Cannon:
 		case MoveName::Hyper_Beam:
-		case MoveName::Meteor_Assault:
-		case MoveName::Roar_of_Time:
-		case MoveName::Rock_Wrecker:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
-				if (generation >= Generation::two or other.pokemon().hp().current() != 0_bi) {
-					user.pokemon().use_recharge_move();
+				if (generation == Generation::one and other.pokemon().hp().current() == 0_bi) {
+					user.pokemon().recharge();
 				}
 			});
 		case MoveName::Bug_Bite:
@@ -1806,6 +1798,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Behemoth_Bash:
 		case MoveName::Behemoth_Blade:
 		case MoveName::Bestow:
+		case MoveName::Blast_Burn:
 		case MoveName::Body_Press:
 		case MoveName::Bolt_Beak:
 		case MoveName::Bone_Rush:
@@ -1856,6 +1849,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Endure:
 		case MoveName::Entrainment:
 		case MoveName::Eruption:
+		case MoveName::Eternabeam:
 		case MoveName::Expanding_Force:
 		case MoveName::Extreme_Speed:
 		case MoveName::Facade:
@@ -1873,6 +1867,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Flip_Turn:
 		case MoveName::Focus_Punch:
 		case MoveName::Foul_Play:
+		case MoveName::Frenzy_Plant:
 		case MoveName::Frost_Breath:
 		case MoveName::Frustration:
 		case MoveName::Fury_Attack:
@@ -1881,6 +1876,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Fusion_Bolt:
 		case MoveName::Fusion_Flare:
 		case MoveName::Gear_Grind:
+		case MoveName::Giga_Impact:
 		case MoveName::Glacial_Lance:
 		case MoveName::Glaciate:
 		case MoveName::Grass_Knot:
@@ -1901,6 +1897,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Horn_Attack:
 		case MoveName::Horn_Drill:
 		case MoveName::Horn_Leech:
+		case MoveName::Hydro_Cannon:
 		case MoveName::Hydro_Pump:
 		case MoveName::Hyper_Voice:
 		case MoveName::Ice_Shard:
@@ -1938,6 +1935,7 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Mega_Punch:
 		case MoveName::Megahorn:
 		case MoveName::Metal_Burst:
+		case MoveName::Meteor_Assault:
 		case MoveName::Metronome:
 		case MoveName::Mind_Reader:
 		case MoveName::Mirror_Coat:
@@ -1976,8 +1974,10 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Revenge:
 		case MoveName::Reversal:
 		case MoveName::Rising_Voltage:
+		case MoveName::Roar_of_Time:
 		case MoveName::Rock_Blast:
 		case MoveName::Rock_Throw:
+		case MoveName::Rock_Wrecker:
 		case MoveName::Round:
 		case MoveName::Sacred_Sword:
 		case MoveName::Scratch:
