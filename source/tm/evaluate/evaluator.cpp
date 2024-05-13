@@ -550,8 +550,12 @@ private:
 				return execute_switch(state, select, switch_, continuation);
 			},
 			[&](MoveName const selected) {
+				auto const & team = select(state).team;
+				if (team.pokemon().hp().current() == 0_bi) {
+					return continuation(state);
+				}
 				double score = 0.0;
-				auto const executed_moves = possible_executed_moves(selected, select(state).team);
+				auto const executed_moves = possible_executed_moves(selected, team);
 				for (auto const executed : executed_moves) {
 					score += execute_move(
 						state,
