@@ -732,7 +732,7 @@ public:
 		auto const was_active = is_active();
 		this->m_flags.perish_song.advance_one_turn();
 		if (was_active and !is_active()) {
-			faint(this->m_pokemon);
+			faint(*this);
 		}
 	}
 	constexpr auto activate_power_trick() const {

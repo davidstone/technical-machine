@@ -14,10 +14,6 @@ import bounded;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export constexpr auto faint(any_pokemon auto & pokemon) -> void {
-	pokemon.set_hp(0_bi);
-}
-
 export constexpr auto faint(any_mutable_active_pokemon auto const pokemon) -> void {
 	pokemon.set_hp(Environment(), 0_bi);
 }
