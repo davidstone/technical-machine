@@ -277,6 +277,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 template<any_team UserTeam>
 auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+	BOUNDED_ASSERT(user.pokemon().hp().current() != 0_bi);
 	try_use_move(user, move, other, other_action, environment, clear_status, actual_damage, is_fully_paralyzed);
 	end_of_attack(user.pokemon(), other.pokemon(), environment);
 }
