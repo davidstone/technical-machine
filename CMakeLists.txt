@@ -71,6 +71,7 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/extreme_element_value.cpp
 		source/tm/evaluate/load_evaluate.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
+		source/tm/evaluate/predict_random_selection.cpp
 		source/tm/evaluate/predict_selection.cpp
 		source/tm/evaluate/predicted.cpp
 		source/tm/evaluate/random_selection.cpp

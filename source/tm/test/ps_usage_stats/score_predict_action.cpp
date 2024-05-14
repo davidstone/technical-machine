@@ -18,6 +18,7 @@ import tm.clients.party;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.predicted;
+import tm.evaluate.predict_random_selection;
 import tm.evaluate.predict_selection;
 
 import tm.move.move_name;
@@ -94,20 +95,6 @@ struct PredictedSelection {
 	SlotMemory slot_memory;
 };
 
-struct SelectionTypeCount {
-	double switch_ = 0.0;
-	double move = 0.0;
-	double pass = 0.0;
-
-	friend constexpr auto operator+(SelectionTypeCount const lhs, SelectionTypeCount const rhs) -> SelectionTypeCount {
-		return SelectionTypeCount(
-			lhs.switch_ + rhs.switch_,
-			lhs.move + rhs.move,
-			lhs.pass + rhs.pass
-		);
-	}
-};
-
 auto get_predicted_selection(
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats,
@@ -129,55 +116,9 @@ auto get_predicted_selection(
 					state.environment
 				);
 				if constexpr (false) {
-					auto const selection_size = containers::size(selections);
-					return AllPredicted(containers::transform(
-						selections,
-						[=](Selection const selection) {
-							return Predicted(selection, 1.0 / double(selection_size));
-						}
-					));
+					return predict_random_selection(selections);
 				} else {
-					auto const type_count = containers::sum(containers::transform(
-						selections,
-						[](Selection const selection) {
-							return tv::visit(selection, tv::overload(
-								[](Switch) {
-									return SelectionTypeCount(1.0, 0.0, 0.0);
-								},
-								[](MoveName) {
-									return SelectionTypeCount(0.0, 1.0, 0.0);
-								},
-								[](Pass) {
-									return SelectionTypeCount(0.0, 0.0, 1.0);
-								}
-							));
-						}
-					));
-					auto const local_switch_probability = type_count.move == 0.0 ? 1.0 : switch_probability;
-					return AllPredicted(containers::transform(
-						selections,
-						[=](Selection const selection) {
-							auto const probability = tv::visit(selection, tv::overload(
-								[&](Switch) {
-									return local_switch_probability / type_count.switch_;
-								},
-								[&](MoveName) {
-									return (1.0 - local_switch_probability) / type_count.move;
-								},
-								[&](Pass) {
-									auto const valid = 
-										type_count.switch_ == 0.0 and
-										type_count.move == 0.0 and
-										type_count.pass == 1.0;
-									if (!valid) {
-										throw std::runtime_error("Yikes");
-									}
-									return 1.0;
-								}
-							));
-							return Predicted(selection, probability);
-						}
-					));
+					return predict_random_selection(selections, switch_probability);
 				}
 			}
 		};
