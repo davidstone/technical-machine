@@ -286,6 +286,21 @@ private:
 		}
 	}
 
+	constexpr explicit SeenPokemon(bounded::tombstone_tag, auto const make):
+		m_nickname(),
+		m_regular_moves(make()),
+		m_species(),
+		m_item(bounded::tombstone_traits<HeldItem>::make(0_bi)),
+		m_ability(),
+		m_gender(),
+		m_nature(),
+		m_status(),
+		m_level(bounded::tombstone_traits<Level>::make(0_bi)),
+		m_hp(CurrentVisibleHP(0_bi), MaxVisibleHP(100_bi)),
+		m_stats(bounded::tombstone_traits<Stats<stat_style_for(generation)>>::make(0_bi))
+	{
+	}
+
 	Nickname m_nickname;
 	RegularMoves m_regular_moves;
 
@@ -306,9 +321,16 @@ private:
 	Stats<stat_style_for(generation)> m_stats;
 
 	// TODO: Possible Hidden Power types
+
+	friend bounded::tombstone_traits<SeenPokemon<generation>>;
+	friend bounded::tombstone_traits_composer<&SeenPokemon<generation>::m_regular_moves>;
 };
 
 template<Generation generation>
 constexpr auto is_seen_pokemon<SeenPokemon<generation>> = true;
 
 } // namespace technicalmachine
+
+template<technicalmachine::Generation generation>
+struct bounded::tombstone_traits<technicalmachine::SeenPokemon<generation>> : bounded::tombstone_traits_composer<&technicalmachine::SeenPokemon<generation>::m_regular_moves> {
+};
