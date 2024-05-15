@@ -17,6 +17,7 @@ import tm.clients.ps.slot_memory;
 import tm.clients.party;
 
 import tm.evaluate.all_evaluate;
+import tm.evaluate.depth;
 import tm.evaluate.predicted;
 import tm.evaluate.predict_random_selection;
 import tm.evaluate.predict_selection;
@@ -61,26 +62,66 @@ using namespace bounded::literal;
 using namespace ps;
 using namespace ps_usage_stats;
 
+struct RandomSelection {
+};
+
+struct RandomWeightedSelection {
+	double switch_probability;
+};
+
+struct AI {
+	Depth depth;
+};
+
+using SelectionStrategy = tv::variant<
+	RandomSelection,
+	RandomWeightedSelection,
+	AI
+>;
+
 struct ParsedArgs {
 	ThreadCount thread_count;
 	std::filesystem::path input_directory;
+	SelectionStrategy selection_strategy;
 };
 
-double switch_probability;
-
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
-	if (argc != 4) {
-		throw std::runtime_error("Usage is score_predict_selection thread_count input_directory");
+	if (argc < 4) {
+		throw std::runtime_error("Usage is score_predict_selection thread_count input_directory selection_strategy");
 	}
 	auto const thread_count = bounded::to_integer<ThreadCount>(argv[1]);
 	auto input_directory = std::filesystem::path(argv[2]);
 	if (!std::filesystem::exists(input_directory)) {
 		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"sv));
 	}
-	switch_probability = std::stod(argv[3]);
+	auto const selection_strategy = [=] -> SelectionStrategy {
+		auto const name = std::string_view(argv[3]);
+		if (name == "random"sv) {
+			if (argc != 4) {
+				throw std::runtime_error("random strategy accepts no arguments");
+			}
+			return SelectionStrategy(RandomSelection());
+		} else if (name == "random_weighted"sv) {
+			if (argc != 5) {
+				throw std::runtime_error("random_weighted strategy requires probability argument");
+			}
+			return SelectionStrategy(RandomWeightedSelection(std::stod(argv[4])));
+		} else if (name == "ai"sv) {
+			if (argc != 6) {
+				throw std::runtime_error("ai strategy requires two depth arguments");
+			}
+			return SelectionStrategy(AI(Depth(
+				bounded::to_integer<DepthInt>(argv[4]),
+				bounded::to_integer<DepthInt>(argv[5])
+			)));
+		} else {
+			throw std::runtime_error("Selection strategy must be one of random, random_weighted, or ai");
+		}
+	}();
 	return ParsedArgs{
 		thread_count,
-		std::move(input_directory)
+		std::move(input_directory),
+		selection_strategy
 	};
 }
 
@@ -96,32 +137,39 @@ struct PredictedSelection {
 };
 
 auto get_predicted_selection(
+	SelectionStrategy const & selection_strategy,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats,
 	AllEvaluate const & evaluate
 ) {
 	return [&](BattleMessage const & message) -> tv::optional<PredictedSelection> {
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
-			if constexpr (false) {
-				return get_both_selections(
-					Team<generation>(state.ai),
-					most_likely_team(all_usage_stats[generation], state.foe),
-					state.environment,
-					evaluate.get<generation>(),
-					Depth(1_bi, 1_bi)
-				).predicted;
-			} else {
-				auto const selections = get_legal_selections(
-					Team<generation>(state.ai),
-					most_likely_team(all_usage_stats[generation], state.foe),
+			auto const user_team = Team<generation>(state.ai);
+			auto const predicted_team = most_likely_team(all_usage_stats[generation], state.foe);
+			auto selections = [&] {
+				return get_legal_selections(
+					user_team,
+					predicted_team,
 					state.environment
 				);
-				if constexpr (false) {
-					return predict_random_selection(selections);
-				} else {
-					return predict_random_selection(selections, switch_probability);
+			};
+			return tv::visit(selection_strategy, tv::overload(
+				[&](RandomSelection) {
+					return predict_random_selection(selections());
+				},
+				[&](RandomWeightedSelection const strategy) {
+					return predict_random_selection(selections(), strategy.switch_probability);
+				},
+				[&](AI const strategy) {
+					return get_both_selections(
+						user_team,
+						predicted_team,
+						state.environment,
+						evaluate.get<generation>(),
+						strategy.depth
+					).predicted;
 				}
-			}
+			));
 		};
 		auto const battle_result = tv::visit(message, tv::overload(
 			[](ps::CreateBattle) -> BattleManager::Result {
@@ -187,6 +235,7 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 }
 
 auto predicted_selections(
+	SelectionStrategy const & selection_strategy,
 	std::span<BattleMessage const> const battle_messages,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats,
@@ -194,7 +243,7 @@ auto predicted_selections(
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
 		std::move(battle_messages),
-		get_predicted_selection(battle, all_usage_stats, evaluate)
+		get_predicted_selection(selection_strategy, battle, all_usage_stats, evaluate)
 	));
 }
 
@@ -230,6 +279,7 @@ auto print_actual(auto && all_actual) {
 }
 
 auto print_all(
+	SelectionStrategy const selection_strategy,
 	AllUsageStats const & all_usage_stats,
 	AllEvaluate const & evaluate,
 	RatedSide const & rated_side,
@@ -239,7 +289,7 @@ auto print_all(
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 	auto range = containers::zip_smallest(
-		predicted_selections(battle_messages, battle, all_usage_stats, evaluate),
+		predicted_selections(selection_strategy, battle_messages, battle, all_usage_stats, evaluate),
 		containers::filter(player_inputs, is_input_for(rated_side.side.party))
 	);
 	auto const last = containers::end(std::move(range));
@@ -253,18 +303,19 @@ auto print_all(
 }
 
 auto score_one_side_of_battle(
+	SelectionStrategy const selection_strategy,
 	AllUsageStats const & all_usage_stats,
 	AllEvaluate const & evaluate,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
 	std::span<PlayerInput const> const player_inputs
 ) -> WeightedScore {
-	//print_all(all_usage_stats, evaluate, rated_side, battle_messages, player_inputs);
+	//print_all(selection_strategy, all_usage_stats, evaluate, rated_side, battle_messages, player_inputs);
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 	auto const scores = containers::vector(containers::transform(
 		containers::zip_smallest(
-			predicted_selections(battle_messages, battle, all_usage_stats, evaluate),
+			predicted_selections(selection_strategy, battle_messages, battle, all_usage_stats, evaluate),
 			containers::filter(player_inputs, is_input_for(rated_side.side.party))
 		),
 		individual_brier_score
@@ -272,7 +323,7 @@ auto score_one_side_of_battle(
 	return weighted_score(scores);
 }
 
-auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory) -> double {
+auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, SelectionStrategy const selection_strategy) -> double {
 	auto score = std::atomic<WeightedScore>();
 	{
 		auto const all_evaluate = AllEvaluate();
@@ -295,6 +346,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 						});
 						auto const individual = containers::sum(containers::transform(sides, [&](RatedSide const & rated_side) {
 							return score_one_side_of_battle(
+								selection_strategy,
 								all_usage_stats,
 								all_evaluate,
 								rated_side,
@@ -324,7 +376,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 auto main(int argc, char ** argv) -> int {
 	using namespace technicalmachine;
 	auto const args = parse_args(argc, argv);
-	auto const result = score_predict_selection(args.thread_count, args.input_directory);
+	auto const result = score_predict_selection(args.thread_count, args.input_directory, args.selection_strategy);
 	std::cout << "Brier score: " << result << '\n';
 	return 0;
 }
