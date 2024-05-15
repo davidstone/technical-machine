@@ -225,6 +225,10 @@ struct Battle {
 			auto const user_pokemon = user_team.pokemon();
 			auto const other_pokemon = other_team.pokemon();
 
+			if (user_pokemon.hp().current() == 0_bi) {
+				throw std::runtime_error("Tried to use a move with 0 HP");
+			}
+
 			// TODO: Handle the other states better
 			auto const move = tv::visit(move_result, tv::overload(
 				[](Used const used) {
