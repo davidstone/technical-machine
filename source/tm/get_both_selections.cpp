@@ -33,7 +33,7 @@ struct BothActions {
 };
 
 export template<Generation generation>
-auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate) -> BothActions {
+auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> BothActions {
 	auto const team_selections = get_legal_selections(team, other, environment);
 	auto const other_selections = get_legal_selections(other, team, environment);
 	auto predicted = predict_selection(
@@ -43,14 +43,14 @@ auto get_both_selections(Team<generation> const & team, Team<generation> const &
 		other_selections,
 		environment,
 		evaluate,
-		Depth(1_bi, 1_bi)
+		depth
 	);
 	return BothActions(predicted, other_selections);
 }
 
 #define INSTANTIATE(generation) \
-	extern template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate) -> BothActions; \
-	template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate) -> BothActions
+	extern template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth) -> BothActions; \
+	template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth) -> BothActions
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

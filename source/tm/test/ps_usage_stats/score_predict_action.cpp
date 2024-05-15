@@ -107,7 +107,8 @@ auto get_predicted_selection(
 					Team<generation>(state.ai),
 					most_likely_team(all_usage_stats[generation], state.foe),
 					state.environment,
-					evaluate.get<generation>()
+					evaluate.get<generation>(),
+					Depth(1_bi, 1_bi)
 				).predicted;
 			} else {
 				auto const selections = get_legal_selections(
