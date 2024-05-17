@@ -52,7 +52,7 @@ auto predict_selection(Team<generation> const & ai, Team<generation> const & foe
 		get_legal_selections(foe, ai, environment),
 		environment,
 		evaluate,
-		Depth(1_bi, 1_bi)
+		Depth(1_bi, 0_bi)
 	);
 }
 

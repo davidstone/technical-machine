@@ -120,7 +120,7 @@ auto determine_selection(
 		state.ai,
 		state.environment,
 		evaluate,
-		Depth(1_bi, 1_bi)
+		Depth(1_bi, 0_bi)
 	);
 	containers::sort(foe_moves, [](Predicted const lhs, Predicted const rhs) {
 		return lhs.probability > rhs.probability;

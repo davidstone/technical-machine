@@ -68,7 +68,7 @@ struct ScoreMovesEvaluator {
 				ai_selections,
 				state.environment,
 				evaluate,
-				Depth(1_bi, 1_bi)
+				Depth(1_bi, 0_bi)
 			),
 			evaluate,
 			std::move(function)
