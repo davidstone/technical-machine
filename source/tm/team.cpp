@@ -77,10 +77,10 @@ struct TeamImpl {
 	{
 	}
 
-	constexpr auto all_pokemon() const -> auto const & {
+	constexpr auto all_pokemon() const [[clang::lifetimebound]] -> auto const & {
 		return m_all_pokemon;
 	}
-	constexpr auto all_pokemon() -> auto & {
+	constexpr auto all_pokemon() [[clang::lifetimebound]] -> auto & {
 		return m_all_pokemon;
 	}
 	constexpr auto flags() const {
@@ -93,16 +93,16 @@ struct TeamImpl {
 		return m_wish;
 	}
 
-	constexpr auto pokemon() const {
+	constexpr auto pokemon() const [[clang::lifetimebound]] {
 		return AnyActivePokemon<PokemonType>(all_pokemon()(), m_flags);
 	}
-	constexpr auto pokemon() {
+	constexpr auto pokemon() [[clang::lifetimebound]] {
 		return AnyMutableActivePokemon<PokemonType>(all_pokemon()(), m_flags);
 	}
-	constexpr auto pokemon(TeamIndex const index) const -> PokemonType const & {
+	constexpr auto pokemon(TeamIndex const index) const [[clang::lifetimebound]] -> PokemonType const & {
 		return all_pokemon()(index);
 	}
-	constexpr auto pokemon(TeamIndex const index) -> PokemonType & {
+	constexpr auto pokemon(TeamIndex const index) [[clang::lifetimebound]] -> PokemonType & {
 		return all_pokemon()(index);
 	}
 
@@ -117,7 +117,7 @@ struct TeamImpl {
 		}
 	}
 
-	constexpr auto add_pokemon(PokemonType pokemon) -> PokemonType & requires any_seen_pokemon<PokemonType> {
+	constexpr auto add_pokemon(PokemonType pokemon) [[clang::lifetimebound]] -> PokemonType & requires any_seen_pokemon<PokemonType> {
 		return all_pokemon().add(std::move(pokemon));
 	}
 
