@@ -43,7 +43,7 @@ using namespace std::string_view_literals;
 // TODO: Make this compatible with Pokemon Showdown
 
 constexpr auto percent_to_string(double const value) -> containers::string {
-	BOUNDED_ASSERT(0.0 <= value <= 100.0);
+	BOUNDED_ASSERT(0.0 <= value and value <= 100.0);
 	auto const integer_part = bounded::check_in_range(
 		static_cast<std::uint64_t>(value),
 		0_bi,
