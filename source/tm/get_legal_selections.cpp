@@ -5,6 +5,7 @@
 
 module;
 
+#include <bounded/assert.hpp>
 #include <operators/forward.hpp>
 
 export module tm.get_legal_selections;
@@ -142,6 +143,7 @@ constexpr auto get_legal_selections(
 		return LegalSelections({pass});
 	}
 	if (auto const move = last_used_move.locked_in_by_move()) {
+		BOUNDED_ASSERT(containers::any_equal(user_pokemon.regular_moves(), *move));
 		return LegalSelections({*move});
 	}
 	auto const other_pokemon = other.pokemon();
