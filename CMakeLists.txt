@@ -267,6 +267,7 @@ target_sources(tm_common PUBLIC
 		source/tm/ability_blocks_switching.cpp
 		source/tm/ability_blocks_weather.cpp
 		source/tm/activate_ability_on_switch.cpp
+		source/tm/all_selections_valid.cpp
 		source/tm/any_team.cpp
 		source/tm/apply_entry_hazards.cpp
 		source/tm/associated_team.cpp

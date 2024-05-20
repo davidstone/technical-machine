@@ -3,6 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <bounded/assert.hpp>
+
 export module tm.evaluate.expectiminimax;
 
 import tm.evaluate.depth;
@@ -19,6 +23,7 @@ import tm.move.move_name;
 import tm.move.pass;
 import tm.move.selection;
 
+import tm.all_selections_valid;
 import tm.environment;
 import tm.generation;
 
@@ -60,9 +65,10 @@ struct ExpectiminimaxEvaluator {
 	}
 };
 
-
 export template<Generation generation>
 auto expectiminimax(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredSelections {
+	BOUNDED_ASSERT(all_selections_valid(state.ai, ai_selections));
+	BOUNDED_ASSERT(all_selections_valid(state.foe, foe_selections));
 	if (auto const score = win(state.ai, state.foe)) {
 		return ScoredSelections({ScoredSelection(pass, *score)});
 	}
