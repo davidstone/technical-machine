@@ -70,6 +70,7 @@ import tm.heal;
 import tm.held_item;
 import tm.item;
 import tm.rational;
+import tm.visible_hp;
 
 import bounded;
 import containers;
@@ -279,6 +280,9 @@ public:
 
 	constexpr auto hp() const {
 		return m_pokemon.hp();
+	}
+	constexpr auto visible_hp() const -> VisibleHP requires any_seen_pokemon<PokemonType> {
+		return this->m_pokemon.visible_hp();
 	}
 	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_pokemon.stat(stat_name);
