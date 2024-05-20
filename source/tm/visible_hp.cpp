@@ -8,6 +8,8 @@ export module tm.visible_hp;
 import tm.stat.current_hp;
 import tm.stat.max_hp;
 
+import bounded;
+
 namespace technicalmachine {
 
 export struct CurrentVisibleHP {
@@ -21,6 +23,13 @@ export struct CurrentVisibleHP {
 	}
 
 	friend constexpr auto operator<=>(CurrentVisibleHP, CurrentVisibleHP) = default;
+	friend constexpr auto operator==(CurrentVisibleHP, CurrentVisibleHP) -> bool = default;
+	friend constexpr auto operator<=>(CurrentVisibleHP const lhs, bounded::constant_t<0> const rhs) {
+		return lhs.m_value <=> rhs;
+	}
+	friend constexpr auto operator==(CurrentVisibleHP const lhs, bounded::constant_t<0> const rhs) -> bool {
+		return lhs.m_value == rhs;
+	}
 
 private:
 	CurrentHP m_value;
