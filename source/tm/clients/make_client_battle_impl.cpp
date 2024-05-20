@@ -162,9 +162,6 @@ struct ClientBattleImpl final : ClientBattle {
 		}
 	}
 
-	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, TeamIndex const team_index) & -> void final {
-		m_battle.correct_hp(is_ai, visible_hp, team_index);
-	}
 	auto correct_hp(bool const is_ai, VisibleHP const visible_hp) & -> void final {
 		m_battle.correct_hp(is_ai, visible_hp);
 	}

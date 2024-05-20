@@ -312,9 +312,9 @@ struct Battle {
 	}
 
 	// TODO: What happens here if a Pokemon has a pinch item?
-	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) & -> void {
-		apply_to_teams(is_ai, [=]<any_team TeamType>(TeamType & team, auto const &) {
-			auto & pokemon = team.all_pokemon()(maybe_index...);
+	auto correct_hp(bool const is_ai, VisibleHP const visible_hp) & -> void {
+		apply_to_teams(is_ai, [&]<any_team TeamType>(TeamType & team, auto const &) {
+			auto const pokemon = team.pokemon();
 			if constexpr (any_seen_team<TeamType>) {
 				auto const original_hp = pokemon.visible_hp();
 				auto const current_hp = original_hp.current;
@@ -322,12 +322,12 @@ struct Battle {
 				if (!hp_acceptable) {
 					std::cerr << "Seen HP out of sync with server messages. Expected " << current_hp.value() << " but received " << visible_hp.current.value() << '\n';
 				}
-				pokemon.set_hp(visible_hp.current);
+				pokemon.set_hp(m_environment, visible_hp.current);
 			} else {
 				static_assert(any_known_team<TeamType>);
 				if (pokemon.hp().current() != visible_hp.current.value()) {
 					std::cerr << "Known HP out of sync with server messages. Expected " << pokemon.hp().current() << " but received " << visible_hp.current.value() << " (max of " << pokemon.hp().max() << ")\n";
-					pokemon.set_hp(visible_hp.current.value());
+					pokemon.set_hp(m_environment, visible_hp.current.value());
 					//throw std::runtime_error("ahh");
 				}
 			}

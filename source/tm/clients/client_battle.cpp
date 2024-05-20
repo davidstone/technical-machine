@@ -73,7 +73,6 @@ export struct ClientBattle {
 	// For a correct implementation of a correct protocol, these functions have
 	// no effect.
 
-	virtual auto correct_hp(bool is_ai, VisibleHP, TeamIndex) & -> void = 0;
 	virtual auto correct_hp(bool is_ai, VisibleHP) & -> void = 0;
 
 	virtual auto correct_status(bool is_ai, StatusName, TeamIndex) & -> void = 0;
