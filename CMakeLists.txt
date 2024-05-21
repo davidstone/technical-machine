@@ -26,6 +26,8 @@ target_compile_definitions(Boost::headers INTERFACE
 	BOOST_CHRONO_HEADER_ONLY
 )
 
+find_package(OpenSSL REQUIRED)
+
 find_package(TBB REQUIRED)
 
 add_library(nlohmann_json INTERFACE IMPORTED)
@@ -535,6 +537,7 @@ target_link_libraries(tm_pokemon_showdown
 	bounded
 	concurrent
 	containers
+	OpenSSL::SSL
 	tm_common
 	tm_clients
 	strict_defaults
