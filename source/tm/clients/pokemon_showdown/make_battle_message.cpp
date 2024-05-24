@@ -75,7 +75,7 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 			throw std::runtime_error("Error message contains too much data");
 		}
 		return ErrorMessage(first_message.remainder());
-	} else if (matches("t:"sv, "inactive"sv, "inactiveoff"sv)) {
+	} else if (matches("raw"sv, "t:"sv, "inactive"sv, "inactiveoff"sv)) {
 		return tv::none;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
