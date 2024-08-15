@@ -7,19 +7,12 @@ module;
 
 #include <std_module/prelude.hpp>
 
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/ssl.hpp>
-
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/ssl.hpp>
-#include <boost/beast/websocket.hpp>
-
+#include <openssl/err.h>
 #include <openssl/ssl.h>
 
 export module tm.clients.ps.sockets;
+
+import tm.boost_networking;
 
 import containers;
 import std_module;
@@ -31,7 +24,6 @@ using namespace std::string_view_literals;
 namespace http = boost::beast::http;
 using tcp = boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
-using Websocket = boost::beast::websocket::stream<boost::beast::ssl_stream<tcp::socket>>;
 
 auto make_ssl_context() -> ssl::context {
     auto context = ssl::context(ssl::context::tlsv13_client);
@@ -69,7 +61,7 @@ export struct Sockets {
 
 	auto read_message() -> std::string_view {
 		m_buffer.consume(static_cast<std::size_t>(-1));
-		m_websocket.read(m_buffer);
+		websocket_read(m_websocket, m_buffer);
 
 		auto const asio_buffer = m_buffer.data();
 		auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
@@ -78,7 +70,7 @@ export struct Sockets {
 	}
 
 	auto write_message(std::string_view const message) -> void {
-		m_websocket.write(boost::asio::buffer(message));
+		websocket_write(m_websocket, boost::asio::buffer(message));
 	}
 
 	auto authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {

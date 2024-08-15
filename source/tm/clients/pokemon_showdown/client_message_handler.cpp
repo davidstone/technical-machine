@@ -50,7 +50,7 @@ import tm.string_conversions.move_name;
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.all_usage_stats;
 
-import tm.boost_beast_http;
+import tm.boost_networking;
 import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;

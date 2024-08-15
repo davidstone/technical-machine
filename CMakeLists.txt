@@ -276,7 +276,7 @@ target_sources(tm_common PUBLIC
 		source/tm/battle.cpp
 		source/tm/bit_view.cpp
 		source/tm/blocks_selection_and_execution.cpp
-		source/tm/boost_beast_http.cpp
+		source/tm/boost_networking.cpp
 		source/tm/buffer_view.cpp
 		source/tm/bytes_in_file.cpp
 		source/tm/can_execute_move.cpp
@@ -338,6 +338,7 @@ target_link_libraries(tm_common
 	Boost::headers
 	bounded
 	containers
+	OpenSSL::SSL
 	nlohmann_json
 	strict_defaults
 )
@@ -537,7 +538,6 @@ target_link_libraries(tm_pokemon_showdown
 	bounded
 	concurrent
 	containers
-	OpenSSL::SSL
 	tm_common
 	tm_clients
 	strict_defaults

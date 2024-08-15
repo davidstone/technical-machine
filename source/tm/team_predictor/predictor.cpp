@@ -6,12 +6,11 @@
 #include <std_module/prelude.hpp>
 #include <iostream>
 
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/io_context.hpp>
-
 import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.connection;
 import tm.team_predictor.parser;
+
+import tm.boost_networking;
 
 import std_module;
 

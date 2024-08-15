@@ -3,15 +3,9 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-
 export module tm.team_predictor.connection;
 
-import tm.boost_beast_http;
+import tm.boost_networking;
 import tm.team_predictor.generate_team_builder_ui;
 import tm.team_predictor.mutable_buffer;
 
