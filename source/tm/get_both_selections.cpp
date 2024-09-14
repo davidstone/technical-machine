@@ -48,11 +48,4 @@ auto get_both_selections(Team<generation> const & team, Team<generation> const &
 	return BothActions(predicted, other_selections);
 }
 
-#define INSTANTIATE(generation) \
-	extern template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth) -> BothActions; \
-	template auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth) -> BothActions
-
-TM_FOR_EACH_GENERATION(INSTANTIATE);
-
-
 } // namespace technicalmachine
