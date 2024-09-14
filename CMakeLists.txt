@@ -18,8 +18,11 @@ endif()
 
 enable_testing()
 
-find_package(Boost REQUIRED)
-target_compile_definitions(Boost::headers INTERFACE
+add_library(boost INTERFACE IMPORTED)
+if(DEFINED Boost_INCLUDE_DIR)
+	target_include_directories(boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}")
+endif()
+target_compile_definitions(boost INTERFACE
 	BOOST_ASIO_NO_DEPRECATED
 	BOOST_BEAST_USE_STD_STRING_VIEW
 	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
@@ -335,7 +338,7 @@ target_sources(tm_common PRIVATE
 	source/tm/team_predictor/team_predictor_impl.cpp
 )
 target_link_libraries(tm_common
-	Boost::headers
+	boost
 	bounded
 	containers
 	OpenSSL::SSL
@@ -534,7 +537,7 @@ target_sources(tm_pokemon_showdown PRIVATE
 	source/tm/clients/pokemon_showdown/to_packed_format_impl.cpp
 )
 target_link_libraries(tm_pokemon_showdown
-	Boost::headers
+	boost
 	bounded
 	concurrent
 	containers
