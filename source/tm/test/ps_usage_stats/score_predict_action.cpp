@@ -315,7 +315,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 		auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
 		auto queue = concurrent::basic_blocking_queue<std::deque<std::filesystem::path>>(1000);
 		auto workers = containers::dynamic_array<std::jthread>(containers::generate_n(thread_count, [&] {
-			return bounded::no_lazy_construction(std::jthread([&](std::stop_token token) {
+			return std::jthread([&](std::stop_token token) {
 				while (auto input_file = queue.pop_one(token)) {
 					try {
 						auto const json = load_json_from_file(*input_file);
@@ -345,7 +345,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 						std::cerr << "Unable to process " << input_file->string() << ": " << ex.what() << ", skipping\n";
 					}
 				}
-			}));
+			});
 		}));
 		for (auto file : files_in_directory(input_directory)) {
 			queue.push(std::move(file));

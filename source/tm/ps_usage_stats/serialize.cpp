@@ -38,6 +38,7 @@ constexpr auto write_bytes(std::ostream & stream, T const & value, auto const ex
 	static_assert(!std::is_empty_v<T>);
 	static_assert(std::is_trivial_v<T>);
 	static_assert(sizeof(value) == expected_size);
+	static_assert(std::endian::native == std::endian::little);
 	stream.write(reinterpret_cast<char const *>(std::addressof(value)), sizeof(value));
 }
 
