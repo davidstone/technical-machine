@@ -32,4 +32,4 @@ jobs:
     - uses: davidstone/cmake_strict_defaults@main
       with:
         dependencies: 'libtbb-dev'
-        cmake_args: '-DBoost_INCLUDE_DIR="${{github.workspace}}/../boost" -DCMAKE_CXX_FLAGS="-Og"'
+        cmake_args: '-DBoost_INCLUDE_DIR="${{github.workspace}}/../boost/include" -DCMAKE_CXX_FLAGS="-Og"'
