@@ -6,6 +6,10 @@
 #include <std_module/prelude.hpp>
 #include <string_view>
 
+import tm.action_prediction.predict_max_damage_selection;
+import tm.action_prediction.predict_random_selection;
+import tm.action_prediction.predicted;
+
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
@@ -17,9 +21,6 @@ import tm.clients.ps.slot_memory;
 import tm.clients.party;
 
 import tm.evaluate.depth;
-import tm.evaluate.predicted;
-import tm.evaluate.predict_max_damage_selection;
-import tm.evaluate.predict_random_selection;
 
 import tm.move.move_name;
 import tm.move.pass;

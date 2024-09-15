@@ -3,9 +3,9 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.evaluate.predict_max_damage_selection;
+export module tm.action_prediction.predict_max_damage_selection;
 
-import tm.evaluate.predicted;
+import tm.action_prediction.predicted;
 
 import tm.move.calculate_damage;
 import tm.move.damage_type;

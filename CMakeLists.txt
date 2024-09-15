@@ -62,6 +62,10 @@ target_sources(tm_common PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/action_prediction/predict_max_damage_selection.cpp
+		source/tm/action_prediction/predict_random_selection.cpp
+		source/tm/action_prediction/predicted.cpp
+
 		source/tm/bide/bide.cpp
 		source/tm/bide/damage.cpp
 		source/tm/bide/duration.cpp
@@ -76,9 +80,6 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/extreme_element_value.cpp
 		source/tm/evaluate/load_evaluate.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
-		source/tm/evaluate/predict_max_damage_selection.cpp
-		source/tm/evaluate/predict_random_selection.cpp
-		source/tm/evaluate/predicted.cpp
 		source/tm/evaluate/random_selection.cpp
 		source/tm/evaluate/score_selections.cpp
 		source/tm/evaluate/scored_selection.cpp

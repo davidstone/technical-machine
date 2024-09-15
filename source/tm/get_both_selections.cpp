@@ -5,8 +5,9 @@
 
 export module tm.get_both_selections;
 
-import tm.evaluate.predicted;
-import tm.evaluate.predict_random_selection;
+import tm.action_prediction.predicted;
+
+import tm.action_prediction.predict_random_selection;
 
 import tm.move.legal_selections;
 

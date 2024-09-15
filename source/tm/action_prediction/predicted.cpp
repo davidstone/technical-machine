@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.evaluate.predicted;
+export module tm.action_prediction.predicted;
 
 import tm.move.legal_selections;
 import tm.move.selection;

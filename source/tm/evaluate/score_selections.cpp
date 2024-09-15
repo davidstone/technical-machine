@@ -9,8 +9,9 @@ module;
 
 export module tm.evaluate.score_selections;
 
+import tm.action_prediction.predicted;
+
 import tm.evaluate.evaluate;
-import tm.evaluate.predicted;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 
