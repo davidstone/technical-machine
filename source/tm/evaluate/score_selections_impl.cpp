@@ -14,7 +14,6 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.predicted;
 import tm.evaluate.predict_random_selection;
-import tm.evaluate.predict_selection;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 import tm.evaluate.win;

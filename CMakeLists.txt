@@ -78,7 +78,6 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/possible_executed_moves.cpp
 		source/tm/evaluate/predict_max_damage_selection.cpp
 		source/tm/evaluate/predict_random_selection.cpp
-		source/tm/evaluate/predict_selection.cpp
 		source/tm/evaluate/predicted.cpp
 		source/tm/evaluate/random_selection.cpp
 		source/tm/evaluate/score_selections.cpp
@@ -331,7 +330,6 @@ target_sources(tm_common PUBLIC
 		source/tm/wish.cpp
 )
 target_sources(tm_common PRIVATE
-	source/tm/evaluate/predict_selection_impl.cpp
 	source/tm/evaluate/score_selections_impl.cpp
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
@@ -669,7 +667,6 @@ target_sources(tm_test PRIVATE
 
 	source/tm/test/evaluate/evaluate.cpp
 	source/tm/test/evaluate/expectiminimax.cpp
-	source/tm/test/evaluate/predict_selection.cpp
 
 	source/tm/test/move/call_move.cpp
 
