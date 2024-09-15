@@ -3,16 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.get_both_selections;
 
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
 import tm.evaluate.predicted;
-import tm.evaluate.predict_selection;
+import tm.evaluate.predict_random_selection;
 
 import tm.move.legal_selections;
 
@@ -33,18 +27,10 @@ struct BothActions {
 };
 
 export template<Generation generation>
-auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> BothActions {
+auto get_both_selections(Team<generation> const & team, Team<generation> const & other, Environment const environment) -> BothActions {
 	auto const team_selections = get_legal_selections(team, other, environment);
 	auto const other_selections = get_legal_selections(other, team, environment);
-	auto predicted = predict_selection(
-		team,
-		team_selections,
-		other,
-		other_selections,
-		environment,
-		evaluate,
-		depth
-	);
+	auto predicted = predict_random_selection(team_selections, 0.164);
 	return BothActions(predicted, other_selections);
 }
 

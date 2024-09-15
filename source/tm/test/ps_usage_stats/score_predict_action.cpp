@@ -174,13 +174,15 @@ auto get_predicted_selection(
 					return predict_max_damage_selection(user_team, predicted_team, state.environment);
 				},
 				[&](AI const strategy) {
-					return get_both_selections(
+					return predict_selection(
 						user_team,
+						get_legal_selections(user_team, predicted_team, state.environment),
 						predicted_team,
+						get_legal_selections(predicted_team, user_team, state.environment),
 						state.environment,
 						evaluate.get<generation>(),
 						strategy.depth
-					).predicted;
+					);
 				}
 			));
 		};

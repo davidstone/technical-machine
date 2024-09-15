@@ -13,6 +13,7 @@ import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.predicted;
+import tm.evaluate.predict_random_selection;
 import tm.evaluate.predict_selection;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
@@ -61,15 +62,7 @@ struct ScoreMovesEvaluator {
 		return ScoreMovesEvaluator()(
 			state,
 			ai_selections,
-			predict_selection(
-				state.foe,
-				foe_selections,
-				state.ai,
-				ai_selections,
-				state.environment,
-				evaluate,
-				Depth(1_bi, 0_bi)
-			),
+			predict_random_selection(foe_selections, 0.164),
 			evaluate,
 			std::move(function)
 		);
