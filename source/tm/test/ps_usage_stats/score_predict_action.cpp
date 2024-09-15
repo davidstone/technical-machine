@@ -19,6 +19,7 @@ import tm.clients.party;
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 import tm.evaluate.predicted;
+import tm.evaluate.predict_max_damage_selection;
 import tm.evaluate.predict_random_selection;
 import tm.evaluate.predict_selection;
 
@@ -69,6 +70,9 @@ struct RandomWeightedSelection {
 	double switch_probability;
 };
 
+struct MaxDamageSelection {
+};
+
 struct AI {
 	Depth depth;
 };
@@ -76,6 +80,7 @@ struct AI {
 using SelectionStrategy = tv::variant<
 	RandomSelection,
 	RandomWeightedSelection,
+	MaxDamageSelection,
 	AI
 >;
 
@@ -106,6 +111,11 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 				throw std::runtime_error("random_weighted strategy requires probability argument");
 			}
 			return SelectionStrategy(RandomWeightedSelection(std::stod(argv[4])));
+		} else if (name == "max_damage"sv) {
+			if (argc != 4) {
+				throw std::runtime_error("max_damage strategy accepts no arguments");
+			}
+			return SelectionStrategy(MaxDamageSelection());
 		} else if (name == "ai"sv) {
 			if (argc != 6) {
 				throw std::runtime_error("ai strategy requires two depth arguments");
@@ -115,7 +125,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 				bounded::to_integer<DepthInt>(argv[5])
 			)));
 		} else {
-			throw std::runtime_error("Selection strategy must be one of random, random_weighted, or ai");
+			throw std::runtime_error("Selection strategy must be one of random, random_weighted, max_damage, or ai");
 		}
 	}();
 	return ParsedArgs{
@@ -159,6 +169,9 @@ auto get_predicted_selection(
 				},
 				[&](RandomWeightedSelection const strategy) {
 					return predict_random_selection(selections(), strategy.switch_probability);
+				},
+				[&](MaxDamageSelection) {
+					return predict_max_damage_selection(user_team, predicted_team, state.environment);
 				},
 				[&](AI const strategy) {
 					return get_both_selections(
