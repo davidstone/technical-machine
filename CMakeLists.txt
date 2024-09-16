@@ -330,6 +330,7 @@ target_sources(tm_common PUBLIC
 		source/tm/visible_state.cpp
 		source/tm/weather.cpp
 		source/tm/wish.cpp
+		source/tm/write_bytes.cpp
 )
 target_sources(tm_common PRIVATE
 	source/tm/evaluate/score_selections_impl.cpp

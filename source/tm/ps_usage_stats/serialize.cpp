@@ -24,6 +24,7 @@ import tm.string_conversions.species;
 import tm.ability;
 import tm.generation;
 import tm.item;
+import tm.write_bytes;
 
 import bounded;
 import containers;
@@ -32,15 +33,6 @@ import std_module;
 namespace technicalmachine::ps_usage_stats {
 namespace {
 using namespace bounded::literal;
-
-template<typename T>
-constexpr auto write_bytes(std::ostream & stream, T const & value, auto const expected_size) {
-	static_assert(!std::is_empty_v<T>);
-	static_assert(std::is_trivial_v<T>);
-	static_assert(sizeof(value) == expected_size);
-	static_assert(std::endian::native == std::endian::little);
-	stream.write(reinterpret_cast<char const *>(std::addressof(value)), sizeof(value));
-}
 
 template<typename Key>
 struct HasUsage {
