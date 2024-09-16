@@ -33,6 +33,7 @@ constexpr auto to_string_impl(TeamType const & team) -> containers::string {
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),
+			member.species() == team.pokemon().species() ? "* "sv : ""sv,
 			to_string(member),
 			containers::array{'\n'}
 		);
