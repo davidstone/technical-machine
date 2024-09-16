@@ -7,6 +7,7 @@ export module tm.clients.determine_selection;
 
 import tm.action_prediction.predicted;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.score_selections;
@@ -22,6 +23,7 @@ import tm.string_conversions.move_name;
 import tm.string_conversions.species;
 import tm.string_conversions.team;
 
+import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
@@ -146,24 +148,22 @@ auto determine_selection(
 export auto determine_selection(
 	GenerationGeneric<VisibleState> const & generic_state,
 	std::ostream & stream,
-	UsageStats const & usage_stats,
-	GenerationGeneric<Evaluate> const generic_evaluate,
+	AllUsageStats const & all_usage_stats,
+	AllEvaluate const & all_evaluate,
 	Depth const depth
 ) -> Selection {
-	return tv::visit(generic_state, generic_evaluate, tv::overload(
-		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> Selection {
+	return tv::visit(
+		generic_state,
+		[&]<Generation generation>(VisibleState<generation> const & state) -> Selection {
 			return determine_selection(
 				state,
 				stream,
-				usage_stats,
-				evaluate,
+				all_usage_stats[generation],
+				all_evaluate.get<generation>(),
 				depth
 			);
-		},
-		[](auto const &, auto) -> Selection {
-			std::unreachable();
 		}
-	));
+	);
 }
 
 } // namespace technicalmachine

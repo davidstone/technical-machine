@@ -115,27 +115,6 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 	stream << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 }
 
-auto determine_selection(
-	GenerationGeneric<VisibleState> const & generic_state,
-	std::ostream & stream,
-	AllEvaluate const all_evaluate,
-	AllUsageStats const & all_usage_stats,
-	Depth const depth
-) -> Selection {
-	return tv::visit(
-		generic_state,
-		[&]<Generation generation>(VisibleState<generation> const & state) -> Selection {
-			return determine_selection(
-				state,
-				stream,
-				all_usage_stats[generation],
-				all_evaluate.get<generation>(),
-				depth
-			);
-		}
-	);
-}
-
 export struct ClientMessageHandler {
 	ClientMessageHandler(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
@@ -243,8 +222,8 @@ private:
 		auto const action = determine_selection(
 			state,
 			analysis_logger,
-			m_evaluate,
 			m_all_usage_stats,
+			m_evaluate,
 			m_depth
 		);
 		tv::visit(action, tv::overload(

@@ -53,15 +53,13 @@ struct Evaluator {
 	template<typename T>
 	auto operator()(T const & value, std::ostream & logger) const {
 		if constexpr (bounded::convertible_to<T, ps::ActionRequired>) {
-			tv::visit(value.state, [&]<Generation generation>(VisibleState<generation> const & state) {
-				determine_selection(
-					state,
-					logger,
-					m_all_usage_stats[generation],
-					m_all_evaluate.get<generation>(),
-					depth
-				);
-			});
+			determine_selection(
+				value.state,
+				logger,
+				m_all_usage_stats,
+				m_all_evaluate,
+				depth
+			);
 		}
 	}
 private:
