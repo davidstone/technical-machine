@@ -5,12 +5,9 @@
 
 export module tm.clients.determine_selection;
 
-import tm.action_prediction.predicted;
-
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.score_selections;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 
@@ -18,6 +15,10 @@ import tm.move.move_name;
 import tm.move.pass;
 import tm.move.selection;
 import tm.move.switch_;
+
+import tm.strategy.expectimax;
+import tm.strategy.random_selection;
+import tm.strategy.weighted_selection;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;
@@ -29,7 +30,7 @@ import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.generation_generic;
-import tm.get_both_selections;
+import tm.get_legal_selections;
 import tm.team;
 import tm.visible_state;
 
@@ -71,11 +72,11 @@ auto log_move_scores(
 template<Generation generation>
 auto log_foe_move_probabilities(
 	std::ostream & stream,
-	AllPredicted const all_predicted,
+	WeightedSelections const all_predicted,
 	Team<generation> const & foe
 ) -> void {
 	for (auto const predicted : all_predicted) {
-		stream << "Predicted " << predicted.probability * 100.0 << "% chance: ";
+		stream << "Predicted " << predicted.weight * 100.0 << "% chance: ";
 		log_selection(stream, predicted.selection, foe);
 		stream << '\n';
 	}
@@ -115,21 +116,21 @@ auto determine_selection(
 	log_team("Predicted Foe", state.foe);
 	stream << std::flush;
 
-	stream << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
+	auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);
+
 	auto const start = std::chrono::steady_clock::now();
 
-	auto [foe_moves, ai_selections] = get_both_selections(
-		state.foe,
-		state.ai,
-		state.environment
+	auto foe_moves = random_selection(
+		get_legal_selections(state.foe, state.ai, state.environment),
+		0.164
 	);
-	containers::sort(foe_moves, [](Predicted const lhs, Predicted const rhs) {
-		return lhs.probability > rhs.probability;
+	containers::sort(foe_moves, [](WeightedSelection const lhs, WeightedSelection const rhs) {
+		return lhs.weight > rhs.weight;
 	});
 	log_foe_move_probabilities(stream, foe_moves, state.foe);
 	stream << std::flush;
 
-	auto scored_selections = score_selections(
+	auto scored_selections = expectimax(
 		state,
 		ai_selections,
 		foe_moves,

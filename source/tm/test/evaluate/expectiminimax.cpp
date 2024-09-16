@@ -12,7 +12,6 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
 import tm.evaluate.expectiminimax;
 import tm.evaluate.scored_selection;
-import tm.evaluate.score_selections;
 import tm.evaluate.state;
 import tm.evaluate.victory;
 

@@ -7,9 +7,7 @@ module;
 
 #include <tm/for_each_generation.hpp>
 
-export module tm.evaluate.score_selections;
-
-import tm.action_prediction.predicted;
+export module tm.strategy.expectimax;
 
 import tm.evaluate.evaluate;
 import tm.evaluate.scored_selection;
@@ -17,15 +15,17 @@ import tm.evaluate.state;
 
 import tm.move.legal_selections;
 
+import tm.strategy.weighted_selection;
+
 import tm.generation;
 
 namespace technicalmachine {
 
 export template<Generation generation>
-auto score_selections(State<generation> const &, LegalSelections ai_selections, AllPredicted foe_selections, Evaluate<generation>) -> ScoredSelections;
+auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto score_selections(State<generation> const &, LegalSelections ai_selections, AllPredicted foe_selections, Evaluate<generation>) -> ScoredSelections
+	extern template auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 

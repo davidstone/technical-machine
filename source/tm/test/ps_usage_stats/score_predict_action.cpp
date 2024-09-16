@@ -6,11 +6,6 @@
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-import tm.action_prediction.predict_max_damage_selection;
-import tm.action_prediction.predict_random_selection;
-import tm.action_prediction.predict_statistical_selection;
-import tm.action_prediction.predicted;
-
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
@@ -20,8 +15,6 @@ import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
-
-import tm.evaluate.depth;
 
 import tm.move.move_name;
 import tm.move.pass;
@@ -38,12 +31,16 @@ import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
 
+import tm.strategy.max_damage;
+import tm.strategy.random_selection;
+import tm.strategy.statistical;
+import tm.strategy.weighted_selection;
+
 import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
 import tm.generation;
-import tm.get_both_selections;
 import tm.get_legal_selections;
 import tm.load_json_from_file;
 import tm.open_file;
@@ -141,7 +138,7 @@ constexpr auto is_input_for(Party const party) {
 }
 
 struct PredictedSelection {
-	AllPredicted predicted;
+	WeightedSelections predicted;
 	SlotMemory slot_memory;
 };
 
@@ -163,16 +160,16 @@ auto get_predicted_selection(
 			};
 			return tv::visit(selection_strategy, tv::overload(
 				[&](RandomSelection) {
-					return predict_random_selection(selections());
+					return random_selection(selections());
 				},
 				[&](RandomWeightedSelection const strategy) {
-					return predict_random_selection(selections(), strategy.switch_probability);
+					return random_selection(selections(), strategy.switch_probability);
 				},
 				[&](MaxDamageSelection) {
-					return predict_max_damage_selection(user_team, predicted_team, state.environment);
+					return max_damage(user_team, predicted_team, state.environment);
 				},
 				[&](StatisticalSelection const & strategy) {
-					return predict_statistical_selection(
+					return statistical(
 						user_team,
 						predicted_team,
 						state.environment,
@@ -195,7 +192,7 @@ auto get_predicted_selection(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
-				if (selection.predicted == AllPredicted({{pass, 1.0}})) {
+				if (selection.predicted == WeightedSelections({{pass, 1.0}})) {
 					return tv::none;
 				}
 				return selection;
@@ -216,9 +213,9 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 			return Switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
-	auto score_prediction = [&](Predicted const predicted) {
+	auto score_prediction = [&](WeightedSelection const predicted) {
 		auto const actual_probability = actual == predicted.selection ? 1.0 : 0.0;
-		auto const value = predicted.probability - actual_probability;
+		auto const value = predicted.weight - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));
@@ -275,7 +272,7 @@ auto print_predicted(auto && all_predicted) {
 			[](MoveName const move) { std::cerr << to_string(move); },
 			[](Pass) { std::cerr << "Pass"; }
 		));
-		std::cerr << ": " << predicted.probability << '\n';
+		std::cerr << ": " << predicted.weight << '\n';
 	}
 }
 

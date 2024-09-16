@@ -7,12 +7,8 @@ module;
 
 #include <tm/for_each_generation.hpp>
 
-module tm.evaluate.score_selections;
+module tm.strategy.expectimax;
 
-import tm.action_prediction.predict_random_selection;
-import tm.action_prediction.predicted;
-
-import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.scored_selection;
@@ -23,6 +19,9 @@ import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.pass;
 import tm.move.selection;
+
+import tm.strategy.statistical;
+import tm.strategy.weighted_selection;
 
 import tm.environment;
 import tm.generation;
@@ -45,24 +44,42 @@ auto parallel_sum(auto && range) {
 
 template<Generation generation>
 struct ScoreMovesEvaluator {
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, AllPredicted const foe_selections, Evaluate<generation>, auto const function) -> ScoredSelections {
+	static constexpr auto operator()(
+		State<generation> const & state,
+		LegalSelections const ai_selections,
+		WeightedSelections const foe_selections,
+		Evaluate<generation>,
+		auto const function
+	) -> ScoredSelections {
 		return ScoredSelections(containers::transform(ai_selections, [&](Selection const ai_selection) {
 			return ScoredSelection(
 				ai_selection,
 				parallel_sum(containers::transform(
 					foe_selections,
-					[&](Predicted const predicted) {
-						return predicted.probability * function(state, ai_selection, predicted.selection);
+					[&](WeightedSelection const predicted) {
+						return predicted.weight * function(state, ai_selection, predicted.selection);
 					}
 				))
 			);
 		}));
 	}
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredSelections {
+	static constexpr auto operator()(
+		State<generation> const & state,
+		LegalSelections const ai_selections,
+		LegalSelections,
+		SelectionWeights const & selection_weights,
+		Evaluate<generation> const evaluate,
+		auto const function
+	) -> ScoredSelections {
 		return ScoreMovesEvaluator()(
 			state,
 			ai_selections,
-			predict_random_selection(foe_selections, 0.164),
+			statistical(
+				state.foe,
+				state.ai,
+				state.environment,
+				selection_weights
+			),
 			evaluate,
 			std::move(function)
 		);
@@ -70,7 +87,7 @@ struct ScoreMovesEvaluator {
 };
 
 template<Generation generation>
-auto score_selections(State<generation> const & state, LegalSelections const ai_selections, AllPredicted const foe_selections, Evaluate<generation> const evaluate) -> ScoredSelections {
+auto expectimax(State<generation> const & state, LegalSelections const ai_selections, WeightedSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredSelections {
 	if (auto const score = win(state.ai, state.foe)) {
 		return ScoredSelections({ScoredSelection(pass, *score)});
 	}
@@ -83,7 +100,7 @@ auto score_selections(State<generation> const & state, LegalSelections const ai_
 }
 
 #define INSTANTIATE(generation) \
-	template auto score_selections(State<generation> const &, LegalSelections ai_selections, AllPredicted foe_selections, Evaluate<generation>) -> ScoredSelections
+	template auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

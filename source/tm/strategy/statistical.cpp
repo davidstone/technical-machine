@@ -7,9 +7,7 @@ module;
 
 #include <bounded/assert.hpp>
 
-export module tm.action_prediction.predict_statistical_selection;
-
-import tm.action_prediction.predicted;
+export module tm.strategy.statistical;
 
 import tm.move.legal_selections;
 import tm.move.move_name;
@@ -18,6 +16,8 @@ import tm.move.selection;
 import tm.move.switch_;
 
 import tm.pokemon.species;
+
+import tm.strategy.weighted_selection;
 
 import tm.environment;
 import tm.generation;
@@ -121,22 +121,17 @@ export auto read_selection_weights_from_file(std::istream & stream) -> std::uniq
 	return weights;
 }
 
-struct WeightedSelection {
-	Selection selection;
-	double weight;
-};
-
 // This models a player that uses moves based on how often the move was used in
 // that match-up in the historical logs. So if Tauros uses Body Slam against
 // Starmie 26% of the time, then Body Slam is given a weight of 0.26 when up
 // against a Starmie.
 export template<Generation generation>
-constexpr auto predict_statistical_selection(
+constexpr auto statistical(
 	Team<generation> const & user,
 	Team<generation> const & other,
 	Environment const environment,
 	SelectionWeights const & weights
-) -> AllPredicted {
+) -> WeightedSelections {
 	auto const legal_selections = get_legal_selections(user, other, environment);
 
 	auto const user_species = user.pokemon().species();
@@ -167,12 +162,12 @@ constexpr auto predict_statistical_selection(
 
 	auto const cummulative_weight = containers::sum(containers::transform(weighted_selections, &WeightedSelection::weight));
 
-	return AllPredicted(containers::transform(weighted_selections, [&](WeightedSelection const value) {
+	return WeightedSelections(containers::transform(weighted_selections, [&](WeightedSelection const value) {
 		auto const probability = cummulative_weight != 0.0 ?
 			value.weight / cummulative_weight :
 			1.0 / double(containers::size(weighted_selections));
 		BOUNDED_ASSERT(0.0 <= probability and probability <= 1.0);
-		return Predicted(value.selection, probability);
+		return WeightedSelection(value.selection, probability);
 	}));
 }
 

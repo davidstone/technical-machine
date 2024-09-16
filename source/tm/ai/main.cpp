@@ -8,8 +8,6 @@ import tm.ai.print_sizes;
 
 import tm.clients.ps.client;
 
-import tm.evaluate.depth;
-
 import tm.environment;
 import tm.get_directory;
 import tm.load_settings_file;

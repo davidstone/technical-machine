@@ -62,11 +62,6 @@ target_sources(tm_common PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		source/tm/action_prediction/predict_max_damage_selection.cpp
-		source/tm/action_prediction/predict_random_selection.cpp
-		source/tm/action_prediction/predict_statistical_selection.cpp
-		source/tm/action_prediction/predicted.cpp
-
 		source/tm/bide/bide.cpp
 		source/tm/bide/damage.cpp
 		source/tm/bide/duration.cpp
@@ -82,7 +77,6 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/load_evaluate.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
 		source/tm/evaluate/random_selection.cpp
-		source/tm/evaluate/score_selections.cpp
 		source/tm/evaluate/scored_selection.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
@@ -227,6 +221,12 @@ target_sources(tm_common PUBLIC
 		source/tm/status/team_has_status.cpp
 		source/tm/status/toxic_resets_on_switch.cpp
 	
+		source/tm/strategy/expectimax.cpp
+		source/tm/strategy/max_damage.cpp
+		source/tm/strategy/random_selection.cpp
+		source/tm/strategy/statistical.cpp
+		source/tm/strategy/weighted_selection.cpp
+
 		source/tm/string_conversions/ability.cpp
 		source/tm/string_conversions/from_string.cpp
 		source/tm/string_conversions/gender.cpp
@@ -305,7 +305,6 @@ target_sources(tm_common PUBLIC
 		source/tm/held_item.cpp
 		source/tm/initial_team.cpp
 		source/tm/item.cpp
-		source/tm/get_both_selections.cpp
 		source/tm/get_legal_selections.cpp
 		source/tm/nlohmann_json.cpp
 		source/tm/load_json_from_file.cpp
@@ -336,9 +335,9 @@ target_sources(tm_common PUBLIC
 		source/tm/write_bytes.cpp
 )
 target_sources(tm_common PRIVATE
-	source/tm/evaluate/score_selections_impl.cpp
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
+	source/tm/strategy/expectimax_impl.cpp
 	source/tm/string_conversions/team_impl.cpp
 	source/tm/team_predictor/team_predictor_impl.cpp
 )

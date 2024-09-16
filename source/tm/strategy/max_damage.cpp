@@ -3,9 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.action_prediction.predict_max_damage_selection;
-
-import tm.action_prediction.predicted;
+export module tm.strategy.max_damage;
 
 import tm.move.calculate_damage;
 import tm.move.damage_type;
@@ -22,6 +20,8 @@ import tm.move.selection;
 import tm.move.switch_;
 
 import tm.pokemon.get_hidden_power_type;
+
+import tm.strategy.weighted_selection;
 
 import tm.type.move_type;
 
@@ -45,7 +45,7 @@ struct SelectionAndDamage {
 };
 
 export template<Generation generation>
-constexpr auto predict_max_damage_selection(Team<generation> const & user, Team<generation> const & other, Environment const environment) -> AllPredicted {
+constexpr auto max_damage(Team<generation> const & user, Team<generation> const & other, Environment const environment) -> WeightedSelections {
 	auto const legal_selections = get_legal_selections(user, other, environment);
 
 	auto const scores = containers::make_static_vector(containers::transform(
@@ -103,7 +103,7 @@ constexpr auto predict_max_damage_selection(Team<generation> const & user, Team<
 		}
 	);
 
-	return AllPredicted({Predicted(best->selection, 1.0)});
+	return WeightedSelections({{best->selection, 1.0}});
 }
 
 } // namespace technicalmachine
