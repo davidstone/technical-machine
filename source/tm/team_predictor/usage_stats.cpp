@@ -20,6 +20,7 @@ import tm.team_predictor.usage_stats_probabilities;
 import tm.ability;
 import tm.generation;
 import tm.item;
+import tm.read_bytes;
 
 import bounded;
 import containers;
@@ -34,27 +35,17 @@ struct FileReader {
 		m_stream(stream)
 	{
 	}
-	auto read(auto const size) {
-		auto buffer = containers::array<std::byte, size>();
-		auto const ptr = reinterpret_cast<char *>(std::addressof(buffer));
-		m_stream.read(ptr, static_cast<std::streamsize>(size));
-		return buffer;
-	}
-	auto is_done() const {
-		return m_stream.eof();
+	template<typename T>
+	auto read() {
+		return read_bytes<T>(m_stream);
 	}
 private:
 	std::istream & m_stream;
 };
 
-template<typename T>
-auto read_as(FileReader & reader) {
-	return std::bit_cast<T>(reader.read(bounded::size_of<T>));
-}
-
 template<bounded::bounded_integer T>
 auto checked_read(FileReader & reader) {
-	return bounded::check_in_range<T>(read_as<typename T::underlying_type>(reader));
+	return bounded::check_in_range<T>(reader.read<typename T::underlying_type>());
 }
 
 template<typename T> requires std::is_enum_v<T>
@@ -64,7 +55,7 @@ auto checked_read(FileReader & reader) {
 
 template<std::floating_point T>
 auto checked_read(FileReader & reader) {
-	auto const value = read_as<T>(reader);
+	auto const value = reader.read<T>();
 	if (value < 0.0 or !std::isfinite(value)) {
 		throw std::runtime_error("Invalid floating point value");
 	}
@@ -95,7 +86,7 @@ auto read_map(FileReader & reader) {
 }
 
 auto checked_header_read(FileReader & reader) -> void {
-	auto str = reader.read(containers::size(usage_stats_magic_string));
+	auto str = reader.read<decltype(usage_stats_magic_string)>();
 	if (str != usage_stats_magic_string) {
 		throw std::runtime_error("Invalid magic string");
 	}

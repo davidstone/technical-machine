@@ -314,6 +314,7 @@ target_sources(tm_common PUBLIC
 		source/tm/other_team.cpp
 		source/tm/property_tree.cpp
 		source/tm/rational.cpp
+		source/tm/read_bytes.cpp
 		source/tm/saturating_add.cpp
 		source/tm/screen.cpp
 		source/tm/screens.cpp
