@@ -324,7 +324,9 @@ target_sources(tm_common PUBLIC
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
 		source/tm/team_is_empty.cpp
+		source/tm/to_index.cpp
 		source/tm/to_used_move.cpp
+		source/tm/usage_for.cpp
 		source/tm/visible_damage_to_actual_damage.cpp
 		source/tm/visible_hp.cpp
 		source/tm/visible_state.cpp
@@ -529,7 +531,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/rating.cpp
 		source/tm/ps_usage_stats/serialize.cpp
 		source/tm/ps_usage_stats/thread_count.cpp
-		source/tm/ps_usage_stats/to_index.cpp
 		source/tm/ps_usage_stats/usage_stats.cpp
 		source/tm/ps_usage_stats/worker.cpp
 )

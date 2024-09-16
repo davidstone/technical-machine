@@ -17,7 +17,6 @@ import tm.move.move_names;
 import tm.pokemon.species;
 
 import tm.ps_usage_stats.header;
-import tm.ps_usage_stats.to_index;
 
 import tm.stat.calculate_speed;
 import tm.stat.stage;
@@ -26,6 +25,8 @@ import tm.ability;
 import tm.environment;
 import tm.generation_generic;
 import tm.item;
+import tm.to_index;
+import tm.usage_for;
 
 import bounded;
 import concurrent;
@@ -35,9 +36,6 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
-
-template<typename Key, typename Mapped = double>
-using UsageFor = containers::array<Mapped, bounded::number_of<Key>>;
 
 export using SpeedDistribution = UsageFor<InitialSpeed>;
 

@@ -12,7 +12,6 @@ export module tm.ps_usage_stats.serialize;
 import tm.move.move_name;
 
 import tm.ps_usage_stats.header;
-import tm.ps_usage_stats.to_index;
 import tm.ps_usage_stats.usage_stats;
 
 import tm.pokemon.species;
@@ -24,6 +23,7 @@ import tm.string_conversions.species;
 import tm.ability;
 import tm.generation;
 import tm.item;
+import tm.to_index;
 import tm.write_bytes;
 
 import bounded;

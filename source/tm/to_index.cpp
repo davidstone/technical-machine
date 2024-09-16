@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.ps_usage_stats.to_index;
+export module tm.to_index;
 
 import bounded;
 import numeric_traits;
 
-namespace technicalmachine::ps_usage_stats {
+namespace technicalmachine {
 
 export template<typename T>
 constexpr auto to_index(T const value) {
 	return bounded::integer(value) - bounded::constant<numeric_traits::min_value<T>>;
 }
 
-} // namespace technicalmachine::ps_usage_stats
+} // namespace technicalmachine
