@@ -8,11 +8,7 @@ Technical Machine assigns a probability to each of the opponent's possible selec
 
 ## Action Prediction
 
-To estimate the foe's actions, Technical Machine currently runs an expectiminimax algorithm from the foe's perspective and weights by the evaluated score. This is equivalent to the foe trying to maximize their score in a game in which Technical Machine gets to know their selections before it determines its own selections. The worst selection the foe can make as determined by this scoring algorithm is assumed to never be used (unless all selections score the same), and the the remaining selections are weighted by their differences in relative scores.
-
-The exact weighting algorithm is just some arbitrary math. and the ability of this algorithm to predict the actual actions of the foe is quite poor -- it seems to do worse on average than random guessing. It also takes a long time to come up with this answer, which limits Technical Machine's ability to search deeper.
-
-In the near future, Technical Machine will use a much simpler algorithm for action prediction, most likely based on hand-tuned heuristics like "Moves that do more damage are more likely to be used". Longer term, this looks like an area with good potential for traditional machine learning techniques.
+See [Action Prediction](action_prediction.md).
 
 ## Searching the game state
 
