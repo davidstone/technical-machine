@@ -8,6 +8,7 @@
 
 import tm.action_prediction.predict_max_damage_selection;
 import tm.action_prediction.predict_random_selection;
+import tm.action_prediction.predict_statistical_selection;
 import tm.action_prediction.predicted;
 
 import tm.clients.ps.action_required;
@@ -45,6 +46,7 @@ import tm.generation;
 import tm.get_both_selections;
 import tm.get_legal_selections;
 import tm.load_json_from_file;
+import tm.open_file;
 import tm.team;
 import tm.visible_state;
 
@@ -72,10 +74,15 @@ struct RandomWeightedSelection {
 struct MaxDamageSelection {
 };
 
+struct StatisticalSelection {
+	std::unique_ptr<SelectionWeights> weights;
+};
+
 using SelectionStrategy = tv::variant<
 	RandomSelection,
 	RandomWeightedSelection,
-	MaxDamageSelection
+	MaxDamageSelection,
+	StatisticalSelection
 >;
 
 struct ParsedArgs {
@@ -93,7 +100,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (!std::filesystem::exists(input_directory)) {
 		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"sv));
 	}
-	auto const selection_strategy = [=] -> SelectionStrategy {
+	auto selection_strategy = [=] -> SelectionStrategy {
 		auto const name = std::string_view(argv[3]);
 		if (name == "random"sv) {
 			if (argc != 4) {
@@ -110,14 +117,20 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 				throw std::runtime_error("max_damage strategy accepts no arguments");
 			}
 			return SelectionStrategy(MaxDamageSelection());
+		} else if (name == "statistical"sv) {
+			if (argc != 5) {
+				throw std::runtime_error("statistical strategy requires a file name for the statistics");
+			}
+			auto file = open_binary_file_for_reading(argv[4]);
+			return SelectionStrategy(StatisticalSelection(read_selection_weights_from_file(file)));
 		} else {
-			throw std::runtime_error("Selection strategy must be one of random, random_weighted, max_damage");
+			throw std::runtime_error("Selection strategy must be one of random, random_weighted, max_damage, statistical");
 		}
 	}();
 	return ParsedArgs{
 		thread_count,
 		std::move(input_directory),
-		selection_strategy
+		std::move(selection_strategy)
 	};
 }
 
@@ -157,6 +170,14 @@ auto get_predicted_selection(
 				},
 				[&](MaxDamageSelection) {
 					return predict_max_damage_selection(user_team, predicted_team, state.environment);
+				},
+				[&](StatisticalSelection const & strategy) {
+					return predict_statistical_selection(
+						user_team,
+						predicted_team,
+						state.environment,
+						*strategy.weights
+					);
 				}
 			));
 		};
@@ -267,7 +288,7 @@ auto print_actual(auto && all_actual) {
 }
 
 auto print_all(
-	SelectionStrategy const selection_strategy,
+	SelectionStrategy const & selection_strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
@@ -290,7 +311,7 @@ auto print_all(
 }
 
 auto score_one_side_of_battle(
-	SelectionStrategy const selection_strategy,
+	SelectionStrategy const & selection_strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
@@ -309,7 +330,7 @@ auto score_one_side_of_battle(
 	return weighted_score(scores);
 }
 
-auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, SelectionStrategy const selection_strategy) -> double {
+auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, SelectionStrategy const & selection_strategy) -> double {
 	auto score = std::atomic<WeightedScore>();
 	{
 		auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));

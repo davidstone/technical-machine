@@ -64,6 +64,7 @@ target_sources(tm_common PUBLIC
 	FILES
 		source/tm/action_prediction/predict_max_damage_selection.cpp
 		source/tm/action_prediction/predict_random_selection.cpp
+		source/tm/action_prediction/predict_statistical_selection.cpp
 		source/tm/action_prediction/predicted.cpp
 
 		source/tm/bide/bide.cpp
@@ -563,6 +564,13 @@ target_link_libraries(ai
 	tm_common
 	tm_pokemon_showdown
 	TBB::tbb
+)
+
+add_executable(create_selection_weights
+	source/tm/ps_usage_stats/create_selection_weights.cpp
+)
+target_link_libraries(create_selection_weights
+	tm_pokemon_showdown
 )
 
 add_executable(file_converter
