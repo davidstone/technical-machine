@@ -64,7 +64,7 @@ struct Evaluator {
 	}
 private:
 	AllEvaluate m_all_evaluate;
-	AllUsageStats m_all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
+	AllUsageStats m_all_usage_stats;
 };
 
 TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {

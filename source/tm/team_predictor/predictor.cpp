@@ -17,7 +17,7 @@ import std_module;
 int main() {
 	using namespace technicalmachine;
 	using tcp = boost::asio::ip::tcp;
-	auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
+	auto const all_usage_stats = AllUsageStats();
 
 	constexpr auto port = static_cast<unsigned short>(46923);
 

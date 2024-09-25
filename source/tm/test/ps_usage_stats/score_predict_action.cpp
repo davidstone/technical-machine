@@ -330,7 +330,7 @@ auto score_one_side_of_battle(
 auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, SelectionStrategy const & selection_strategy) -> double {
 	auto score = std::atomic<WeightedScore>();
 	{
-		auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
+		auto const all_usage_stats = AllUsageStats();
 		auto queue = concurrent::basic_blocking_queue<std::deque<std::filesystem::path>>(1000);
 		auto workers = containers::dynamic_array<std::jthread>(containers::generate_n(thread_count, [&] {
 			return std::jthread([&](std::stop_token token) {

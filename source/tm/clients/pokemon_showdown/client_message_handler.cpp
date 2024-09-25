@@ -118,7 +118,6 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 export struct ClientMessageHandler {
 	ClientMessageHandler(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
-		m_all_usage_stats(stats_for_generation),
 		m_settings(std::move(settings)),
 		m_depth(depth),
 		m_battles_directory(get_battles_directory()),
