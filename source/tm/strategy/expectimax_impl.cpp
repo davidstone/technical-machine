@@ -3,34 +3,27 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 module tm.strategy.expectimax;
 
-import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
-import tm.evaluate.win;
 
 import tm.move.legal_selections;
-import tm.move.move_name;
-import tm.move.pass;
 import tm.move.selection;
 
-import tm.strategy.statistical;
 import tm.strategy.weighted_selection;
 
 import tm.environment;
 import tm.generation;
+import tm.team;
 
 import bounded;
 import containers;
 import std_module;
 
 namespace technicalmachine {
+namespace {
 using namespace bounded::literal;
 
 auto parallel_sum(auto && range) {
@@ -44,13 +37,16 @@ auto parallel_sum(auto && range) {
 
 template<Generation generation>
 struct ScoreMovesEvaluator {
-	static constexpr auto operator()(
+	explicit ScoreMovesEvaluator(Strategy const & foe_strategy):
+		m_foe_strategy(foe_strategy)
+	{
+	}
+	auto operator()(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
 		WeightedSelections const foe_selections,
-		Evaluate<generation>,
 		auto const function
-	) -> ScoredSelections {
+	) const -> ScoredSelections {
 		return ScoredSelections(containers::transform(ai_selections, [&](Selection const ai_selection) {
 			return ScoredSelection(
 				ai_selection,
@@ -63,45 +59,78 @@ struct ScoreMovesEvaluator {
 			);
 		}));
 	}
-	static constexpr auto operator()(
+	auto operator()(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
-		LegalSelections,
-		SelectionWeights const & selection_weights,
-		Evaluate<generation> const evaluate,
+		LegalSelections const foe_selections,
 		auto const function
-	) -> ScoredSelections {
-		return ScoreMovesEvaluator()(
+	) const -> ScoredSelections {
+		return operator()(
 			state,
 			ai_selections,
-			statistical(
+			m_foe_strategy.get()(
 				state.foe,
+				foe_selections,
 				state.ai,
-				state.environment,
-				selection_weights
-			),
-			evaluate,
+				ai_selections,
+				state.environment
+			).user,
 			std::move(function)
 		);
 	}
+
+private:
+	std::reference_wrapper<Strategy const> m_foe_strategy;
 };
 
-template<Generation generation>
-auto expectimax(State<generation> const & state, LegalSelections const ai_selections, WeightedSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredSelections {
-	if (auto const score = win(state.ai, state.foe)) {
-		return ScoredSelections({ScoredSelection(pass, *score)});
-	}
-	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
-	return evaluator.select_type_of_action(
-		state,
-		ai_selections,
-		foe_selections
+auto to_weighted_selections(ScoredSelections selections) -> WeightedSelections {
+	auto const best = containers::max_element(
+		selections,
+		[](ScoredSelection const lhs, ScoredSelection const rhs) {
+			return lhs.score > rhs.score;
+		}
 	);
+	return WeightedSelections({
+		WeightedSelection(best->selection, 1.0)
+	});
 }
 
-#define INSTANTIATE(generation) \
-	template auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections
+} // namespace
 
-TM_FOR_EACH_GENERATION(INSTANTIATE);
+auto make_expectimax(
+	AllEvaluate all_evaluate,
+	Depth const depth,
+	Strategy foe_strategy_
+) -> Strategy {
+	return Strategy([=, foe_strategy = std::move(foe_strategy_)]<Generation generation>(
+		Team<generation> const & ai,
+		LegalSelections const ai_selections,
+		Team<generation> const & foe,
+		LegalSelections const foe_selections,
+		Environment const environment
+	) -> BothWeightedSelections {
+		auto evaluator = Evaluator(
+			all_evaluate.get<generation>(),
+			ScoreMovesEvaluator<generation>(foe_strategy)
+		);
+		auto const predicted_foe_selections = foe_strategy(
+			foe,
+			foe_selections,
+			ai,
+			ai_selections,
+			environment
+		).user;
+		auto const scored_selections = evaluator.select_type_of_action(
+			State<generation>(ai, foe, environment),
+			ai_selections,
+			predicted_foe_selections,
+			depth
+		);
+		return BothWeightedSelections(
+			to_weighted_selections(scored_selections),
+			predicted_foe_selections
+		);
+	});
+}
 
 } // namespace technicalmachine

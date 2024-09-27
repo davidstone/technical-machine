@@ -3,30 +3,19 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.strategy.expectimax;
 
-import tm.evaluate.evaluate;
-import tm.evaluate.scored_selection;
-import tm.evaluate.state;
+import tm.evaluate.all_evaluate;
+import tm.evaluate.depth;
 
-import tm.move.legal_selections;
-
-import tm.strategy.weighted_selection;
-
-import tm.generation;
+import tm.strategy.strategy;
 
 namespace technicalmachine {
 
-export template<Generation generation>
-auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections;
-
-#define EXTERN_INSTANTIATION(generation) \
-	extern template auto expectimax(State<generation> const &, LegalSelections ai_selections, WeightedSelections foe_selections, Evaluate<generation>) -> ScoredSelections
-
-TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
+export auto make_expectimax(
+	AllEvaluate all_evaluate,
+	Depth const depth,
+	Strategy foe_strategy
+) -> Strategy;
 
 } // namespace technicalmachine

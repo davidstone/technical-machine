@@ -7,10 +7,9 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.evaluate_settings;
-import tm.evaluate.expectiminimax;
 import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 import tm.evaluate.victory;
@@ -35,6 +34,11 @@ import tm.stat.nature;
 
 import tm.status.status_name;
 
+import tm.strategy.expectimax;
+import tm.strategy.random_selection;
+import tm.strategy.strategy;
+import tm.strategy.weighted_selection;
+
 import tm.ability;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
@@ -56,36 +60,32 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto evaluate_settings = EvaluateSettings{
-	.hp = 1024_bi,
-	.hidden = 80_bi,
-	.spikes = -150_bi,
-	.stealth_rock = -200_bi,
-	.toxic_spikes = -100_bi
-};
-
-constexpr auto make_depth(DepthInt const depth) {
-	return Depth(depth, 0_bi);
+auto make_strategy(DepthInt const depth) -> Strategy {
+	return make_expectimax(
+		AllEvaluate(),
+		Depth(depth, 0_bi),
+		make_random_selection()
+	);
 }
 
 template<Generation generation>
-auto determine_best_selection(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
-	auto const moves = expectiminimax(
-		State<generation>(ai, foe, environment, depth),
+auto determine_best_selection(Strategy const & strategy, Team<generation> const & ai, Team<generation> const & foe, Environment const environment) -> WeightedSelection {
+	auto const moves = strategy(
+		ai,
 		get_legal_selections(ai, foe, environment),
+		foe,
 		get_legal_selections(foe, ai, environment),
-		evaluate
-	);
-	return *containers::max_element(moves, [](ScoredSelection const lhs, ScoredSelection const rhs) {
-		return lhs.score > rhs.score;
+		environment
+	).user;
+	return *containers::max_element(moves, [](WeightedSelection const lhs, WeightedSelection const rhs) {
+		return lhs.weight > rhs.weight;
 	});
 }
 
-TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
+TEST_CASE("expectimax OHKO", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(1_bi);
 	auto const environment = Environment();
-	constexpr auto depth = make_depth(1_bi);
 
 	auto team1 = Team<generation>({{
 		{
@@ -118,9 +118,9 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team2.pokemon().switch_in(environment, true);
 
 	{
-		auto const best = determine_best_selection(team1, team2, environment, evaluate, depth);
+		auto const best = determine_best_selection(strategy, team1, team2, environment);
 		CHECK(best.selection == MoveName::Thunderbolt);
-		CHECK(best.score == victory<generation>);
+		CHECK(best.weight == 1.0);
 	}
 	
 	auto team3 = Team<generation>({{
@@ -139,17 +139,16 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team3.pokemon().switch_in(environment, true);
 	
 	{
-		auto const best = determine_best_selection(team1, team3, environment, evaluate, depth);
+		auto const best = determine_best_selection(strategy, team1, team3, environment);
 		CHECK(best.selection == MoveName::Shadow_Ball);
-		CHECK(best.score == victory<generation>);
+		CHECK(best.weight == 1.0);
 	}
 }
 
-TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
+TEST_CASE("expectimax one-turn damage", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(1_bi);
 	auto const environment = Environment();
-	constexpr auto depth = make_depth(1_bi);
 	
 	auto attacker = Team<generation>({{
 		{
@@ -179,15 +178,14 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Shadow_Ball);
 }
 
-TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
+TEST_CASE("expectimax BellyZard", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(2_bi);
 	auto const environment = Environment();
-	constexpr auto depth = make_depth(2_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -216,16 +214,15 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.score == victory<generation>);
+	CHECK(best.weight == 1.0);
 }
 
-TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
+TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(11_bi);
 	auto const environment = Environment();
-	constexpr auto depth = make_depth(11_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -277,17 +274,16 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Curse);
-	CHECK(best.score == victory<generation>);
+	CHECK(best.weight == 1.0);
 }
 
 
-TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
+TEST_CASE("expectimax Baton Pass middle of turn", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
-	constexpr auto depth = Depth(1_bi, 0_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -359,16 +355,15 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 		);
 	}
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == Switch(1_bi));
 }
 
 
-TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
+TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(3_bi);
 	auto const environment = Environment();
-	constexpr auto depth = Depth(3_bi, 0_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -398,17 +393,16 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.score == victory<generation>);
+	CHECK(best.weight == 1.0);
 }
 
 
-TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
+TEST_CASE("expectimax replace fainted", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(2_bi);
 	auto environment = Environment();
-	constexpr auto depth = make_depth(2_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -475,16 +469,15 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	attacker.reset_end_of_turn();
 	defender.reset_end_of_turn();
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == Switch(2_bi));
 }
 
 
-TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
+TEST_CASE("expectimax Latias vs Suicune", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(3_bi);
 	auto const environment = Environment();
-	constexpr auto depth = make_depth(3_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -535,15 +528,14 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	}});
 	defender.pokemon().switch_in(environment, true);
 
-	auto const best = determine_best_selection(attacker, defender, environment, evaluate, depth);
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Calm_Mind);
 }
 
-TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
+TEST_CASE("expectimax Sleep Talk", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
-	constexpr auto depth = make_depth(1_bi);
 
 	auto attacker = Team<generation>({{
 		{
@@ -592,7 +584,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, depth).selection == MoveName::Thunderbolt);
+	CHECK(determine_best_selection(strategy, attacker, defender, environment).selection == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
@@ -607,7 +599,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	jolteon.set_status(StatusName::sleep, environment);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, depth).selection == MoveName::Sleep_Talk);
+	CHECK(determine_best_selection(strategy, attacker, defender, environment).selection == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -621,7 +613,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, depth).selection == MoveName::Sleep_Talk);
+	CHECK(determine_best_selection(strategy, attacker, defender, environment).selection == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -635,7 +627,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, depth).selection == MoveName::Sleep_Talk);
+	CHECK(determine_best_selection(strategy, attacker, defender, environment).selection == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -651,13 +643,12 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(determine_best_selection(attacker, defender, environment, evaluate, depth).selection == ?);
+		CHECK(determine_best_selection(strategy, attacker, defender, environment).selection == ?);
 	#endif
 }
 
-TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
+TEST_CASE("Generation 1 frozen last Pokemon", "[expectimax]") {
 	constexpr auto generation = Generation::one;
-	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -684,57 +675,8 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	defender.pokemon().set_hp(environment, 12_bi);
 	defender.pokemon().switch_in(environment, true);
 
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, make_depth(1_bi)).selection == MoveName::Psychic);
-	CHECK(determine_best_selection(attacker, defender, environment, evaluate, make_depth(2_bi)).selection == MoveName::Psychic);
-}
-
-TEST_CASE("Pokemon might get locked into move and faint in same turn", "[expectiminimax]") {
-	constexpr auto generation = Generation::one;
-	constexpr auto evaluate = Evaluate<generation>({
-		0_bi,
-		0_bi,
-		0_bi,
-		0_bi,
-		0_bi
-	});
-	auto environment = Environment();
-	auto ai = Team<generation>({{
-		{
-			.species = Species::Tauros,
-			.moves = {{
-				MoveName::Hyper_Beam,
-			}}
-		},
-		{
-			.species = Species::Magikarp,
-			.moves = {{
-				MoveName::Splash,
-			}}
-		},
-	}});
-	ai.pokemon().switch_in(environment, true);
-
-	auto foe = Team<generation>({{
-		{
-			.species = Species::Snorlax,
-			.moves = {{
-				MoveName::Body_Slam,
-			}}
-		},
-	}});
-	foe.pokemon().switch_in(environment, true);
-	
-	ai.pokemon().set_hp(environment, 52_bi);
-
-	constexpr auto ai_selections = LegalSelections({MoveName::Hyper_Beam});
-	constexpr auto foe_selections = LegalSelections({MoveName::Body_Slam});
-
-	expectiminimax(
-		State<generation>(foe, ai, environment, Depth(1_bi, 1_bi)),
-		foe_selections,
-		ai_selections,
-		evaluate
-	);
+	CHECK(determine_best_selection(make_strategy(1_bi), attacker, defender, environment).selection == MoveName::Psychic);
+	CHECK(determine_best_selection(make_strategy(2_bi), attacker, defender, environment).selection == MoveName::Psychic);
 }
 
 } // namespace

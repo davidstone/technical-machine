@@ -72,11 +72,9 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/evaluate.cpp
 		source/tm/evaluate/evaluate_settings.cpp
 		source/tm/evaluate/evaluator.cpp
-		source/tm/evaluate/expectiminimax.cpp
 		source/tm/evaluate/extreme_element_value.cpp
 		source/tm/evaluate/load_evaluate.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
-		source/tm/evaluate/random_selection.cpp
 		source/tm/evaluate/scored_selection.cpp
 		source/tm/evaluate/selector.cpp
 		source/tm/evaluate/state.cpp
@@ -225,6 +223,7 @@ target_sources(tm_common PUBLIC
 		source/tm/strategy/max_damage.cpp
 		source/tm/strategy/random_selection.cpp
 		source/tm/strategy/statistical.cpp
+		source/tm/strategy/strategy.cpp
 		source/tm/strategy/weighted_selection.cpp
 
 		source/tm/string_conversions/ability.cpp
@@ -338,6 +337,7 @@ target_sources(tm_common PRIVATE
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
 	source/tm/strategy/expectimax_impl.cpp
+	source/tm/strategy/statistical_impl.cpp
 	source/tm/string_conversions/team_impl.cpp
 	source/tm/team_predictor/team_predictor_impl.cpp
 )
@@ -677,16 +677,17 @@ target_sources(tm_test PRIVATE
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
 	source/tm/test/evaluate/evaluate.cpp
-	source/tm/test/evaluate/expectiminimax.cpp
-
+	
 	source/tm/test/move/call_move.cpp
-
+	
 	source/tm/test/pokemon_lab/team_file.cpp
-
+	
 	source/tm/test/pokemon_online/team_file.cpp
-
+	
 	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
 	source/tm/test/ps_usage_stats/serialize.cpp
+
+	source/tm/test/strategy/expectimax.cpp
 
 	source/tm/test/team_predictor/estimate.cpp
 	source/tm/test/team_predictor/usage_stats.cpp

@@ -38,20 +38,20 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 
 export template<Generation generation>
 struct TranspositionTable {
-	auto add_score(State<generation> const & state, ScoredSelections selections) -> void {
+	auto add_score(State<generation> const & state, Depth const depth, ScoredSelections selections) -> void {
 		auto const compressed_battle = compress_battle(state);
 		auto _ = std::scoped_lock(m_mutex);
-		auto & value = m_data[index(compressed_battle)];
+		auto & value = (*m_data)[index(compressed_battle)];
 		value.compressed_battle = compressed_battle;
-		value.depth = state.depth;
+		value.depth = depth;
 		value.selections = selections;
 	}
 
-	auto get_score(State<generation> const & state) const -> tv::optional<ScoredSelections> {
+	auto get_score(State<generation> const & state, Depth const depth) const -> tv::optional<ScoredSelections> {
 		auto const compressed_battle = compress_battle(state);
 		auto _ = std::scoped_lock(m_mutex);
-		auto const & value = m_data[index(compressed_battle)];
-		if (value.depth >= state.depth and value.compressed_battle == compressed_battle) {
+		auto const & value = (*m_data)[index(compressed_battle)];
+		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
 			return value.selections;
 		}
 		return tv::none;
@@ -79,7 +79,7 @@ private:
 	using Data = containers::array<Value, table_size>;
 	static_assert(std::same_as<TableIndex, containers::index_type<Data>>);
 
-	Data m_data;
+	std::unique_ptr<Data> m_data = std::make_unique<Data>();
 	mutable std::mutex m_mutex;
 };
 

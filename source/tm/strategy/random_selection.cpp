@@ -10,7 +10,12 @@ import tm.move.move_name;
 import tm.move.selection;
 import tm.move.switch_;
 
+import tm.strategy.strategy;
 import tm.strategy.weighted_selection;
+
+import tm.environment;
+import tm.generation;
+import tm.team;
 
 import bounded;
 import containers;
@@ -20,7 +25,7 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-export constexpr auto random_selection(LegalSelections const selections) -> WeightedSelections {
+constexpr auto random_selection(LegalSelections const selections) -> WeightedSelections {
 	auto const total_size = double(containers::size(selections));
 	return WeightedSelections(containers::transform(selections, [=](Selection const selection) {
 		return WeightedSelection(selection, 1.0 / total_size);
@@ -31,7 +36,7 @@ constexpr auto is_switch = [](Selection const selection) {
 	return selection.index() == bounded::type<Switch>;
 };
 
-export constexpr auto random_selection(LegalSelections const selections, double const general_switch_probability) -> WeightedSelections {
+constexpr auto random_selection(LegalSelections const selections, double const general_switch_probability) -> WeightedSelections {
 	auto const total_size = containers::size(selections);
 	auto const switches = containers::count_if(selections, is_switch);
 	auto const switch_probability =
@@ -82,5 +87,29 @@ static_assert(
 	random_selection(LegalSelections({Switch(0_bi)}), 0.2) ==
 	WeightedSelections({{Switch(0_bi), 1.0}})
 );
+
+export auto make_random_selection() -> Strategy {
+	return Strategy([]<Generation generation>(
+		[[maybe_unused]] Team<generation> const & ai,
+		LegalSelections const ai_selections,
+		[[maybe_unused]] Team<generation> const & foe,
+		[[maybe_unused]] LegalSelections const foe_selections,
+		[[maybe_unused]] Environment const environment
+	) -> WeightedSelections {
+		return random_selection(ai_selections);
+	});
+}
+
+export auto make_random_selection(double const general_switch_probability) -> Strategy {
+	return Strategy([=]<Generation generation>(
+		[[maybe_unused]] Team<generation> const & ai,
+		LegalSelections const ai_selections,
+		[[maybe_unused]] Team<generation> const & foe,
+		[[maybe_unused]] LegalSelections const foe_selections,
+		[[maybe_unused]] Environment const environment
+	) -> WeightedSelections {
+		return random_selection(ai_selections, general_switch_probability);
+	});
+}
 
 } // namespace technicalmachine

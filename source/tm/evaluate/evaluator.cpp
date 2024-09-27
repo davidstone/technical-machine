@@ -136,7 +136,14 @@ constexpr auto paralysis_probability(StatusName const status) -> double {
 }
 
 template<Generation generation>
-auto execute_move(State<generation> const & state, Selector<generation> const select, SelectedAndExecuted const move, OtherAction const other_action, auto const continuation) -> double {
+auto execute_move(
+	State<generation> const & state,
+	Selector<generation> const select,
+	SelectedAndExecuted const move,
+	OtherAction const other_action,
+	Depth const depth,
+	auto const continuation
+) -> double {
 	auto const selected = select(state);
 	auto const user_pokemon = selected.team.pokemon();
 	auto const other_pokemon = selected.other.pokemon();
@@ -185,7 +192,7 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 								is_fully_paralyzed
 							);
 							if (auto const won = win(copy.ai, copy.foe)) {
-								return *won + double(state.depth.general - 1_bi);
+								return *won + double(depth.general - 1_bi);
 							}
 							return continuation(copy);
 						}
@@ -198,7 +205,7 @@ auto execute_move(State<generation> const & state, Selector<generation> const se
 }
 
 template<Generation generation>
-auto execute_switch(State<generation> state, Selector<generation> const select, Switch const switch_, auto const continuation) -> double {
+auto execute_switch(State<generation> state, Selector<generation> const select, Switch const switch_, Depth const depth, auto const continuation) -> double {
 	auto const selected = select(state);
 	selected.team.switch_pokemon(
 		selected.other.pokemon(),
@@ -206,7 +213,7 @@ auto execute_switch(State<generation> state, Selector<generation> const select, 
 		switch_.value()
 	);
 	if (auto const won = win(state.ai, state.foe)) {
-		return *won + double(state.depth.general - 1_bi);
+		return *won + double(depth.general - 1_bi);
 	}
 	return continuation(state);
 }
@@ -277,11 +284,11 @@ struct Evaluator {
 	{
 	}
 
-	auto select_type_of_action(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredSelections {
+	auto select_type_of_action(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections, Depth const depth) -> ScoredSelections {
 		BOUNDED_ASSERT(!team_is_empty(state.ai));
 		BOUNDED_ASSERT(!team_is_empty(state.foe));
 
-		if (auto const score = m_transposition_table.get_score(state)) {
+		if (auto const score = m_transposition_table.get_score(state, depth)) {
 			return *score;
 		}
 
@@ -289,33 +296,33 @@ struct Evaluator {
 			state,
 			ai_selections,
 			foe_selections,
-			m_evaluate,
 			[&](auto && ... args) {
-				return order_branch(OPERATORS_FORWARD(args)...);
+				return order_branch(OPERATORS_FORWARD(args)..., depth);
 			}
 		);
-		m_transposition_table.add_score(state, actions);
+		m_transposition_table.add_score(state, depth, actions);
 		return actions;
 	}
 
 private:
-	auto select_type_of_action(State<generation> const & state) -> ScoredSelections {
+	auto select_type_of_action(State<generation> const & state, Depth const depth) -> ScoredSelections {
 		return select_type_of_action(
 			state,
 			get_legal_selections(state.ai, state.foe, state.environment),
-			get_legal_selections(state.foe, state.ai, state.environment)
+			get_legal_selections(state.foe, state.ai, state.environment),
+			depth
 		);
 	}
 
-	auto order_branch(State<generation> const & state, Selection const ai_selection, Selection const foe_selection) -> double {
+	auto order_branch(State<generation> const & state, Selection const ai_selection, Selection const foe_selection, Depth const depth) -> double {
 		auto ordered = Order(state.ai, ai_selection, state.foe, foe_selection, state.environment);
 		auto is_ai = team_matcher(state.ai);
 		return !ordered ?
-			(use_action_branch(state, Selector<generation>(true), ai_selection, foe_selection) + use_action_branch(state, Selector<generation>(false), foe_selection, ai_selection)) / 2.0 :
-			use_action_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.selection, ordered->second.selection);
+			(use_action_branch(state, Selector<generation>(true), ai_selection, foe_selection, depth) + use_action_branch(state, Selector<generation>(false), foe_selection, ai_selection, depth)) / 2.0 :
+			use_action_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.selection, ordered->second.selection, depth);
 	}
 
-	auto use_action_branch_inner(OtherAction const first_used_action, Selector<generation> const select) {
+	auto use_action_branch_inner(OtherAction const first_used_action, Selector<generation> const select, Depth const depth) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
 			auto const [first_selection, last_selection] = sort_two(
 				team_matcher(state.ai)(select(state).team),
@@ -323,7 +330,7 @@ private:
 				ai_selection
 			);
 			BOUNDED_ASSERT(first_selection == pass);
-			return score_executed_actions(state, select, last_selection, first_used_action, [&](State<generation> const & updated) {
+			return score_executed_actions(state, select, last_selection, first_used_action, depth, [&](State<generation> const & updated) {
 				auto shed_skin_probability = [&](bool const is_ai) {
 					auto const pokemon = (is_ai ? updated.ai : updated.foe).pokemon();
 					return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
@@ -349,7 +356,8 @@ private:
 										updated,
 										teams,
 										EndOfTurnFlags(ai_shed_skin, ai_lock_in_ends, ai_thaws),
-										EndOfTurnFlags(foe_shed_skin, foe_lock_in_ends, foe_thaws)
+										EndOfTurnFlags(foe_shed_skin, foe_lock_in_ends, foe_thaws),
+										depth
 									);
 								}
 							);
@@ -360,19 +368,19 @@ private:
 		};
 	}
 
-	auto use_action_branch_outer(OriginalPokemon const original_last_pokemon, Selector<generation> const select) {
+	auto use_action_branch_outer(OriginalPokemon const original_last_pokemon, Selector<generation> const select, Depth const depth) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
 			auto const [first_selection, last_selection] = sort_two(
 				team_matcher(state.ai)(select(state).team),
 				ai_selection,
 				foe_selection
 			);
-			return score_executed_actions(state, select, first_selection, FutureSelection(is_damaging(last_selection)), [&](State<generation> const & pre_updated) {
+			return score_executed_actions(state, select, first_selection, FutureSelection(is_damaging(last_selection)), depth, [&](State<generation> const & pre_updated) {
 				auto const pre_ordered = select(pre_updated);
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(pre_ordered.other.pokemon().species());
 				auto const actual_last_selection = is_same_pokemon ? last_selection : pass;
 				auto const first_used_action = original_last_pokemon.other_action();
-				return score_executed_actions(pre_updated, select.invert(), actual_last_selection, first_used_action, [&](State<generation> const & updated) {
+				return score_executed_actions(pre_updated, select.invert(), actual_last_selection, first_used_action, depth, [&](State<generation> const & updated) {
 					constexpr auto first_selections = LegalSelections({pass});
 					auto const ordered = select(updated);
 					auto const last_selections = get_legal_selections(
@@ -389,15 +397,14 @@ private:
 						updated,
 						ai_selections,
 						foe_selections,
-						m_evaluate,
-						use_action_branch_inner(first_used_action, select.invert())
+						use_action_branch_inner(first_used_action, select.invert(), depth)
 					));
 				});
 			});
 		};
 	}
 
-	auto use_action_branch(State<generation> const & state, Selector<generation> const select, Selection const first_selection, Selection const last_selection) -> double {
+	auto use_action_branch(State<generation> const & state, Selector<generation> const select, Selection const first_selection, Selection const last_selection, Depth const depth) -> double {
 		// For U-turn and Baton Pass, the user needs to make a new selection and
 		// execute it before the other Pokemon acts. During that selection, the
 		// other team's only legal selection at this point is Pass. We store the
@@ -433,8 +440,7 @@ private:
 				updated,
 				ai_selections,
 				foe_selections,
-				m_evaluate,
-				use_action_branch_outer(original_last_pokemon, select)
+				use_action_branch_outer(original_last_pokemon, select, depth)
 			));
 		};
 		return score_executed_actions(
@@ -442,42 +448,41 @@ private:
 			select,
 			first_selection,
 			FutureSelection(is_damaging(last_selection)),
+			depth,
 			function
 		);
 	}
 
-	auto end_of_turn_order_branch(State<generation> const & state, Faster<generation> const faster, EndOfTurnFlags const ai_flags, EndOfTurnFlags const foe_flags) -> double {
+	auto end_of_turn_order_branch(State<generation> const & state, Faster<generation> const faster, EndOfTurnFlags const ai_flags, EndOfTurnFlags const foe_flags, Depth const depth) -> double {
 		auto is_ai = team_matcher(state.ai);
 		auto get_flag = [&](Team<generation> const & match) {
 			return is_ai(match) ? ai_flags : foe_flags;
 		};
 		return !faster ?
-			(end_of_turn_branch(state, Selector<generation>(true), ai_flags, foe_flags) + end_of_turn_branch(state, Selector<generation>(false), foe_flags, ai_flags)) / 2.0 :
-			end_of_turn_branch(state, Selector<generation>(is_ai(faster->first)), get_flag(faster->first), get_flag(faster->second));
+			(end_of_turn_branch(state, Selector<generation>(true), ai_flags, foe_flags, depth) + end_of_turn_branch(state, Selector<generation>(false), foe_flags, ai_flags, depth)) / 2.0 :
+			end_of_turn_branch(state, Selector<generation>(is_ai(faster->first)), get_flag(faster->first), get_flag(faster->second), depth);
 	}
 
-	auto end_of_turn_branch(State<generation> state, Selector<generation> const select, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag) -> double {
+	auto end_of_turn_branch(State<generation> state, Selector<generation> const select, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag, Depth const depth) -> double {
 		auto const selected = select(state);
 		end_of_turn(selected.team, first_flag, selected.other, last_flag, state.environment);
-		state.depth = one_level_deeper(state.depth);
-		if (auto const won = win(state.ai, state.foe)) {
-			return *won + double(state.depth.general);
-		}
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
+			if (auto const won = win(state.ai, state.foe)) {
+				return *won + double(depth.general);
+			}
 			return max_score(m_repond_to_foe_actions(
 				state,
 				get_legal_selections(state.ai, state.foe, state.environment),
 				get_legal_selections(state.foe, state.ai, state.environment),
-				m_evaluate,
 				[&](State<generation> const & updated, Selection const ai_selection, Selection const foe_selection) {
-					return handle_end_of_turn_replacing(updated, select, ai_selection, foe_selection);
+					return handle_end_of_turn_replacing(updated, select, ai_selection, foe_selection, depth);
 				}
 			));
 		}
-		return finish_end_of_turn(state);
+		return finish_end_of_turn(state, depth);
 	}
 
-	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, Selection const ai_selection, Selection const foe_selection) -> double {
+	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, Selection const ai_selection, Selection const foe_selection, Depth const depth) -> double {
 		auto selected = select(state);
 		auto const [first_selection, last_selection] = sort_two(
 			team_matcher(state.ai)(selected.team),
@@ -499,26 +504,27 @@ private:
 		switch_one_side(first_selection, selected.team, selected.other);
 		switch_one_side(last_selection, selected.other, selected.team);
 		if (auto const won = win(state.ai, state.foe)) {
-			return *won + double(state.depth.general);
+			return *won + double(depth.general);
 		}
-		return finish_end_of_turn(state);
+		return finish_end_of_turn(state, depth);
 	}
 
-	auto finish_end_of_turn(State<generation> const & state) -> double {
-		if (state.depth.general > 0_bi) {
-			return max_score(select_type_of_action(state));
-		} else if (state.depth.single > 0_bi) {
-			return generate_single_matchups(state);
+	auto finish_end_of_turn(State<generation> const & state, Depth const old_depth) -> double {
+		auto const depth = one_level_deeper(old_depth);
+		if (depth.general > 0_bi) {
+			return max_score(select_type_of_action(state, depth));
+		} else if (depth.single > 0_bi) {
+			return generate_single_matchups(state, depth);
 		} else {
 			return static_cast<double>(m_evaluate(state.ai, state.foe));
 		}
 	}
 
-	auto generate_single_matchups(State<generation> const & state) -> double {
+	auto generate_single_matchups(State<generation> const & state, Depth const depth) -> double {
 		auto score = 0.0;
 		for (auto const ai_index : containers::integer_range(state.ai.size())) {
 			for (auto const foe_index : containers::integer_range(state.foe.size())) {
-				score += evaluate_single_matchup(state, ai_index, foe_index);
+				score += evaluate_single_matchup(state, ai_index, foe_index, depth);
 			}
 		}
 		auto const difference = state.ai.size() - state.foe.size();
@@ -527,7 +533,7 @@ private:
 		return score;
 	}
 
-	auto evaluate_single_matchup(State<generation> state, TeamIndex const ai_index, TeamIndex const foe_index) -> double {
+	auto evaluate_single_matchup(State<generation> state, TeamIndex const ai_index, TeamIndex const foe_index, Depth const depth) -> double {
 		// TODO: Something involving switch order
 		auto remove_all_but_index = [&](Team<generation> & team, TeamIndex const index, Team<generation> & other) {
 			if (index != team.all_pokemon().index()) {
@@ -538,18 +544,25 @@ private:
 		remove_all_but_index(state.ai, ai_index, state.foe);
 		remove_all_but_index(state.foe, foe_index, state.ai);
 		if (auto const won = win(state.ai, state.foe)) {
-			return *won + double(state.depth.general - 1_bi);
+			return *won + double(depth.general - 1_bi);
 		}
-		return max_score(select_type_of_action(state));
+		return max_score(select_type_of_action(state, depth));
 	}
 
 
-	auto score_executed_actions(State<generation> const & state, Selector<generation> const select, Selection const selection, OtherAction const other_action, auto const continuation) const -> double {
+	auto score_executed_actions(
+		State<generation> const & state,
+		Selector<generation> const select,
+		Selection const selection,
+		OtherAction const other_action,
+		Depth const depth,
+		auto const continuation
+	) const -> double {
 		return tv::visit(selection, tv::overload(
-			[&](Switch const switch_) {
-				return execute_switch(state, select, switch_, continuation);
+			[&](Switch const switch_) -> double {
+				return execute_switch(state, select, switch_, depth, continuation);
 			},
-			[&](MoveName const selected) {
+			[&](MoveName const selected) -> double {
 				auto const & team = select(state).team;
 				if (team.pokemon().hp().current() == 0_bi) {
 					return continuation(state);
@@ -562,12 +575,13 @@ private:
 						select,
 						SelectedAndExecuted(selected, executed),
 						other_action,
+						depth,
 						continuation
 					);
 				}
 				return score / static_cast<double>(containers::size(executed_moves));
 			},
-			[&](Pass) {
+			[&](Pass) -> double {
 				return continuation(state);
 			}
 		));

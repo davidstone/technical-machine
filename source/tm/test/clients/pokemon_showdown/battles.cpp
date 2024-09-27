@@ -21,6 +21,10 @@ import tm.clients.determine_selection;
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
+import tm.strategy.expectimax;
+import tm.strategy.statistical;
+import tm.strategy.strategy;
+
 import tm.team_predictor.all_usage_stats;
 
 import tm.generation;
@@ -51,20 +55,25 @@ constexpr auto depth = Depth(1_bi, 0_bi);
 
 struct Evaluator {
 	template<typename T>
-	auto operator()(T const & value, std::ostream & logger) const {
+	auto operator()(T const & value, std::ostream & logger) {
 		if constexpr (bounded::convertible_to<T, ps::ActionRequired>) {
 			determine_selection(
 				value.state,
 				logger,
 				m_all_usage_stats,
-				m_all_evaluate,
-				depth
+				m_strategy,
+				m_random_engine
 			);
 		}
 	}
 private:
-	AllEvaluate m_all_evaluate;
+	Strategy m_strategy = make_expectimax(
+		AllEvaluate(),
+		depth,
+		make_statistical()
+	);
 	AllUsageStats m_all_usage_stats;
+	std::mt19937 m_random_engine;
 };
 
 TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {

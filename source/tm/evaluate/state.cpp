@@ -5,8 +5,6 @@
 
 export module tm.evaluate.state;
 
-import tm.evaluate.depth;
-
 import tm.environment;
 import tm.generation;
 import tm.team;
@@ -18,7 +16,6 @@ struct State {
 	Team<generation> ai;
 	Team<generation> foe;
 	Environment environment;
-	Depth depth;
 };
 
 } // namespace technicalmachine

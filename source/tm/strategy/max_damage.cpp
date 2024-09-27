@@ -21,6 +21,7 @@ import tm.move.switch_;
 
 import tm.pokemon.get_hidden_power_type;
 
+import tm.strategy.strategy;
 import tm.strategy.weighted_selection;
 
 import tm.type.move_type;
@@ -44,10 +45,13 @@ struct SelectionAndDamage {
 	damage_type damage;
 };
 
-export template<Generation generation>
-constexpr auto max_damage(Team<generation> const & user, Team<generation> const & other, Environment const environment) -> WeightedSelections {
-	auto const legal_selections = get_legal_selections(user, other, environment);
-
+template<Generation generation>
+constexpr auto max_damage(
+	Team<generation> const & user,
+	LegalSelections const legal_selections,
+	Team<generation> const & other,
+	Environment const environment
+) -> WeightedSelections {
 	auto const scores = containers::make_static_vector(containers::transform(
 		legal_selections,
 		[&](Selection const selection) -> SelectionAndDamage {
@@ -104,6 +108,18 @@ constexpr auto max_damage(Team<generation> const & user, Team<generation> const 
 	);
 
 	return WeightedSelections({{best->selection, 1.0}});
+}
+
+export auto make_max_damage() -> Strategy {
+	return Strategy([]<Generation generation>(
+		Team<generation> const & ai,
+		LegalSelections const ai_selections,
+		Team<generation> const & foe,
+		[[maybe_unused]] LegalSelections const foe_selections,
+		Environment const environment
+	) -> WeightedSelections {
+		return max_damage(ai, ai_selections, foe, environment);
+	});
 }
 
 } // namespace technicalmachine

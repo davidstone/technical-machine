@@ -31,9 +31,11 @@ import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
 
+import tm.strategy.expectimax;
 import tm.strategy.max_damage;
 import tm.strategy.random_selection;
 import tm.strategy.statistical;
+import tm.strategy.strategy;
 import tm.strategy.weighted_selection;
 
 import tm.team_predictor.all_usage_stats;
@@ -61,65 +63,43 @@ using namespace bounded::literal;
 using namespace ps;
 using namespace ps_usage_stats;
 
-struct RandomSelection {
-};
-
-struct RandomWeightedSelection {
-	double switch_probability;
-};
-
-struct MaxDamageSelection {
-};
-
-struct StatisticalSelection {
-	std::unique_ptr<SelectionWeights> weights;
-};
-
-using SelectionStrategy = tv::variant<
-	RandomSelection,
-	RandomWeightedSelection,
-	MaxDamageSelection,
-	StatisticalSelection
->;
-
 struct ParsedArgs {
 	ThreadCount thread_count;
 	std::filesystem::path input_directory;
-	SelectionStrategy selection_strategy;
+	Strategy strategy;
 };
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (argc < 4) {
-		throw std::runtime_error("Usage is score_predict_selection thread_count input_directory selection_strategy");
+		throw std::runtime_error("Usage is score_predict_selection thread_count input_directory strategy");
 	}
 	auto const thread_count = bounded::to_integer<ThreadCount>(argv[1]);
 	auto input_directory = std::filesystem::path(argv[2]);
 	if (!std::filesystem::exists(input_directory)) {
 		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"sv));
 	}
-	auto selection_strategy = [=] -> SelectionStrategy {
+	auto strategy = [=] -> Strategy {
 		auto const name = std::string_view(argv[3]);
 		if (name == "random"sv) {
 			if (argc != 4) {
 				throw std::runtime_error("random strategy accepts no arguments");
 			}
-			return SelectionStrategy(RandomSelection());
+			return make_random_selection();
 		} else if (name == "random_weighted"sv) {
 			if (argc != 5) {
 				throw std::runtime_error("random_weighted strategy requires probability argument");
 			}
-			return SelectionStrategy(RandomWeightedSelection(std::stod(argv[4])));
+			return make_random_selection(std::stod(argv[4]));
 		} else if (name == "max_damage"sv) {
 			if (argc != 4) {
 				throw std::runtime_error("max_damage strategy accepts no arguments");
 			}
-			return SelectionStrategy(MaxDamageSelection());
+			return make_max_damage();
 		} else if (name == "statistical"sv) {
-			if (argc != 5) {
-				throw std::runtime_error("statistical strategy requires a file name for the statistics");
+			if (argc != 4) {
+				throw std::runtime_error("statistical strategy accepts no arguments");
 			}
-			auto file = open_binary_file_for_reading(argv[4]);
-			return SelectionStrategy(StatisticalSelection(read_selection_weights_from_file(file)));
+			return make_statistical();
 		} else {
 			throw std::runtime_error("Selection strategy must be one of random, random_weighted, max_damage, statistical");
 		}
@@ -127,7 +107,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	return ParsedArgs{
 		thread_count,
 		std::move(input_directory),
-		std::move(selection_strategy)
+		std::move(strategy)
 	};
 }
 
@@ -143,7 +123,7 @@ struct PredictedSelection {
 };
 
 auto get_predicted_selection(
-	SelectionStrategy const & selection_strategy,
+	Strategy const & strategy,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats
 ) {
@@ -151,32 +131,13 @@ auto get_predicted_selection(
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
 			auto const user_team = Team<generation>(state.ai);
 			auto const predicted_team = most_likely_team(all_usage_stats[generation], state.foe);
-			auto selections = [&] {
-				return get_legal_selections(
-					user_team,
-					predicted_team,
-					state.environment
-				);
-			};
-			return tv::visit(selection_strategy, tv::overload(
-				[&](RandomSelection) {
-					return random_selection(selections());
-				},
-				[&](RandomWeightedSelection const strategy) {
-					return random_selection(selections(), strategy.switch_probability);
-				},
-				[&](MaxDamageSelection) {
-					return max_damage(user_team, predicted_team, state.environment);
-				},
-				[&](StatisticalSelection const & strategy) {
-					return statistical(
-						user_team,
-						predicted_team,
-						state.environment,
-						*strategy.weights
-					);
-				}
-			));
+			return strategy(
+				user_team,
+				get_legal_selections(user_team, predicted_team, state.environment),
+				predicted_team,
+				get_legal_selections(predicted_team, user_team, state.environment),
+				state.environment
+			).user;
 		};
 		auto const battle_result = tv::visit(message, tv::overload(
 			[](ps::CreateBattle) -> BattleManager::Result {
@@ -242,14 +203,14 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 }
 
 auto predicted_selections(
-	SelectionStrategy const & selection_strategy,
+	Strategy const & strategy,
 	std::span<BattleMessage const> const battle_messages,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
 		std::move(battle_messages),
-		get_predicted_selection(selection_strategy, battle, all_usage_stats)
+		get_predicted_selection(strategy, battle, all_usage_stats)
 	));
 }
 
@@ -285,7 +246,7 @@ auto print_actual(auto && all_actual) {
 }
 
 auto print_all(
-	SelectionStrategy const & selection_strategy,
+	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
@@ -294,7 +255,7 @@ auto print_all(
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 	auto range = containers::zip_smallest(
-		predicted_selections(selection_strategy, battle_messages, battle, all_usage_stats),
+		predicted_selections(strategy, battle_messages, battle, all_usage_stats),
 		containers::filter(player_inputs, is_input_for(rated_side.side.party))
 	);
 	auto const last = containers::end(std::move(range));
@@ -308,18 +269,18 @@ auto print_all(
 }
 
 auto score_one_side_of_battle(
-	SelectionStrategy const & selection_strategy,
+	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
 	std::span<PlayerInput const> const player_inputs
 ) -> WeightedScore {
-	//print_all(selection_strategy, all_usage_stats, rated_side, battle_messages, player_inputs);
+	//print_all(strategy, all_usage_stats, rated_side, battle_messages, player_inputs);
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 	auto const scores = containers::vector(containers::transform(
 		containers::zip_smallest(
-			predicted_selections(selection_strategy, battle_messages, battle, all_usage_stats),
+			predicted_selections(strategy, battle_messages, battle, all_usage_stats),
 			containers::filter(player_inputs, is_input_for(rated_side.side.party))
 		),
 		individual_brier_score
@@ -327,7 +288,7 @@ auto score_one_side_of_battle(
 	return weighted_score(scores);
 }
 
-auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, SelectionStrategy const & selection_strategy) -> double {
+auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, Strategy const & strategy) -> double {
 	auto score = std::atomic<WeightedScore>();
 	{
 		auto const all_usage_stats = AllUsageStats();
@@ -349,7 +310,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 						});
 						auto const individual = containers::sum(containers::transform(sides, [&](RatedSide const & rated_side) {
 							return score_one_side_of_battle(
-								selection_strategy,
+								strategy,
 								all_usage_stats,
 								rated_side,
 								battle_messages,
@@ -378,7 +339,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 auto main(int argc, char ** argv) -> int {
 	using namespace technicalmachine;
 	auto const args = parse_args(argc, argv);
-	auto const result = score_predict_selection(args.thread_count, args.input_directory, args.selection_strategy);
+	auto const result = score_predict_selection(args.thread_count, args.input_directory, args.strategy);
 	std::cout << "Brier score: " << result << '\n';
 	return 0;
 }

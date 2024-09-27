@@ -8,6 +8,11 @@ import tm.ai.print_sizes;
 
 import tm.clients.ps.client;
 
+import tm.evaluate.all_evaluate;
+
+import tm.strategy.expectimax;
+import tm.strategy.statistical;
+
 import tm.environment;
 import tm.get_directory;
 import tm.load_settings_file;
@@ -25,7 +30,14 @@ int main(int argc, char * * argv) {
 	auto const depth = parse_args(argc, argv);
 	while (true) {
 		try {
-			auto client = ps::Client(load_settings_file(get_settings_directory() / "settings.json"), depth);
+			auto client = ps::Client(
+				load_settings_file(get_settings_directory() / "settings.json"),
+				make_expectimax(
+					AllEvaluate(),
+					depth,
+					make_statistical()
+				)
+			);
 			std::cout << "Connected\n" << std::flush;
 			client.run();
 		} catch (std::exception const & ex) {

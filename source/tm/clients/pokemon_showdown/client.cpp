@@ -9,7 +9,7 @@ import tm.clients.ps.client_message_handler;
 import tm.clients.ps.room_message_block;
 import tm.clients.ps.sockets;
 
-import tm.evaluate.depth;
+import tm.strategy.strategy;
 
 import tm.settings_file;
 
@@ -18,11 +18,11 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct Client {
-	Client(SettingsFile settings, Depth const depth):
+	Client(SettingsFile settings, Strategy strategy):
 		m_sockets(settings.host, settings.port, settings.resource),
 		m_impl(
 			std::move(settings),
-			depth,
+			std::move(strategy),
 			[&](std::string_view const output) { m_sockets.write_message(output); },
 			[&](auto const & ... args) { return m_sockets.authenticate(args...); }
 		)

@@ -5,10 +5,6 @@
 
 export module tm.clients.determine_selection;
 
-import tm.evaluate.all_evaluate;
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
-import tm.evaluate.scored_selection;
 import tm.evaluate.state;
 
 import tm.move.move_name;
@@ -16,8 +12,7 @@ import tm.move.pass;
 import tm.move.selection;
 import tm.move.switch_;
 
-import tm.strategy.expectimax;
-import tm.strategy.random_selection;
+import tm.strategy.strategy;
 import tm.strategy.weighted_selection;
 
 import tm.string_conversions.move_name;
@@ -58,26 +53,14 @@ auto log_selection(std::ostream & stream, Selection const selection, Team<genera
 }
 
 template<Generation generation>
-auto log_move_scores(
-	std::ostream & stream,
-	ScoredSelections const scored_selections,
-	Team<generation> const & ai
-) -> void {
-	for (auto const scored : scored_selections) {
-		log_selection(stream, scored.selection, ai);
-		stream << " for an expected score of " << static_cast<std::int64_t>(scored.score) << '\n';
-	}
-}
-
-template<Generation generation>
-auto log_foe_move_probabilities(
+auto log_move_probabilities(
 	std::ostream & stream,
 	WeightedSelections const all_predicted,
-	Team<generation> const & foe
+	Team<generation> const & team
 ) -> void {
 	for (auto const predicted : all_predicted) {
-		stream << "Predicted " << predicted.weight * 100.0 << "% chance: ";
-		log_selection(stream, predicted.selection, foe);
+		stream << '\t' << predicted.weight * 100.0 << "% chance: ";
+		log_selection(stream, predicted.selection, team);
 		stream << '\n';
 	}
 }
@@ -85,15 +68,19 @@ auto log_foe_move_probabilities(
 template<Generation generation>
 auto predicted_state(
 	VisibleState<generation> const & state,
-	UsageStats const & usage_stats,
-	Depth const depth
+	UsageStats const & usage_stats
 ) -> State<generation> {
 	return State<generation>(
 		Team<generation>(state.ai),
 		most_likely_team(usage_stats, state.foe),
-		state.environment,
-		depth
+		state.environment
 	);
+}
+
+constexpr auto sort_selections(WeightedSelections & selections) -> void {
+	containers::sort(selections, [](WeightedSelection const lhs, WeightedSelection const rhs) {
+		return lhs.weight > rhs.weight;
+	});
 }
 
 template<Generation generation>
@@ -101,13 +88,13 @@ auto determine_selection(
 	VisibleState<generation> const & visible,
 	std::ostream & stream,
 	UsageStats const & usage_stats,
-	Evaluate<generation> const evaluate,
-	Depth const depth
+	Strategy const & strategy,
+	std::mt19937 & random_engine
 ) -> Selection {
 	if (visible.ai.size() == 0_bi or visible.foe.size() == 0_bi) {
 		throw std::runtime_error("Tried to determine a selection with an empty team.");
 	}
-	auto const state = predicted_state(visible, usage_stats, depth);
+	auto const state = predicted_state(visible, usage_stats);
 
 	auto log_team = [&](std::string_view const label, Team<generation> const & team) {
 		stream << label << "'s " << to_string(team) << '\n';
@@ -117,51 +104,49 @@ auto determine_selection(
 	stream << std::flush;
 
 	auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);
+	auto const foe_selections = get_legal_selections(state.foe, state.ai, state.environment);
 
 	auto const start = std::chrono::steady_clock::now();
 
-	auto foe_moves = random_selection(
-		get_legal_selections(state.foe, state.ai, state.environment),
-		0.164
+	auto result = strategy(
+		state.ai,
+		ai_selections,
+		state.foe,
+		foe_selections,
+		state.environment
 	);
-	containers::sort(foe_moves, [](WeightedSelection const lhs, WeightedSelection const rhs) {
-		return lhs.weight > rhs.weight;
-	});
-	log_foe_move_probabilities(stream, foe_moves, state.foe);
+
+	sort_selections(result.predicted_other);
+	stream << "Predicted:\n";
+	log_move_probabilities(stream, result.predicted_other, state.foe);
+	sort_selections(result.user);
+	stream << "Use:\n";
+	log_move_probabilities(stream, result.user, state.ai);
+
+	auto const finish = std::chrono::steady_clock::now();
+	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds\n";
 	stream << std::flush;
 
-	auto scored_selections = expectimax(
-		state,
-		ai_selections,
-		foe_moves,
-		evaluate
-	);
-	auto const finish = std::chrono::steady_clock::now();
-	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-	containers::sort(scored_selections, [](ScoredSelection const lhs, ScoredSelection const rhs) {
-		return lhs.score > rhs.score;
-	});
-	log_move_scores(stream, scored_selections, state.ai);
-	stream << std::flush;
-	return containers::front(scored_selections).selection;
+	return pick_selection(result.user, random_engine);
 }
 
 export auto determine_selection(
 	GenerationGeneric<VisibleState> const & generic_state,
 	std::ostream & stream,
 	AllUsageStats const & all_usage_stats,
-	AllEvaluate const & all_evaluate,
-	Depth const depth
+	Strategy const & strategy,
+	std::mt19937 & random_engine
 ) -> Selection {
+	auto const & usage_stats = all_usage_stats[get_generation(generic_state)];
 	return tv::visit(
 		generic_state,
 		[&]<Generation generation>(VisibleState<generation> const & state) -> Selection {
 			return determine_selection(
 				state,
 				stream,
-				all_usage_stats[generation],
-				all_evaluate.get<generation>(),
-				depth
+				usage_stats,
+				strategy,
+				random_engine
 			);
 		}
 	);

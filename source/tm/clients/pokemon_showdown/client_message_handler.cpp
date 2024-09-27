@@ -37,15 +37,14 @@ import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 import tm.clients.turn_count;
 
-import tm.evaluate.all_evaluate;
-import tm.evaluate.depth;
-
 import tm.move.move_name;
 import tm.move.pass;
 import tm.move.selection;
 import tm.move.switch_;
 
 import tm.string_conversions.move_name;
+
+import tm.strategy.strategy;
 
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.all_usage_stats;
@@ -116,10 +115,10 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 }
 
 export struct ClientMessageHandler {
-	ClientMessageHandler(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
+	ClientMessageHandler(SettingsFile settings, Strategy strategy, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
+		m_strategy(std::move(strategy)),
 		m_settings(std::move(settings)),
-		m_depth(depth),
 		m_battles_directory(get_battles_directory()),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
@@ -222,8 +221,8 @@ private:
 			state,
 			analysis_logger,
 			m_all_usage_stats,
-			m_evaluate,
-			m_depth
+			m_strategy,
+			m_random_engine
 		);
 		tv::visit(action, tv::overload(
 			[&](Switch const switch_) {
@@ -333,11 +332,9 @@ private:
 	std::mt19937 m_random_engine;
 
 	AllUsageStats m_all_usage_stats;
-	AllEvaluate m_evaluate;
+	Strategy m_strategy;
 
 	SettingsFile m_settings;
-
-	Depth m_depth;
 
 	std::filesystem::path m_battles_directory;
 	Battles m_battles;
