@@ -35,6 +35,25 @@ auto parallel_sum(auto && range) {
 	);
 }
 
+constexpr auto remove_unlikely_foe_selections(WeightedSelections const foe_selections) {
+	auto const filtered = containers::filter(
+		foe_selections,
+		[](WeightedSelection const value) {
+			return value.weight > 0.05;
+		}
+	);
+	auto const cummulative_weight = containers::sum(containers::transform(
+		filtered,
+		&WeightedSelection::weight
+	));
+	return WeightedSelections(containers::transform(
+		filtered,
+		[=](WeightedSelection const value) {
+			return WeightedSelection(value.selection, value.weight / cummulative_weight);
+		}
+	));
+}
+
 template<Generation generation>
 struct ScoreMovesEvaluator {
 	explicit ScoreMovesEvaluator(Strategy const & foe_strategy):
@@ -68,13 +87,13 @@ struct ScoreMovesEvaluator {
 		return operator()(
 			state,
 			ai_selections,
-			m_foe_strategy.get()(
+			remove_unlikely_foe_selections(m_foe_strategy.get()(
 				state.foe,
 				foe_selections,
 				state.ai,
 				ai_selections,
 				state.environment
-			).user,
+			).user),
 			std::move(function)
 		);
 	}
@@ -123,7 +142,7 @@ auto make_expectimax(
 		auto const scored_selections = evaluator.select_type_of_action(
 			State<generation>(ai, foe, environment),
 			ai_selections,
-			predicted_foe_selections,
+			remove_unlikely_foe_selections(predicted_foe_selections),
 			depth
 		);
 		return BothWeightedSelections(
