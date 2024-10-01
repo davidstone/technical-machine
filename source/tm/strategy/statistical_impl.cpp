@@ -82,12 +82,15 @@ struct SelectionWeights {
 			auto const other = read_bytes<Species>(stream);
 			auto const user = read_bytes<Species>(stream);
 			auto const switch_out_weight = read_bytes<double>(stream);
+			BOUNDED_ASSERT(switch_out_weight >= 0.0);
 			auto const switch_in_multiplier = read_bytes<double>(stream);
+			BOUNDED_ASSERT(switch_in_multiplier >= 0.0);
 			using MoveCount = bounded::integer<0, bounded::normalize<bounded::number_of<MoveName>>>;
 			auto const move_count = read_bytes<MoveCount>(stream);
 			auto moves = MoveData(containers::generate_n(move_count, [&] {
 				auto const name = read_bytes<MoveName>(stream);
 				auto const weight = read_bytes<double>(stream);
+				BOUNDED_ASSERT(weight >= 0.0);
 				return containers::map_value_type<MoveName, double>(name, weight);
 			}));
 			set(
@@ -124,7 +127,7 @@ private:
 		per_matchup.set(switch_out_weight, switch_in_multiplier, std::move(move_data));
 	}
 
-	UsageFor<Species, PerOther> m_data;
+	UsageFor<Species, PerOther> m_data{};
 };
 
 struct Statistical {
