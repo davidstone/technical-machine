@@ -547,7 +547,12 @@ constexpr auto can_confuse_with_chatter(Species const pokemon) {
 }
 
 template<any_active_pokemon UserPokemon>
-auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>> {
+auto possible_side_effects(
+	MoveName const move,
+	UserPokemon const original_user,
+	OtherTeam<AssociatedTeam<UserPokemon>> const & original_other,
+	Environment const original_environment
+) -> SideEffects<AssociatedTeam<UserPokemon>> {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto generation = generation_from<UserPokemon>;
 	switch (move) {
@@ -2270,7 +2275,12 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 }
 
 #define INSTANTIATE_ONE(UserPokemon) \
-	template auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>>
+	template auto possible_side_effects( \
+		MoveName const move, \
+		UserPokemon const original_user, \
+		OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, \
+		Environment const original_environment \
+	) -> SideEffects<AssociatedTeam<UserPokemon>>
 
 #define INSTANTIATE_ALL(generation) \
 	INSTANTIATE_ONE(AnyActivePokemon<Pokemon<generation>>); \

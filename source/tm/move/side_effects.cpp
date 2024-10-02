@@ -39,10 +39,20 @@ template<any_team UserTeam>
 using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15_bi>;
 
 export template<any_active_pokemon UserPokemon>
-auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>>;
+auto possible_side_effects(
+	MoveName const move,
+	UserPokemon const original_user,
+	OtherTeam<AssociatedTeam<UserPokemon>> const & original_other,
+	Environment const original_environment
+) -> SideEffects<AssociatedTeam<UserPokemon>>;
 
 #define EXTERN_INSTANTIATION_ONE(UserPokemon) \
-	extern template auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>>
+	extern template auto possible_side_effects( \
+		MoveName const move, \
+		UserPokemon const original_user, \
+		OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, \
+		Environment const original_environment \
+	) -> SideEffects<AssociatedTeam<UserPokemon>>
 
 #define EXTERN_INSTANTIATION_ALL(generation) \
 	EXTERN_INSTANTIATION_ONE(AnyActivePokemon<Pokemon<generation>>); \
