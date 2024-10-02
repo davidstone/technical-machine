@@ -103,7 +103,8 @@ export struct LastUsedMove {
 					throw std::runtime_error(containers::concatenate<std::string>(
 						"Tried to use "sv,
 						to_string(move),
-						" while locked into another move"sv
+						" while locked into "sv,
+						m_move ? to_string(*m_move) : "nothing"sv
 					));
 				}
 			}
