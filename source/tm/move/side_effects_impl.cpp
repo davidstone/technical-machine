@@ -1400,10 +1400,11 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & environment, auto) {
 				auto const pokemon = user.pokemon();
 				auto const stockpiles = pokemon.release_stockpile();
-				if (stockpiles == 0_bi) {
+				auto const healing = swallow_healing(stockpiles);
+				if (!healing) {
 					return;
 				}
-				heal(pokemon, environment, swallow_healing(stockpiles));
+				heal(pokemon, environment, *healing);
 			});
 
 		case MoveName::Mud_Sport:

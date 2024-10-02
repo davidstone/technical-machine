@@ -13,13 +13,15 @@ import tm.saturating_add;
 
 import bounded;
 import std_module;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
+using StockpileCount = bounded::integer<0, 3>;
+
 export template<Generation generation>
 struct Stockpile {
-	static constexpr auto max = 3;
 	// Returns whether Stockpile was able to increment (true) or if it is
 	// already maxed out (false)
 	constexpr auto increment() & {
@@ -49,15 +51,19 @@ struct Stockpile {
 
 private:
 	static constexpr auto exists = generation >= Generation::three;
-	[[no_unique_address]] IntegerIf<bounded::integer<0, max>, exists> m_level = 0_bi;
+	[[no_unique_address]] IntegerIf<StockpileCount, exists> m_level = 0_bi;
 };
 
-export constexpr auto swallow_healing(bounded::bounded_integer auto const stockpiles) {
-	using result = rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
+using Healing = rational<
+	bounded::constant_t<1>,
+	bounded::integer<1, 4>
+>;
+export constexpr auto swallow_healing(StockpileCount const stockpiles) -> tv::optional<Healing> {
 	switch (stockpiles.value()) {
-		case 1: return result{1_bi, 4_bi};
-		case 2: return result{1_bi, 2_bi};
-		case 3: return result{1_bi, 1_bi};
+		case 0: return tv::none;
+		case 1: return Healing(1_bi, 4_bi);
+		case 2: return Healing(1_bi, 2_bi);
+		case 3: return Healing(1_bi, 1_bi);
 		default: std::unreachable();
 	}
 }
