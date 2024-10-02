@@ -46,6 +46,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto reset_end_of_turn() & -> void {
+		break_protect();
 		m_moved_this_turn = false;
 	}
 
@@ -99,6 +100,10 @@ export struct LastUsedMove {
 						}
 						m_effects = ChargingUp();
 						return false;
+					case MoveName::Detect:
+					case MoveName::Protect:
+						m_effects = Protecting();
+						return false;
 					case MoveName::Blast_Burn:
 					case MoveName::Eternabeam:
 					case MoveName::Frenzy_Plant:
@@ -134,6 +139,9 @@ export struct LastUsedMove {
 				check_valid_lock_in();
 				m_effects = Empty();
 				return false;
+			},
+			[&](Protecting) -> bool {
+				throw std::runtime_error("Cannot use a move while protecting");
 			},
 			[&](UproarCounter & uproar) -> bool {
 				BOUNDED_ASSERT(m_move == MoveName::Uproar);
@@ -306,10 +314,7 @@ export struct LastUsedMove {
 	}
 
 	constexpr auto is_protecting() const -> bool {
-		return moved_this_turn() and (
-			successful_last_move(MoveName::Detect) or
-			successful_last_move(MoveName::Protect)
-		);
+		return m_effects.index() == bounded::type<Protecting>;
 	}
 	constexpr auto break_protect() & -> void {
 		if (is_protecting()) {
@@ -382,6 +387,9 @@ private:
 	struct ChargingUp {
 		friend auto operator==(ChargingUp, ChargingUp) -> bool = default;
 	};
+	struct Protecting {
+		friend auto operator==(Protecting, Protecting) -> bool = default;
+	};
 	struct Recharging {
 		friend auto operator==(Recharging, Recharging) -> bool = default;
 	};
@@ -401,6 +409,7 @@ private:
 		Empty,
 		Bide,
 		ChargingUp,
+		Protecting,
 		Rampage,
 		Recharging,
 		UproarCounter,
