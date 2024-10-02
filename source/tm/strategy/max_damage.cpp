@@ -106,8 +106,18 @@ constexpr auto max_damage(
 			return lhs.damage > rhs.damage;
 		}
 	);
-
-	return WeightedSelections({{best->selection, 1.0}});
+	auto const all_best = containers::filter(
+		scores,
+		[&](SelectionAndDamage const element) {
+			return element.damage == best->damage;
+		}
+	);
+	auto const best_size = double(containers::linear_size(all_best));
+	return WeightedSelections(
+		containers::transform(all_best, [&](SelectionAndDamage const element) {
+			return WeightedSelection(element.selection, 1.0 / best_size);
+		})
+	);
 }
 
 export auto make_max_damage() -> Strategy {
