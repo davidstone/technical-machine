@@ -18,6 +18,7 @@ import tm.ability;
 import tm.environment;
 import tm.generation;
 import tm.item;
+import tm.weather;
 
 import bounded;
 import numeric_traits;
@@ -40,10 +41,10 @@ constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutab
 			break;
 		}
 		case Ability::Drizzle:
-			environment.activate_rain_from_ability(generation, extends_rain(switcher.item(environment)));
+			environment.activate_weather_from_ability(generation, Weather::rain, extends_rain(switcher.item(environment)));
 			break;
 		case Ability::Drought:
-			environment.activate_sun_from_ability(generation, extends_sun(switcher.item(environment)));
+			environment.activate_weather_from_ability(generation, Weather::sun, extends_sun(switcher.item(environment)));
 			break;
 		case Ability::Forecast:
 			break;
@@ -64,10 +65,10 @@ constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutab
 			break;
 		}
 		case Ability::Sand_Stream:
-			environment.activate_sand_from_ability(generation, extends_sand(switcher.item(environment)));
+			environment.activate_weather_from_ability(generation, Weather::sand, extends_sand(switcher.item(environment)));
 			break;
 		case Ability::Snow_Warning:
-			environment.activate_hail_from_ability(generation, extends_hail(switcher.item(environment)));
+			environment.activate_weather_from_ability(generation, Weather::hail, extends_hail(switcher.item(environment)));
 			break;
 		case Ability::Trace: {
 			auto const other_ability = other.ability();

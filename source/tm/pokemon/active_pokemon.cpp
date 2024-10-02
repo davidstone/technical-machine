@@ -71,6 +71,7 @@ import tm.held_item;
 import tm.item;
 import tm.rational;
 import tm.visible_hp;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -493,11 +494,11 @@ constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, En
 	pokemon.remove_item();
 }
 
-constexpr auto yawn_can_apply(any_active_pokemon auto const target, Environment const environment, bool const either_is_uproaring, bool const sleep_clause_activates) {
+constexpr auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
-		indirect_status_can_apply(StatusName::sleep, target, environment);
+		indirect_status_can_apply(StatusName::sleep, target, weather);
 }
 
 // A mutable reference to the currently active Pokemon
@@ -758,14 +759,15 @@ public:
 		set_status_impl(status_name, environment);
 	}
 
-	constexpr auto rest(Environment const environment, bool const other_is_uproaring) const -> void {
+	constexpr auto rest(Environment const environment, Ability const other_ability, bool const other_is_uproaring) const -> void {
 		if (other_is_uproaring) {
 			return;
 		}
 		if (generation >= Generation::three and is_sleeping(this->m_pokemon.status())) {
 			return;
 		}
-		if (blocks_status(this->ability(), this->ability(), StatusName::rest, environment)) {
+		auto const weather = environment.effective_weather(this->ability(), other_ability);
+		if (blocks_status(this->ability(), this->ability(), StatusName::rest, weather)) {
 			return;
 		}
 		auto const active_hp = this->hp();
@@ -896,7 +898,7 @@ public:
 	constexpr auto hit_with_yawn() const {
 		this->m_flags.yawn.activate();
 	}
-	constexpr auto try_to_activate_yawn(Environment const environment, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
+	constexpr auto try_to_activate_yawn(Environment const environment, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
 		auto is_active = [&] {
 			return this->m_flags.yawn.is_active();
 		};
@@ -909,7 +911,7 @@ public:
 		if (is_active()) {
 			return;
 		}
-		if (yawn_can_apply(as_const(), environment, either_is_uproaring, sleep_clause_activates)) {
+		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {
 			set_status(StatusName::sleep, environment);
 		}
 	}

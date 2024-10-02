@@ -30,13 +30,13 @@ import tm.type.effectiveness;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.any_team;
 import tm.associated_team;
 import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.rational;
+import tm.weather;
 
 import bounded;
 
@@ -59,31 +59,32 @@ constexpr auto screen_is_active(ExecutedMove<AttackerTeam> const executed, Defen
 	return !executed.critical_hit and (reflect_is_active(executed.move, defender) or light_screen_is_active(executed.move, defender));
 }
 
-constexpr auto is_strengthened_by_weather(Type const type, Environment const environment, bool const weather_is_blocked) -> bool {
-	if (weather_is_blocked) {
-		return false;
+using WeatherModifier = rational<
+	bounded::integer<1, 3>,
+	bounded::constant_t<2>
+>;
+constexpr auto calculate_weather_modifier(Type const type, Weather const weather) -> WeatherModifier {
+	constexpr auto boost = WeatherModifier(3_bi, 2_bi);
+	constexpr auto neutral = WeatherModifier(2_bi, 2_bi);
+	constexpr auto weaken = WeatherModifier(1_bi, 2_bi);
+	switch (weather) {
+		case Weather::clear:
+		case Weather::hail:
+		case Weather::sand:
+			return neutral;
+		case Weather::sun:
+			switch (type) {
+				case Type::Fire: return boost;
+				case Type::Water: return weaken;
+				default: return neutral;
+			}
+		case Weather::rain:
+			switch (type) {
+				case Type::Fire: return weaken;
+				case Type::Water: return boost;
+				default: return neutral;
+			}
 	}
-	return
-		(environment.rain() and type == Type::Water) or
-		(environment.sun() and type == Type::Fire);
-}
-
-constexpr auto is_weakened_by_weather(Type const type, Environment const environment, bool const weather_is_blocked) -> bool {
-	if (weather_is_blocked) {
-		return false;
-	}
-	return
-		(environment.rain() and type == Type::Fire) or
-		(environment.sun() and type == Type::Water);
-}
-
-
-constexpr auto calculate_weather_modifier(Type const type, Environment const environment, bool const weather_is_blocked) {
-	return
-		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, environment, weather_is_blocked), rational(3_bi, 2_bi),
-		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, environment, weather_is_blocked), rational(1_bi, 2_bi),
-		rational(1_bi, 1_bi)
-	));
 }
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
@@ -213,14 +214,16 @@ constexpr auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserT
 	auto const attacker = attacker_team.pokemon();
 	auto const attacker_ability = attacker.ability();
 	auto const defender = defender_team.pokemon();
+	auto const defender_ability = defender.ability();
 	auto const effectiveness = Effectiveness(generation, executed.move.type, defender.types());
+	auto const weather = environment.effective_weather(attacker_ability, defender_ability);
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
 		move_power(attacker_team, executed, defender_team, environment) *
 		physical_vs_special_modifier(attacker, executed, defender, environment) /
 		screen_divisor(executed, defender_team) *
-		calculate_weather_modifier(executed.move.type, environment, ability_blocks_weather(attacker_ability, defender.ability())) *
+		calculate_weather_modifier(executed.move.type, weather) *
 		calculate_flash_fire_modifier(attacker, executed.move.type) +
 		2_bi;
 
@@ -231,7 +234,7 @@ constexpr auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserT
 		// random_damage *
 		calculate_stab_modifier(attacker, executed.move.type) *
 		effectiveness *
-		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *
+		calculate_ability_effectiveness_modifier(defender_ability, effectiveness) *
 		calculate_expert_belt_modifier(attacker.item(environment), effectiveness) *
 		tinted_lens_multiplier(attacker_ability, effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)

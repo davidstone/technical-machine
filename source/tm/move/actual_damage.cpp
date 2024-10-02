@@ -55,11 +55,14 @@ export struct ActualDamage {
 	template<any_team UserTeam>	
 	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, any_team auto const & other, OtherAction const other_action, Environment const environment) const -> damage_type {
 		auto calculate = [&] {
+			auto const user_pokemon = user.pokemon();
+			auto const other_pokemon = other.pokemon();
 			auto const substitute = substitute_interaction(generation_from<UserTeam>, executed.move.name);
+			auto const weather = environment.effective_weather(user_pokemon.ability(), other_pokemon.ability());
 			auto const no_damage =
 				!is_damaging(executed.move.name) or
-				(other.pokemon().substitute() and substitute != Substitute::bypassed) or
-				will_be_recharge_turn(user.pokemon(), executed.move.name, other.pokemon().ability(), environment);
+				(other_pokemon.substitute() and substitute != Substitute::bypassed) or
+				will_be_recharge_turn(user_pokemon.last_used_move(), executed.move.name, weather);
 			return no_damage ? 0_bi : calculate_damage(user, executed, move_weakened_from_item, other, other_action, environment);
 		};
 

@@ -13,7 +13,6 @@ import tm.evaluate.all_evaluate;
 import tm.strategy.expectimax;
 import tm.strategy.statistical;
 
-import tm.environment;
 import tm.get_directory;
 import tm.load_settings_file;
 

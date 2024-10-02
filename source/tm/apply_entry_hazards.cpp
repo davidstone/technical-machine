@@ -34,9 +34,10 @@ constexpr auto removes_toxic_spikes(any_active_pokemon auto const switcher) {
 }
 
 template<any_mutable_active_pokemon PokemonType>
-constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const & hazards, PokemonType const switcher, Environment const environment) {
+constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const hazards, PokemonType const switcher, Ability const other_ability, Environment const environment) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? StatusName::poison : StatusName::toxic;
-	if (indirect_status_can_apply(status, switcher.as_const(), environment)) {
+	auto const weather = environment.effective_weather(switcher.ability(), other_ability);
+	if (indirect_status_can_apply(status, switcher.as_const(), weather)) {
 		switcher.set_status(status, environment);
 	}
 }
@@ -53,7 +54,7 @@ constexpr auto spikes_damage(EntryHazards<generation> const hazards) -> rational
 }
 
 export template<any_mutable_active_pokemon PokemonType>
-constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, PokemonType const switcher, Environment const environment) -> void {
+constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, PokemonType const switcher, Ability const other_ability, Environment const environment) -> void {
 	constexpr auto generation = generation_from<PokemonType>;
 	if (switcher.item(environment) == Item::Heavy_Duty_Boots) {
 		return;
@@ -64,7 +65,7 @@ constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, Pokem
 			if (removes_toxic_spikes(switcher.as_const())) {
 				hazards.clear_toxic_spikes();
 			} else if (generation >= Generation::five or !blocks_secondary_damage(switcher.ability())) {
-				apply_toxic_spikes(hazards, switcher, environment);
+				apply_toxic_spikes(hazards, switcher, other_ability, environment);
 			}
 		}
 		if (hazards.spikes() != 0_bi) {

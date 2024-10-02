@@ -47,8 +47,9 @@ static_assert([]{
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
 	constexpr auto environment = Environment();
+	constexpr auto other_ability = Ability::Honey_Gather;
 
-	active_pokemon.rest(environment, false);
+	active_pokemon.rest(environment, other_ability, false);
 	return active_pokemon.status().name() == StatusName::clear;
 }());
 
@@ -67,12 +68,13 @@ static_assert([]{
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
 	constexpr auto environment = Environment();
+	constexpr auto other_ability = Ability::Honey_Gather;
 
 	active_pokemon.set_status(StatusName::paralysis, environment);
 	BOUNDED_ASSERT(active_pokemon.status().name() == StatusName::paralysis);
 
 	BOUNDED_ASSERT(clears_status(active_pokemon.item(environment), StatusName::rest));
-	active_pokemon.rest(environment, false);
+	active_pokemon.rest(environment, other_ability, false);
 
 	return active_pokemon.status().name() == StatusName::clear;
 }());

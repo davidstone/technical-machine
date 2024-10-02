@@ -10,15 +10,11 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
-import tm.environment;
+import tm.weather;
 
 namespace technicalmachine {
 
-export constexpr bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Environment const environment) {
-	auto is_sunny = [&] {
-		return environment.sun() and !ability_blocks_weather(ability, other_ability);
-	};
+export constexpr bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Weather const weather) {
 	auto const ability_blocked = other_ability == Ability::Mold_Breaker;
 	switch (status) {
 		case StatusName::burn:
@@ -27,21 +23,21 @@ export constexpr bool blocks_status(Ability const ability, Ability const other_a
 			}
 			switch (ability) {
 				case Ability::Leaf_Guard:
-					return is_sunny();
+					return weather == Weather::sun;
 				case Ability::Water_Veil:
 					return true;
 				default:
 					return false;
 			}
 		case StatusName::freeze:
-			return is_sunny() or (!ability_blocked and ability == Ability::Magma_Armor);
+			return weather == Weather::sun or (!ability_blocked and ability == Ability::Magma_Armor);
 		case StatusName::paralysis:
 			if (ability_blocked) {
 				return false;
 			}
 			switch (ability) {
 				case Ability::Leaf_Guard:
-					return is_sunny();
+					return weather == Weather::sun;
 				case Ability::Limber:
 					return true;
 				default:
@@ -56,7 +52,7 @@ export constexpr bool blocks_status(Ability const ability, Ability const other_a
 				case Ability::Immunity:
 					return true;
 				case Ability::Leaf_Guard:
-					return is_sunny();
+					return weather == Weather::sun;
 				default:
 					return false;
 			}
@@ -70,7 +66,7 @@ export constexpr bool blocks_status(Ability const ability, Ability const other_a
 				case Ability::Vital_Spirit:
 					return true;
 				case Ability::Leaf_Guard:
-					return is_sunny();
+					return weather == Weather::sun;
 				default:
 					return false;
 			}

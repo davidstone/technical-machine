@@ -5,6 +5,7 @@
 
 module;
 
+#include <bounded/assert.hpp>
 #include <bounded/conditional.hpp>
 
 export module tm.environment;
@@ -15,73 +16,40 @@ import tm.generation;
 import tm.weather;
 
 import bounded;
-import numeric_traits;
-import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
+constexpr auto ability_blocks_weather(Ability const ability) -> bool {
+	switch (ability) {
+		case Ability::Air_Lock:
+		case Ability::Cloud_Nine:
+			return true;
+		default:
+			return false;
+	}
+}
+
 export struct Environment {
-private:
-	static constexpr auto standard = 5_bi;
-	static constexpr auto extended = 8_bi;
-	static constexpr auto permanent = -1_bi;
-	using Short = bounded::integer<0, bounded::normalize<standard>>;
-	using Long = bounded::integer<-1, bounded::normalize<extended>>;
-
-	constexpr auto activate_weather(Weather const type, Long const duration) {
-		if (type == m_active and duration != permanent) {
-			return;
-		}
-		m_active = type;
-		m_turns_remaining = static_cast<Long>(duration);
-	}
-	constexpr auto activate_weather(Weather const type, bool const is_extended) {
-		activate_weather(type, BOUNDED_CONDITIONAL(is_extended, extended, standard));
-	}
-	constexpr auto activate_weather_from_ability(Generation const generation, Weather const type, bool const is_extended) {
-		auto const duration =
-			BOUNDED_CONDITIONAL(generation <= Generation::five, permanent,
-			BOUNDED_CONDITIONAL(is_extended, extended,
-			standard
-		));
-		activate_weather(type, duration);
-	}
-
-	Short m_trick_room_turns_remaining = 0_bi;
-	Short m_gravity_turns_remaining = 0_bi;
-	Short m_magic_room_turns_remaining = 0_bi;
-	Weather m_active = Weather::clear;
-	Long m_turns_remaining = 0_bi;
-
-	constexpr auto is_active(Weather const type) const {
-		return m_active == type;
-	}
-
-public:
-	constexpr auto trick_room() const {
+	constexpr auto trick_room() const -> bool {
 		return m_trick_room_turns_remaining != 0_bi;
 	}
-	constexpr auto gravity() const {
+	constexpr auto gravity() const -> bool {
 		return m_gravity_turns_remaining != 0_bi;
 	}
-	constexpr auto magic_room() const {
+	constexpr auto magic_room() const -> bool {
 		return m_magic_room_turns_remaining != 0_bi;
 	}
-	constexpr auto hail() const {
-		return is_active(Weather::hail);
+	constexpr auto actual_weather() const -> Weather {
+		return m_weather;
 	}
-	constexpr auto sand() const {
-		return is_active(Weather::sand);
-	}
-	constexpr auto sun() const {
-		return is_active(Weather::sun);
-	}
-	constexpr auto rain() const {
-		return is_active(Weather::rain);
+	constexpr auto effective_weather(Ability const ability1, Ability const ability2) const -> Weather {
+		return ability_blocks_weather(ability1) or ability_blocks_weather(ability2) ?
+			Weather::clear :
+			m_weather;
 	}
 
-	constexpr auto advance_one_turn() {
+	constexpr auto advance_one_turn() -> void {
 		constexpr auto conditional_decrement = [](auto & n) {
 			if (n > 0_bi) {
 				--n;
@@ -92,51 +60,39 @@ public:
 		conditional_decrement(m_magic_room_turns_remaining);
 		conditional_decrement(m_turns_remaining);
 		if (m_turns_remaining == 0_bi) {
-			m_active = Weather::clear;
+			m_weather = Weather::clear;
 		}
 	}
 
 
-	constexpr auto activate_trick_room() {
+	constexpr auto activate_trick_room() -> void {
 		m_trick_room_turns_remaining = BOUNDED_CONDITIONAL(trick_room(), 0_bi, standard);
 	}
 
-	constexpr auto activate_gravity() {
+	constexpr auto activate_gravity() -> void {
 		if (!gravity()) {
 			m_gravity_turns_remaining = standard;
 		}
 	}
 
-	constexpr auto activate_magic_room() {
+	constexpr auto activate_magic_room() -> void {
 		m_magic_room_turns_remaining = BOUNDED_CONDITIONAL(magic_room(), 0_bi, standard);
 	}
 
-	constexpr auto deactivate_fog() {
+	constexpr auto deactivate_fog() -> void {
 	}
 
-	constexpr auto activate_hail_from_move(bool const is_extended) {
-		activate_weather(Weather::hail, is_extended);
+	constexpr auto activate_weather_from_move(Weather const weather, bool const is_extended) -> void {
+		BOUNDED_ASSERT(weather != Weather::clear);
+		activate_weather(weather, is_extended ? Long(extended) : Long(standard));
 	}
-	constexpr auto activate_hail_from_ability(Generation const generation, bool const is_extended) {
-		activate_weather_from_ability(generation, Weather::hail, is_extended);
-	}
-	constexpr auto activate_sun_from_move(bool const is_extended) {
-		activate_weather(Weather::sun, is_extended);
-	}
-	constexpr auto activate_sun_from_ability(Generation const generation, bool const is_extended) {
-		activate_weather_from_ability(generation, Weather::sun, is_extended);
-	}
-	constexpr auto activate_sand_from_move(bool const is_extended) {
-		activate_weather(Weather::sand, is_extended);
-	}
-	constexpr auto activate_sand_from_ability(Generation const generation, bool const is_extended) {
-		activate_weather_from_ability(generation, Weather::sand, is_extended);
-	}
-	constexpr auto activate_rain_from_move(bool const is_extended) {
-		activate_weather(Weather::rain, is_extended);
-	}
-	constexpr auto activate_rain_from_ability(Generation const generation, bool const is_extended) {
-		activate_weather_from_ability(generation, Weather::rain, is_extended);
+	constexpr auto activate_weather_from_ability(Generation const generation, Weather const weather, bool const is_extended) -> void {
+		BOUNDED_ASSERT(weather != Weather::clear);
+		auto const duration =
+			generation <= Generation::five ? Long(permanent) :
+			is_extended ? Long(extended) :
+			Long(standard);
+		activate_weather(weather, duration);
 	}
 
 	friend auto operator==(Environment, Environment) -> bool = default;
@@ -146,24 +102,31 @@ public:
 			environment.m_trick_room_turns_remaining,
 			environment.m_gravity_turns_remaining,
 			environment.m_magic_room_turns_remaining,
-			environment.m_active,
+			environment.m_weather,
 			environment.m_turns_remaining
 		);
 	}
-};
 
-export constexpr auto to_weather(Environment const environment) -> Weather {
-	if (environment.hail()) {
-		return Weather::hail;
-	} else if (environment.sand()) {
-		return Weather::sand;
-	} else if (environment.sun()) {
-		return Weather::sun;
-	} else if (environment.rain()) {
-		return Weather::rain;
-	} else {
-		return Weather::clear;
+private:
+	static constexpr auto standard = 5_bi;
+	static constexpr auto extended = 8_bi;
+	static constexpr auto permanent = -1_bi;
+	using Short = bounded::integer<0, bounded::normalize<standard>>;
+	using Long = bounded::integer<-1, bounded::normalize<extended>>;
+
+	constexpr auto activate_weather(Weather const weather, Long const duration) -> void {
+		if (m_weather == weather and duration != permanent) {
+			return;
+		}
+		m_weather = weather;
+		m_turns_remaining = duration;
 	}
-}
+
+	Short m_trick_room_turns_remaining = 0_bi;
+	Short m_gravity_turns_remaining = 0_bi;
+	Short m_magic_room_turns_remaining = 0_bi;
+	Weather m_weather = Weather::clear;
+	Long m_turns_remaining = 0_bi;
+};
 
 } // namespace technicalmachine

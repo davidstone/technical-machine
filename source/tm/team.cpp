@@ -150,7 +150,7 @@ struct TeamImpl {
 
 		auto const replacement_pokemon = pokemon();
 		replacement_pokemon.switch_in(environment, replacing_fainted);
-		apply(m_entry_hazards, replacement_pokemon, environment);
+		apply(m_entry_hazards, replacement_pokemon, other.ability(), environment);
 		if (replacement_pokemon.hp().current() != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other, environment);
 		}

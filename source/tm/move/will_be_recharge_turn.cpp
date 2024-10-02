@@ -7,18 +7,17 @@ export module tm.move.will_be_recharge_turn;
 
 import tm.move.move_name;
 
-import tm.pokemon.any_pokemon;
+import tm.pokemon.last_used_move;
 
 import tm.ability;
-import tm.ability_blocks_weather;
-import tm.environment;
+import tm.weather;
 
 namespace technicalmachine {
 
-export auto will_be_recharge_turn(any_active_pokemon auto const user, MoveName const move, Ability const other_ability, Environment const environment) {
+export auto will_be_recharge_turn(LastUsedMove const last_used_move, MoveName const move, Weather const weather) {
 	switch (move) {
 		case MoveName::Solar_Beam:
-			return (!environment.sun() or ability_blocks_weather(user.ability(), other_ability)) and !user.last_used_move().is_charging_up();
+			return weather != Weather::sun and !last_used_move.is_charging_up();
 		default:
 			return false;
 	}

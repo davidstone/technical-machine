@@ -23,11 +23,11 @@ import tm.stat.stat_names;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.rational;
+import tm.weather;
 
 import bounded;
 
@@ -79,15 +79,15 @@ inline auto evasion_item_modifier(Generation const generation, Item const item) 
 	}
 }
 
-auto ability_evasion_modifier(any_active_pokemon auto const target, Environment const environment, bool const weather_is_blocked) {
+auto ability_evasion_modifier(any_active_pokemon auto const target, Weather const weather) {
 	using Modifier = rational<
 		bounded::integer<1, 4>,
 		bounded::integer<1, 5>
 	>;
 	auto const target_ability = target.ability();
 	switch (target_ability) {
-		case Ability::Sand_Veil: return environment.sand() and !weather_is_blocked ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
-		case Ability::Snow_Cloak: return environment.hail() and !weather_is_blocked ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Sand_Veil: return weather == Weather::sand ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Snow_Cloak: return weather == Weather::hail ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		case Ability::Tangled_Feet: return target.is_confused() ? Modifier(1_bi, 2_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}
@@ -98,8 +98,8 @@ auto chance_to_hit(ActivePokemonType const user, KnownMove const move, ActivePok
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
-	auto const weather_is_blocked = ability_blocks_weather(target_ability, user_ability);
-	auto const base_accuracy = accuracy(generation, move.name, environment, weather_is_blocked, is_type(user, Type::Poison));
+	auto const weather = environment.effective_weather(target_ability, user_ability);
+	auto const base_accuracy = accuracy(generation, move.name, weather, is_type(user, Type::Poison));
 	if (!move_can_miss(user, move.name, base_accuracy, target)) {
 		return 1.0;
 	}
@@ -112,7 +112,7 @@ auto chance_to_hit(ActivePokemonType const user, KnownMove const move, ActivePok
 		accuracy_item_modifier(user.item(environment), target_moved) *
 		ability_accuracy_modifier(generation, user_ability, move) *
 		evasion_item_modifier(generation, target.item(environment)) *
-		ability_evasion_modifier(target, environment, weather_is_blocked) *
+		ability_evasion_modifier(target, weather) *
 		gravity_multiplier
 	;
 	

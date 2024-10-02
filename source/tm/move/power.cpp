@@ -25,13 +25,13 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.any_team;
 import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.rational;
+import tm.weather;
 
 import bounded;
 
@@ -64,8 +64,12 @@ constexpr auto doubling(AttackerPokemon const attacker, MoveName const move, any
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 	constexpr auto generation = generation_from<AttackerPokemon>;
-	if (defender.last_used_move().vanish_doubles_power(generation, move))
+	if (defender.last_used_move().vanish_doubles_power(generation, move)) {
 		return true;
+	}
+	auto weather = [&] {
+		return environment.effective_weather(attacker.ability(), defender.ability());
+	};
 	switch (move) {
 		case MoveName::Assurance:
 			return defender.damaged();
@@ -95,21 +99,26 @@ constexpr auto doubling(AttackerPokemon const attacker, MoveName const move, any
 		case MoveName::Smelling_Salts:
 			return boosts_smellingsalt(defender.status());
 		case MoveName::Solar_Beam:
-			if (ability_blocks_weather(attacker.ability(), defender.ability())) {
-				return true;
-			}
 			switch (generation) {
 				case Generation::one:
 					return true;
 				case Generation::two:
-					return !environment.rain();
+					return weather() != Weather::rain;
 				case Generation::three:
 				case Generation::four:
 				case Generation::five:
 				case Generation::six:
 				case Generation::seven:
 				case Generation::eight:
-					return !environment.hail() and !environment.rain() and !environment.sand();
+					switch (weather()) {
+						case Weather::clear:
+						case Weather::sun:
+							return true;
+						case Weather::hail:
+						case Weather::sand:
+						case Weather::rain:
+							return false;
+					}
 			}
 		case MoveName::Steamroller:
 		case MoveName::Stomp:
@@ -117,10 +126,7 @@ constexpr auto doubling(AttackerPokemon const attacker, MoveName const move, any
 		case MoveName::Wake_Up_Slap:
 			return is_sleeping(defender.status());
 		case MoveName::Weather_Ball:
-			if (ability_blocks_weather(attacker.ability(), defender.ability())) {
-				return false;
-			}
-			return environment.hail() or environment.rain() or environment.sand() or environment.sun();
+			return weather() != Weather::clear;
 		default:
 			return false;
 	}

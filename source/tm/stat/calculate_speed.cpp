@@ -19,12 +19,12 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.any_team;
 import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.rational;
+import tm.weather;
 
 import bounded;
 import std_module;
@@ -41,19 +41,18 @@ constexpr auto speed_ability_modifier(
 	StatusName const status,
 	bool const is_unburdened,
 	bool const slow_start_is_active,
-	Ability const other_ability,
-	Environment const environment
+	Weather const weather
 ) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&] -> bounded::integer<1, 4> {
 		switch (ability) {
 			case Ability::Chlorophyll: return BOUNDED_CONDITIONAL(
-				environment.sun() and !ability_blocks_weather(ability, other_ability),
+				weather == Weather::sun,
 				denominator * 2_bi,
 				denominator
 			);
 			case Ability::Swift_Swim: return BOUNDED_CONDITIONAL(
-				environment.rain() and !ability_blocks_weather(ability, other_ability),
+				weather == Weather::rain,
 				denominator * 2_bi,
 				denominator
 			);
@@ -120,8 +119,7 @@ export constexpr auto calculate_speed(
 	bool const is_unburdened,
 	bool const slow_start_is_active,
 	bool const tailwind,
-	Ability const other_ability,
-	Environment const environment
+	Weather const weather
 ) {
 	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(status, ability), 4_bi, 1_bi);
 	auto const tailwind_multiplier = BOUNDED_CONDITIONAL(tailwind, 2_bi, 1_bi);
@@ -133,8 +131,7 @@ export constexpr auto calculate_speed(
 			status,
 			is_unburdened,
 			slow_start_is_active,
-			other_ability,
-			environment
+			weather
 		) *
 		item_modifier(species, item) /
 		paralysis_divisor *
@@ -162,8 +159,7 @@ export constexpr auto calculate_speed(any_team auto const & team, Ability const 
 		pokemon.is_unburdened(),
 		pokemon.slow_start_is_active(),
 		static_cast<bool>(team.tailwind()),
-		other_ability,
-		environment
+		environment.effective_weather(pokemon.ability(), other_ability)
 	);
 }
 

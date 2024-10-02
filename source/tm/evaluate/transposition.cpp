@@ -12,7 +12,6 @@ import tm.evaluate.state;
 
 import tm.move.move_name;
 
-import tm.environment;
 import tm.generation;
 
 import bounded;

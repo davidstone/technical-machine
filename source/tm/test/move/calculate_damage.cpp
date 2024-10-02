@@ -32,6 +32,7 @@ import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -129,7 +130,7 @@ namespace max_special_damage {
 
 constexpr auto environment() {
 	auto env = Environment();
-	env.activate_sun_from_move(false);
+	env.activate_weather_from_move(Weather::sun, false);
 	return env;
 }
 

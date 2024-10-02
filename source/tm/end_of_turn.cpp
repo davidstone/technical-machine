@@ -23,7 +23,6 @@ import tm.type.pokemon_types;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.any_team;
 import tm.end_of_turn_flags;
 import tm.environment;
@@ -33,6 +32,7 @@ import tm.heal;
 import tm.item;
 import tm.rational;
 import tm.other_team;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -117,18 +117,23 @@ void sun_effect(any_mutable_active_pokemon auto const pokemon, Environment const
 template<any_mutable_active_pokemon PokemonType>
 void environment_effects(PokemonType const first, OtherMutableActivePokemon<PokemonType> const last, Environment & environment) {
 	environment.advance_one_turn();
-	if (ability_blocks_weather(first.ability(), last.ability())) {
-		return;
-	}
+	auto const weather = environment.effective_weather(first.ability(), last.ability());
 	auto apply_weather = [&](auto const pokemon) {
-		if (environment.hail()) {
-			hail_effect(pokemon, environment);
-		} else if (environment.rain()) {
-			rain_effect(pokemon, environment);
-		} else if (environment.sand()) {
-			sand_effect(pokemon, environment);
-		} else if (environment.sun()) {
-			sun_effect(pokemon, environment);
+		switch (weather) {
+			case Weather::clear:
+				break;
+			case Weather::hail:
+				hail_effect(pokemon, environment);
+				break;
+			case Weather::sand:
+				sand_effect(pokemon, environment);
+				break;
+			case Weather::sun:
+				sun_effect(pokemon, environment);
+				break;
+			case Weather::rain:
+				rain_effect(pokemon, environment);
+				break;
 		}
 	};
 	apply_weather(first);
@@ -172,8 +177,9 @@ auto other_effects(TeamType & team, ActivePokemonFromTeam<OtherTeam<TeamType>> c
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.last_used_move().is_uproaring() or foe.last_used_move().is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, environment, uproar);
+	auto const weather = environment.effective_weather(pokemon.ability(), foe.ability());
 	auto set_status = [&](StatusName const status) {
-		if (indirect_status_can_apply(status, pokemon.as_const(), environment)) {
+		if (indirect_status_can_apply(status, pokemon.as_const(), weather)) {
 			pokemon.set_status(status, environment);
 		}
 	};
@@ -198,7 +204,7 @@ auto other_effects(TeamType & team, ActivePokemonFromTeam<OtherTeam<TeamType>> c
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(environment, uproar, team_has_status(team, StatusName::sleep));
+	pokemon.try_to_activate_yawn(environment, weather, uproar, team_has_status(team, StatusName::sleep));
 	if (pokemon.item(environment) == Item::Sticky_Barb) {
 		heal(pokemon, environment, rational(-1_bi, 8_bi));
 	}
@@ -212,8 +218,9 @@ void generation_2_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_
 	// TODO: Future Sight in reverse speed order
 
 	environment.advance_one_turn();
+	auto const weather = environment.effective_weather(first.ability(), last.ability());
 	auto apply_environment = [&](auto const pokemon) {
-		if (environment.sand() and !is_immune_to_sandstorm(pokemon.types())) {
+		if (weather == Weather::sand and !is_immune_to_sandstorm(pokemon.types())) {
 			heal(pokemon, environment, rational(-1_bi, 8_bi));
 		}
 	};

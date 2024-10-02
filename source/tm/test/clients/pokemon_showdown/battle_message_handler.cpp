@@ -43,7 +43,6 @@ import tm.status.status_name;
 import tm.test.make_seen_team;
 
 import tm.ability;
-import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.generation_generic;

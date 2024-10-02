@@ -22,11 +22,11 @@ import tm.stat.calculate_speed;
 import tm.stat.stage;
 
 import tm.ability;
-import tm.environment;
 import tm.generation_generic;
 import tm.item;
 import tm.to_index;
 import tm.usage_for;
+import tm.weather;
 
 import bounded;
 import concurrent;
@@ -53,8 +53,7 @@ constexpr auto calculate_speed(ps::ParsedPokemon const pokemon) {
 		is_unburdened,
 		slow_start_is_active,
 		tailwind,
-		Ability::Honey_Gather,
-		Environment()
+		Weather::clear
 	);
 }
 

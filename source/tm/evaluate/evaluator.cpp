@@ -60,7 +60,6 @@ import tm.contact_ability_effect;
 import tm.critical_hit_probability;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
-import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
 import tm.switch_decision_required;

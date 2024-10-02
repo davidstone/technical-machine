@@ -27,12 +27,12 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.ability_blocks_weather;
 import tm.any_team;
 import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.rational;
+import tm.weather;
 
 import bounded;
 import std_module;
@@ -98,13 +98,13 @@ constexpr auto pinch_ability_activates(Type const ability_type, PokemonType cons
 	return generation_from<PokemonType> >= Generation::five and move_type == ability_type and hp_ratio(pokemon) <= rational(1_bi, 3_bi);
 }
 
-constexpr auto boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) -> bool {
+constexpr auto boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Weather const weather) -> bool {
 	auto const ability = pokemon.ability();
 	auto pinch_ability = [&](Type const type) {
 		return pinch_ability_activates(type, pokemon, move_type);
 	};
 	switch (ability) {
-		case Ability::Solar_Power: return environment.sun() and !ability_blocks_weather(ability, other_ability);
+		case Ability::Solar_Power: return weather == Weather::sun;
 		case Ability::Blaze: return pinch_ability(Type::Fire);
 		case Ability::Overgrow: return pinch_ability(Type::Grass);
 		case Ability::Swarm: return pinch_ability(Type::Bug);
@@ -113,12 +113,12 @@ constexpr auto boosts_special_attack(any_active_pokemon auto const pokemon, Type
 	}
 }
 
-constexpr auto boosts_special_defense(Ability const ability, Ability const other_ability, Environment const environment) -> bool {
-	return ability == Ability::Flower_Gift and environment.sun() and !ability_blocks_weather(ability, other_ability);
+constexpr auto boosts_special_defense(Ability const ability, Weather const weather) -> bool {
+	return ability == Ability::Flower_Gift and weather == Weather::sun;
 }
 
 template<any_active_pokemon PokemonType>
-constexpr auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]() -> bounded::integer<1, 4> {
 		auto const ability = pokemon.ability();
@@ -131,7 +131,7 @@ constexpr auto attack_ability_modifier(PokemonType const pokemon, Type const mov
 			case Ability::Swarm: return pinch_ability(Type::Bug);
 			case Ability::Torrent: return pinch_ability(Type::Water);
 			case Ability::Flower_Gift: return BOUNDED_CONDITIONAL(
-				environment.sun() and !ability_blocks_weather(ability, other_ability),
+				weather == Weather::sun,
 				3_bi,
 				denominator
 			);
@@ -165,20 +165,20 @@ constexpr auto defense_ability_modifier(any_active_pokemon auto const pokemon) {
 	return rational(numerator, denominator);
 }
 
-constexpr auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_special_attack(pokemon, move_type, other_ability, environment),
+		boosts_special_attack(pokemon, move_type, weather),
 		denominator * 3_bi / 2_bi,
 		denominator
 	);
 	return rational(numerator, denominator);
 }
 
-constexpr auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
+constexpr auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_special_defense(pokemon.ability(), other_ability, environment),
+		boosts_special_defense(pokemon.ability(), weather),
 		denominator * 3_bi / 2_bi,
 		denominator
 	);
@@ -186,12 +186,12 @@ constexpr auto special_defense_ability_modifier(any_active_pokemon auto const po
 }
 
 template<SplitSpecialRegularStat stat>
-constexpr auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Weather const weather) {
 	if constexpr (stat == SplitSpecialRegularStat::atk) {
-		return attack_ability_modifier(pokemon, move_type, other_ability, environment);
+		return attack_ability_modifier(pokemon, move_type, weather);
 	} else {
 		static_assert(stat == SplitSpecialRegularStat::spa);
-		return special_attack_ability_modifier(pokemon, move_type, other_ability, environment);
+		return special_attack_ability_modifier(pokemon, move_type, weather);
 	}
 }
 
@@ -199,7 +199,7 @@ template<SplitSpecialRegularStat stat, any_active_pokemon PokemonType>
 constexpr auto item_modifier(PokemonType const pokemon, Environment const environment) {
 	constexpr auto generation = generation_from<PokemonType>;
 	constexpr auto denominator = 2_bi;
-	[[maybe_unused]] auto const species = pokemon.species();
+	auto const species = pokemon.species();
 	auto const item = pokemon.item(environment);
 	auto const numerator = [&] {
 		if constexpr (stat == SplitSpecialRegularStat::atk) {
@@ -289,7 +289,7 @@ constexpr auto calculate_common_offensive_stat(any_active_pokemon auto const pok
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
 		modifier<BoostableStat(stat)>(pokemon.stages(), critical_hit) *
-		offensive_ability_modifier<stat>(pokemon, move_type, other_ability, environment) *
+		offensive_ability_modifier<stat>(pokemon, move_type, environment.effective_weather(pokemon.ability(), other_ability)) *
 		item_modifier<stat>(pokemon, environment);
 
 	return bounded::max(attack, 1_bi);
@@ -338,11 +338,11 @@ export constexpr auto calculate_defense(any_active_pokemon auto const defender, 
 
 
 template<any_active_pokemon PokemonType>
-constexpr auto special_defense_sandstorm_boost(PokemonType const defender, Ability const attacker_ability, Environment const environment) {
+constexpr auto special_defense_sandstorm_boost(PokemonType const defender, Weather const weather) {
 	auto const is_boosted =
 		generation_from<PokemonType> >= Generation::four and
 		is_type(defender, Type::Rock) and
-		(environment.sand() and !ability_blocks_weather(defender.ability(), attacker_ability));
+		weather == Weather::sand;
 	return rational(
 		BOUNDED_CONDITIONAL(is_boosted, 3_bi, 2_bi),
 		2_bi
@@ -351,12 +351,13 @@ constexpr auto special_defense_sandstorm_boost(PokemonType const defender, Abili
 
 export constexpr auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::spd;
+	auto const weather = environment.effective_weather(defender.ability(), attacker_ability);
 	auto const defense =
 		defender.stat(stat) *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
-		special_defense_ability_modifier(defender, attacker_ability, environment) *
+		special_defense_ability_modifier(defender, weather) *
 		item_modifier<stat>(defender, environment) *
-		special_defense_sandstorm_boost(defender, attacker_ability, environment);
+		special_defense_sandstorm_boost(defender, weather);
 
 	// Cast here because it looks as though the strongest defender would hold
 	// Deep Sea Scale, but because of the restriction on the defender being

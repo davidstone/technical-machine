@@ -174,7 +174,7 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto weather_is(Weather const weather) const -> void final {
-		check_weathers_match(weather, m_battle.environment());
+		check_weathers_match(weather, m_battle.environment().actual_weather());
 	}
 
 private:

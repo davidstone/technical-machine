@@ -20,6 +20,7 @@ import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.team;
+import tm.weather;
 
 import bounded;
 
@@ -31,7 +32,7 @@ constexpr auto generation = Generation::four;
 // Calculate max Speed
 static_assert([]{
 	auto environment = Environment();
-	environment.activate_rain_from_move(false);
+	environment.activate_weather_from_move(Weather::rain, false);
 
 	auto team = Team<generation>({{
 		{

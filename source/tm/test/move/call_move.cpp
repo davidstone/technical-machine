@@ -288,7 +288,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	}});
 	user.pokemon().switch_in(environment, true);
 	user.pokemon().set_hp(environment, 5_bi);
-	user.pokemon().rest(environment, false);
+	user.pokemon().rest(environment, Ability::Honey_Gather, false);
 
 	auto other = Team<generation>({{
 		{

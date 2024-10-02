@@ -29,6 +29,7 @@ import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -79,7 +80,7 @@ static_assert([]{
 // Calculate max Special Attack
 static_assert([]{
 	auto environment = Environment();
-	environment.activate_sun_from_move(false);
+	environment.activate_weather_from_move(Weather::sun, false);
 
 	auto flags = ActivePokemonFlags<generation>();
 	auto pokemon = Pokemon<generation>({
@@ -170,7 +171,7 @@ static_assert([]{
 // Calculate max Special Defense
 static_assert([]{
 	auto environment = Environment();
-	environment.activate_sand_from_move(false);
+	environment.activate_weather_from_move(Weather::sand, false);
 
 	auto defender = Team<generation>({{
 		{

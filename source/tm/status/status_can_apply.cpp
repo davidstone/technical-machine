@@ -14,7 +14,7 @@ import tm.status.status_name;
 import tm.status.team_has_status;
 
 import tm.any_team;
-import tm.environment;
+import tm.weather;
 
 namespace technicalmachine {
 
@@ -33,19 +33,19 @@ constexpr auto status_is_clausable(StatusName const status) {
 	}
 }
 
-export constexpr auto status_can_apply_ignoring_current_status(StatusName const status, any_active_pokemon auto const user, any_team auto const & target, Environment const environment, auto const... immune_types) {
+export constexpr auto status_can_apply_ignoring_current_status(StatusName const status, any_active_pokemon auto const user, any_team auto const & target, Weather const weather, auto const... immune_types) {
 	auto const target_pokemon = target.pokemon();
 	return
-		!blocks_status(target_pokemon.ability(), user.ability(), status, environment) and
+		!blocks_status(target_pokemon.ability(), user.ability(), status, weather) and
 		(... and !is_type(target_pokemon, immune_types)) and
 		(!status_is_clausable(status) or !team_has_status(target, status)) and
 		(status != StatusName::sleep or (!user.last_used_move().is_uproaring() and !target_pokemon.last_used_move().is_uproaring()));
 }
 
-export constexpr auto status_can_apply(StatusName const status, any_active_pokemon auto const user, any_team auto const & target, Environment const environment, auto const... immune_types) {
+export constexpr auto status_can_apply(StatusName const status, any_active_pokemon auto const user, any_team auto const & target, Weather const weather, auto const... immune_types) {
 	return
 		is_clear(target.pokemon().status()) and
-		status_can_apply_ignoring_current_status(status, user, target, environment, immune_types...);
+		status_can_apply_ignoring_current_status(status, user, target, weather, immune_types...);
 }
 
 } // namespace technicalmachine
