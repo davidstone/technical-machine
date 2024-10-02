@@ -14,7 +14,6 @@ module tm.move.side_effects;
 import tm.move.healing_move_fails_in_generation_1;
 import tm.move.move_name;
 import tm.move.no_effect_function;
-import tm.move.will_be_recharge_turn;
 import tm.move.side_effect_function;
 
 import tm.pokemon.active_pokemon;
@@ -513,21 +512,6 @@ constexpr auto random_spite = [] {
 	return result;
 }();
 
-template<any_active_pokemon UserPokemon>
-constexpr auto charge_up_move(
-	MoveName const move_name,
-	UserPokemon const original_user,
-	OtherActivePokemon<UserPokemon> const original_other,
-	Environment const original_environment,
-	SideEffects<AssociatedTeam<UserPokemon>> when_used
-) {
-	return will_be_recharge_turn(original_user.last_used_move(), move_name, original_environment.effective_weather(original_user.ability(), original_other.ability())) ?
-		guaranteed_effect<AssociatedTeam<UserPokemon>>([](auto & user, auto &, auto &, auto) {
-			user.pokemon().use_charge_up_move();
-		}) :
-		std::move(when_used);
-}
-
 template<any_active_pokemon PokemonType>
 constexpr auto item_can_be_lost(PokemonType const pokemon) {
 	return
@@ -564,6 +548,16 @@ auto possible_side_effects(
 ) -> SideEffects<AssociatedTeam<UserPokemon>> {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto generation = generation_from<UserPokemon>;
+	auto will_charge = [&] {
+		return original_user.last_used_move().will_be_charge_turn(
+			move,
+			original_user.item(original_environment),
+			original_environment.effective_weather(
+				original_user.ability(),
+				original_other.pokemon().ability()
+			)
+		);
+	};
 	switch (move) {
 		case MoveName::Absorb:
 		case MoveName::Drain_Punch:
@@ -1200,57 +1194,35 @@ auto possible_side_effects(
 			return confusing_stat_boost<UserTeam, BoostableStat::atk, 2>;
 
 		case MoveName::Bounce:
-			// TODO: Paralysis
-		case MoveName::Dig:
-		case MoveName::Dive:
-		case MoveName::Fly:
-			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & environment, auto) {
-				user.pokemon().use_vanish_move(environment);
-			});
+			return will_charge() ?
+				no_effect<UserTeam> :
+				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment);
 		case MoveName::Shadow_Force:
-			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & environment, auto) {
-				auto const hit = user.pokemon().use_vanish_move(environment);
-				if (hit) {
+			return will_charge() ?
+				no_effect<UserTeam> :
+				guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 					other.pokemon().break_protect();
-				}
-			});
+				});
 
-		case MoveName::Razor_Wind:
-		case MoveName::Solar_Beam:
-			return charge_up_move(
-				move,
-				original_user,
-				original_other.pokemon(),
-				original_environment,
-				no_effect<UserTeam>
-			);
 		case MoveName::Meteor_Beam:
-			return charge_up_move(
-				move,
-				original_user,
-				original_other.pokemon(),
-				original_environment,
-				guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 1>)
-			);
-		case MoveName::Skull_Bash:
-			return charge_up_move(
-				move,
-				original_user,
-				original_other.pokemon(),
-				original_environment,
-				generation >= Generation::two ? guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 1>) : no_effect<UserTeam>
-			);
+			return original_user.last_used_move().locked_in() != MoveName::Meteor_Beam ?
+				guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 1>) :
+				no_effect<UserTeam>;
+		case MoveName::Skull_Bash: {
+			auto const will_boost =
+				generation >= Generation::two and
+				original_user.last_used_move().locked_in() != MoveName::Skull_Bash;
+			return will_boost ?
+				guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 1>) :
+				no_effect<UserTeam>;
+		}
 		case MoveName::Sky_Attack:
-			return charge_up_move(
-				move,
-				original_user,
-				original_other.pokemon(),
-				original_environment,
+			return will_charge() ?
+				no_effect<UserTeam> :
 				SideEffects<UserTeam>({
 					SideEffect<UserTeam>{0.7, no_effect_function},
 					SideEffect<UserTeam>{0.3, flinch}
-				})
-			);
+				});
 
 		case MoveName::Gravity:
 			return guaranteed_effect<UserTeam>([](auto &, auto &, auto & environment, auto) {
@@ -1866,6 +1838,8 @@ auto possible_side_effects(
 		case MoveName::Cut:
 		case MoveName::Destiny_Bond:
 		case MoveName::Detect:
+		case MoveName::Dig:
+		case MoveName::Dive:
 		case MoveName::Double_Hit:
 		case MoveName::Double_Kick:
 		case MoveName::Double_Slap:
@@ -1905,6 +1879,7 @@ auto possible_side_effects(
 		case MoveName::Flame_Burst:
 		case MoveName::Flame_Charge:
 		case MoveName::Flip_Turn:
+		case MoveName::Fly:
 		case MoveName::Focus_Punch:
 		case MoveName::Foul_Play:
 		case MoveName::Frenzy_Plant:
@@ -2008,6 +1983,7 @@ auto possible_side_effects(
 		case MoveName::Quick_Guard:
 		case MoveName::Rage_Powder:
 		case MoveName::Razor_Leaf:
+		case MoveName::Razor_Wind:
 		case MoveName::Reflect_Type:
 		case MoveName::Retaliate:
 		case MoveName::Return:
@@ -2038,6 +2014,7 @@ auto possible_side_effects(
 		case MoveName::Smack_Down:
 		case MoveName::Snipe_Shot:
 		case MoveName::Soak:
+		case MoveName::Solar_Beam:
 		case MoveName::Sonic_Boom:
 		case MoveName::Spacial_Rend:
 		case MoveName::Spike_Cannon:

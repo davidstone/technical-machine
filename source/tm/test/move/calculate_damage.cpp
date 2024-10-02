@@ -87,7 +87,7 @@ constexpr auto attacker() {
 
 	pokemon.defense_curl();
 	for (auto const _ : containers::integer_range(10_bi)) {
-		pokemon.successfully_use_move(move);
+		pokemon.successfully_use_move(move, Ability::Honey_Gather, Environment());
 	}
 
 	pokemon.activate_power_trick();
@@ -167,7 +167,7 @@ constexpr auto attacker() {
 	pokemon.stages()[BoostableStat::spa] += 6_bi;
 
 	for (auto const _ : containers::integer_range(10_bi)) {
-		pokemon.successfully_use_move(move);
+		pokemon.successfully_use_move(move, Ability::Honey_Gather, environment());
 	}
 
 	pokemon.activate_flash_fire();

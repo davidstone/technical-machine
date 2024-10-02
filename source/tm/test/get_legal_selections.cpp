@@ -15,6 +15,7 @@ import tm.pokemon.species;
 
 import tm.stat.stat_style;
 
+import tm.ability;
 import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
@@ -48,7 +49,7 @@ constexpr auto use_move_that_kos(
 		environment,
 		other.hp().current().value()
 	);
-	user.successfully_use_move(move_name);
+	user.successfully_use_move(move_name, other.ability(), environment);
 }
 
 namespace one_action {
@@ -164,7 +165,7 @@ namespace already_acted {
 				}}
 			},
 		});
-		team.pokemon().successfully_use_move(MoveName::Splash);
+		team.pokemon().successfully_use_move(MoveName::Splash, Ability::Honey_Gather, environment);
 		return team;
 	};
 	constexpr auto user = make();
@@ -196,7 +197,7 @@ namespace using_baton_pass {
 				}}
 			},
 		});
-		team.pokemon().successfully_use_move(MoveName::Baton_Pass);
+		team.pokemon().successfully_use_move(MoveName::Baton_Pass, Ability::Honey_Gather, environment);
 		return team;
 	}();
 
@@ -248,7 +249,7 @@ static_assert([]{
 		},
 	});
 
-	user.pokemon().successfully_use_move(MoveName::Thunderbolt);
+	user.pokemon().successfully_use_move(MoveName::Thunderbolt, Ability::Honey_Gather, environment);
 	use_move_that_kos(
 		other.pokemon(),
 		user.pokemon(),
@@ -297,7 +298,7 @@ static_assert([]{
 		},
 	});
 
-	user.pokemon().successfully_use_move(MoveName::Thunderbolt);
+	user.pokemon().successfully_use_move(MoveName::Thunderbolt, Ability::Honey_Gather, environment);
 	use_move_that_kos(
 		other.pokemon(),
 		user.pokemon(),

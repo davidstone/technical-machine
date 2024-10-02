@@ -10,7 +10,6 @@ import tm.move.category;
 import tm.move.damage_type;
 import tm.move.executed_move;
 import tm.move.other_action;
-import tm.move.will_be_recharge_turn;
 
 import tm.pokemon.substitute;
 
@@ -62,7 +61,7 @@ export struct ActualDamage {
 			auto const no_damage =
 				!is_damaging(executed.move.name) or
 				(other_pokemon.substitute() and substitute != Substitute::bypassed) or
-				will_be_recharge_turn(user_pokemon.last_used_move(), executed.move.name, weather);
+				user_pokemon.last_used_move().will_be_charge_turn(executed.move.name, user_pokemon.item(environment), weather);
 			return no_damage ? 0_bi : calculate_damage(user, executed, move_weakened_from_item, other, other_action, environment);
 		};
 

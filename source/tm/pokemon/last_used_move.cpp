@@ -27,6 +27,7 @@ import tm.generation;
 import tm.item;
 import tm.rational;
 import tm.saturating_add;
+import tm.weather;
 
 import bounded;
 import containers;
@@ -38,8 +39,6 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 using namespace std::string_view_literals;
-
-export enum class VanishOutcome { vanishes, attacks, consumes_item };
 
 export struct LastUsedMove {
 	constexpr auto name() const -> tv::optional<MoveName> {
@@ -57,10 +56,49 @@ export struct LastUsedMove {
 		m_effects = Empty();
 	}
 
-	constexpr auto successful_move(MoveName const move) & -> void {
-		tv::visit(m_effects, tv::overload(
-			[&](Empty) {
+	// Returns whether the item is consumed
+	constexpr auto successful_move(MoveName const move, Item const item, Weather const weather) & -> bool {
+		auto check_valid_lock_in = [&] {
+			if (!successful_last_move(move)) {
+				throw std::runtime_error(containers::concatenate<std::string>(
+					"Tried to use "sv,
+					to_string(move),
+					" while locked into "sv,
+					m_move ? to_string(*m_move) : "nothing"sv
+				));
+			}
+		};
+		auto const consumes = tv::visit(m_effects, tv::overload(
+			[&](Empty) -> bool {
 				switch (move) {
+					case MoveName::Bounce:
+					case MoveName::Dig:
+					case MoveName::Dive:
+					case MoveName::Fly:
+					case MoveName::Shadow_Force:
+						if (item == Item::Power_Herb) {
+							return true;
+						}
+						m_effects = Vanishing();
+						return false;
+					case MoveName::Meteor_Beam:
+					case MoveName::Razor_Wind:
+					case MoveName::Skull_Bash:
+					case MoveName::Sky_Attack:
+						if (item == Item::Power_Herb) {
+							return true;
+						}
+						m_effects = ChargingUp();
+						return false;
+					case MoveName::Solar_Beam:
+						if (weather == Weather::sun) {
+							return false;
+						}
+						if (item == Item::Power_Herb) {
+							return true;
+						}
+						m_effects = ChargingUp();
+						return false;
 					case MoveName::Blast_Burn:
 					case MoveName::Eternabeam:
 					case MoveName::Frenzy_Plant:
@@ -71,7 +109,7 @@ export struct LastUsedMove {
 					case MoveName::Roar_of_Time:
 					case MoveName::Rock_Wrecker:
 						m_effects = Recharging();
-						break;
+						return false;
 					case MoveName::Outrage:
 					case MoveName::Petal_Dance:
 					case MoveName::Thrash: {
@@ -79,34 +117,38 @@ export struct LastUsedMove {
 						auto rampage = Rampage();
 						rampage.activate();
 						m_effects = rampage;
-						break;
+						return false;
 					}
 					case MoveName::Uproar: {
 						// TODO: Have it be active when it is constructed
 						auto counter = UproarCounter();
 						counter.advance_one_turn();
 						m_effects = counter;
-						break;
+						return false;
 					}
 					default:
-						break;
+						return false;
 				}
 			},
-			[&](UproarCounter & uproar) {
-				if (!successful_last_move(move)) {
-					throw std::runtime_error("Tried to use a move while locked into Uproar");
-				}
+			[&](ChargingUp) -> bool {
+				check_valid_lock_in();
+				m_effects = Empty();
+				return false;
+			},
+			[&](UproarCounter & uproar) -> bool {
+				BOUNDED_ASSERT(m_move == MoveName::Uproar);
+				check_valid_lock_in();
 				uproar.advance_one_turn();
+				return false;
 			},
-			[&](auto) {
-				if (!successful_last_move(move)) {
-					throw std::runtime_error(containers::concatenate<std::string>(
-						"Tried to use "sv,
-						to_string(move),
-						" while locked into "sv,
-						m_move ? to_string(*m_move) : "nothing"sv
-					));
-				}
+			[&](Vanishing) -> bool {
+				check_valid_lock_in();
+				m_effects = Empty();
+				return false;
+			},
+			[&](auto) -> bool {
+				check_valid_lock_in();
+				return false;
 			}
 		));
 
@@ -117,6 +159,7 @@ export struct LastUsedMove {
 			m_consecutive_successes = 1_bi;
 		}
 		m_moved_this_turn = true;
+		return consumes;
 	}
 
 	// Not for the initial switch in or replacing fainted
@@ -167,12 +210,21 @@ export struct LastUsedMove {
 		));
 	}
 
-	constexpr auto is_charging_up() const -> bool {
-		return m_effects.index() == bounded::type<ChargingUp>;
-	}
-	constexpr auto use_charge_up_move() & -> void {
-		BOUNDED_ASSERT(!locked_in_by_move());
-		m_effects = ChargingUp();
+	constexpr auto will_be_charge_turn(MoveName const move, Item const item, Weather const weather) const -> bool {
+		if (item == Item::Power_Herb) {
+			return false;
+		}
+		switch (move) {
+			case MoveName::Meteor_Beam:
+			case MoveName::Razor_Wind:
+			case MoveName::Skull_Bash:
+			case MoveName::Sky_Attack:
+				return m_effects.index() != bounded::type<ChargingUp>;
+			case MoveName::Solar_Beam:
+				return weather != Weather::sun and m_effects.index() != bounded::type<ChargingUp>;
+			default:
+				return false;
+		}
 	}
 
 	constexpr auto is_delayed_switching() const -> bool {
@@ -201,7 +253,7 @@ export struct LastUsedMove {
 		return bounded::min(base << m_consecutive_successes, 160_bi);
 	}
 
-	constexpr auto locked_in_by_move() const -> tv::optional<MoveName> {
+	constexpr auto locked_in() const -> tv::optional<MoveName> {
 		return m_effects.index() != bounded::type<Empty> ? m_move : tv::none;
 	}
 	// Returns whether the use should get confused
@@ -311,21 +363,6 @@ export struct LastUsedMove {
 			default:
 				return false;
 		}
-	}
-	constexpr auto use_vanish_move(Item const item) & -> VanishOutcome {
-		return tv::visit(m_effects, tv::overload(
-			[&](Vanishing) {
-				m_effects = Empty();
-				return VanishOutcome::vanishes;
-			},
-			[&](auto) {
-				if (item == Item::Power_Herb) {
-					return VanishOutcome::consumes_item;
-				}
-				m_effects = Vanishing();
-				return VanishOutcome::attacks;
-			}
-		));
 	}
 
 	friend auto operator==(LastUsedMove, LastUsedMove) -> bool = default;

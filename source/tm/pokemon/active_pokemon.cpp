@@ -916,16 +916,6 @@ public:
 		}
 	}
 
-	// Returns whether the move hits
-	constexpr auto use_vanish_move(Environment const environment) const -> bool {
-		auto result = this->m_flags.last_used_move.use_vanish_move(this->item(environment));
-		switch (result) {
-			case VanishOutcome::vanishes: return false;
-			case VanishOutcome::attacks: return true;
-			case VanishOutcome::consumes_item: remove_item(); return true;
-		}
-	}
-
 	constexpr auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Environment const environment) const -> void {
 		if (auto const damage = this->m_flags.last_used_move.use_bide()) {
 			change_hp(target, environment, -*damage * 2_bi);
@@ -965,10 +955,18 @@ public:
 		return applied.damage;
 	}
 
-	constexpr auto successfully_use_move(MoveName const move) const {
+	constexpr auto successfully_use_move(MoveName const move, Ability const other_ability, Environment const environment) const {
 		BOUNDED_ASSERT(move == MoveName::Struggle or containers::any_equal(this->regular_moves(), move));
-		if (this->hp().current() != 0_bi) {
-			this->m_flags.last_used_move.successful_move(move);
+		if (this->hp().current() == 0_bi) {
+			return;
+		}
+		auto const consumes = this->m_flags.last_used_move.successful_move(
+			move,
+			this->item(environment),
+			environment.effective_weather(this->ability(), other_ability)
+		);
+		if (consumes) {
+			remove_item();
 		}
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
@@ -981,8 +979,6 @@ public:
 private:
 	constexpr auto activate_pinch_item(Environment const environment) const -> void {
 		// TODO: Confusion damage does not activate healing berries in Generation 5+
-		auto consume = [&] { remove_item(); };
-
 		auto const current_hp = hp_ratio(this->m_pokemon);
 
 		auto quarter_threshold = [&] {
@@ -993,7 +989,7 @@ private:
 			if (current_hp > threshold) {
 				return false;
 			}
-			consume();
+			remove_item();
 			this->m_pokemon.set_hp(this->hp().current() + amount);
 			return true;
 		};
@@ -1011,7 +1007,7 @@ private:
 			if (current_hp > quarter_threshold()) {
 				return;
 			}
-			consume();
+			remove_item();
 			stages()[stat] += 1_bi;
 		};
 
@@ -1030,7 +1026,7 @@ private:
 				healing_berry(rational(1_bi, 2_bi), 20_bi);
 				break;
 			case Item::Custap_Berry:
-				consume();
+				remove_item();
 				break;
 			case Item::Figy_Berry:
 				confusion_berry(SplitSpecialRegularStat::atk);
@@ -1045,7 +1041,7 @@ private:
 				confusion_berry(SplitSpecialRegularStat::def);
 				break;
 			case Item::Lansat_Berry:
-				consume();
+				remove_item();
 				break;
 			case Item::Liechi_Berry:
 				stat_boost_berry(BoostableStat::atk);
@@ -1054,7 +1050,7 @@ private:
 				confusion_berry(SplitSpecialRegularStat::spe);
 				break;
 			case Item::Micle_Berry:
-				consume();
+				remove_item();
 				break;
 			case Item::Petaya_Berry:
 				stat_boost_berry(BoostableStat::spa);
@@ -1070,7 +1066,7 @@ private:
 				break;
 			case Item::Starf_Berry:
 				// TODO: Raise Atk, Def, SpA, SpD, or Spe +2
-				consume();
+				remove_item();
 				break;
 			case Item::Wiki_Berry:
 				confusion_berry(SplitSpecialRegularStat::spa);

@@ -126,7 +126,6 @@ target_sources(tm_common PUBLIC
 		source/tm/move/target.cpp
 		source/tm/move/usable_while_sleeping.cpp
 		source/tm/move/used_move.cpp
-		source/tm/move/will_be_recharge_turn.cpp
 
 		source/tm/pokemon/active_pokemon.cpp
 		source/tm/pokemon/active_status.cpp

@@ -518,5 +518,80 @@ TEST_CASE("Perish Song", "[call_move]") {
 	check_max_hp(other);
 }
 
+TEST_CASE("Solar Beam", "[call_move]") {
+	auto environment = Environment();
+
+	auto user = Team<generation>({{
+		{
+			.species = Species::Meganium,
+			.moves = {{
+				MoveName::Solar_Beam,
+			}}
+		},
+	}});
+	user.pokemon().switch_in(environment, true);
+
+	auto other = Team<generation>({{
+		{
+			.species = Species::Moltres,
+			.moves = {{
+				MoveName::Agility,
+			}}
+		},
+	}});
+	other.pokemon().switch_in(environment, true);
+
+	auto call_solar_beam = [&] {
+		constexpr auto move = MoveName::Solar_Beam;
+		auto const side_effects = possible_side_effects(move, user.pokemon().as_const(), other, environment);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			user,
+			UsedMove<Team<generation>>(
+				move,
+				containers::front(side_effects).function
+			),
+			other,
+			FutureSelection(false),
+			environment,
+			false,
+			damage,
+			false
+		);
+	};
+
+	CHECK(!user.pokemon().last_used_move().name());
+	CHECK(!user.pokemon().last_used_move().moved_this_turn());
+	CHECK(!user.pokemon().last_used_move().locked_in());
+
+	call_solar_beam();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Solar_Beam);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Solar_Beam);
+
+	auto check_max_hp = [](auto const & team) {
+		CHECK(team.pokemon().hp().current() == team.pokemon().hp().max());
+	};
+	check_max_hp(user);
+	check_max_hp(other);
+
+	user.reset_end_of_turn();
+
+	call_solar_beam();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Solar_Beam);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(!user.pokemon().last_used_move().locked_in());
+
+	user.reset_end_of_turn();
+
+	call_solar_beam();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Solar_Beam);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Solar_Beam);
+}
+
 } // namespace
 } // namespace technicalmachine

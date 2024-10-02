@@ -232,7 +232,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const other_ability = other_pokemon.ability();
 
-	if (!user_pokemon.last_used_move().locked_in_by_move()) {
+	if (!user_pokemon.last_used_move().locked_in()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
 		user_pokemon.reduce_pp(move.selected, environment, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
@@ -272,7 +272,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		};
 		use_move(user, executed_move, target, other, other_action, environment, actual_damage);
 	}
-	user_pokemon.successfully_use_move(move.executed);
+	user_pokemon.successfully_use_move(move.executed, other_ability, environment);
 }
 
 template<any_team UserTeam>

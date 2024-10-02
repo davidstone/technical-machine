@@ -142,7 +142,7 @@ constexpr auto get_legal_selections(
 	if (last_used_move.moved_this_turn()) {
 		return LegalSelections({pass});
 	}
-	if (auto const move = last_used_move.locked_in_by_move()) {
+	if (auto const move = last_used_move.locked_in()) {
 		BOUNDED_ASSERT(containers::any_equal(user_pokemon.regular_moves(), *move));
 		return LegalSelections({*move});
 	}
