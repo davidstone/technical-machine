@@ -1323,6 +1323,18 @@ auto possible_side_effects(
 				}();
 				heal(user.pokemon(), environment, amount);
 			});
+		case MoveName::Shore_Up:
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & environment, auto) {
+				using Healing = rational<
+					bounded::integer<1, 2>,
+					bounded::integer<2, 3>
+				>;
+				// TODO: Grassy Terrain heals 2/3
+				auto const amount = environment.sand() and !ability_blocks_weather(user.pokemon().ability(), other.pokemon().ability()) ?
+					Healing(2_bi, 3_bi) :
+					Healing(1_bi, 2_bi);
+				heal(user.pokemon(), environment, amount);
+			});
 		case MoveName::Life_Dew:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & environment, auto) {
 				heal(user.pokemon(), environment, rational(1_bi, 4_bi));
@@ -2143,7 +2155,6 @@ auto possible_side_effects(
 		case MoveName::Black_Hole_Eclipse:
 		case MoveName::Twinkle_Tackle:
 		case MoveName::Catastropika:
-		case MoveName::Shore_Up:
 		case MoveName::First_Impression:
 		case MoveName::Baneful_Bunker:
 		case MoveName::Spirit_Shackle:
