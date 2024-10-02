@@ -20,6 +20,8 @@ import tm.move.move_name;
 
 import tm.stat.current_hp;
 
+import tm.string_conversions.move_name;
+
 import tm.compress;
 import tm.generation;
 import tm.item;
@@ -27,6 +29,7 @@ import tm.rational;
 import tm.saturating_add;
 
 import bounded;
+import containers;
 import numeric_traits;
 import tv;
 import std_module;
@@ -34,6 +37,7 @@ import std_module;
 namespace technicalmachine {
 
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 export enum class VanishOutcome { vanishes, attacks, consumes_item };
 
@@ -96,7 +100,11 @@ export struct LastUsedMove {
 			},
 			[&](auto) {
 				if (!successful_last_move(move)) {
-					throw std::runtime_error("Tried to use a move while locked into another move");
+					throw std::runtime_error(containers::concatenate<std::string>(
+						"Tried to use "sv,
+						to_string(move),
+						" while locked into another move"sv
+					));
 				}
 			}
 		));
