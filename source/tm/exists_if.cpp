@@ -17,14 +17,12 @@ using namespace bounded::literal;
 // conditional variables in a row
 template<typename>
 struct Empty {
+	Empty() = default;
 	constexpr explicit Empty(auto const & ...) {}
 	constexpr Empty & operator=(auto const &) & {
 		return *this;
 	}
 	friend auto operator<=>(Empty, Empty) = default;
-	friend constexpr auto compress(Empty) {
-		return 0_bi;
-	}
 };
 
 export template<typename T, bool condition, typename unique = void>
@@ -70,10 +68,6 @@ struct BoolIf<false, unique> {
 	}
 	constexpr operator bool() const {
 		return false;
-	}
-
-	friend constexpr auto compress(BoolIf) {
-		return 0_bi;
 	}
 };
 

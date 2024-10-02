@@ -25,39 +25,21 @@ using namespace bounded::literal;
 
 struct Clear {
 	friend auto operator==(Clear, Clear) -> bool = default;
-	friend constexpr auto compress(Clear) {
-		return 0_bi;
-	}
 };
 struct Burn {
 	friend auto operator==(Burn, Burn) -> bool = default;
-	friend constexpr auto compress(Burn) {
-		return 0_bi;
-	}
 };
 struct Freeze {
 	friend auto operator==(Freeze, Freeze) -> bool = default;
-	friend constexpr auto compress(Freeze) {
-		return 0_bi;
-	}
 };
 struct Paralysis {
 	friend auto operator==(Paralysis, Paralysis) -> bool = default;
-	friend constexpr auto compress(Paralysis) {
-		return 0_bi;
-	}
 };
 struct Poison {
 	friend auto operator==(Poison, Poison) -> bool = default;
-	friend constexpr auto compress(Poison) {
-		return 0_bi;
-	}
 };
 struct Toxic {
 	friend auto operator==(Toxic, Toxic) -> bool = default;
-	friend constexpr auto compress(Toxic) {
-		return 0_bi;
-	}
 };
 struct Sleep {
 	bounded::integer<0, 4> turns_slept = 0_bi;

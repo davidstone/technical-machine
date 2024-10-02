@@ -16,7 +16,6 @@ import tm.type.effectiveness;
 import tm.type.type;
 
 import tm.ability;
-import tm.compress;
 import tm.entry_hazards;
 import tm.environment;
 import tm.generation;

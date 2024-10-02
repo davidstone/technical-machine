@@ -35,7 +35,6 @@ import tm.string_conversions.species;
 import tm.type.type;
 
 import tm.ability;
-import tm.compress;
 import tm.exists_if;
 import tm.gender;
 import tm.generation;

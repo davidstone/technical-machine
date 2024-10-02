@@ -20,7 +20,17 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<typename T>
-concept explicitly_convertible_to_integer = numeric_traits::has_min_value<T> and numeric_traits::has_max_value<T>;
+concept stateless = std::is_empty_v<T> and std::is_trivially_default_constructible_v<T>;
+
+export constexpr auto compress(stateless auto) -> bounded::constant_t<0> {
+	return 0_bi;
+}
+
+template<typename T>
+concept explicitly_convertible_to_integer =
+	numeric_traits::has_min_value<T> and
+	numeric_traits::has_max_value<T> and
+	!stateless<T>;
 
 // Returns an integer with a min value of 0.
 export constexpr auto compress(explicitly_convertible_to_integer auto const value) {

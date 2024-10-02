@@ -332,27 +332,15 @@ export struct LastUsedMove {
 private:
 	struct Empty {
 		friend auto operator==(Empty, Empty) -> bool = default;
-		friend constexpr auto compress(Empty) -> bounded::constant_t<0> {
-			return 0_bi;
-		}
 	};
 	struct ChargingUp {
 		friend auto operator==(ChargingUp, ChargingUp) -> bool = default;
-		friend constexpr auto compress(ChargingUp) -> bounded::constant_t<0> {
-			return 0_bi;
-		}
 	};
 	struct Recharging {
 		friend auto operator==(Recharging, Recharging) -> bool = default;
-		friend constexpr auto compress(Recharging) -> bounded::constant_t<0> {
-			return 0_bi;
-		}
 	};
 	struct Vanishing {
 		friend auto operator==(Vanishing, Vanishing) -> bool = default;
-		friend constexpr auto compress(Vanishing) -> bounded::constant_t<0> {
-			return 0_bi;
-		}
 	};
 
 	constexpr auto successful_last_move(MoveName const move) const -> bool {
