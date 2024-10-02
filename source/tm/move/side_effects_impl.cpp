@@ -1301,19 +1301,22 @@ auto possible_side_effects(
 		case MoveName::Morning_Sun:
 		case MoveName::Synthesis:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & environment, auto) {
-				auto const amount = [&]() {
-					using Numerator = bounded::integer<1, 2>;
-					using Denominator = bounded::integer<2, 4>;
-					using Result = rational<Numerator, Denominator>;
+				auto const amount = [&] {
+					using Healing = rational<
+						bounded::integer<1, 2>,
+						bounded::integer<1, 4>
+					>;
 
-					constexpr auto default_value = Result(1_bi, 2_bi);
+					constexpr auto default_value = Healing(1_bi, 2_bi);
 					if (ability_blocks_weather(user.pokemon().ability(), other.pokemon().ability())) {
 						return default_value;
 					}
 					if (environment.sun()) {
-						return Result(2_bi, 3_bi);
+						return generation <= Generation::two ?
+							Healing(1_bi, 1_bi) :
+							Healing(2_bi, 3_bi);
 					} else if (environment.hail() or environment.rain() or environment.sand()) {
-						return Result(1_bi, 4_bi);
+						return Healing(1_bi, 4_bi);
 					} else {
 						return default_value;
 					}
