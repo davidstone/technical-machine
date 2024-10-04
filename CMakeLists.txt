@@ -730,6 +730,7 @@ add_executable(score_predict_action
 target_link_libraries(score_predict_action
 	tm_common
 	tm_pokemon_showdown
+	TBB::tbb
 )
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
