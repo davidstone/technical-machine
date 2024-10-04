@@ -916,12 +916,6 @@ public:
 		}
 	}
 
-	constexpr auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Environment const environment) const -> void {
-		if (auto const damage = this->m_flags.last_used_move.use_bide()) {
-			change_hp(target, environment, -*damage * 2_bi);
-		}
-	}
-
 	constexpr auto set_hp(Environment const environment, auto const new_hp) const -> void {
 		this->m_pokemon.set_hp(new_hp);
 		if (new_hp > 0_bi) {
@@ -955,19 +949,32 @@ public:
 		return applied.damage;
 	}
 
-	constexpr auto successfully_use_move(MoveName const move, Ability const other_ability, Environment const environment) const {
+	constexpr auto successfully_use_move(
+		MoveName const move,
+		Ability const other_ability,
+		Environment const environment
+	) const -> tv::optional<CurrentHP> {
 		BOUNDED_ASSERT(move == MoveName::Struggle or containers::any_equal(this->regular_moves(), move));
 		if (this->hp().current() == 0_bi) {
-			return;
+			return tv::none;
 		}
-		auto const consumes = this->m_flags.last_used_move.successful_move(
+		auto const result = this->m_flags.last_used_move.successful_move(
 			move,
 			this->item(environment),
 			environment.effective_weather(this->ability(), other_ability)
 		);
-		if (consumes) {
-			remove_item();
-		}
+		return tv::visit(result, tv::overload(
+			[](DoNothing) -> tv::optional<CurrentHP> {
+				return tv::none;
+			},
+			[&](ConsumeItem) -> tv::optional<CurrentHP> {
+				remove_item();
+				return tv::none;
+			},
+			[&](CurrentHP const damage) -> tv::optional<CurrentHP> {
+				return damage;
+			}
+		));
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);

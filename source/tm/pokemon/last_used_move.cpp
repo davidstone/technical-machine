@@ -40,6 +40,14 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
+export struct DoNothing {};
+export struct ConsumeItem {};
+export using SuccessfulMove = tv::variant<
+	DoNothing,
+	ConsumeItem,
+	CurrentHP
+>;
+
 export struct LastUsedMove {
 	constexpr auto name() const -> tv::optional<MoveName> {
 		return m_move;
@@ -58,7 +66,11 @@ export struct LastUsedMove {
 	}
 
 	// Returns whether the item is consumed
-	constexpr auto successful_move(MoveName const move, Item const item, Weather const weather) & -> bool {
+	constexpr auto successful_move(
+		MoveName const move,
+		Item const item,
+		Weather const weather
+	) & -> SuccessfulMove {
 		auto check_valid_lock_in = [&] {
 			if (!successful_last_move(move)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
@@ -69,41 +81,44 @@ export struct LastUsedMove {
 				));
 			}
 		};
-		auto const consumes = tv::visit(m_effects, tv::overload(
-			[&](Empty) -> bool {
+		auto const result = tv::visit(m_effects, tv::overload(
+			[&](Empty) -> SuccessfulMove {
 				switch (move) {
+					case MoveName::Bide:
+						m_effects = Bide();
+						return DoNothing();
 					case MoveName::Bounce:
 					case MoveName::Dig:
 					case MoveName::Dive:
 					case MoveName::Fly:
 					case MoveName::Shadow_Force:
 						if (item == Item::Power_Herb) {
-							return true;
+							return ConsumeItem();
 						}
 						m_effects = Vanishing();
-						return false;
+						return DoNothing();
 					case MoveName::Meteor_Beam:
 					case MoveName::Razor_Wind:
 					case MoveName::Skull_Bash:
 					case MoveName::Sky_Attack:
 						if (item == Item::Power_Herb) {
-							return true;
+							return ConsumeItem();
 						}
 						m_effects = ChargingUp();
-						return false;
+						return DoNothing();
 					case MoveName::Solar_Beam:
 						if (weather == Weather::sun) {
-							return false;
+							return DoNothing();
 						}
 						if (item == Item::Power_Herb) {
-							return true;
+							return ConsumeItem();
 						}
 						m_effects = ChargingUp();
-						return false;
+						return DoNothing();
 					case MoveName::Detect:
 					case MoveName::Protect:
 						m_effects = Protecting();
-						return false;
+						return DoNothing();
 					case MoveName::Blast_Burn:
 					case MoveName::Eternabeam:
 					case MoveName::Frenzy_Plant:
@@ -114,7 +129,7 @@ export struct LastUsedMove {
 					case MoveName::Roar_of_Time:
 					case MoveName::Rock_Wrecker:
 						m_effects = Recharging();
-						return false;
+						return DoNothing();
 					case MoveName::Outrage:
 					case MoveName::Petal_Dance:
 					case MoveName::Thrash: {
@@ -122,41 +137,55 @@ export struct LastUsedMove {
 						auto rampage = Rampage();
 						rampage.activate();
 						m_effects = rampage;
-						return false;
+						return DoNothing();
 					}
 					case MoveName::Uproar: {
 						// TODO: Have it be active when it is constructed
 						auto counter = UproarCounter();
 						counter.advance_one_turn();
 						m_effects = counter;
-						return false;
+						return DoNothing();
 					}
 					default:
-						return false;
+						return DoNothing();
 				}
 			},
-			[&](ChargingUp) -> bool {
+			[&](Bide & bide) -> SuccessfulMove {
+				BOUNDED_ASSERT(m_move == MoveName::Bide);
+				check_valid_lock_in();
+				auto const damage = bide.advance_one_turn();
+				if (!damage) {
+					return DoNothing();
+				}
+				m_effects = Empty();
+				return CurrentHP(*damage);
+			},
+			[&](ChargingUp) -> SuccessfulMove {
 				check_valid_lock_in();
 				m_effects = Empty();
-				return false;
+				return DoNothing();
 			},
-			[&](Protecting) -> bool {
+			[&](Protecting) -> SuccessfulMove {
 				throw std::runtime_error("Cannot use a move while protecting");
 			},
-			[&](UproarCounter & uproar) -> bool {
+			[&](Rampage) -> SuccessfulMove {
+				check_valid_lock_in();
+				return DoNothing();
+			},
+			[&](Recharging) -> SuccessfulMove {
+				check_valid_lock_in();
+				return DoNothing();
+			},
+			[&](UproarCounter & uproar) -> SuccessfulMove {
 				BOUNDED_ASSERT(m_move == MoveName::Uproar);
 				check_valid_lock_in();
 				uproar.advance_one_turn();
-				return false;
+				return DoNothing();
 			},
-			[&](Vanishing) -> bool {
+			[&](Vanishing) -> SuccessfulMove {
 				check_valid_lock_in();
 				m_effects = Empty();
-				return false;
-			},
-			[&](auto) -> bool {
-				check_valid_lock_in();
-				return false;
+				return DoNothing();
 			}
 		));
 
@@ -167,7 +196,7 @@ export struct LastUsedMove {
 			m_consecutive_successes = 1_bi;
 		}
 		m_moved_this_turn = true;
-		return consumes;
+		return result;
 	}
 
 	// Not for the initial switch in or replacing fainted
@@ -195,20 +224,6 @@ export struct LastUsedMove {
 
 	constexpr auto is_baton_passing() const -> bool {
 		return moved_this_turn() and successful_last_move(MoveName::Baton_Pass);
-	}
-
-	constexpr auto use_bide() & -> tv::optional<CurrentHP> {
-		return tv::visit(m_effects, tv::overload(
-			[&](Bide & bide) {
-				auto const result = bide.advance_one_turn();
-				m_effects = Empty();
-				return tv::optional<CurrentHP>(result);
-			},
-			[&](auto) {
-				m_effects = Bide();
-				return tv::optional<CurrentHP>();
-			}
-		));
 	}
 
 	constexpr auto direct_damage(CurrentHP const damage) & -> void {

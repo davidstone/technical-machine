@@ -272,7 +272,10 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		};
 		use_move(user, executed_move, target, other, other_action, environment, actual_damage);
 	}
-	user_pokemon.successfully_use_move(move.executed, other_ability, environment);
+	auto const released_damage = user_pokemon.successfully_use_move(move.executed, other_ability, environment);
+	if (released_damage) {
+		other_pokemon.direct_damage(move.executed, user_pokemon, environment, *released_damage * 2_bi);
+	}
 }
 
 template<any_team UserTeam>

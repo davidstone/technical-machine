@@ -1437,10 +1437,6 @@ auto possible_side_effects(
 					other.pokemon().attract(user.pokemon(), environment);
 				}) :
 				no_effect<UserTeam>;
-		case MoveName::Bide:
-			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & environment, auto) {
-				user.pokemon().use_bide(other.pokemon(), environment);
-			});
 		case MoveName::Bind:
 		case MoveName::Clamp:
 		case MoveName::Sand_Tomb:
@@ -1810,6 +1806,7 @@ auto possible_side_effects(
 		case MoveName::Behemoth_Bash:
 		case MoveName::Behemoth_Blade:
 		case MoveName::Bestow:
+		case MoveName::Bide:
 		case MoveName::Blast_Burn:
 		case MoveName::Body_Press:
 		case MoveName::Bolt_Beak:
