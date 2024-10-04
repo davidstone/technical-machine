@@ -220,6 +220,7 @@ target_sources(tm_common PUBLIC
 	
 		source/tm/strategy/expectimax.cpp
 		source/tm/strategy/max_damage.cpp
+		source/tm/strategy/net_hp.cpp
 		source/tm/strategy/random_selection.cpp
 		source/tm/strategy/statistical.cpp
 		source/tm/strategy/strategy.cpp
@@ -335,6 +336,7 @@ target_sources(tm_common PRIVATE
 	source/tm/move/call_move_impl.cpp
 	source/tm/move/side_effects_impl.cpp
 	source/tm/strategy/expectimax_impl.cpp
+	source/tm/strategy/net_hp_impl.cpp
 	source/tm/strategy/statistical_impl.cpp
 	source/tm/string_conversions/team_impl.cpp
 	source/tm/team_predictor/team_predictor_impl.cpp
