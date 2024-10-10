@@ -34,8 +34,7 @@ import tm.string_conversions.invalid_string_conversion;
 import tm.string_conversions.item;
 import tm.string_conversions.move_name;
 import tm.string_conversions.nature;
-import tm.string_conversions.pokemon_from_string;
-import tm.string_conversions.pokemon_to_string;
+import tm.string_conversions.pokemon;
 import tm.string_conversions.species;
 import tm.string_conversions.status_name;
 import tm.string_conversions.type;
@@ -88,7 +87,7 @@ static_assert(test_generic<Weather>());
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	constexpr auto check = [](InitialMoves const moves, StatusName const status) {
+	constexpr auto make = [](StatusName const status, InitialMoves const moves) {
 		auto pokemon = Pokemon<generation>({
 			.species = Species::Mewtwo,
 			.item = Item::Leftovers,
@@ -108,21 +107,66 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		});
 		pokemon.set_status(status);
 
-		auto const str = to_string(pokemon);
-		auto const result = pokemon_from_string<generation>(str);
-		CHECK(pokemon == result);
+		return to_string(pokemon);
 	};
 
-	constexpr auto moves = InitialMoves({
-		MoveName::Psychic,
-		MoveName::Recover,
-		MoveName::Calm_Mind,
-		MoveName::Taunt,
-	});
-	for (auto const n : containers::integer_range(1_bi, 4_bi)) {
-		check(InitialMoves(containers::take(moves, n)), StatusName::clear);
-	}
-	check(moves, StatusName::burn);
+	CHECK(
+		make(
+			StatusName::clear,
+			InitialMoves({
+				MoveName::Psychic
+			})
+		) ==
+		std::string_view(
+			"Mewtwo (100.0% HP) @ Leftovers\n"
+			"\tAbility: Pressure\n"
+			"\tNature: Modest\n"
+			"\tIVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe\n"
+			"\tEVs: 4 HP / 12 Atk / 24 Def / 0 SpA / 32 SpD / 100 Spe\n"
+			"\t- Psychic"
+		)
+	);
+
+	CHECK(
+		make(
+			StatusName::clear,
+			InitialMoves({
+				MoveName::Psychic,
+				MoveName::Recover,
+				MoveName::Calm_Mind,
+				MoveName::Taunt
+			})
+		) ==
+		std::string_view(
+			"Mewtwo (100.0% HP) @ Leftovers\n"
+			"\tAbility: Pressure\n"
+			"\tNature: Modest\n"
+			"\tIVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe\n"
+			"\tEVs: 4 HP / 12 Atk / 24 Def / 0 SpA / 32 SpD / 100 Spe\n"
+			"\t- Psychic\n"
+			"\t- Recover\n"
+			"\t- Calm Mind\n"
+			"\t- Taunt"
+		)
+	);
+
+	CHECK(
+		make(
+			StatusName::burn,
+			InitialMoves({
+				MoveName::Psychic
+			})
+		) ==
+		std::string_view(
+			"Mewtwo (100.0% HP) @ Leftovers\n"
+			"\tAbility: Pressure\n"
+			"\tStatus: Burn\n"
+			"\tNature: Modest\n"
+			"\tIVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe\n"
+			"\tEVs: 4 HP / 12 Atk / 24 Def / 0 SpA / 32 SpD / 100 Spe\n"
+			"\t- Psychic"
+		)
+	);
 }
 
 } // namespace technicalmachine

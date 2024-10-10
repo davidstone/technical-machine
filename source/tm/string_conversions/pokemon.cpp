@@ -7,7 +7,7 @@ module;
 
 #include <bounded/assert.hpp>
 
-export module tm.string_conversions.pokemon_to_string;
+export module tm.string_conversions.pokemon;
 
 import tm.pokemon.any_pokemon;
 import tm.pokemon.hp_ratio;
@@ -21,7 +21,6 @@ import tm.string_conversions.ability;
 import tm.string_conversions.item;
 import tm.string_conversions.move_name;
 import tm.string_conversions.nature;
-import tm.string_conversions.pokemon_helpers;
 import tm.string_conversions.species;
 import tm.string_conversions.status_name;
 
@@ -66,7 +65,10 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 	auto status_to_string = [&] {
 		auto const output_status = !is_clear(pokemon.status());
 		return output_status ?
-			containers::concatenate<containers::string>(ability_status, to_string(pokemon.status().name())) :
+			containers::concatenate<containers::string>(
+				"\n\tStatus: "sv,
+				to_string(pokemon.status().name())
+			) :
 			containers::string("");
 	};
 
@@ -84,52 +86,52 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 		if constexpr (generation <= Generation::two) {
 			return containers::concatenate<containers::string>(
 				stat_to_iv_string(SpecialRegularStat::atk),
-				atk_dv_def_dv,
+				" Atk / "sv,
 				stat_to_iv_string(SpecialRegularStat::def),
-				def_dv_spe_dv,
+				" Def / "sv,
 				stat_to_iv_string(SpecialRegularStat::spe),
-				spe_dv_spc_dv,
+				" Spe / "sv,
 				stat_to_iv_string(SpecialRegularStat::spc),
-				spc_dv_old_hp_ev,
+				" Spc\n\tEVs: "sv,
 				stat_to_ev_string(SpecialPermanentStat::hp),
-				old_hp_ev_atk_ev,
+				" HP / "sv,
 				stat_to_ev_string(SpecialPermanentStat::atk),
-				old_atk_ev_def_ev,
+				" Atk / "sv,
 				stat_to_ev_string(SpecialPermanentStat::def),
-				old_def_ev_spe_ev,
+				" Def / "sv,
 				stat_to_ev_string(SpecialPermanentStat::spe),
-				old_spe_ev_spc_ev,
+				" Spe / "sv,
 				stat_to_ev_string(SpecialPermanentStat::spc),
-				old_spc_ev_moves
+				" Spc"sv
 			);
 		} else {
 			return containers::concatenate<containers::string>(
 				to_string(pokemon.nature()),
-				nature_hp_iv,
+				"\n\tIVs: "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::hp),
-				hp_iv_atk_iv,
+				" HP / "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::atk),
-				atk_iv_def_iv,
+				" Atk / "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::def),
-				def_iv_spa_iv,
+				" Def / "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::spa),
-				spa_iv_spd_iv,
+				" SpA / "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::spd),
-				spd_iv_spe_iv,
+				" SpD / "sv,
 				stat_to_iv_string(SplitSpecialPermanentStat::spe),
-				spe_iv_hp_ev,
+				" Spe\n\tEVs: "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::hp),
-				hp_ev_atk_ev,
+				" HP / "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::atk),
-				atk_ev_def_ev,
+				" Atk / "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::def),
-				def_ev_spa_ev,
+				" Def / "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::spa),
-				spa_ev_spd_ev,
+				" SpA / "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::spd),
-				spd_ev_spe_ev,
+				" SpD / "sv,
 				stat_to_ev_string(SplitSpecialPermanentStat::spe),
-				spe_ev_moves
+				" Spe"sv
 			);
 		}
 	};
@@ -137,21 +139,25 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 	auto moves_to_string = [&] {
 		containers::string output;
 		for (auto const & move : pokemon.regular_moves()) {
-			output = containers::concatenate<containers::string>(std::move(output), moves_separator, to_string(move.name()));
+			output = containers::concatenate<containers::string>(
+				std::move(output),
+				"\n\t- "sv,
+				to_string(move.name())
+			);
 		}
 		return output;
 	};
 
 	return containers::concatenate<containers::string>(
 		to_string(pokemon.species()),
-		species_hp,
+		" ("sv,
 		hp_str,
-		hp_item,
+		"% HP) @ "sv,
 		to_string(pokemon.item(false, false)),
-		item_ability,
+		"\n\tAbility: "sv,
 		to_string(pokemon.initial_ability()),
 		status_to_string(),
-		generation <= Generation::two ? status_atk_dv : status_nature,
+		generation <= Generation::two ? "\n\tDVs: "sv : "\n\tNature: "sv,
 		stats_to_string(),
 		moves_to_string()
 	);

@@ -10,7 +10,7 @@ module;
 module tm.string_conversions.team;
 
 import tm.string_conversions.generation;
-import tm.string_conversions.pokemon_to_string;
+import tm.string_conversions.pokemon;
 
 import tm.any_team;
 import tm.generation;
