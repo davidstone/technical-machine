@@ -12,8 +12,16 @@ module;
 
 export module tm.nlohmann_json;
 
-namespace technicalmachine::nlohmann {
+namespace nlohmann {
 
 export using ::nlohmann::json;
 
-} // namespace technicalmachine::nlohmann
+inline namespace literals {
+inline namespace json_literals {
+
+export using ::nlohmann::literals::json_literals::operator""_json;
+
+} // inline namespace json_literals
+} // inline namespace literals
+
+} // namespace nlohmann
