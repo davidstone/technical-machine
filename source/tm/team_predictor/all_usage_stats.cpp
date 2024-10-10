@@ -27,20 +27,29 @@ auto stats_for_generation(Generation const generation) -> UsageStats {
 	));
 }
 
+export using StatsForGeneration = containers::trivial_inplace_function<
+	auto(Generation) const -> UsageStats,
+	0
+>;
+
 export struct AllUsageStats {
-	AllUsageStats():
+	explicit AllUsageStats(StatsForGeneration const make):
 		m_all_stats{
-			stats_for_generation(Generation::one),
-			stats_for_generation(Generation::two),
-			stats_for_generation(Generation::three),
-			stats_for_generation(Generation::four),
-			stats_for_generation(Generation::five),
-			stats_for_generation(Generation::six),
-			stats_for_generation(Generation::seven),
-			stats_for_generation(Generation::eight)
+			make(Generation::one),
+			make(Generation::two),
+			make(Generation::three),
+			make(Generation::four),
+			make(Generation::five),
+			make(Generation::six),
+			make(Generation::seven),
+			make(Generation::eight)
 		}
 	{
 		static_assert(numeric_traits::max_value<Generation> == Generation::eight);
+	}
+	AllUsageStats():
+		AllUsageStats(stats_for_generation)
+	{
 	}
 	auto operator[](Generation const generation) const -> UsageStats const & {
 		return m_all_stats[bounded::integer(generation) - 1_bi];
