@@ -21,6 +21,8 @@ module;
 
 export module tm.boost_networking;
 
+import containers;
+
 namespace boost::asio::error {
 
 export using ::boost::asio::error::get_ssl_category;
@@ -50,16 +52,24 @@ export using ::boost::asio::io_context;
 
 namespace boost::beast::http {
 
+export using ::boost::beast::http::async_read;
+export using ::boost::beast::http::async_write;
+export using ::boost::beast::http::empty_body;
+export using ::boost::beast::http::error;
+export using ::boost::beast::http::field;
 export using ::boost::beast::http::read;
 export using ::boost::beast::http::request;
 export using ::boost::beast::http::response;
+export using ::boost::beast::http::status;
 export using ::boost::beast::http::string_body;
+export using ::boost::beast::http::verb;
 export using ::boost::beast::http::write;
 
 } // namespace boost::beast::http
 
 namespace boost::beast {
 
+export using ::boost::beast::async_write;
 export using ::boost::beast::error_code;
 export using ::boost::beast::flat_buffer;
 export using ::boost::beast::get_lowest_layer;
@@ -69,26 +79,16 @@ export using ::boost::beast::system_error;
 
 namespace technicalmachine {
 
-namespace http = boost::beast::http;
+export namespace http = boost::beast::http;
+export using boost::asio::ip::tcp;
 
-export auto prepare_http_response() -> http::response<http::basic_dynamic_body<boost::beast::flat_buffer>> {
-	auto response = http::response<http::basic_dynamic_body<boost::beast::flat_buffer>>();
-	response.body().reserve(1ULL << 20ULL);
-	// response.version(version);
-	response.keep_alive(false);
-	response.result(http::status::ok);
-	response.set(http::field::server, "Beast");
-	response.set(http::field::content_type, "text/html");
-	return response;
-}
-
-export auto http_read(boost::asio::ip::tcp::socket & socket, boost::beast::flat_buffer & buffer) -> std::string {
+export auto http_read(tcp::socket & socket, boost::beast::flat_buffer & buffer) -> http::request<http::string_body> {
 	auto request = http::request<http::string_body>();
 	http::read(socket, buffer, request);
-	return std::move(request).body();
+	return request;
 }
 
-export auto http_write(boost::asio::ip::tcp::socket & socket, http::response<http::basic_dynamic_body<boost::beast::flat_buffer>> const & response) -> void {
+export auto http_write(tcp::socket & socket, http::response<http::basic_dynamic_body<boost::beast::flat_buffer>> const & response) -> void {
 	http::write(socket, response);
 }
 
@@ -102,15 +102,40 @@ export auto create_http_post(std::string_view const host, std::string_view const
 	return request;
 }
 
-export using Websocket = boost::beast::websocket::stream<boost::beast::ssl_stream<boost::asio::ip::tcp::socket>>;
+export using Websocket = boost::beast::websocket::stream<boost::beast::ssl_stream<tcp::socket>>;
+export using InsecureWebsocket = boost::beast::websocket::stream<tcp::socket>;
 
 // Work around boost headers declaring some functions `static`
 export auto websocket_read(Websocket & websocket, boost::beast::flat_buffer & buffer) -> void {
 	websocket.read(buffer);
 }
 // Work around boost headers declaring some functions `static`
-export auto websocket_write(Websocket & websocket, boost::asio::const_buffer const buffer) -> void {
-	websocket.write(buffer);
+export auto websocket_write(Websocket & websocket, std::string_view const str) -> void {
+	websocket.write(boost::asio::buffer(str));
+}
+
+// `const &` until https://github.com/boostorg/compat/pull/15
+using Continuation = auto(boost::beast::error_code const &, std::size_t const &) const -> void;
+
+// Work around boost headers declaring some functions `static`
+export auto websocket_async_read(
+	InsecureWebsocket & websocket,
+	boost::beast::flat_buffer & buffer,
+	containers::trivial_inplace_function<Continuation, sizeof(void *)> const continuation
+) -> void {
+	websocket.async_read(buffer, continuation);
+}
+// Work around boost headers declaring some functions `static`
+export auto websocket_async_write(
+	InsecureWebsocket & websocket,
+	boost::asio::const_buffer const buffer,
+	containers::trivial_inplace_function<Continuation, sizeof(void *)> const continuation
+) -> void {
+	websocket.async_write(buffer, continuation);
+}
+
+export auto websocket_close(InsecureWebsocket & socket) -> void {
+	socket.close(boost::beast::websocket::close_reason());
 }
 
 } // namespace technicalmachine

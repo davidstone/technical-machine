@@ -21,8 +21,6 @@ namespace technicalmachine::ps {
 
 using namespace std::string_view_literals;
 
-namespace http = boost::beast::http;
-using tcp = boost::asio::ip::tcp;
 namespace ssl = boost::asio::ssl;
 
 auto make_ssl_context() -> ssl::context {
@@ -70,7 +68,7 @@ export struct Sockets {
 	}
 
 	auto write_message(std::string_view const message) -> void {
-		websocket_write(m_websocket, boost::asio::buffer(message));
+		websocket_write(m_websocket, message);
 	}
 
 	auto authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {
