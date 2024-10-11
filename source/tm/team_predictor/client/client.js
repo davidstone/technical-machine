@@ -51,10 +51,13 @@ function populate_generation() {
 	generation.value = "1";
 }
 
-function create_species_input(pokemon_data) {
+function create_species_input(pokemon, pokemon_data) {
 	const species = document.createElement('select');
 	species.className = 'species';
 	add_keys_to_select(species, pokemon_data);
+	species.addEventListener('change', () => {
+		update_moves_and_abilities(pokemon, pokemon_data[species.value]);
+	});
 	return species;
 }
 
@@ -135,10 +138,7 @@ function create_pokemon_inputs(generation_data) {
 	const pokemon = document.createElement('div');
 	pokemon.className = 'pokemon';
 
-	const species = create_species_input(generation_data.pokemon);
-	species.addEventListener('change', () => {
-		update_moves_and_abilities(pokemon, generation_data.pokemon[species.value]);
-	});
+	const species = create_species_input(pokemon, generation_data.pokemon);
 	pokemon.appendChild(species);
 	pokemon.appendChild(create_level_input());
 	if (generation_data.items) {
