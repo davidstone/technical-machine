@@ -238,6 +238,7 @@ target_sources(tm_common PUBLIC
 		source/tm/string_conversions/nature.cpp
 		source/tm/string_conversions/pokemon.cpp
 		source/tm/string_conversions/species.cpp
+		source/tm/string_conversions/stat_names.cpp
 		source/tm/string_conversions/status_name.cpp
 		source/tm/string_conversions/team.cpp
 		source/tm/string_conversions/type.cpp

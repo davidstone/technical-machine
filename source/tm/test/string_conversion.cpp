@@ -25,6 +25,7 @@ import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_names;
 
 import tm.status.status_name;
 
@@ -36,6 +37,7 @@ import tm.string_conversions.move_name;
 import tm.string_conversions.nature;
 import tm.string_conversions.pokemon;
 import tm.string_conversions.species;
+import tm.string_conversions.stat_names;
 import tm.string_conversions.status_name;
 import tm.string_conversions.type;
 import tm.string_conversions.weather;
@@ -80,6 +82,10 @@ static_assert(test_generic<Nature>());
 TEST_CASE("species", "[string_conversion]") {
 	test_generic<Species>();
 }
+static_assert(test_generic<SpecialPermanentStat>());
+static_assert(test_generic<SplitSpecialPermanentStat>());
+static_assert(test_generic<SpecialRegularStat>());
+static_assert(test_generic<SplitSpecialRegularStat>());
 static_assert(test_generic<StatusName>());
 static_assert(test_generic<Type>());
 static_assert(test_generic<Weather>());
