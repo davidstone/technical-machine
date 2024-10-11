@@ -12,7 +12,6 @@ import tm.clients.load_team_from_file;
 import tm.stat.stat_style;
 
 import tm.string_conversions.initial_team;
-import tm.string_conversions.team;
 
 import tm.files_in_path;
 import tm.initial_team;

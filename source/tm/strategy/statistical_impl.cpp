@@ -36,8 +36,6 @@ import numeric_traits;
 import std_module;
 import tv;
 
-import tm.string_conversions.team;
-
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
