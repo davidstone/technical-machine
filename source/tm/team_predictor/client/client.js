@@ -168,7 +168,7 @@ add_pokemon_button.addEventListener('click', () => {
 	}
 });
 
-document.getElementById('send-data').addEventListener('click', send_data);
+document.getElementById('generate').addEventListener('click', send_data);
 document.addEventListener('keydown', (event) => {
 	if (event.key === 'Enter') {
 		// Without this, the data is submitted twice
