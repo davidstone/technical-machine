@@ -548,6 +548,8 @@ target_link_libraries(tm_pokemon_showdown
 	strict_defaults
 )
 
+add_subdirectory(source/tm/web_server)
+
 add_executable(ai
 	source/tm/ai/main.cpp
 )
