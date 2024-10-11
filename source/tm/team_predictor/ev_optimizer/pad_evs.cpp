@@ -6,6 +6,7 @@
 module;
 
 #include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
 
 export module tm.team_predictor.ev_optimizer.pad_evs;
 
@@ -50,19 +51,18 @@ constexpr auto useful_value(auto const value) {
 constexpr auto max = max_total_evs(SpecialStyle::split);
 
 constexpr auto greatest_non_full(EVs & evs) -> EV & {
-	auto ref = std::ref(evs.hp());
-	auto update = [&](EV & ev) {
-		if (ref.get() == EV::useful_max or ev > ref.get()) {
-			ref = std::ref(ev);
+	return *containers::max_element(
+		containers::transform(
+			containers::enum_range<SplitSpecialPermanentStat>(),
+			[&](SplitSpecialPermanentStat const stat) -> EV & { return evs[stat]; }
+		),
+		[](EV const lhs, EV const rhs) {
+			auto normalize = [](EV const ev) {
+				return BOUNDED_CONDITIONAL(ev >= EV::useful_max, -1_bi, ev.value());
+			};
+			return normalize(lhs) > normalize(rhs);
 		}
-	};
-	update(evs.atk());
-	update(evs.def());
-	update(evs.spa());
-	update(evs.spd());
-	update(evs.spe());
-	BOUNDED_ASSERT(ref.get() < EV::useful_max);
-	return ref.get();
+	);
 }
 
 constexpr auto used_non_full_evs(EVs const evs) {
