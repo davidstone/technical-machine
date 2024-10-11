@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pokémon Team Builder</title>
+	<style>
+		.container {
+			display: flex;
+		}
+		.inputs {
+			flex: 1;
+		}
+		.predicted {
+			flex: 1;
+			margin-left: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="inputs">
+			<select id="generation"></select>
+			<select id="style">
+				<option value="most likely" selected>Most Likely</option>
+				<option value="random">Random</option>
+			</select>
+			<div id="team"></div>
+			<div id="add-pokemon-container">
+				<button id="add-pokemon">Add Pokémon</button>
+			</div>
+			<div id="send-container">
+				<button id="send-data">Send Data</button>
+			</div>
+		</div>
+		<pre id="predicted" class="predicted"></pre>
+	</div>
+	<script src="client.js"></script>
+</body>
+</html>

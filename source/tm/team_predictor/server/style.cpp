@@ -8,7 +8,7 @@ module;
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-export module tm.team_predictor.style;
+export module tm.team_predictor.server.style;
 
 export import tm.string_conversions.from_string;
 import tm.string_conversions.invalid_string_conversion;
@@ -34,7 +34,7 @@ export template<>
 constexpr auto from_string(std::string_view const str) -> Style {
 	if (str == "random"sv) {
 		return Style::random;
-	} else if (str == "most likely"sv or str == "most+likely") {
+	} else if (str == "most likely"sv) {
 		return Style::most_likely;
 	} else {
 		throw InvalidFromStringConversion("Style", str);

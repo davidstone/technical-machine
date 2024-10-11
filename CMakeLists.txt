@@ -257,7 +257,6 @@ target_sources(tm_common PUBLIC
 		source/tm/team_predictor/all_usage_stats.cpp
 		source/tm/team_predictor/estimate.cpp
 		source/tm/team_predictor/stats_user.cpp
-		source/tm/team_predictor/style.cpp
 		source/tm/team_predictor/team_predictor.cpp
 		source/tm/team_predictor/usage_stats.cpp
 		source/tm/team_predictor/usage_stats_probabilities.cpp
@@ -607,23 +606,22 @@ target_link_libraries(ps_usage_stats_create_derivative_stats
 	tm_pokemon_showdown
 )
 
-
-add_executable(predict
-	source/tm/team_predictor/predictor.cpp
-)
+add_subdirectory(source/tm/team_predictor/server)
 add_subdirectory(source/tm/string_conversions/test)
 
-target_sources(predict PRIVATE
+add_library(tm_test_lib STATIC)
+target_sources(tm_test_lib PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		source/tm/team_predictor/connection.cpp
-		source/tm/team_predictor/generate_team_builder_ui.cpp
-		source/tm/team_predictor/mutable_buffer.cpp
-		source/tm/team_predictor/parser.cpp
+		source/tm/test/usage_bytes.cpp
 )
-target_link_libraries(predict
-	tm_common
+target_link_libraries(tm_test_lib
+	PUBLIC
+		tm_common
+		strict_defaults_interface
+	PRIVATE
+		strict_defaults
 )
 
 add_executable(tm_test)
@@ -670,7 +668,6 @@ target_sources(tm_test PRIVATE
 		source/tm/test/critical_hit_probability.cpp
 		source/tm/test/get_legal_selections.cpp
 		source/tm/test/make_seen_team.cpp
-		source/tm/test/usage_bytes.cpp
 		source/tm/test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
@@ -708,6 +705,7 @@ target_link_libraries(tm_test
 	tm_pokemon_online
 	tm_pokemon_showdown
 	tm_shoddy_battle
+	tm_test_lib
 	Catch2::Catch2WithMain
 	TBB::tbb
 )
