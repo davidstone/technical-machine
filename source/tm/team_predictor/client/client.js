@@ -61,19 +61,18 @@ function create_species_input(pokemon, pokemon_data) {
 	return species;
 }
 
-function create_numeric_input(label, min, max) {
+function create_numeric_input(label, min, max, initial) {
 	const input = document.createElement('input');
 	input.type = 'number';
 	input.min = min;
 	input.max = max;
 	input.placeholder = label;
+	input.value = initial;
 	return input;
 }
 
 function create_level_input() {
-	input = create_numeric_input('level', 1, 100);
-	input.value = 100;
-	return input;
+	return create_numeric_input('level', 1, 100, 100);
 }
 
 function create_select(data, name) {
@@ -102,7 +101,7 @@ const stats = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
 function create_ev_inputs() {
 	const evs = document.createElement('div');
 	stats.forEach(stat => {
-		evs.appendChild(create_numeric_input(stat, 0, 252));
+		evs.appendChild(create_numeric_input(stat, 0, 252, 0));
 	});
 	return evs;
 }
