@@ -609,6 +609,8 @@ target_link_libraries(ps_usage_stats_create_derivative_stats
 add_executable(predict
 	source/tm/team_predictor/predictor.cpp
 )
+add_subdirectory(source/tm/string_conversions/test)
+
 target_sources(predict PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -666,7 +668,6 @@ target_sources(tm_test PRIVATE
 		source/tm/test/critical_hit_probability.cpp
 		source/tm/test/get_legal_selections.cpp
 		source/tm/test/make_seen_team.cpp
-		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
 		source/tm/test/visible_damage_to_actual_damage.cpp
 )
