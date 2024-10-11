@@ -168,22 +168,30 @@ add_pokemon_button.addEventListener('click', () => {
 	}
 });
 
-document.getElementById('generate').addEventListener('click', send_data);
+document.getElementById('generate-random').addEventListener('click', send_random_data);
 document.addEventListener('keydown', (event) => {
 	if (event.key === 'Enter') {
 		// Without this, the data is submitted twice
 		event.preventDefault();
-		send_data();
+		send_random_data();
 	}
 });
+document.getElementById('generate-most-likely').addEventListener('click', send_most_likely_data);
 
-function send_data() {
-	socket.send(JSON.stringify(team_to_json()));
+function send_data(style) {
+	socket.send(JSON.stringify(team_to_json(style)));
 }
 
-function team_to_json() {
+function send_random_data() {
+	send_data('random');
+}
+
+function send_most_likely_data() {
+	send_data('most likely');
+}
+
+function team_to_json(style) {
 	const generation = document.getElementById('generation').value;
-	const style = document.getElementById('style').value;
 	const team = [];
 	const pokemon_elements = document.querySelectorAll('.pokemon');
 
