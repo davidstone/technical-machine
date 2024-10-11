@@ -27,35 +27,35 @@ function clear_team() {
 
 document.getElementById('generation').addEventListener('change', clear_team);
 
-function add_element_to_dropdown(dropdown, element) {
+function add_element_to_select(select, element) {
 	const option = document.createElement('option');
 	option.value = element;
 	option.textContent = element;
-	dropdown.appendChild(option);
+	select.appendChild(option);
 }
 
-function add_elements_to_dropdown(dropdown, object) {
+function add_elements_to_select(select, object) {
 	for (const element of object) {
-		add_element_to_dropdown(dropdown, element);
+		add_element_to_select(select, element);
 	}
 }
 
-function add_keys_to_dropdown(dropdown, object) {
-	add_elements_to_dropdown(dropdown, Object.keys(object));
+function add_keys_to_select(select, object) {
+	add_elements_to_select(select, Object.keys(object));
 }
 
 function populate_generation() {
-	const dropdown = document.getElementById('generation');
-	dropdown.innerHTML = '';
-	add_keys_to_dropdown(dropdown, data);
-	dropdown.value = "1";
+	const generation = document.getElementById('generation');
+	generation.innerHTML = '';
+	add_keys_to_select(generation, data);
+	generation.value = "1";
 }
 
-function create_species_dropdown(pokemon_data) {
-	const dropdown = document.createElement('select');
-	dropdown.className = 'species';
-	add_keys_to_dropdown(dropdown, pokemon_data);
-	return dropdown;
+function create_species_input(pokemon_data) {
+	const species = document.createElement('select');
+	species.className = 'species';
+	add_keys_to_select(species, pokemon_data);
+	return species;
 }
 
 function create_numeric_input(label, min, max) {
@@ -73,24 +73,25 @@ function create_level_input() {
 	return input;
 }
 
+function create_select(data, name) {
+	const select = document.createElement('select');
+	select.className = name;
+	add_elements_to_select(select, data);
+	return select;
+}
+
 function create_item_input(items_data) {
-	const dropdown = document.createElement('select');
-	dropdown.className = 'item';
-	add_elements_to_dropdown(dropdown, items_data);
-	return dropdown;
+	return create_select(items_data, 'item');
 }
 
 function create_ability_input() {
-	const dropdown = document.createElement('select');
-	dropdown.className = 'ability';
-	return dropdown;
+	const ability = document.createElement('select');
+	ability.className = 'ability';
+	return ability;
 }
 
 function create_nature_input(natures_data) {
-	const dropdown = document.createElement('select');
-	dropdown.className = 'item';
-	add_elements_to_dropdown(dropdown, natures_data);
-	return dropdown;
+	return create_select(natures_data, 'nature');
 }
 
 const stats = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
@@ -104,11 +105,11 @@ function create_ev_inputs() {
 }
 
 function create_move_input(move_data) {
-	const dropdown = document.createElement('select');
-	dropdown.className = 'move';
-	add_element_to_dropdown(dropdown, 'Select move');
-	add_elements_to_dropdown(dropdown, move_data);
-	return dropdown;
+	const move = document.createElement('select');
+	move.className = 'move';
+	add_element_to_select(move, 'Select move');
+	add_elements_to_select(move, move_data);
+	return move;
 }
 
 function create_move_inputs() {
@@ -121,7 +122,7 @@ function update_moves_and_abilities(pokemon, pokemon_data) {
 	if (pokemon_data.abilities) {
 		const ability = pokemon.querySelector('.ability');
 		ability.innerHTML = '';
-		add_elements_to_dropdown(ability, pokemon_data.abilities);
+		add_elements_to_select(ability, pokemon_data.abilities);
 	}
 	const moves = pokemon.querySelector('.moves');
 	moves.innerHTML = '';
@@ -134,7 +135,7 @@ function create_pokemon_inputs(generation_data) {
 	const pokemon = document.createElement('div');
 	pokemon.className = 'pokemon';
 
-	const species = create_species_dropdown(generation_data.pokemon);
+	const species = create_species_input(generation_data.pokemon);
 	species.addEventListener('change', () => {
 		update_moves_and_abilities(pokemon, generation_data.pokemon[species.value]);
 	});
