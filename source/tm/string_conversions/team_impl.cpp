@@ -24,16 +24,22 @@ namespace technicalmachine {
 using namespace std::string_view_literals;
 
 template<any_team TeamType>
-constexpr auto to_string_impl(TeamType const & team) -> containers::string {
+constexpr auto to_string_impl(
+	TeamType const & team,
+	bool const include_active_marker
+) -> containers::string {
 	auto output = containers::concatenate<containers::string>(
 		"Generation "sv,
 		to_string(generation_from<TeamType>),
 		" team:\n"sv
 	);
+	auto const active_marker = include_active_marker ? "* "sv : ""sv;
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),
-			member.species() == team.pokemon().species() ? "* "sv : ""sv,
+			member.species() == team.pokemon().species() ?
+				active_marker :
+				""sv,
 			to_string(member),
 			containers::array{'\n'}
 		);
@@ -41,16 +47,18 @@ constexpr auto to_string_impl(TeamType const & team) -> containers::string {
 	return output;
 }
 
-#define CREATE_OVERLOADS(generation) \
-	auto to_string(Team<generation> const & team) -> containers::string { \
-		return to_string_impl(team); \
-	} \
-	auto to_string(KnownTeam<generation> const & team) -> containers::string { \
-		return to_string_impl(team); \
-	} \
-	auto to_string(SeenTeam<generation> const & team) -> containers::string { \
-		return to_string_impl(team); \
+#define CREATE_OVERLOAD(TeamType) \
+	auto to_string( \
+		TeamType const & team, \
+		bool const include_active_marker \
+	) -> containers::string { \
+		return to_string_impl(team, include_active_marker); \
 	}
+
+#define CREATE_OVERLOADS(generation) \
+	CREATE_OVERLOAD(Team<generation>); \
+	CREATE_OVERLOAD(KnownTeam<generation>); \
+	CREATE_OVERLOAD(SeenTeam<generation>)
 
 TM_FOR_EACH_GENERATION(CREATE_OVERLOADS);
 

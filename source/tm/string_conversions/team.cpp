@@ -15,10 +15,16 @@ import containers;
 
 namespace technicalmachine {
 
+#define CREATE_OVERLOAD(TeamType) \
+	export auto to_string( \
+		TeamType const & team, \
+		bool include_active_marker \
+	) -> containers::string
+
 #define CREATE_OVERLOADS(generation) \
-	export auto to_string(Team<generation> const & team) -> containers::string; \
-	export auto to_string(KnownTeam<generation> const & team) -> containers::string; \
-	export auto to_string(SeenTeam<generation> const & team) -> containers::string
+	CREATE_OVERLOAD(Team<generation>); \
+	CREATE_OVERLOAD(KnownTeam<generation>); \
+	CREATE_OVERLOAD(SeenTeam<generation>)
 
 TM_FOR_EACH_GENERATION(CREATE_OVERLOADS);
 

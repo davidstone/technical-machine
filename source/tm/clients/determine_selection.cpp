@@ -97,7 +97,9 @@ auto determine_selection(
 	auto const state = predicted_state(visible, usage_stats);
 
 	auto log_team = [&](std::string_view const label, Team<generation> const & team) {
-		stream << label << "'s " << to_string(team) << '\n';
+		constexpr auto include_active_marker = true;
+		auto const team_str = to_string(team, include_active_marker);
+		stream << label << "'s " << team_str << '\n';
 	};
 	log_team("AI", state.ai);
 	log_team("Predicted Foe", state.foe);

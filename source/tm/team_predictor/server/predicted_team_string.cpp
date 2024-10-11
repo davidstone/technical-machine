@@ -93,7 +93,8 @@ export auto predicted_team_string(
 			auto const predicted_team = inputs.style == Style::random ?
 				random_team(usage_stats, random_engine, std::move(seen_team)) :
 				most_likely_team(usage_stats, std::move(seen_team));
-			return to_string(predicted_team);
+			constexpr auto include_active_marker = false;
+			return to_string(predicted_team, include_active_marker);
 		};
 		return constant_generation(inputs.generation, impl);
 	} catch (std::exception const & ex) {
