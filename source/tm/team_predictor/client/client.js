@@ -27,16 +27,12 @@ function clear_team() {
 
 document.getElementById('generation').addEventListener('change', clear_team);
 
-function add_element_to_select(select, element) {
-	const option = document.createElement('option');
-	option.value = element;
-	option.textContent = element;
-	select.appendChild(option);
-}
-
 function add_elements_to_select(select, object) {
 	for (const element of object) {
-		add_element_to_select(select, element);
+		const option = document.createElement('option');
+		option.value = element;
+		option.textContent = element;
+		select.appendChild(option);
 	}
 }
 
@@ -109,8 +105,7 @@ function create_ev_inputs() {
 function create_move_input(move_data) {
 	const move = document.createElement('select');
 	move.className = 'move';
-	add_element_to_select(move, 'Select move');
-	add_elements_to_select(move, move_data);
+	add_elements_to_select(move, ['Select move', ...move_data]);
 	return move;
 }
 
