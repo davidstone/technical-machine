@@ -84,7 +84,7 @@ function create_select(data, name) {
 }
 
 function create_item_input(items_data) {
-	return create_select(items_data, 'item');
+	return create_select(['Select item', ...items_data], 'item');
 }
 
 function create_ability_input() {
@@ -95,7 +95,9 @@ function create_ability_input() {
 }
 
 function create_nature_input(natures_data) {
-	return create_select(natures_data, 'nature');
+	const nature = create_select(natures_data, 'nature');
+	nature.value = 'Hardy';
+	return nature;
 }
 
 const stats = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
@@ -109,11 +111,7 @@ function create_ev_inputs() {
 }
 
 function create_move_input(move_data) {
-	const move = document.createElement('select');
-	move.className = 'move';
-	add_elements_to_select(move, ['Select move', ...move_data]);
-	generate_most_likely_on_change(move);
-	return move;
+	return create_select(['Select move', ...move_data], 'move');
 }
 
 function create_move_inputs() {
@@ -130,7 +128,7 @@ function update_moves_and_abilities(pokemon, pokemon_data) {
 	}
 	const moves = pokemon.querySelector('.moves');
 	moves.innerHTML = '';
-	for (let n = 0; n != 4; ++n) {
+	for (let n = 0; n !== 4; ++n) {
 		moves.appendChild(create_move_input(pokemon_data.moves));
 	}
 }
@@ -210,7 +208,7 @@ function team_to_json(style) {
 		const pokemon_data = {species, level};
 
 		const item = pokemon.querySelector('.item');
-		if (item) {
+		if (item && item.value !== 'Select item') {
 			pokemon_data.item = item.value;
 		}
 
@@ -221,7 +219,9 @@ function team_to_json(style) {
 
 		const nature = pokemon.querySelector('.nature');
 		if (nature) {
-			pokemon_data.nature = nature.value;
+			if (nature.value !== 'Select nature') {
+				pokemon_data.nature = nature.value;
+			}
 			const evs = {};
 			stats.forEach(stat => {
 				evs[stat] = pokemon.querySelector(`input[placeholder="${stat}"]`).value;
@@ -229,7 +229,7 @@ function team_to_json(style) {
 			pokemon_data.evs = evs;
 		}
 
-		pokemon_data.moves = Array.from(pokemon.querySelectorAll('.move')).map(move => move.value).filter(move => move != 'Select move');
+		pokemon_data.moves = Array.from(pokemon.querySelectorAll('.move')).map(move => move.value).filter(move => move !== 'Select move');
 
 		team.push(pokemon_data);
 	});
