@@ -7,6 +7,7 @@ socket.onmessage = function(event) {
 	if (parsed.generations) {
 		data = parsed.generations;
 		populate_generation();
+		send_most_likely_data();
 	}
 	if (parsed.predicted) {
 		display_predicted(parsed.predicted);
@@ -45,6 +46,7 @@ function populate_generation() {
 	generation.innerHTML = '';
 	add_keys_to_select(generation, data);
 	generation.value = "1";
+	generate_most_likely_on_change(generation);
 }
 
 function create_species_input(pokemon, pokemon_data) {
@@ -53,6 +55,7 @@ function create_species_input(pokemon, pokemon_data) {
 	add_keys_to_select(species, pokemon_data);
 	species.addEventListener('change', () => {
 		update_moves_and_abilities(pokemon, pokemon_data[species.value]);
+		send_most_likely_data();
 	});
 	return species;
 }
@@ -64,6 +67,7 @@ function create_numeric_input(label, min, max, initial) {
 	input.max = max;
 	input.placeholder = label;
 	input.value = initial;
+	generate_most_likely_on_change(input);
 	return input;
 }
 
@@ -75,6 +79,7 @@ function create_select(data, name) {
 	const select = document.createElement('select');
 	select.className = name;
 	add_elements_to_select(select, data);
+	generate_most_likely_on_change(select);
 	return select;
 }
 
@@ -85,6 +90,7 @@ function create_item_input(items_data) {
 function create_ability_input() {
 	const ability = document.createElement('select');
 	ability.className = 'ability';
+	generate_most_likely_on_change(ability);
 	return ability;
 }
 
@@ -106,6 +112,7 @@ function create_move_input(move_data) {
 	const move = document.createElement('select');
 	move.className = 'move';
 	add_elements_to_select(move, ['Select move', ...move_data]);
+	generate_most_likely_on_change(move);
 	return move;
 }
 
@@ -161,7 +168,13 @@ add_pokemon_button.addEventListener('click', () => {
 	if (get_team().childElementCount >= max_pokemon) {
 		add_pokemon_button.style.display = 'none';
 	}
+
+	send_most_likely_data();
 });
+
+function generate_most_likely_on_change(element) {
+	element.addEventListener('change', send_most_likely_data);
+}
 
 document.getElementById('generate-random').addEventListener('click', send_random_data);
 document.addEventListener('keydown', (event) => {
