@@ -774,7 +774,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		)
 	endif()
 	target_link_libraries(ai pthread)
-	target_link_libraries(predict pthread)
 	target_link_libraries(score_predict_action atomic)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
