@@ -17,17 +17,18 @@ struct SelectedTeams {
 	TeamType & other;
 };
 
-export template<Generation generation>
-struct Selector {
+export struct Selector {
 	constexpr explicit Selector(bool const select_ai):
 		m_select_ai(select_ai)
 	{
 	}
+	template<Generation generation>
 	constexpr auto operator()(State<generation> const & state) const -> SelectedTeams<Team<generation> const> {
 		return m_select_ai ?
 			SelectedTeams<Team<generation> const>(state.ai, state.foe) :
 			SelectedTeams<Team<generation> const>(state.foe, state.ai);
 	}
+	template<Generation generation>
 	constexpr auto operator()(State<generation> & state) const -> SelectedTeams<Team<generation>> {
 		return m_select_ai ?
 			SelectedTeams<Team<generation>>(state.ai, state.foe) :
@@ -35,7 +36,7 @@ struct Selector {
 	}
 
 	constexpr auto invert() const -> Selector {
-		return Selector<generation>(!m_select_ai);
+		return Selector(!m_select_ai);
 	}
 private:
 	bool m_select_ai;

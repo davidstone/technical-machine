@@ -150,7 +150,7 @@ constexpr auto paralysis_probability(StatusName const status) -> double {
 template<Generation generation>
 auto execute_move(
 	State<generation> const & state,
-	Selector<generation> const select,
+	Selector const select,
 	SelectedAndExecuted const move,
 	OtherAction const other_action,
 	Depth const depth,
@@ -217,7 +217,7 @@ auto execute_move(
 }
 
 template<Generation generation>
-auto execute_switch(State<generation> state, Selector<generation> const select, Switch const switch_, Depth const depth, auto const continuation) -> double {
+auto execute_switch(State<generation> state, Selector const select, Switch const switch_, Depth const depth, auto const continuation) -> double {
 	auto const selected = select(state);
 	selected.team.switch_pokemon(
 		selected.other.pokemon(),
@@ -371,14 +371,14 @@ private:
 			average(
 				use_action_branch(
 					state,
-					Selector<generation>(true),
+					Selector(true),
 					ai_selection,
 					foe_selection,
 					depth
 				),
 				use_action_branch(
 					state,
-					Selector<generation>(false),
+					Selector(false),
 					foe_selection,
 					ai_selection,
 					depth
@@ -386,7 +386,7 @@ private:
 			) :
 			use_action_branch(
 				state,
-				Selector<generation>(team_matcher(state.ai)(ordered->first.team)),
+				Selector(team_matcher(state.ai)(ordered->first.team)),
 				ordered->first.selection,
 				ordered->second.selection,
 				depth
@@ -395,7 +395,7 @@ private:
 
 	auto use_action_branch_inner(
 		OtherAction const first_used_action,
-		Selector<generation> const select,
+		Selector const select,
 		Depth const depth
 	) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
@@ -445,7 +445,7 @@ private:
 
 	auto use_action_branch_outer(
 		OriginalPokemon const original_last_pokemon,
-		Selector<generation> const select,
+		Selector const select,
 		Depth const depth
 	) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
@@ -485,7 +485,7 @@ private:
 
 	auto use_action_branch(
 		State<generation> const & state,
-		Selector<generation> const select,
+		Selector const select,
 		Selection const first_selection,
 		Selection const last_selection,
 		Depth const depth
@@ -553,14 +553,14 @@ private:
 			average(
 				end_of_turn_branch(
 					state,
-					Selector<generation>(true),
+					Selector(true),
 					ai_flags,
 					foe_flags,
 					depth
 				),
 				end_of_turn_branch(
 					state,
-					Selector<generation>(false),
+					Selector(false),
 					foe_flags,
 					ai_flags,
 					depth
@@ -568,7 +568,7 @@ private:
 			) :
 			end_of_turn_branch(
 				state,
-				Selector<generation>(is_ai(faster->first)),
+				Selector(is_ai(faster->first)),
 				get_flag(faster->first),
 				get_flag(faster->second),
 				depth
@@ -577,7 +577,7 @@ private:
 
 	auto end_of_turn_branch(
 		State<generation> state,
-		Selector<generation> const select,
+		Selector const select,
 		EndOfTurnFlags const first_flag,
 		EndOfTurnFlags const last_flag,
 		Depth const depth
@@ -600,7 +600,13 @@ private:
 		return finish_end_of_turn(state, depth);
 	}
 
-	auto handle_end_of_turn_replacing(State<generation> state, Selector<generation> const select, Selection const ai_selection, Selection const foe_selection, Depth const depth) -> double {
+	auto handle_end_of_turn_replacing(
+		State<generation> state,
+		Selector const select,
+		Selection const ai_selection,
+		Selection const foe_selection,
+		Depth const depth
+	) -> double {
 		auto selected = select(state);
 		auto const [first_selection, last_selection] = sort_two(
 			team_matcher(state.ai)(selected.team),
@@ -670,7 +676,7 @@ private:
 
 	auto score_executed_actions(
 		State<generation> const & state,
-		Selector<generation> const select,
+		Selector const select,
 		Selection const selection,
 		OtherAction const other_action,
 		Depth const depth,
