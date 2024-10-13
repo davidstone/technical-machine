@@ -307,6 +307,10 @@ constexpr auto remove_unlikely_foe_selections(WeightedSelections const foe_selec
 	));
 }
 
+constexpr auto average(auto... values) -> double {
+	return (... + values) / sizeof...(values);
+}
+
 template<Generation generation>
 struct Evaluator {
 	explicit Evaluator(Evaluate<generation> const evaluate, Strategy const & foe_strategy):
@@ -350,15 +354,50 @@ private:
 		);
 	}
 
-	auto order_branch(State<generation> const & state, Selection const ai_selection, Selection const foe_selection, Depth const depth) -> double {
-		auto ordered = Order(state.ai, ai_selection, state.foe, foe_selection, state.environment);
-		auto is_ai = team_matcher(state.ai);
+	auto order_branch(
+		State<generation> const & state,
+		Selection const ai_selection,
+		Selection const foe_selection,
+		Depth const depth
+	) -> double {
+		auto ordered = Order(
+			state.ai,
+			ai_selection,
+			state.foe,
+			foe_selection,
+			state.environment
+		);
 		return !ordered ?
-			(use_action_branch(state, Selector<generation>(true), ai_selection, foe_selection, depth) + use_action_branch(state, Selector<generation>(false), foe_selection, ai_selection, depth)) / 2.0 :
-			use_action_branch(state, Selector<generation>(is_ai(ordered->first.team)), ordered->first.selection, ordered->second.selection, depth);
+			average(
+				use_action_branch(
+					state,
+					Selector<generation>(true),
+					ai_selection,
+					foe_selection,
+					depth
+				),
+				use_action_branch(
+					state,
+					Selector<generation>(false),
+					foe_selection,
+					ai_selection,
+					depth
+				)
+			) :
+			use_action_branch(
+				state,
+				Selector<generation>(team_matcher(state.ai)(ordered->first.team)),
+				ordered->first.selection,
+				ordered->second.selection,
+				depth
+			);
 	}
 
-	auto use_action_branch_inner(OtherAction const first_used_action, Selector<generation> const select, Depth const depth) {
+	auto use_action_branch_inner(
+		OtherAction const first_used_action,
+		Selector<generation> const select,
+		Depth const depth
+	) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
 			auto const [first_selection, last_selection] = sort_two(
 				team_matcher(state.ai)(select(state).team),
@@ -404,7 +443,11 @@ private:
 		};
 	}
 
-	auto use_action_branch_outer(OriginalPokemon const original_last_pokemon, Selector<generation> const select, Depth const depth) {
+	auto use_action_branch_outer(
+		OriginalPokemon const original_last_pokemon,
+		Selector<generation> const select,
+		Depth const depth
+	) {
 		return [=, this](State<generation> const & state, Selection const ai_selection, Selection const foe_selection) {
 			auto const [first_selection, last_selection] = sort_two(
 				team_matcher(state.ai)(select(state).team),
@@ -440,7 +483,13 @@ private:
 		};
 	}
 
-	auto use_action_branch(State<generation> const & state, Selector<generation> const select, Selection const first_selection, Selection const last_selection, Depth const depth) -> double {
+	auto use_action_branch(
+		State<generation> const & state,
+		Selector<generation> const select,
+		Selection const first_selection,
+		Selection const last_selection,
+		Depth const depth
+	) -> double {
 		// For U-turn and Baton Pass, the user needs to make a new selection and
 		// execute it before the other Pokemon acts. During that selection, the
 		// other team's only legal selection at this point is Pass. We store the
@@ -489,17 +538,50 @@ private:
 		);
 	}
 
-	auto end_of_turn_order_branch(State<generation> const & state, Faster<generation> const faster, EndOfTurnFlags const ai_flags, EndOfTurnFlags const foe_flags, Depth const depth) -> double {
+	auto end_of_turn_order_branch(
+		State<generation> const & state,
+		Faster<generation> const faster,
+		EndOfTurnFlags const ai_flags,
+		EndOfTurnFlags const foe_flags,
+		Depth const depth
+	) -> double {
 		auto is_ai = team_matcher(state.ai);
 		auto get_flag = [&](Team<generation> const & match) {
 			return is_ai(match) ? ai_flags : foe_flags;
 		};
 		return !faster ?
-			(end_of_turn_branch(state, Selector<generation>(true), ai_flags, foe_flags, depth) + end_of_turn_branch(state, Selector<generation>(false), foe_flags, ai_flags, depth)) / 2.0 :
-			end_of_turn_branch(state, Selector<generation>(is_ai(faster->first)), get_flag(faster->first), get_flag(faster->second), depth);
+			average(
+				end_of_turn_branch(
+					state,
+					Selector<generation>(true),
+					ai_flags,
+					foe_flags,
+					depth
+				),
+				end_of_turn_branch(
+					state,
+					Selector<generation>(false),
+					foe_flags,
+					ai_flags,
+					depth
+				)
+			) :
+			end_of_turn_branch(
+				state,
+				Selector<generation>(is_ai(faster->first)),
+				get_flag(faster->first),
+				get_flag(faster->second),
+				depth
+			);
 	}
 
-	auto end_of_turn_branch(State<generation> state, Selector<generation> const select, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag, Depth const depth) -> double {
+	auto end_of_turn_branch(
+		State<generation> state,
+		Selector<generation> const select,
+		EndOfTurnFlags const first_flag,
+		EndOfTurnFlags const last_flag,
+		Depth const depth
+	) -> double {
 		auto const selected = select(state);
 		end_of_turn(selected.team, first_flag, selected.other, last_flag, state.environment);
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
