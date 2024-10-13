@@ -332,7 +332,7 @@ struct Evaluator {
 			return *score;
 		}
 
-		auto const actions = respond_to_foe_actions(
+		auto const actions = score_selections(
 			state,
 			ai_selections,
 			foe_selections,
@@ -472,7 +472,7 @@ private:
 						first_selections,
 						last_selections
 					);
-					return max_score(respond_to_foe_actions(
+					return max_score(score_selections(
 						updated,
 						ai_selections,
 						foe_selections,
@@ -521,7 +521,7 @@ private:
 			auto const last_selections = LegalSelections({last_selection});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
-			return max_score(respond_to_foe_actions(
+			return max_score(score_selections(
 				updated,
 				ai_selections,
 				foe_selections,
@@ -588,7 +588,7 @@ private:
 			if (auto const won = win(state.ai, state.foe)) {
 				return *won + double(depth.general);
 			}
-			return max_score(respond_to_foe_actions(
+			return max_score(score_selections(
 				state,
 				get_legal_selections(state.ai, state.foe, state.environment),
 				get_legal_selections(state.foe, state.ai, state.environment),
@@ -705,7 +705,7 @@ private:
 		));
 	}
 
-	auto respond_to_foe_actions(
+	auto score_selections(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
 		WeightedSelections const foe_selections,
@@ -723,13 +723,13 @@ private:
 			);
 		}));
 	}
-	auto respond_to_foe_actions(
+	auto score_selections(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
 		LegalSelections const foe_selections,
 		auto const function
 	) const -> ScoredSelections {
-		return respond_to_foe_actions(
+		return score_selections(
 			state,
 			ai_selections,
 			remove_unlikely_foe_selections(m_foe_strategy.get()(
