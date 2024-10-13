@@ -14,6 +14,7 @@ export constexpr auto is_delayed_switch(MoveName const move) -> bool {
 		case MoveName::Baton_Pass:
 		case MoveName::Flip_Turn:
 		case MoveName::U_turn:
+		case MoveName::Volt_Switch:
 			return true;
 		default:
 			return false;
