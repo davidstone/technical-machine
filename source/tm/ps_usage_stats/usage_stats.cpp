@@ -115,34 +115,11 @@ private:
 	double m_total_teams = 0.0;
 };
 
-struct LocalTopMoves {
-	MoveName move;
-	double value;
-};
-
-auto get_most_used(UsageFor<MoveName> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
-	auto const total_sum = containers::sum(moves);
-	if (total_sum == 0.0) {
-		return {};
-	}
-	auto const usage_threshold = percent_threshold * total_sum;
-	auto top_moves = containers::vector<LocalTopMoves>(containers::transform(
+auto get_used(UsageFor<MoveName> const & moves) {
+	return containers::filter(
 		containers::enum_range<MoveName>(),
-		[&](MoveName const move) { return LocalTopMoves{move, moves[to_index(move)]}; }
-	));
-	auto current_sum = 0.0;
-	containers::ska_sort(top_moves, [](LocalTopMoves const x) { return -x.value; });
-	auto it = containers::begin(top_moves);
-	while (true) {
-		BOUNDED_ASSERT(it != containers::end(top_moves));
-		current_sum += it->value;
-		++it;
-		if (current_sum >= usage_threshold) {
-			break;
-		}
-	}
-	containers::erase_to_end(top_moves, it);
-	return top_moves;
+		[&](MoveName const move) { return moves[to_index(move)] != 0.0; }
+	);
 }
 
 struct PerTeammate {
@@ -205,12 +182,14 @@ export struct Correlations {
 	};
 
 	explicit Correlations(UsageStats const & usage_stats) {
-		constexpr auto threshold = 0.95;
 		for (auto const species : containers::enum_range<Species>()) {
 			m_data[bounded::integer(species)].top_moves = TopMoves(
-				containers::assume_unique,
-				containers::transform(get_most_used(usage_stats.moves(species), threshold), [](LocalTopMoves const moves) {
-					return containers::range_value_t<TopMoves>{moves.move, std::make_unique<concurrent::locked_access<MoveData>>()};
+				containers::assume_sorted_unique,
+				containers::transform(get_used(usage_stats.moves(species)), [](MoveName const move) {
+					return containers::range_value_t<TopMoves>{
+						move,
+						std::make_unique<concurrent::locked_access<MoveData>>()
+					};
 				})
 			);
 		}
