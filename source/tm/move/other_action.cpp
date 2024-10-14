@@ -40,7 +40,13 @@ export struct OtherAction {
 				switch (generation) {
 					case Generation::one:
 						// TODO: This isn't quite right
-						return move_type(generation, move.name, tv::none) == Type::Normal;
+						switch (move_type(generation, move.name, tv::none)) {
+							case Type::Normal:
+							case Type::Fighting:
+								return true;
+							default:
+								return false;
+						}
 					case Generation::two:
 					case Generation::three:
 						return
@@ -53,7 +59,6 @@ export struct OtherAction {
 					case Generation::eight:
 						return is_physical(generation, move);
 				}
-				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? true : is_physical(generation, move);
 			},
 			[](auto) { return false; }
 		));
