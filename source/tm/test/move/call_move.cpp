@@ -46,10 +46,10 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto generation = Generation::four;
 constexpr auto damage = ActualDamage::Unknown{};
 
 TEST_CASE("Baton Pass", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -152,6 +152,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 }
 
 TEST_CASE("Wonder Guard", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -212,6 +213,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 }
 
 TEST_CASE("Fire move thaws target", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -275,6 +277,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 }
 
 TEST_CASE("Sleep Talk Substitute", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto user = Team<generation>({{
@@ -326,6 +329,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 }
 
 TEST_CASE("Static paralyzes", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto user = Team<generation>({{
@@ -371,6 +375,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 }
 
 TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto user = Team<generation>({{
@@ -439,6 +444,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 }
 
 TEST_CASE("Perish Song", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto user = Team<generation>({{
@@ -519,6 +525,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 }
 
 TEST_CASE("Solar Beam", "[call_move]") {
+	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
 	auto user = Team<generation>({{
@@ -571,7 +578,8 @@ TEST_CASE("Solar Beam", "[call_move]") {
 	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Solar_Beam);
 
 	auto check_max_hp = [](auto const & team) {
-		CHECK(team.pokemon().hp().current() == team.pokemon().hp().max());
+		auto const hp = team.pokemon().hp();
+		CHECK(hp.current() == hp.max());
 	};
 	check_max_hp(user);
 	check_max_hp(other);
@@ -591,6 +599,65 @@ TEST_CASE("Solar Beam", "[call_move]") {
 	CHECK(user.pokemon().last_used_move().name() == MoveName::Solar_Beam);
 	CHECK(user.pokemon().last_used_move().moved_this_turn());
 	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Solar_Beam);
+}
+
+TEST_CASE("Generation 1 Hyper Beam KO", "[call_move]") {
+	constexpr auto generation = Generation::one;
+	auto environment = Environment();
+
+	auto user = Team<generation>({{
+		{
+			.species = Species::Snorlax,
+			.moves = {{
+				MoveName::Hyper_Beam,
+			}}
+		},
+	}});
+	user.pokemon().switch_in(environment, true);
+
+	auto other = Team<generation>({{
+		{
+			.species = Species::Chansey,
+			.level = Level(40_bi),
+			.moves = {{
+				MoveName::Ice_Beam,
+			}}
+		},
+		{
+			.species = Species::Slowbro,
+			.moves = {{
+				MoveName::Ice_Beam,
+			}}
+		},
+	}});
+	other.pokemon().switch_in(environment, true);
+
+	constexpr auto move = MoveName::Hyper_Beam;
+	auto const side_effects = possible_side_effects(
+		move,
+		user.pokemon().as_const(),
+		other,
+		environment
+	);
+	CHECK(containers::size(side_effects) == 1_bi);
+	call_move(
+		user,
+		UsedMove<Team<generation>>(
+			move,
+			containers::front(side_effects).function
+		),
+		other,
+		FutureSelection(false),
+		environment,
+		false,
+		damage,
+		false
+	);
+
+	CHECK(other.pokemon().hp().current() == 0_bi);
+
+	CHECK(!user.pokemon().last_used_move().locked_in());
+	CHECK(!user.pokemon().recharge());
 }
 
 } // namespace

@@ -7,6 +7,7 @@ module;
 
 #include <tm/for_each_generation.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/conditional.hpp>
 
 module tm.move.side_effects;
@@ -548,16 +549,6 @@ auto possible_side_effects(
 ) -> SideEffects<AssociatedTeam<UserPokemon>> {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto generation = generation_from<UserPokemon>;
-	auto will_charge = [&] {
-		return original_user.last_used_move().will_be_charge_turn(
-			move,
-			original_user.item(original_environment),
-			original_environment.effective_weather(
-				original_user.ability(),
-				original_other.pokemon().ability()
-			)
-		);
-	};
 	switch (move) {
 		case MoveName::Absorb:
 		case MoveName::Drain_Punch:
@@ -1194,11 +1185,11 @@ auto possible_side_effects(
 			return confusing_stat_boost<UserTeam, BoostableStat::atk, 2>;
 
 		case MoveName::Bounce:
-			return will_charge() ?
+			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
 				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment);
 		case MoveName::Shadow_Force:
-			return will_charge() ?
+			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
 				guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 					other.pokemon().break_protect();
@@ -1217,7 +1208,7 @@ auto possible_side_effects(
 				no_effect<UserTeam>;
 		}
 		case MoveName::Sky_Attack:
-			return will_charge() ?
+			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
 				SideEffects<UserTeam>({
 					SideEffect<UserTeam>{0.7, no_effect_function},
@@ -1481,7 +1472,8 @@ auto possible_side_effects(
 		case MoveName::Hyper_Beam:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				if (generation == Generation::one and other.pokemon().hp().current() == 0_bi) {
-					user.pokemon().recharge();
+					auto const recharged = user.pokemon().recharge();
+					BOUNDED_ASSERT(recharged);
 				}
 			});
 		case MoveName::Bug_Bite:

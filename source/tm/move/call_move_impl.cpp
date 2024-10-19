@@ -260,19 +260,22 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move.executed,
 		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
+
+	auto const released_damage = user_pokemon.successfully_use_move(move.executed, other_ability, environment);
+
 	if (ability_blocks_move(generation, other_ability, known_move, other_pokemon.status().name(), other_pokemon.types())) {
 		handle_ability_blocks_move(other_pokemon, environment);
-	} else {
-		auto const executed_move = ExecutedMove<UserTeam>{
-			known_move,
-			found_move.pp(),
-			move.side_effect,
-			move.critical_hit,
-			move.contact_ability_effect
-		};
-		use_move(user, executed_move, target, other, other_action, environment, actual_damage);
+		return;
 	}
-	auto const released_damage = user_pokemon.successfully_use_move(move.executed, other_ability, environment);
+
+	auto const executed_move = ExecutedMove<UserTeam>{
+		known_move,
+		found_move.pp(),
+		move.side_effect,
+		move.critical_hit,
+		move.contact_ability_effect
+	};
+	use_move(user, executed_move, target, other, other_action, environment, actual_damage);
 	if (released_damage) {
 		other_pokemon.direct_damage(move.executed, user_pokemon, environment, *released_damage * 2_bi);
 	}

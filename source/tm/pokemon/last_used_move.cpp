@@ -233,21 +233,11 @@ export struct LastUsedMove {
 		));
 	}
 
-	constexpr auto will_be_charge_turn(MoveName const move, Item const item, Weather const weather) const -> bool {
-		if (item == Item::Power_Herb) {
-			return false;
-		}
-		switch (move) {
-			case MoveName::Meteor_Beam:
-			case MoveName::Razor_Wind:
-			case MoveName::Skull_Bash:
-			case MoveName::Sky_Attack:
-				return m_effects.index() != bounded::type<ChargingUp>;
-			case MoveName::Solar_Beam:
-				return weather != Weather::sun and m_effects.index() != bounded::type<ChargingUp>;
-			default:
-				return false;
-		}
+	constexpr auto is_charging_up() const -> bool {
+		return tv::visit(m_effects, tv::overload(
+			[](ChargingUp) { return true; },
+			[](auto) { return false; }
+		));
 	}
 
 	constexpr auto is_delayed_switching() const -> bool {
