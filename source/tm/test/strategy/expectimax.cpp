@@ -53,9 +53,6 @@ import bounded;
 import containers;
 import std_module;
 
-
-import tm.move.legal_selections;
-
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
