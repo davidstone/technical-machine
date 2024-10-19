@@ -214,10 +214,6 @@ export struct TurnMessage {
 	friend auto operator==(TurnMessage, TurnMessage) -> bool = default;
 };
 
-export struct EndOfTurnMessage {
-	friend auto operator==(EndOfTurnMessage, EndOfTurnMessage) -> bool = default;
-};
-
 export struct WeatherMessage {
 	Weather weather;
 	friend auto operator==(WeatherMessage, WeatherMessage) -> bool = default;
@@ -260,7 +256,6 @@ export using ParsedMessage = tv::variant<
 	MoveStatus,
 	AbilityStatusMessage,
 	TurnMessage,
-	EndOfTurnMessage,
 	WeatherMessage,
 	BattleFinishedMessage
 >;

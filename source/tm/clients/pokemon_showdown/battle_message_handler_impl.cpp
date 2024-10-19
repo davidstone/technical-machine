@@ -437,16 +437,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				action_builder = Nothing();
 				result = message.count;
 			},
-			[&](EndOfTurnMessage) {
-				// Pokemon Showdown does not always send an end of turn message
-				// to indicate the end of the turn. So instead we relay on the
-				// start of turn message since that comes through reliably.
-				// However, if we need to replace our Pokemon we will get to the
-				// end of a message block without getting a start of turn
-				// message, either. So we trigger end-of-turn logic on the end
-				// of a message block as well.
-				require_is_end_of_turn();
-			},
 			[&](WeatherMessage const message) {
 				require_is_end_of_turn();
 				end_of_turn_state.active_weather(message.weather);

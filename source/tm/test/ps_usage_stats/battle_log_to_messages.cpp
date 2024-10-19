@@ -158,7 +158,6 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				visible_hp(237_bi, 303_bi)
 			),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}),
 		ps::EventBlock({
@@ -184,7 +183,6 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				visible_hp(186_bi, 353_bi)
 			),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}),
 		ps::EventBlock({

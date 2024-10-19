@@ -487,7 +487,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 	} else if (type == "-unboost") {
 		return tv::none;
 	} else if (type == "upkeep") {
-		return EndOfTurnMessage();
+		return tv::none;
 	} else if (type == "-weather") {
 		auto const weather = from_string<Weather>(message.pop());
 		auto const source = parse_from_source(message.pop());

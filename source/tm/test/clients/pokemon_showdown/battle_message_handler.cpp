@@ -297,7 +297,6 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::MoveMessage(Party(0_bi), MoveName::Splash, did_not_miss),
 			ps::MoveMessage(Party(1_bi), MoveName::Spikes, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
 
@@ -333,7 +332,6 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(203_bi, 231_bi)),
 			ps::MoveMessage(Party(1_bi), MoveName::Spikes, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
 
@@ -523,7 +521,6 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			ps::MoveMessage(Party(0_bi), MoveName::Mind_Reader, did_not_miss),
 			ps::SeparatorMessage(),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 100_bi)),
-			ps::EndOfTurnMessage(),
 		}));
 
 		expected->use_move(
@@ -593,7 +590,6 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::MoveMessage(Party(0_bi), MoveName::Splash, did_not_miss),
 			ps::MoveMessage(Party(1_bi), MoveName::Spikes, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
 
@@ -626,7 +622,6 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 				visible_hp(0_bi, 100_bi)
 			),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 		}));
 
 		expected->use_move(
@@ -821,7 +816,6 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 		ps::HPMessage(Party(1_bi), StatusName::clear, visible_hp(69_bi, 100_bi)),
 		ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(222_bi, 222_bi)),
 		ps::SeparatorMessage(),
-		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
 
@@ -868,7 +862,6 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 			ps::MoveMessage(Party(1_bi), MoveName::Thunder_Wave, did_not_miss),
 			ps::MoveStatus(Party(0_bi), StatusName::paralysis),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
 
@@ -895,7 +888,6 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 			ps::MoveMessage(Party(1_bi), MoveName::Thunder_Wave, did_not_miss),
 			ps::FullyParalyzedMessage(Party(0_bi)),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
 
@@ -949,7 +941,6 @@ TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
 		),
 		ps::MoveStatus(Party(1_bi), StatusName::freeze),
 		ps::SeparatorMessage(),
-		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
 
@@ -1010,7 +1001,6 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 		ps::FrozenSolidMessage(Party(0_bi)),
 		ps::SeparatorMessage(),
 		ps::StatusClearMessage(Party(0_bi), StatusName::freeze),
-		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
 
@@ -1058,7 +1048,6 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 			ps::MoveMessage(Party(0_bi), MoveName::Sketch, did_not_miss),
 			ps::MoveMessage(Party(1_bi), MoveName::Splash, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
 
@@ -1085,7 +1074,6 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 			ps::RecoilMessage(Party(0_bi), StatusName::clear, visible_hp(246_bi, 251_bi)),
 			ps::MoveMessage(Party(1_bi), MoveName::Splash, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
 
@@ -1131,7 +1119,6 @@ TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
 		ps::StartConfusionMessage(Party(0_bi)),
 		ps::HitSelfMessage(Party(0_bi), StatusName::clear, visible_hp(355_bi, 393_bi)),
 		ps::SeparatorMessage(),
-		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
 
@@ -1177,7 +1164,6 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::MoveMessage(Party(0_bi), MoveName::Splash, did_not_miss),
 			ps::MoveMessage(Party(1_bi), MoveName::Spikes, did_not_miss),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
 
@@ -1230,7 +1216,6 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(220_bi, 251_bi)),
 			ps::SeparatorMessage(),
-			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
 
