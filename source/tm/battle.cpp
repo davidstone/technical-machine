@@ -16,6 +16,7 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.move_result;
 import tm.move.other_action;
+import tm.move.recharging;
 import tm.move.switch_;
 import tm.move.used_move;
 

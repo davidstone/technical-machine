@@ -17,6 +17,7 @@ import tm.bide.bide;
 
 import tm.move.is_delayed_switch;
 import tm.move.move_name;
+import tm.move.recharging;
 
 import tm.stat.current_hp;
 
@@ -47,6 +48,19 @@ export using SuccessfulMove = tv::variant<
 	ConsumeItem,
 	CurrentHP
 >;
+
+struct Empty {
+	friend auto operator==(Empty, Empty) -> bool = default;
+};
+struct ChargingUp {
+	friend auto operator==(ChargingUp, ChargingUp) -> bool = default;
+};
+struct Protecting {
+	friend auto operator==(Protecting, Protecting) -> bool = default;
+};
+struct Vanishing {
+	friend auto operator==(Vanishing, Vanishing) -> bool = default;
+};
 
 export struct LastUsedMove {
 	constexpr auto name() const -> tv::optional<MoveName> {
@@ -386,22 +400,6 @@ export struct LastUsedMove {
 	}
 
 private:
-	struct Empty {
-		friend auto operator==(Empty, Empty) -> bool = default;
-	};
-	struct ChargingUp {
-		friend auto operator==(ChargingUp, ChargingUp) -> bool = default;
-	};
-	struct Protecting {
-		friend auto operator==(Protecting, Protecting) -> bool = default;
-	};
-	struct Recharging {
-		friend auto operator==(Recharging, Recharging) -> bool = default;
-	};
-	struct Vanishing {
-		friend auto operator==(Vanishing, Vanishing) -> bool = default;
-	};
-
 	constexpr auto successful_last_move(MoveName const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
 	}

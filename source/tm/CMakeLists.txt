@@ -63,6 +63,7 @@ target_sources(tm_common PUBLIC
 		move/power.cpp
 		move/pp.cpp
 		move/priority.cpp
+		move/recharging.cpp
 		move/regular_moves.cpp
 		move/selection.cpp
 		move/side_effect_function.cpp

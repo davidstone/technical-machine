@@ -6,6 +6,7 @@
 export module tm.move.move_result;
 
 import tm.move.move_name;
+import tm.move.recharging;
 
 import tm.pokemon.max_pokemon_per_team;
 
@@ -29,7 +30,6 @@ export struct Flinched {};
 export struct FrozenSolid {};
 export struct FullyParalyzed {};
 export struct PartiallyTrapped {};
-export struct Recharging {};
 export struct Used {
 	constexpr explicit Used(MoveName const selected_, bool miss_ = false):
 		selected(selected_),
