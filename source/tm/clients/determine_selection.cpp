@@ -16,6 +16,7 @@ import tm.strategy.strategy;
 import tm.strategy.weighted_selection;
 
 import tm.string_conversions.move_name;
+import tm.string_conversions.selection;
 import tm.string_conversions.species;
 import tm.string_conversions.team;
 
@@ -38,30 +39,18 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-auto log_selection(std::ostream & stream, Selection const selection, Team<generation> const & team) {
-	tv::visit(selection, tv::overload(
-		[&](Switch const switch_) {
-			stream << "Switch to " << to_string(team.pokemon(switch_.value()).species());
-		},
-		[&](MoveName const move) {
-			stream << "Use " << to_string(move);
-		},
-		[&](Pass) {
-			stream << "Pass";
-		}
-	));
-}
-
-template<Generation generation>
 auto log_move_probabilities(
 	std::ostream & stream,
 	WeightedSelections const all_predicted,
 	Team<generation> const & team
 ) -> void {
 	for (auto const predicted : all_predicted) {
-		stream << '\t' << predicted.weight * 100.0 << "% chance: ";
-		log_selection(stream, predicted.selection, team);
-		stream << '\n';
+		stream
+			<< '\t'
+			<< predicted.weight * 100.0
+			<< "% chance: "
+			<< to_string(predicted.selection, team)
+			<< '\n';
 	}
 }
 
