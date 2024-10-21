@@ -626,6 +626,7 @@ public:
 	}
 	constexpr auto flinch() const {
 		this->m_flags.flinched = true;
+		this->m_flags.last_used_move.unsuccessful_move();
 	}
 	constexpr auto focus_energy() const {
 		this->m_flags.has_focused_energy = true;

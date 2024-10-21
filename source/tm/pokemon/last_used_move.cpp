@@ -72,6 +72,12 @@ export struct LastUsedMove {
 		m_moved_this_turn = false;
 	}
 
+	// When the move is not known, like with flinch
+	constexpr auto unsuccessful_move() & -> void {
+		m_consecutive_successes = 0_bi;
+		m_moved_this_turn = true;
+		m_effects = Empty();
+	}
 	constexpr auto unsuccessful_move(MoveName const move) & -> void {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
@@ -213,20 +219,15 @@ export struct LastUsedMove {
 		return result;
 	}
 
-	// Not for the initial switch in or replacing fainted
-	constexpr auto use_switch() & {
+	constexpr auto use_switch(bool const replacing_fainted_or_initial_switch) & {
 		m_move = tv::none;
-		m_moved_this_turn = true;
+		if (!replacing_fainted_or_initial_switch) {
+			m_moved_this_turn = true;
+		}
 		m_effects = Empty();
 	}
 
 	constexpr auto hit_self() & -> void {
-		m_move = tv::none;
-		m_moved_this_turn = true;
-		m_effects = Empty();
-	}
-
-	constexpr auto faint() & -> void {
 		m_move = tv::none;
 		m_moved_this_turn = true;
 		m_effects = Empty();
