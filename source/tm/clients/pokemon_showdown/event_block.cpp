@@ -107,6 +107,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				// TODO: Should I send this as a message?
 				return tv::none;
 			},
+			[](FromDisable) -> tv::optional<ParsedMessage> {
+				throw std::runtime_error("Unexpected -activate source FromDisable");
+			},
 			[](FromEntryHazards) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -activate source FromEntryHazards");
 			},
@@ -204,6 +207,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			},
 			[&](FromConfusion) -> tv::optional<ParsedMessage> {
 				return HitSelfMessage(parsed.party, parsed.status, parsed.hp);
+			},
+			[](FromDisable) -> tv::optional<ParsedMessage> {
+				throw std::runtime_error("Invalid -damage source of FromDisable");
 			},
 			[&](FromEntryHazards) -> tv::optional<ParsedMessage> {
 				return HPMessage(parsed.party, parsed.status, parsed.hp);
@@ -435,6 +441,10 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			[](MainEffect) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -start source MainEffect");
 			},
+			[&](FromDisable) -> tv::optional<ParsedMessage> {
+				auto const move_str = message.pop();
+				return DisableMessage(party, from_string<MoveName>(move_str));
+			},
 			[](FromRecoil) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -start source FromRecoil");
 			},
@@ -459,6 +469,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			},
 			[&](MainEffect) -> tv::optional<ParsedMessage> {
 				return MoveStatus(party, status);
+			},
+			[](FromDisable) -> tv::optional<ParsedMessage> {
+				throw std::runtime_error("Disable cannot cause a status");
 			},
 			[](FromEntryHazards) -> tv::optional<ParsedMessage> {
 				return tv::none;

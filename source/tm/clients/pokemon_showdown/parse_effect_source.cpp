@@ -27,12 +27,24 @@ using namespace std::string_view_literals;
 export struct MainEffect {};
 export struct FromMove {};
 export struct FromConfusion {};
+export struct FromDisable {};
 export struct FromEntryHazards {};
 export struct FromMiscellaneous {};
 export struct FromRecoil {};
 export struct FromSubstitute {};
 
-export using EffectSource = tv::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromEntryHazards, FromMiscellaneous, FromRecoil, FromSubstitute>;
+export using EffectSource = tv::variant<
+	MainEffect,
+	Item,
+	Ability,
+	FromMove,
+	FromConfusion,
+	FromDisable,
+	FromEntryHazards,
+	FromMiscellaneous,
+	FromRecoil,
+	FromSubstitute
+>;
 
 export constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) -> EffectSource {
 	return
@@ -41,6 +53,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 		(type == "ability") ? EffectSource(from_string<Ability>(source)) :
 		(type == "move") ? EffectSource(FromMove()) :
 		(type == "confusion") ? EffectSource(FromConfusion()) :
+		(type == "Disable") ? EffectSource(FromDisable()) :
 		(type == "Recoil") ? EffectSource(FromRecoil()) :
 		(type == "Spikes") ? EffectSource(FromEntryHazards()) :
 		(type == "Stealth Rock") ? EffectSource(FromEntryHazards()) :

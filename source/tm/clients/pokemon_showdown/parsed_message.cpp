@@ -92,6 +92,12 @@ export struct StillAsleepMessage {
 	friend auto operator==(StillAsleepMessage, StillAsleepMessage) -> bool = default;
 };
 
+export struct DisableMessage {
+	Party party;
+	MoveName move;
+	friend auto operator==(DisableMessage, DisableMessage) -> bool = default;
+};
+
 export struct RechargingMessage {
 	Party party;
 	friend auto operator==(RechargingMessage, RechargingMessage) -> bool = default;
@@ -237,6 +243,7 @@ export using ParsedMessage = tv::variant<
 	FullyParalyzedMessage,
 	PartiallyTrappedMessage,
 	StillAsleepMessage,
+	DisableMessage,
 	RechargingMessage,
 	CriticalHitMessage,
 	StatusClearMessage,

@@ -198,6 +198,13 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				auto & move_builder = make_move_builder();
 				move_builder.still_asleep(message.party);
 			},
+			[&](DisableMessage const message) {
+				m_client_battle->active_has(
+					message.party == m_party,
+					message.move
+				);
+				// TODO: Implement Generation 1 Disable
+			},
 			[&](RechargingMessage const message) {
 				use_previous_action();
 				auto & move_builder = make_move_builder();
