@@ -213,7 +213,7 @@ private:
 
 	// TODO: https://github.com/llvm/llvm-project/issues/61360
 	// Disabled for https://github.com/llvm/llvm-project/issues/60711
-	/*[[no_unique_address]]*/ ExistsIf<Ability, generation >= Generation::three, struct active_ability> ability{};
+	/*[[no_unique_address]]*/ ExistsIf<Ability, generation >= Generation::three> ability{};
 	Confusion confusion;
 	Disable disable;
 	/*[[no_unique_address]]*/ EmbargoCounter<generation> embargo;

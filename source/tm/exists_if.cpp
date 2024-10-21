@@ -25,7 +25,7 @@ struct Empty {
 	friend auto operator<=>(Empty, Empty) = default;
 };
 
-export template<typename T, bool condition, typename unique = void>
+export template<typename T, bool condition, typename unique = T>
 using ExistsIf = std::conditional_t<condition, T, Empty<unique>>;
 
 export template<typename T>

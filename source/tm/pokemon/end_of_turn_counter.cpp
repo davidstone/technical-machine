@@ -49,7 +49,7 @@ struct EndOfTurnCounter {
 
 private:
 	using Counter = tv::optional<bounded::integer<0, max_turns>>;
-	[[no_unique_address]] ExistsIf<Counter, is_supported_this_generation, struct turns_active> m_turns_active{tv::none};
+	[[no_unique_address]] ExistsIf<Counter, is_supported_this_generation> m_turns_active{tv::none};
 };
 
 } // namespace technicalmachine

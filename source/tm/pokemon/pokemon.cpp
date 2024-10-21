@@ -283,15 +283,15 @@ private:
 	Stats<stat_style_for(generation)> m_stats;
 
 	Species m_species;
-	[[no_unique_address]] ExistsIf<HeldItem, generation >= Generation::two, struct item> m_item;
-	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three, struct ability> m_ability;
-	[[no_unique_address]] ExistsIf<Gender, generation >= Generation::two, struct gender> m_gender;
+	[[no_unique_address]] ExistsIf<HeldItem, generation >= Generation::two> m_item;
+	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three> m_ability;
+	[[no_unique_address]] ExistsIf<Gender, generation >= Generation::two> m_gender;
 	Status m_status;
-	[[no_unique_address]] ExistsIf<Nature, generation >= Generation::three, struct nature> m_nature;
+	[[no_unique_address]] ExistsIf<Nature, generation >= Generation::three> m_nature;
 
 	Level m_level;
-	[[no_unique_address]] ExistsIf<Happiness, generation >= Generation::two, struct happiness> m_happiness;
-	[[no_unique_address]] ExistsIf<tv::optional<HiddenPower<generation>>, generation >= Generation::two, struct hidden_power> m_hidden_power;
+	[[no_unique_address]] ExistsIf<Happiness, generation >= Generation::two> m_happiness;
+	[[no_unique_address]] ExistsIf<tv::optional<HiddenPower<generation>>, generation >= Generation::two> m_hidden_power;
 
 	bool m_has_been_seen;
 

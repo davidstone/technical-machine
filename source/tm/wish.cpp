@@ -53,7 +53,7 @@ struct Wish {
 private:
 	static constexpr auto exists = generation >= Generation::three;
 	using counter_type = bounded::integer<0, 1>;
-	[[no_unique_address]] ExistsIf<tv::optional<counter_type>, exists, struct turns_until_activation> m_turns_until_activation;
+	[[no_unique_address]] ExistsIf<tv::optional<counter_type>, exists> m_turns_until_activation;
 };
 
 } // namespace technicalmachine

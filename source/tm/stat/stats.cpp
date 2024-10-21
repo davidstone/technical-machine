@@ -104,7 +104,7 @@ private:
 	Stat m_atk;
 	Stat m_def;
 	Stat m_spa;
-	[[no_unique_address]] ExistsIf<Stat, stat_style != StatStyle::gen1, struct spd> m_spd;
+	[[no_unique_address]] ExistsIf<Stat, stat_style != StatStyle::gen1> m_spd;
 	Stat m_spe;
 
 	constexpr explicit Stats(bounded::tombstone_tag, auto const make):

@@ -305,10 +305,10 @@ private:
 
 	Species m_species;
 	// TODO: https://github.com/llvm/llvm-project/issues/61360
-	[[no_unique_address]] ExistsIf<tv::optional<HeldItem>, generation >= Generation::two, struct seen_item> m_item;
-	[[no_unique_address]] ExistsIf<tv::optional<Ability>, generation >= Generation::three, struct seen_ability> m_ability;
-	[[no_unique_address]] ExistsIf<Gender, generation >= Generation::two, struct seen_gender> m_gender;
-	[[no_unique_address]] ExistsIf<tv::optional<Nature>, generation >= Generation::three, struct seen_nature> m_nature;
+	[[no_unique_address]] ExistsIf<tv::optional<HeldItem>, generation >= Generation::two> m_item;
+	[[no_unique_address]] ExistsIf<tv::optional<Ability>, generation >= Generation::three> m_ability;
+	[[no_unique_address]] ExistsIf<Gender, generation >= Generation::two> m_gender;
+	[[no_unique_address]] ExistsIf<tv::optional<Nature>, generation >= Generation::three> m_nature;
 	Status m_status;
 
 	Level m_level;
