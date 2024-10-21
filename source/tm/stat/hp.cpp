@@ -76,6 +76,7 @@ private:
 static_assert(HP(100_bi).max() == 100_bi);
 static_assert(HP(100_bi).current() == 100_bi);
 static_assert(HP(60_bi, Level(1_bi), IV(31_bi), EV(0_bi)).max() == 12_bi);
+static_assert(HP(250_bi, Level(100_bi), IV(30_bi), EV(252_bi)).max() == 703_bi);
 
 } // namespace technicalmachine
 
