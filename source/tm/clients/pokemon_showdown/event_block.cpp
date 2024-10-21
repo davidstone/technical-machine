@@ -150,7 +150,14 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 	} else if (type == "cant") {
 		auto const party = party_from_player_id(message.pop());
 		auto const reason = message.pop();
-		if (reason == "flinch") {
+		if (reason == "Disable") {
+			auto const move_str = message.pop();
+			return MoveMessage(
+				party,
+				from_string<MoveName>(move_str),
+				false
+			);
+		} else if (reason == "flinch") {
 			return FlinchMessage(party);
 		} else if (reason == "Focus Punch") {
 			return FocusPunchMessage(party);
