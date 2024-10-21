@@ -451,14 +451,25 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 		if (m_client_battle->is_end_of_turn()) {
 			handle_end_of_turn(end_of_turn_state.complete());
 		}
-		return ActionRequired(m_client_battle->state(), m_slot_memory);
 	};
 	return tv::visit(result, tv::overload(
 		[&](Unknown) -> Result {
-			return handle_previous_data();
+			handle_previous_data();
+			auto state = m_client_battle->state();
+			auto const is_finished = tv::visit(state, [](auto const & s) {
+				return team_is_empty(s.ai) or team_is_empty(s.foe);
+			});
+			if (is_finished) {
+				return BattleFinished();
+			}
+			return ActionRequired(std::move(state), m_slot_memory);
 		},
 		[&](TurnCount const turn_count) -> Result {
-			return StartOfTurn(handle_previous_data(), turn_count);
+			handle_previous_data();
+			return StartOfTurn(
+				ActionRequired(m_client_battle->state(), m_slot_memory),
+				turn_count
+			);
 		},
 		[](BattleFinished) -> Result {
 			return BattleFinished();
