@@ -13,6 +13,7 @@ import tm.stat.ev;
 import tm.stat.hp;
 import tm.stat.initial_stat;
 import tm.stat.iv;
+import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
 
