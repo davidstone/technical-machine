@@ -28,6 +28,7 @@ import tm.generation;
 import tm.generation_generic;
 import tm.get_legal_selections;
 import tm.team;
+import tm.team_is_empty;
 import tm.visible_state;
 
 import bounded;
@@ -80,7 +81,7 @@ auto determine_selection(
 	Strategy const & strategy,
 	std::mt19937 & random_engine
 ) -> Selection {
-	if (visible.ai.size() == 0_bi or visible.foe.size() == 0_bi) {
+	if (team_is_empty(visible.ai) or team_is_empty(visible.foe)) {
 		throw std::runtime_error("Tried to determine a selection with an empty team.");
 	}
 	auto const state = predicted_state(visible, usage_stats);
