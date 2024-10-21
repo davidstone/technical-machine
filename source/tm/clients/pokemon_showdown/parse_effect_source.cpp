@@ -60,6 +60,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 			type == "Leech Seed" or
 			type == "Light Screen" or
 			type == "Mimic" or // TODO: implement
+			type == "Mist" or
 			type == "Protect" or // Includes Detect
 			type == "Reflect" or
 			type == "Sandstorm"
