@@ -175,11 +175,31 @@ constexpr auto combine(
 	return *best;
 }
 
+constexpr auto get_attack(PossibleDVs const all, bool const include_attack) -> DV {
+	auto const dvs = all.atk();
+	auto const is_odd = [](DV const dv) -> bool {
+		return dv.value() % 2_bi == 1_bi;
+	};
+	if (include_attack) {
+		auto const ptr = containers::maybe_find_if(
+			containers::reversed(dvs),
+			is_odd
+		);
+		return ptr ? *ptr : containers::back(dvs);
+	} else {
+		auto const ptr = containers::maybe_find_if(
+			dvs,
+			is_odd
+		);
+		return ptr ? *ptr : containers::front(dvs);
+	}
+}
+
 constexpr auto combined_special_minimal_spread(PossibleDVs const dvs, bool const include_attack) -> CombinedStats<SpecialStyle::combined> {
 	return CombinedStats<SpecialStyle::combined>{
 		Nature::Hardy,
 		DVs(
-			include_attack ? containers::back(dvs.atk()) : containers::front(dvs.atk()),
+			get_attack(dvs, include_attack),
 			containers::back(dvs.def()),
 			containers::back(dvs.spe()),
 			containers::back(dvs.spc())
