@@ -368,6 +368,8 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		// From moves like SolarBeam on the charge turn. We already get this
 		// information from the move message.
 		return tv::none;
+	} else if (type == "raw") {
+		return tv::none;
 	} else if (type == "-resisted") {
 		auto const party = party_from_player_id(message.pop());
 		return EffectivenessMessage(
