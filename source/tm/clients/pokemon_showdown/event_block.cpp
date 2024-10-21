@@ -364,6 +364,8 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		return tv::none;
 	} else if (type == "-nothing") {
 		return tv::none;
+	} else if (type == "-ohko") {
+		return tv::none;
 	} else if (type == "-prepare") {
 		// From moves like SolarBeam on the charge turn. We already get this
 		// information from the move message.
