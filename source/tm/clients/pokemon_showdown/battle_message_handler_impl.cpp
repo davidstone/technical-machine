@@ -434,7 +434,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						throw std::runtime_error("Should not be hitting self at the start of a turn");
 					}
 				));
-				action_builder = Nothing();
 				result = message.count;
 			},
 			[&](WeatherMessage const message) {
