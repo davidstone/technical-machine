@@ -55,6 +55,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 			type == "perish1" or
 			type == "perish0" or
 			type == "trapped" or
+			type == "Bide" or
 			type == "Encore" or
 			type == "Hail" or
 			type == "Leech Seed" or
