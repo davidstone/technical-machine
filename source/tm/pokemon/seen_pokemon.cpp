@@ -79,10 +79,10 @@ struct SeenPokemon {
 	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_stats[stat_name];
 	}
-	constexpr auto visible_hp() const {
+	constexpr auto visible_hp() const -> VisibleHP {
 		return m_hp;
 	}
-	constexpr auto hp() const {
+	constexpr auto hp() const -> HP {
 		auto const max_hp = m_stats.hp().max();
 		auto temp = HP(max_hp);
 		temp = to_real_hp(max_hp, visible_hp()).value;
@@ -106,11 +106,11 @@ struct SeenPokemon {
 		set_hp(CurrentVisibleHP(bounded::assume_in_range(m_hp.max.value() * real_hp / max_real_hp, 0_bi, m_hp.max.value())));
 	}
 
-	constexpr auto advance_status_from_move(Ability const ability, bool const clear_status) & {
+	constexpr auto advance_status_from_move(Ability const ability, bool const clear_status) & -> void {
 		m_status.advance_from_move(ability, clear_status);
 	}
 
-	constexpr void mark_as_seen() & {
+	constexpr auto mark_as_seen() & -> void {
 	}
 
 	constexpr auto regular_moves() const -> RegularMoves {
@@ -168,12 +168,12 @@ struct SeenPokemon {
 			return Item::None;
 		}
 	}
-	constexpr auto actual_item() const {
+	constexpr auto actual_item() const -> HeldItem {
 		// TODO: ???
 		if constexpr (exists<decltype(m_item)>) {
 			return m_item ? *m_item : HeldItem(Item::None);
 		} else {
-			return Item::None;
+			return HeldItem(Item::None);
 		}
 	}
 	constexpr auto remove_item() & -> tv::optional<Item> {
