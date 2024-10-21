@@ -415,6 +415,8 @@ target_sources(tm_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		stat/test/stats.cpp
+		
 		test/pokemon_online/conversion.cpp
 	
 		test/clients/pokemon_showdown/battle_message_handler.cpp
