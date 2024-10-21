@@ -60,7 +60,6 @@ export struct ClientBattle {
 	virtual auto is_end_of_turn() const -> bool = 0;
 	virtual auto ai_is_fainted() const -> bool = 0;
 	virtual auto foe_is_fainted() const -> bool = 0;
-	virtual auto ai_is_on_last_pokemon() const -> bool = 0;
 
 	virtual auto end_turn(bool ai_went_first, EndOfTurnFlags first_flags, EndOfTurnFlags last_flags) & -> void = 0;
 	virtual auto use_move(bool ai_is_user, MoveResult, bool user_status_was_cleared) & -> void = 0;

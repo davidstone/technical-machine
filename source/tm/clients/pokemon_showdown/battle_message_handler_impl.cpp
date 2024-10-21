@@ -35,6 +35,7 @@ import tm.status.toxic_resets_on_switch;
 import tm.ability;
 import tm.generation;
 import tm.generation_generic;
+import tm.team_is_empty;
 import tm.visible_hp;
 
 import bounded;
@@ -418,10 +419,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](TurnMessage const message) {
 				tv::visit(action_builder, tv::overload(
-					[&](Nothing) {
-						if (m_client_battle->is_end_of_turn()) {
-							handle_end_of_turn(end_of_turn_state.complete());
-						}
+					[](Nothing) {
 					},
 					[](MoveStateBuilder) {
 						throw std::runtime_error("Should not have a move state builder at the start of a turn");

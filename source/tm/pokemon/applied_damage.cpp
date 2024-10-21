@@ -3,6 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <bounded/assert.hpp>
+
 export module tm.pokemon.applied_damage;
 
 import tm.move.damage_type;
@@ -35,7 +39,8 @@ export constexpr auto applied_damage(
 	Environment const environment
 ) -> AppliedDamage {
 	auto const hp = pokemon.hp();
-	auto const actual = bounded::min(damage, hp.max());
+	BOUNDED_ASSERT(hp.current() != 0_bi);
+	auto const actual = bounded::min(damage, hp.current());
 	if (hp.current() > damage) {
 		return AppliedDamage(actual, false);
 	}

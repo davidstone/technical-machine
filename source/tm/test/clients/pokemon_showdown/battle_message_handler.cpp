@@ -457,6 +457,8 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			false
 		);
 
+		handle_end_turn(*expected);
+
 		check_state(result, expected->state());
 	}
 
@@ -476,8 +478,6 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 		}));
 
 		expected->use_switch(true, Switch(1_bi));
-
-		handle_end_turn(*expected);
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}
@@ -701,6 +701,66 @@ TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
 	CHECK(result == BattleFinished());
 }
 
+TEST_CASE("BattleMessageHandler generation 1 explosion single faint", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::one;
+
+	auto [expected, handler] = make_init<generation>(
+		{
+			{
+				.species = Species::Tauros,
+				.moves = {{MoveName::Tackle}}
+			},
+		},
+		{
+			.team_size = 2_bi,
+			.species = Species::Electrode
+		}
+	);
+
+	{
+		auto const result = handler.handle_message(ps::EventBlock({
+			ps::SeparatorMessage(),
+			ps::MoveMessage(Party(1_bi), MoveName::Self_Destruct, did_not_miss),
+			ps::DamageMessage(
+				Party(0_bi),
+				StatusName::clear,
+				visible_hp(201_bi, 353_bi)
+			),
+		}));
+
+		expected->use_move(
+			false,
+			damaging_move(MoveName::Self_Destruct, visible_hp(201_bi, 353_bi)),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state());
+	}
+
+	{
+		auto const result = handler.handle_message(ps::EventBlock({
+			ps::SeparatorMessage(),
+			ps::SwitchMessage(
+				Party(1_bi),
+				Species::Pikachu,
+				"Pikachu"sv,
+				Level(100_bi),
+				Gender::genderless,
+				visible_hp(100_bi, 100_bi),
+				StatusName::clear
+			),
+			ps::TurnMessage(2_bi),
+		}));
+
+		expected->foe_has(Species::Pikachu, "Pikachu"sv, Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
+		expected->use_switch(false, Switch(1_bi));
+
+		check_state(result, expected->state(), TurnCount(2_bi));
+	}
+}
+
 TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon Showdown]") {
 	constexpr auto generation = Generation::one;
 
@@ -738,6 +798,8 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			false
 		);
 
+		handle_end_turn(*expected);
+
 		check_state(result, expected->state());
 	}
 
@@ -768,8 +830,6 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		expected->use_switch(true, Switch(1_bi));
 		expected->foe_has(Species::Pikachu, "Pikachu"sv, Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
-
-		handle_end_turn(*expected);
 
 		check_state(result, expected->state(), TurnCount(2_bi));
 	}

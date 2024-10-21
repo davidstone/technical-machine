@@ -3,6 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <bounded/assert.hpp>
+
 export module tm.strategy.strategy;
 
 import tm.move.legal_selections;
@@ -13,6 +17,7 @@ import tm.environment;
 import tm.generation;
 import tm.generation_generic;
 import tm.team;
+import tm.team_is_empty;
 
 import bounded;
 import std_module;
@@ -51,6 +56,8 @@ struct Wrapper {
 					Team<generation> const & ai,
 					Team<generation> const & foe
 				) -> BothWeightedSelections {
+					BOUNDED_ASSERT(!team_is_empty(ai));
+					BOUNDED_ASSERT(!team_is_empty(foe));
 					auto result = m_impl(
 						ai,
 						ai_selections,

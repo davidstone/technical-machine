@@ -15,6 +15,7 @@ import tm.move.move_name;
 import tm.move.move_result;
 import tm.move.switch_;
 
+import tm.pokemon.any_pokemon;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
@@ -49,15 +50,13 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
+constexpr auto is_fainted(any_team auto const & team) -> bool {
+	return team.pokemon().hp().current() == 0_bi;
+}
+
 template<any_team TeamType>
 constexpr auto is_done_moving(TeamType const & team) -> bool {
 	auto const pokemon = team.pokemon();
-	if constexpr (generation_from<TeamType> <= Generation::three) {
-		auto const is_fainted = pokemon.hp().current() == 0_bi;
-		if (is_fainted) {
-			return false;
-		}
-	}
 	auto const last_move = pokemon.last_used_move();
 	return
 		last_move.moved_this_turn() and
@@ -113,20 +112,28 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto is_end_of_turn() const -> bool final {
-		return
-			is_done_moving(m_battle.ai()) and
-			is_done_moving(m_battle.foe());
+		auto const ai_is_done_moving = is_done_moving(m_battle.ai());
+		auto const foe_is_done_moving = is_done_moving(m_battle.foe());
+		switch (generation_) {
+			case Generation::one:
+			case Generation::three:
+				return
+					(ai_is_done_moving and (foe_is_done_moving or foe_is_fainted() or ai_is_fainted())) or
+					(foe_is_done_moving and (ai_is_fainted() or foe_is_fainted()));
+			case Generation::two:
+				return ai_is_done_moving and foe_is_done_moving;
+			default:
+				return
+					(ai_is_done_moving and (foe_is_done_moving or foe_is_fainted())) or
+					(foe_is_done_moving and ai_is_fainted());
+		}
 	}
 
 	auto ai_is_fainted() const -> bool final {
-		return m_battle.ai().pokemon().hp().current() == 0_bi;
+		return is_fainted(m_battle.ai());
 	}
 	auto foe_is_fainted() const -> bool final {
-		return m_battle.foe().pokemon().hp().current() == 0_bi;
-	}
-
-	auto ai_is_on_last_pokemon() const -> bool final {
-		return m_battle.ai().size() == 1_bi;
+		return is_fainted(m_battle.foe());
 	}
 
 	auto use_move(bool const ai_is_user, MoveResult const move_result, bool const status_clears) & -> void final {

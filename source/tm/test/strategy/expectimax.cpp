@@ -277,7 +277,7 @@ TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 }
 
 
-TEST_CASE("expectimax Baton Pass middle of turn", "[expectimax]") {
+TEST_CASE("expectimax Baton Pass middle of turn other has moved", "[expectimax]") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
@@ -333,6 +333,67 @@ TEST_CASE("expectimax Baton Pass middle of turn", "[expectimax]") {
 			false
 		);
 	}
+	{
+		constexpr auto move_name = MoveName::Baton_Pass;
+		auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, environment);
+		REQUIRE(containers::size(side_effects) == 1_bi);
+		call_move(
+			attacker,
+			UsedMove<Team<generation>>(
+				move_name,
+				containers::front(side_effects).function
+			),
+			defender,
+			FutureSelection(false),
+			environment,
+			false,
+			ActualDamage::Unknown{},
+			false
+		);
+	}
+
+	auto const best = determine_best_selection(strategy, attacker, defender, environment);
+	CHECK(best.selection == Switch(1_bi));
+}
+
+TEST_CASE("expectimax Baton Pass middle of turn other has not moved", "[expectimax]") {
+	constexpr auto generation = Generation::four;
+	auto const strategy = make_strategy(1_bi);
+	auto environment = Environment();
+
+	auto attacker = Team<generation>({{
+		{
+			.species = Species::Smeargle,
+			.item = Item::Leftovers,
+			.ability = Ability::Own_Tempo,
+			.moves = {{
+				MoveName::Baton_Pass,
+				MoveName::Belly_Drum,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Psycho_Cut,
+			}}
+		},
+	}});
+	attacker.pokemon().switch_in(environment, true);
+
+	auto defender = Team<generation>({{
+		{
+			.species = Species::Misdreavus,
+			.item = Item::Iron_Ball,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
+	}});
+	defender.pokemon().switch_in(environment, true);
+
 	{
 		constexpr auto move_name = MoveName::Baton_Pass;
 		auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, environment);

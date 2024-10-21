@@ -820,9 +820,7 @@ public:
 			this->m_pokemon.set_status(StatusName::poison);
 		}
 		this->m_flags.status.set(this->m_pokemon.status().name());
-		if (!replacing_fainted_or_initial_switch) {
-			this->m_flags.last_used_move.use_switch();
-		}
+		this->m_flags.last_used_move.use_switch(replacing_fainted_or_initial_switch);
 		if (this->item(environment) == Item::Berserk_Gene) {
 			activate_berserk_gene(*this, environment);
 		}
@@ -921,8 +919,6 @@ public:
 		this->m_pokemon.set_hp(new_hp);
 		if (new_hp > 0_bi) {
 			activate_pinch_item(environment);
-		} else {
-			this->m_flags.last_used_move.faint();
 		}
 	}
 	constexpr auto indirect_damage(Environment const environment, auto const damage) const -> void {
@@ -956,14 +952,14 @@ public:
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
 		BOUNDED_ASSERT(move == MoveName::Struggle or containers::any_equal(this->regular_moves(), move));
-		if (this->hp().current() == 0_bi) {
-			return tv::none;
-		}
 		auto const result = this->m_flags.last_used_move.successful_move(
 			move,
 			this->item(environment),
 			environment.effective_weather(this->ability(), other_ability)
 		);
+		if (this->hp().current() == 0_bi) {
+			return tv::none;
+		}
 		return tv::visit(result, tv::overload(
 			[](DoNothing) -> tv::optional<CurrentHP> {
 				return tv::none;

@@ -6,6 +6,8 @@
 #include <std_module/prelude.hpp>
 #include <string_view>
 
+#include <bounded/assert.hpp>
+
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
@@ -51,6 +53,7 @@ import tm.get_legal_selections;
 import tm.load_json_from_file;
 import tm.open_file;
 import tm.team;
+import tm.team_is_empty;
 import tm.visible_state;
 
 import bounded;
@@ -151,8 +154,12 @@ auto get_predicted_selection(
 ) {
 	return [&](BattleMessage const & message) -> tv::optional<PredictedSelection> {
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
+			if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
+				throw std::runtime_error("Tried to predict a selection with an empty team");
+			}
 			auto const user_team = Team<generation>(state.ai);
 			auto const predicted_team = most_likely_team(all_usage_stats[generation], state.foe);
+			BOUNDED_ASSERT(!team_is_empty(predicted_team));
 			return strategy(
 				user_team,
 				get_legal_selections(user_team, predicted_team, state.environment),
