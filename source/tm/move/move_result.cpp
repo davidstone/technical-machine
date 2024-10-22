@@ -30,6 +30,7 @@ export struct Flinched {};
 export struct FrozenSolid {};
 export struct FullyParalyzed {};
 export struct PartiallyTrapped {};
+export struct StillAsleep {};
 export struct Used {
 	constexpr explicit Used(MoveName const selected_, bool miss_ = false):
 		selected(selected_),
@@ -48,13 +49,13 @@ export struct Used {
 	bool recoil = false;
 };
 export using MoveResult = tv::variant<
-	InitialMoveResult,
 	Awakening,
 	Flinched,
 	FrozenSolid,
 	FullyParalyzed,
 	PartiallyTrapped,
 	Recharging,
+	StillAsleep,
 	Used
 >;
 

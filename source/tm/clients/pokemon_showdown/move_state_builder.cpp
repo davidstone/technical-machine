@@ -80,7 +80,10 @@ export struct MoveStateBuilder {
 		return m_party;
 	}
 	auto executed_move() const -> tv::optional<MoveName> {
-		return tv::visit(m_move, tv::overload(
+		if (!m_move) {
+			return tv::none;
+		}
+		return tv::visit(*m_move, tv::overload(
 			[](Used const move) -> tv::optional<MoveName> {
 				return move.executed;
 			},
@@ -91,13 +94,23 @@ export struct MoveStateBuilder {
 	}
 
 	auto use_move(Party const party, MoveName const move, bool const miss = false) -> void {
-		tv::visit(m_move, tv::overload(
+		if (!m_move) {
+			set_move_state(party, Used(move, miss));
+			return;
+		}
+		tv::visit(*m_move, tv::overload(
 			[](Awakening) { throw std::runtime_error("Tried to use a move while awakening"); },
 			[](Flinched) { throw std::runtime_error("Tried to use a move while flinching"); },
 			[](FrozenSolid) { throw std::runtime_error("Tried to use a move while frozen solid"); },
 			[](FullyParalyzed) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 			[](PartiallyTrapped) { throw std::runtime_error("Tried to use a move while partially trapped in Gen 1"); },
 			[](Recharging) { throw std::runtime_error("Tried to use a move while recharging"); },
+			[&](StillAsleep) {
+				if (!usable_while_sleeping(move)) {
+					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
+				}
+				m_move->emplace([&] { return Used(move, miss); });
+			},
 			[&](Used & used) {
 				check_party(party);
 				if (used.executed != used.selected) {
@@ -105,13 +118,6 @@ export struct MoveStateBuilder {
 				}
 				used.executed = move;
 				used.miss = miss;
-			},
-			[&](InitialMoveResult) {
-				set_party(party);
-				if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
-					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
-				}
-				m_move.emplace([&] { return Used(move, miss); });
 			}
 		));
 	}
@@ -139,7 +145,7 @@ export struct MoveStateBuilder {
 	}
 
 	auto awaken(Party const party, Generation const generation) & -> void {
-		if (m_status_change != StatusChange::nothing_relevant) {
+		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Tried to awaken after a status change");
 		}
 		if (generation == Generation::one) {
@@ -148,15 +154,15 @@ export struct MoveStateBuilder {
 			set_party(party);
 		}
 		set_expected(party, StatusName::clear);
-		m_status_change = StatusChange::thaw_or_awaken;
+		m_thaw_or_awaken = true;
 	}
 	auto thaw(Party const party) & -> void {
-		if (m_status_change != StatusChange::nothing_relevant) {
+		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Tried to thaw after a status change");
 		}
 		set_party(party);
 		set_expected(party, StatusName::clear);
-		m_status_change = StatusChange::thaw_or_awaken;
+		m_thaw_or_awaken = true;
 	}
 	auto confuse(Party const party) -> void {
 		set_used_flag(party, "Tried to confuse a Pokemon twice", &Used::confuse);
@@ -250,46 +256,38 @@ export struct MoveStateBuilder {
 		tv::insert(target.status, status);
 	}
 	auto still_asleep(Party const party) -> void {
-		if (m_party) {
-			throw error();
-		}
-		if (m_status_change != StatusChange::nothing_relevant) {
+		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Cannot be still asleep at this point");
 		}
-		insert(m_party, party);
-		m_status_change = StatusChange::still_asleep;
+		set_move_state(party, StillAsleep());
 	}
 	auto phaze_index() const -> tv::optional<TeamIndex> {
-		return tv::visit(m_move, tv::overload(
+		if (!m_move) {
+			return tv::none;
+		}
+		return tv::visit(*m_move, tv::overload(
 			[](Used const used) -> tv::optional<TeamIndex> { return used.phaze_index; },
 			[](auto const &) -> tv::optional<TeamIndex> { return tv::none; }
 		));
 	}
 
 	auto complete() -> tv::optional<MoveState> {
-		auto const is_initial = m_move.index() == bounded::type<InitialMoveResult>;
-		if (is_initial and m_status_change != StatusChange::still_asleep) {
+		if (!m_move) {
 			*this = {};
 			return tv::none;
 		}
 		auto const result = MoveState(
-			m_move,
+			*m_move,
 			m_user,
 			m_other,
 			*m_party,
-			m_status_change == StatusChange::thaw_or_awaken
+			m_thaw_or_awaken
 		);
 		*this = {};
 		return result;
 	}
 
 private:
-	enum class StatusChange {
-		nothing_relevant,
-		still_asleep,
-		thaw_or_awaken
-	};
-
 	auto error() const -> std::runtime_error {
 		return std::runtime_error("Received battle messages out of order");
 	}
@@ -300,17 +298,17 @@ private:
 		}
 	}
 	auto check_is_used() const -> void {
-		if (m_move.index() != bounded::type<Used>) {
+		if (!m_move or m_move->index() != bounded::type<Used>) {
 			throw error();
 		}
 	}
 	auto validated() const & -> Used const & {
 		check_is_used();
-		return m_move[bounded::type<Used>];
+		return (*m_move)[bounded::type<Used>];
 	}
 	auto validated() & -> Used & {
 		check_is_used();
-		return m_move[bounded::type<Used>];
+		return (*m_move)[bounded::type<Used>];
 	}
 	auto validated(Party const party) & -> Used & {
 		check_party(party);
@@ -332,19 +330,19 @@ private:
 		flag = true;
 	}
 
-	auto set_move_state(Party const party, auto state) & -> void {
-		if (m_party or m_move.index() != bounded::type<InitialMoveResult>) {
+	auto set_move_state(Party const party, MoveResult const state) & -> void {
+		if (m_party or m_move) {
 			throw error();
 		}
-		insert(m_party, party);
-		m_move = state;
+		tv::insert(m_party, party);
+		tv::insert(m_move, state);
 	}
 
 	tv::optional<Party> m_party;
-	MoveResult m_move = MoveResult(InitialMoveResult());
+	tv::optional<MoveResult> m_move;
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
-	StatusChange m_status_change = StatusChange::nothing_relevant;
+	bool m_thaw_or_awaken = false;
 };
 
 } // namespace technicalmachine::ps
