@@ -163,13 +163,6 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 				MoveName::Thunderbolt,
 			}}
 		},
-		{
-			.species = Species::Alakazam,
-			.moves = {{
-				MoveName::Psycho_Cut,
-				MoveName::Recover,
-			}}
-		},
 	}});
 	attacker.pokemon().switch_in(environment, true);
 
@@ -182,34 +175,39 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 			}}
 		},
 	}});
-	auto shedinja = defender.pokemon();
-	shedinja.switch_in(environment, true);
+	defender.pokemon().switch_in(environment, true);
+	CHECK(defender.pokemon().hp().current() == 1_bi);
 
-	CHECK(shedinja.hp().current() == 1_bi);
-
-	call_move(
-		attacker,
-		UsedMove<Team<generation>>(MoveName::Thunderbolt, no_effect_function),
-		defender,
-		FutureSelection(false),
-		environment,
-		false,
-		damage,
-		false
-	);
-	CHECK(shedinja.hp().current() == 1_bi);
-
-	call_move(
-		attacker,
-		UsedMove<Team<generation>>(MoveName::Shadow_Ball, no_effect_function),
-		defender,
-		FutureSelection(false),
-		environment,
-		false,
-		damage,
-		false
-	);
-	CHECK(shedinja.hp().current() == 0_bi);
+	{
+		auto attacker_copy = attacker;
+		auto defender_copy = defender;
+		call_move(
+			attacker_copy,
+			UsedMove<Team<generation>>(MoveName::Thunderbolt, no_effect_function),
+			defender_copy,
+			FutureSelection(false),
+			environment,
+			false,
+			damage,
+			false
+		);
+		CHECK(defender_copy.pokemon().hp().current() == 1_bi);
+	}
+	{
+		auto attacker_copy = attacker;
+		auto defender_copy = defender;
+		call_move(
+			attacker_copy,
+			UsedMove<Team<generation>>(MoveName::Shadow_Ball, no_effect_function),
+			defender_copy,
+			FutureSelection(false),
+			environment,
+			false,
+			damage,
+			false
+		);
+		CHECK(defender_copy.pokemon().hp().current() == 0_bi);
+	}
 }
 
 TEST_CASE("Fire move thaws target", "[call_move]") {
