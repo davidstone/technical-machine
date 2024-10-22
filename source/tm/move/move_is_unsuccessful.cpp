@@ -58,38 +58,6 @@ constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability 
 	}
 }
 
-constexpr auto blocked_by_protect(Target const target, MoveName const move) -> bool {
-	switch (target) {
-		case Target::user:
-		case Target::all_allies:
-		case Target::user_and_all_allies:
-		case Target::all:
-		case Target::field:
-		case Target::user_team:
-		case Target::user_field:
-		case Target::foe_field:
-			return false;
-		case Target::adjacent_ally:
-		case Target::user_or_adjacent_ally:
-		case Target::adjacent_foe:
-		case Target::all_adjacent_foes:
-		case Target::any:
-		case Target::all_adjacent:
-			return true;
-		case Target::adjacent:
-			switch (move) {
-				case MoveName::Feint:
-				case MoveName::Hyperspace_Fury:
-				case MoveName::Hyperspace_Hole:
-				case MoveName::Phantom_Force:
-				case MoveName::Shadow_Force:
-					return false;
-				default:
-					return true;
-			}
-	}
-}
-
 constexpr auto fails_against_fainted(Target const target) -> bool {
 	switch (target) {
 		case Target::user:
@@ -112,11 +80,10 @@ constexpr auto fails_against_fainted(Target const target) -> bool {
 	}
 }
 
-export constexpr auto move_is_unsuccessful(Target const target, MoveName const move, bool const user_damaged, CurrentHP const other_hp, Ability const other_ability, OtherAction const other_action, bool const is_protecting) -> bool {
+export constexpr auto move_is_unsuccessful(Target const target, MoveName const move, bool const user_damaged, CurrentHP const other_hp, Ability const other_ability, OtherAction const other_action) -> bool {
 	return
 		move_fails(move, user_damaged, other_ability, other_action) or
-		(other_hp == 0_bi and fails_against_fainted(target)) or
-		(is_protecting and blocked_by_protect(target, move));
+		(other_hp == 0_bi and fails_against_fainted(target));
 }
 
 } // namespace technicalmachine

@@ -121,6 +121,27 @@ constexpr auto activate_target_ability(any_mutable_active_pokemon auto const use
 	}
 }
 
+constexpr auto side_effect_happens_on_miss(MoveName const move) -> bool {
+	switch (move) {
+		case MoveName::Explosion:
+		case MoveName::Memento:
+		case MoveName::Misty_Explosion:
+		case MoveName::Self_Destruct:
+			return true;
+		default:
+			return false;
+	}
+}
+
+constexpr auto side_effect_happens_on_protect(MoveName const move) -> bool {
+	return side_effect_happens_on_miss(move);
+}
+
+// TODO: This is probably a ton of moves
+constexpr auto side_effect_happens_on_substitute(MoveName const move) -> bool {
+	return side_effect_happens_on_miss(move);
+}
+
 template<any_team UserTeam>
 auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
@@ -151,6 +172,9 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 		0_bi;
 
 	if (effects == Substitute::absorbs) {
+		if (side_effect_happens_on_substitute(executed.move.name)) {
+			executed.side_effect(user, other, environment, damage_done);
+		}
 		return;
 	}
 	executed.side_effect(user, other, environment, damage_done);
@@ -193,6 +217,38 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, En
 			break;
 		default:
 			break;
+	}
+}
+
+constexpr auto blocked_by_protect(Target const target, MoveName const move) -> bool {
+	switch (target) {
+		case Target::user:
+		case Target::all_allies:
+		case Target::user_and_all_allies:
+		case Target::all:
+		case Target::field:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::foe_field:
+			return false;
+		case Target::adjacent_ally:
+		case Target::user_or_adjacent_ally:
+		case Target::adjacent_foe:
+		case Target::all_adjacent_foes:
+		case Target::any:
+		case Target::all_adjacent:
+			return true;
+		case Target::adjacent:
+			switch (move) {
+				case MoveName::Feint:
+				case MoveName::Hyperspace_Fury:
+				case MoveName::Hyperspace_Hole:
+				case MoveName::Phantom_Force:
+				case MoveName::Shadow_Force:
+					return false;
+				default:
+					return true;
+			}
 	}
 }
 
@@ -246,13 +302,24 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			user_pokemon.stages()[BoostableStat::spe] += 2_bi;
 			user_pokemon.remove_item();
 		}
+		if (side_effect_happens_on_miss(move.executed)) {
+			move.side_effect(user, other, environment, 0_bi);
+		}
 		return;
 	}
 
 	auto const target = move_target(generation, move.executed);
 
-	if (move_is_unsuccessful(target, move.executed, user_pokemon.damaged(), other_pokemon.hp().current(), other_ability, other_action, other_pokemon.last_used_move().is_protecting())) {
+	if (move_is_unsuccessful(target, move.executed, user_pokemon.damaged(), other_pokemon.hp().current(), other_ability, other_action)) {
 		unsuccessfully_use_move();
+		return;
+	}
+
+	auto const is_protecting = other_pokemon.last_used_move().is_protecting();
+	if (is_protecting and blocked_by_protect(target, move.executed)) {
+		if (side_effect_happens_on_protect(move.executed)) {
+			move.side_effect(user, other, environment, 0_bi);
+		}
 		return;
 	}
 
