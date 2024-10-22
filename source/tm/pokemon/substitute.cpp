@@ -130,13 +130,11 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::two>, Move
 		case MoveName::Attract:
 		case MoveName::Disable:
 		case MoveName::Encore:
-		case MoveName::Explosion:
 		case MoveName::Foresight:
 		case MoveName::Mean_Look:
 		case MoveName::Mimic:
 		case MoveName::Psych_Up:
 		case MoveName::Roar:
-		case MoveName::Self_Destruct:
 		case MoveName::Spider_Web:
 		case MoveName::Spite:
 		case MoveName::Transform:
@@ -166,13 +164,11 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::three>, Mo
 		case MoveName::Attract:
 		case MoveName::Disable:
 		case MoveName::Encore:
-		case MoveName::Explosion:
 		case MoveName::Foresight:
 		case MoveName::Odor_Sleuth:
 		case MoveName::Psych_Up:
 		case MoveName::Roar:
 		case MoveName::Role_Play:
-		case MoveName::Self_Destruct:
 		case MoveName::Skill_Swap:
 		case MoveName::Spite:
 		case MoveName::Taunt:
@@ -205,7 +201,6 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::four>, Mov
 		case MoveName::Attract:
 		case MoveName::Disable:
 		case MoveName::Encore:
-		case MoveName::Explosion:
 		case MoveName::Foresight:
 		case MoveName::Guard_Swap:
 		case MoveName::Heart_Swap:
@@ -215,7 +210,6 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::four>, Mov
 		case MoveName::Psych_Up:
 		case MoveName::Roar:
 		case MoveName::Role_Play:
-		case MoveName::Self_Destruct:
 		case MoveName::Skill_Swap:
 		case MoveName::Spite:
 		case MoveName::Taunt:
@@ -240,7 +234,6 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::five>, Mov
 		case MoveName::Conversion_2:
 		case MoveName::Disable:
 		case MoveName::Encore:
-		case MoveName::Explosion:
 		case MoveName::Foresight:
 		case MoveName::Guard_Swap:
 		case MoveName::Heart_Swap:
@@ -251,7 +244,6 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::five>, Mov
 		case MoveName::Reflect_Type:
 		case MoveName::Roar:
 		case MoveName::Role_Play:
-		case MoveName::Self_Destruct:
 		case MoveName::Skill_Swap:
 		case MoveName::Spite:
 		case MoveName::Taunt:
@@ -282,7 +274,6 @@ constexpr auto latest_substitute_interaction(Generation const generation, MoveNa
 		case MoveName::Disarming_Voice:
 		case MoveName::Echoed_Voice:
 		case MoveName::Encore:
-		case MoveName::Explosion:
 		case MoveName::Foresight:
 		case MoveName::Grass_Whistle:
 		case MoveName::Growl:
@@ -307,7 +298,6 @@ constexpr auto latest_substitute_interaction(Generation const generation, MoveNa
 		case MoveName::Role_Play:
 		case MoveName::Round:
 		case MoveName::Screech:
-		case MoveName::Self_Destruct:
 		case MoveName::Sing:
 		case MoveName::Skill_Swap:
 		case MoveName::Snarl:
