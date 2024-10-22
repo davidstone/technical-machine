@@ -217,7 +217,6 @@ target_sources(tm_common PUBLIC
 		ability_blocks_move.cpp
 		ability_blocks_switching.cpp
 		activate_ability_on_switch.cpp
-		all_selections_valid.cpp
 		any_team.cpp
 		apply_entry_hazards.cpp
 		associated_team.cpp
