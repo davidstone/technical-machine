@@ -111,14 +111,22 @@ constexpr auto target_based(Generation const generation, MoveName const move) {
 }
 
 constexpr auto substitute_interaction_impl(constant_gen_t<Generation::one>, MoveName const move) {
+	// TODO: Moves like Psybeam can cause Confusion
 	switch (move) {
-		case MoveName::Disable:
-		case MoveName::Leech_Seed:
-		case MoveName::Super_Fang:
-		case MoveName::Transform:
 		case MoveName::Bind:
 		case MoveName::Clamp:
+		case MoveName::Disable:
 		case MoveName::Fire_Spin:
+		case MoveName::Glare:
+		case MoveName::Hypnosis:
+		case MoveName::Leech_Seed:
+		case MoveName::Lovely_Kiss:
+		case MoveName::Sing:
+		case MoveName::Sleep_Powder:
+		case MoveName::Spore:
+		case MoveName::Stun_Spore:
+		case MoveName::Super_Fang:
+		case MoveName::Transform:
 		case MoveName::Wrap:
 			return Substitute::bypassed;
 		default:
