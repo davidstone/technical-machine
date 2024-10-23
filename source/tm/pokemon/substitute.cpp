@@ -6,6 +6,7 @@
 module;
 
 #include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
 
 export module tm.pokemon.substitute;
 
@@ -13,17 +14,23 @@ import tm.move.move_name;
 import tm.move.target;
 
 import tm.stat.current_hp;
+import tm.stat.max_hp;
 
 import tm.compress;
 import tm.constant_generation;
 import tm.generation;
 
 import bounded;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-using hp_type = decltype(bounded::declval<CurrentHP>() / 4_bi);
+constexpr auto generation_bonus(Generation const generation) {
+	return BOUNDED_CONDITIONAL(generation == Generation::one, 1_bi, 0_bi);
+}
+
+using hp_type = decltype(bounded::declval<CurrentHP>() / 4_bi + generation_bonus(Generation()));
 
 export struct Substitute {
 	enum class Interaction {
@@ -33,12 +40,24 @@ export struct Substitute {
 	};
 	using enum Interaction;
 
-	constexpr auto create(CurrentHP const total_hp) -> hp_type {
+	constexpr auto create(
+		Generation const generation,
+		CurrentHP const current_hp,
+		MaxHP const max_hp
+	) & -> tv::optional<hp_type> {
 		if (static_cast<bool>(*this)) {
-			return 0_bi;
+			return tv::none;
 		}
-		m_hp = total_hp / 4_bi;
-		return m_hp;
+		constexpr auto divisor = 4_bi;
+		auto const can_use_substitute = generation == Generation::one ?
+			current_hp * divisor >= max_hp :
+			current_hp * divisor > max_hp and max_hp != 1_bi;
+		if (!can_use_substitute) {
+			return tv::none;
+		}
+		auto const lost_hp = max_hp / divisor;
+		m_hp = lost_hp + generation_bonus(generation);
+		return lost_hp;
 	}
 
 	constexpr auto damage(auto const damage_done) {

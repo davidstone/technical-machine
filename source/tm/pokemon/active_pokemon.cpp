@@ -802,11 +802,15 @@ public:
 	}
 
 	constexpr auto use_substitute(Environment const environment) const -> void {
-		auto const can_use_substitute = this->hp().current() > this->hp().max() / 4_bi;
-		if (!can_use_substitute) {
-			return;
+		auto const hp = this->hp();
+		auto const lost_hp = this->m_flags.substitute.create(
+			generation,
+			hp.current(),
+			hp.max()
+		);
+		if (lost_hp) {
+			indirect_damage(environment, *lost_hp);
 		}
-		indirect_damage(environment, this->m_flags.substitute.create(this->hp().max()));
 	}
 
 	constexpr auto switch_in(Environment const environment, bool const replacing_fainted_or_initial_switch) const {

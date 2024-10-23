@@ -414,6 +414,8 @@ target_sources(tm_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		pokemon/test/substitute.cpp
+
 		stat/test/stats.cpp
 		
 		test/pokemon_online/conversion.cpp
