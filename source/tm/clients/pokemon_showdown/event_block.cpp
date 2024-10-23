@@ -95,7 +95,8 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			}
 		));
 	} else if (type == "-activate") {
-		auto const party = party_from_player_id(message.pop());
+		// We can intentionally get a blank player ID when Splash "activates"
+		auto const player_id = message.pop();
 		auto const [category, source] = split_view(message.pop(), ": "sv);
 		auto const details = message.pop();
 		return tv::visit(parse_effect_source(category, source), tv::overload(
@@ -123,23 +124,23 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -activate source FromRecoil");
 			},
 			[&](FromSubstitute) -> tv::optional<ParsedMessage> {
-				return DamageSubstituteMessage(party);
+				return DamageSubstituteMessage(party_from_player_id(player_id));
 			},
 			[&](Ability const ability) -> tv::optional<ParsedMessage> {
 				switch (ability) {
 					case Ability::Forewarn:
 						return ForewarnMessage(
-							party,
+							party_from_player_id(player_id),
 							from_string<MoveName>(details)
 						);
 					case Ability::Shed_Skin:
-						return ShedSkinMessage(party);
+						return ShedSkinMessage(party_from_player_id(player_id));
 					default:
-						return AbilityMessage(party, ability);
+						return AbilityMessage(party_from_player_id(player_id), ability);
 				}
 			},
 			[&](Item const item) -> tv::optional<ParsedMessage> {
-				return ItemMessage(party, item);
+				return ItemMessage(party_from_player_id(player_id), item);
 			}
 		));
 	} else if (type == "-anim") {
