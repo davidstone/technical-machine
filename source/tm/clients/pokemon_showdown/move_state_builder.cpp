@@ -322,8 +322,12 @@ private:
 		}
 	}
 
-	auto set_used_flag(Party const party, char const * const message, auto const member) & -> void {
-		auto & flag = std::invoke(member, validated(party));
+	auto set_used_flag(
+		Party const party,
+		char const * const message,
+		bool VisibleMove::* const member
+	) & -> void {
+		auto & flag = validated(party).*member;
 		if (flag) {
 			throw std::runtime_error(message);
 		}
