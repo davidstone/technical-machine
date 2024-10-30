@@ -22,7 +22,7 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-constexpr auto table_size = bounded::constant<1 << 13>;
+constexpr auto table_size = bounded::constant<1 << 19>;
 using TableIndex = bounded::integer<0, bounded::normalize<table_size - 1_bi>>;
 
 template<bounded::bounded_integer Output>
