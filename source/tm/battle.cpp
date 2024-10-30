@@ -7,6 +7,7 @@ export module tm.battle;
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.category;
 import tm.move.causes_recoil;
 import tm.move.future_selection;
 import tm.move.hit_self;
@@ -127,6 +128,24 @@ constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const 
 	return KnownMove(*move_name, type);
 }
 
+constexpr auto non_damaging_move_did_damage(MoveResult const move) -> bool {
+	return tv::visit(move, tv::overload(
+		[](Used const used) {
+			if (is_damaging(used.executed)) {
+				return false;
+			}
+			return tv::visit(used.damage, tv::overload(
+				[](NoDamage) { return false; },
+				[](VisibleHP const damage) { return damage.current != 0_bi; },
+				[](auto) { return true; }
+			));
+		},
+		[](auto) {
+			return false;
+		}
+	));
+}
+
 export template<Generation generation>
 struct Battle {
 	// TODO: Properly order instead of having a default
@@ -222,6 +241,9 @@ struct Battle {
 		});
 	}
 	auto use_move(bool const ai_is_user, MoveResult const move_result, bool const status_clears) & -> void {
+		if (non_damaging_move_did_damage(move_result)) {
+			throw std::runtime_error("A non-damaging move did damage");
+		}
 		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
 			auto const user_pokemon = user_team.pokemon();
 			auto const other_pokemon = other_team.pokemon();
