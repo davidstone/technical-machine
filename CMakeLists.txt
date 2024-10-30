@@ -5,16 +5,16 @@
 
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif()
+
 project(technical_machine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
-
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-endif()
 
 enable_testing()
 
