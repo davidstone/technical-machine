@@ -360,7 +360,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 		}
 	}
 	auto const result = score.load();
-	return result.score / result.weight;
+	return result.weight != 0.0 ? result.score / result.weight : 0.0;
 }
 
 } // namespace technicalmachine
