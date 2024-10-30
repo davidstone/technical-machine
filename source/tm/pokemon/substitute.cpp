@@ -126,6 +126,7 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::one>, Move
 		case MoveName::Spore:
 		case MoveName::Stun_Spore:
 		case MoveName::Super_Fang:
+		case MoveName::Thunder_Wave:
 		case MoveName::Transform:
 		case MoveName::Wrap:
 			return Substitute::bypassed;
