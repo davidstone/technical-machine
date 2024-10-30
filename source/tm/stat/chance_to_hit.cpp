@@ -37,9 +37,9 @@ using namespace bounded::literal;
 export using ChanceToHit = double;
 
 template<any_active_pokemon ActivePokemonType>
-auto move_can_miss(ActivePokemonType const user, MoveName const move, BaseAccuracy const base_accuracy, ActivePokemonType const target) -> bool {
+auto move_can_miss(ActivePokemonType const user, MoveName const move, Accuracy const accuracy, ActivePokemonType const target) -> bool {
 	return
-		static_cast<bool>(base_accuracy) and
+		static_cast<bool>(accuracy) and
 		!cannot_miss(user.ability()) and
 		!cannot_miss(target.ability()) and
 		!(move == MoveName::Body_Slam and target.minimized()) and

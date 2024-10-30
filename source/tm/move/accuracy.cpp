@@ -21,8 +21,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 // A value that is not present indicates that the move cannot miss.
-export using BaseAccuracy = tv::optional<bounded::integer<30, 100>>;
-export constexpr auto accuracy(Generation const generation, MoveName const move, Weather const weather, bool const user_is_poison) -> BaseAccuracy {
+export using Accuracy = tv::optional<bounded::integer<30, 100>>;
+export constexpr auto accuracy(Generation const generation, MoveName const move, Weather const weather, bool const user_is_poison) -> Accuracy {
 	using tv::none;
 	switch (move) {
 		case MoveName::Pound: return 100_bi;
@@ -81,7 +81,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Leer: return 100_bi;
 		case MoveName::Bite: return 100_bi;
 		case MoveName::Growl: return 100_bi;
-		case MoveName::Roar: return generation <= Generation::five ? BaseAccuracy(100_bi) : none;
+		case MoveName::Roar: return generation <= Generation::five ? Accuracy(100_bi) : none;
 		case MoveName::Sing: return 55_bi;
 		case MoveName::Supersonic: return 55_bi;
 		case MoveName::Sonic_Boom: return 90_bi;
@@ -141,9 +141,9 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 				case Weather::clear:
 				case Weather::hail:
 				case Weather::sand:
-					return BaseAccuracy(70_bi);
+					return Accuracy(70_bi);
 				case Weather::sun:
-					return BaseAccuracy(50_bi);
+					return Accuracy(50_bi);
 				case Weather::rain:
 					return none;
 			}
@@ -162,7 +162,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 				case Generation::five:
 					return 90_bi;
 				default:
-					return user_is_poison ? none : BaseAccuracy(90_bi);
+					return user_is_poison ? none : Accuracy(90_bi);
 			}
 		case MoveName::Confusion: return 100_bi;
 		case MoveName::Psychic: return 100_bi;
@@ -173,7 +173,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Rage: return 100_bi;
 		case MoveName::Teleport: return none;
 		case MoveName::Night_Shade: return 100_bi;
-		case MoveName::Mimic: return generation <= Generation::two ? BaseAccuracy(100_bi) : none;
+		case MoveName::Mimic: return generation <= Generation::two ? Accuracy(100_bi) : none;
 		case MoveName::Screech: return 85_bi;
 		case MoveName::Double_Team: return none;
 		case MoveName::Recover: return none;
@@ -267,13 +267,13 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Super_Fang: return 90_bi;
 		case MoveName::Slash: return 100_bi;
 		case MoveName::Substitute: return none;
-		case MoveName::Struggle: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
+		case MoveName::Struggle: return generation <= Generation::three ? Accuracy(100_bi) : none;
 		case MoveName::Sketch: return none;
 		case MoveName::Triple_Kick: return 90_bi;
 		case MoveName::Thief: return 100_bi;
 		case MoveName::Spider_Web: return none;
-		case MoveName::Mind_Reader: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
-		case MoveName::Nightmare: return generation <= Generation::three ? none : BaseAccuracy(100_bi);
+		case MoveName::Mind_Reader: return generation <= Generation::three ? Accuracy(100_bi) : none;
+		case MoveName::Nightmare: return generation <= Generation::three ? none : Accuracy(100_bi);
 		case MoveName::Flame_Wheel: return 100_bi;
 		case MoveName::Snore: return 100_bi;
 		case MoveName::Curse: return none;
@@ -295,13 +295,13 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Octazooka: return 85_bi;
 		case MoveName::Spikes: return none;
 		case MoveName::Zap_Cannon: return 50_bi;
-		case MoveName::Foresight: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
+		case MoveName::Foresight: return generation <= Generation::three ? Accuracy(100_bi) : none;
 		case MoveName::Destiny_Bond: return none;
 		case MoveName::Perish_Song: return none;
 		case MoveName::Icy_Wind: return 95_bi;
 		case MoveName::Detect: return none;
 		case MoveName::Bone_Rush: return BOUNDED_CONDITIONAL(generation <= Generation::four, 80_bi, 90_bi);
-		case MoveName::Lock_On: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
+		case MoveName::Lock_On: return generation <= Generation::three ? Accuracy(100_bi) : none;
 		case MoveName::Outrage: return 100_bi;
 		case MoveName::Sandstorm: return none;
 		case MoveName::Giga_Drain: return 100_bi;
@@ -322,7 +322,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Present: return 90_bi;
 		case MoveName::Frustration: return 100_bi;
 		case MoveName::Safeguard: return none;
-		case MoveName::Pain_Split: return generation <= Generation::two ? BaseAccuracy(100_bi) : none;
+		case MoveName::Pain_Split: return generation <= Generation::two ? Accuracy(100_bi) : none;
 		case MoveName::Sacred_Fire: return 95_bi;
 		case MoveName::Magnitude: return 100_bi;
 		case MoveName::Dynamic_Punch: return 50_bi;
@@ -364,7 +364,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Torment: return 100_bi;
 		case MoveName::Flatter: return 100_bi;
 		case MoveName::Will_O_Wisp: return BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi);
-		case MoveName::Memento: return generation <= Generation::three ? none : BaseAccuracy(100_bi);
+		case MoveName::Memento: return generation <= Generation::three ? none : Accuracy(100_bi);
 		case MoveName::Facade: return 100_bi;
 		case MoveName::Focus_Punch: return 100_bi;
 		case MoveName::Smelling_Salts: return 100_bi;
@@ -418,7 +418,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Fake_Tears: return 100_bi;
 		case MoveName::Air_Cutter: return 95_bi;
 		case MoveName::Overheat: return 90_bi;
-		case MoveName::Odor_Sleuth: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
+		case MoveName::Odor_Sleuth: return generation <= Generation::three ? Accuracy(100_bi) : none;
 		case MoveName::Rock_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::five, 80_bi, 95_bi);
 		case MoveName::Silver_Wind: return 100_bi;
 		case MoveName::Metal_Sound: return 85_bi;
@@ -678,7 +678,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Freeze_Dry: return 100_bi;
 		case MoveName::Disarming_Voice: return none;
 		case MoveName::Parting_Shot: return 100_bi;
-		case MoveName::Topsy_Turvy: return generation <= Generation::six ? BaseAccuracy(100_bi) : none;
+		case MoveName::Topsy_Turvy: return generation <= Generation::six ? Accuracy(100_bi) : none;
 		case MoveName::Draining_Kiss: return 100_bi;
 		case MoveName::Crafty_Shield: return none;
 		case MoveName::Flower_Shield: return none;
