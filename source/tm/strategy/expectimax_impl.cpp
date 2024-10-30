@@ -11,6 +11,7 @@ module;
 
 module tm.strategy.expectimax;
 
+import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.possible_executed_moves;
@@ -396,7 +397,8 @@ private:
 		check_is_valid_start_of_turn(state.ai);
 		check_is_valid_start_of_turn(state.foe);
 
-		if (auto const score = m_transposition_table.get_score(state, depth)) {
+		auto const compressed_battle = compress_battle(state);
+		if (auto const score = m_transposition_table.get_score(compressed_battle, depth)) {
 			return *score;
 		}
 
@@ -407,7 +409,7 @@ private:
 				return order_branch(state, ai_selection, foe_selection, depth);
 			}
 		);
-		m_transposition_table.add_score(state, depth, actions);
+		m_transposition_table.add_score(compressed_battle, depth, actions);
 		return actions;
 	}
 
@@ -428,7 +430,8 @@ private:
 		Depth const depth,
 		tv::optional<Selection> const forced_continuation = tv::none
 	) -> ScoredSelections {
-		if (auto const score = m_transposition_table.get_score(original, depth)) {
+		auto const compressed_battle = compress_battle(original);
+		if (auto const score = m_transposition_table.get_score(compressed_battle, depth)) {
 			return *score;
 		}
 		auto const actions = score_selections(
@@ -471,7 +474,7 @@ private:
 			}
 		);
 
-		m_transposition_table.add_score(original, depth, actions);
+		m_transposition_table.add_score(compressed_battle, depth, actions);
 		return actions;
 	}
 

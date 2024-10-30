@@ -287,6 +287,7 @@ target_sources(tm_common PRIVATE
 )
 target_link_libraries(tm_common
 	boost
+	concurrent
 	containers
 	OpenSSL::SSL
 	nlohmann_json

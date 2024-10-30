@@ -15,6 +15,7 @@ import tm.move.move_name;
 import tm.generation;
 
 import bounded;
+import concurrent;
 import containers;
 import tv;
 import std_module;
@@ -36,19 +37,24 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 
 export template<Generation generation>
 struct TranspositionTable {
-	auto add_score(State<generation> const & state, Depth const depth, ScoredSelections selections) -> void {
-		auto const compressed_battle = compress_battle(state);
-		auto _ = std::scoped_lock(m_mutex);
-		auto & value = (*m_data)[index(compressed_battle)];
+	auto add_score(
+		CompressedBattle<generation> const & compressed_battle,
+		Depth const depth,
+		ScoredSelections selections
+	) -> void {
+		auto const entry = get_entry(compressed_battle);
+		auto & value = entry.value();
 		value.compressed_battle = compressed_battle;
 		value.depth = depth;
 		value.selections = selections;
 	}
 
-	auto get_score(State<generation> const & state, Depth const depth) const -> tv::optional<ScoredSelections> {
-		auto const compressed_battle = compress_battle(state);
-		auto _ = std::scoped_lock(m_mutex);
-		auto const & value = (*m_data)[index(compressed_battle)];
+	auto get_score(
+		CompressedBattle<generation> const & compressed_battle,
+		Depth const depth
+	) const -> tv::optional<ScoredSelections> {
+		auto const entry = get_entry(compressed_battle);
+		auto const & value = entry.value();
 		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
 			return value.selections;
 		}
@@ -56,6 +62,9 @@ struct TranspositionTable {
 	}
 
 private:
+	auto get_entry(this auto && self, CompressedBattle<generation> const & compressed_battle) {
+		return self.m_data[index(compressed_battle)].locked();
+	}
 	template<std::size_t... indexes>
 	static constexpr auto hash(CompressedBattle<generation> const & compressed_battle, std::index_sequence<indexes...>) -> TableIndex {
 		auto result = TableIndex(0_bi);
@@ -74,11 +83,13 @@ private:
 		Depth depth = Depth(0_bi, 0_bi);
 		ScoredSelections selections;
 	};
-	using Data = containers::array<Value, table_size>;
-	static_assert(std::same_as<TableIndex, containers::index_type<Data>>);
-
-	std::unique_ptr<Data> m_data = std::make_unique<Data>();
-	mutable std::mutex m_mutex;
+	using Element = concurrent::locked_access<Value>;
+	using Container = containers::dynamic_array<
+		Element,
+		bounded::constant_t<bounded::normalize<table_size>>
+	>;
+	static_assert(std::same_as<TableIndex, containers::index_type<Container>>);
+	Container m_data = Container(containers::repeat_default_n<Element>(table_size));
 };
 
 } // namespace technicalmachine
