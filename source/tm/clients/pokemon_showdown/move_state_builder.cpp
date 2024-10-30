@@ -84,7 +84,7 @@ export struct MoveStateBuilder {
 			return tv::none;
 		}
 		return tv::visit(*m_move, tv::overload(
-			[](Used const move) -> tv::optional<MoveName> {
+			[](VisibleMove const move) -> tv::optional<MoveName> {
 				return move.executed;
 			},
 			[](auto) -> tv::optional<MoveName> {
@@ -95,7 +95,7 @@ export struct MoveStateBuilder {
 
 	auto use_move(Party const party, MoveName const move, bool const miss = false) -> void {
 		if (!m_move) {
-			set_move_state(party, Used(move, miss));
+			set_move_state(party, VisibleMove(move, miss));
 			return;
 		}
 		tv::visit(*m_move, tv::overload(
@@ -109,9 +109,9 @@ export struct MoveStateBuilder {
 				if (!usable_while_sleeping(move)) {
 					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 				}
-				m_move->emplace([&] { return Used(move, miss); });
+				m_move->emplace([&] { return VisibleMove(move, miss); });
 			},
-			[&](Used & used) {
+			[&](VisibleMove & used) {
 				check_party(party);
 				if (used.executed != used.selected) {
 					throw std::runtime_error("Tried to execute multiple moves");
@@ -165,10 +165,10 @@ export struct MoveStateBuilder {
 		m_thaw_or_awaken = true;
 	}
 	auto confuse(Party const party) -> void {
-		set_used_flag(party, "Tried to confuse a Pokemon twice", &Used::confuse);
+		set_used_flag(party, "Tried to confuse a Pokemon twice", &VisibleMove::confuse);
 	}
 	auto critical_hit(Party const party) -> void {
-		set_used_flag(party, "Tried to critical hit a Pokemon twice", &Used::critical_hit);
+		set_used_flag(party, "Tried to critical hit a Pokemon twice", &VisibleMove::critical_hit);
 	}
 	auto flinch(Party const party) -> void {
 		set_move_state(party, Flinched());
@@ -203,7 +203,7 @@ export struct MoveStateBuilder {
 		move.phaze_index = index;
 	}
 	auto recoil(Party const party) -> void {
-		set_used_flag(party, "Tried to recoil a Pokemon twice", &Used::recoil);
+		set_used_flag(party, "Tried to recoil a Pokemon twice", &VisibleMove::recoil);
 	}
 
 	auto status_from_move(Party const party, StatusName const status) -> void {
@@ -266,7 +266,7 @@ export struct MoveStateBuilder {
 			return tv::none;
 		}
 		return tv::visit(*m_move, tv::overload(
-			[](Used const used) -> tv::optional<TeamIndex> { return used.phaze_index; },
+			[](VisibleMove const used) -> tv::optional<TeamIndex> { return used.phaze_index; },
 			[](auto const &) -> tv::optional<TeamIndex> { return tv::none; }
 		));
 	}
@@ -298,19 +298,19 @@ private:
 		}
 	}
 	auto check_is_used() const -> void {
-		if (!m_move or m_move->index() != bounded::type<Used>) {
+		if (!m_move or m_move->index() != bounded::type<VisibleMove>) {
 			throw error();
 		}
 	}
-	auto validated() const & -> Used const & {
+	auto validated() const & -> VisibleMove const & {
 		check_is_used();
-		return (*m_move)[bounded::type<Used>];
+		return (*m_move)[bounded::type<VisibleMove>];
 	}
-	auto validated() & -> Used & {
+	auto validated() & -> VisibleMove & {
 		check_is_used();
-		return (*m_move)[bounded::type<Used>];
+		return (*m_move)[bounded::type<VisibleMove>];
 	}
-	auto validated(Party const party) & -> Used & {
+	auto validated(Party const party) & -> VisibleMove & {
 		check_party(party);
 		return validated();
 	}

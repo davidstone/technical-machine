@@ -31,8 +31,8 @@ export struct FrozenSolid {};
 export struct FullyParalyzed {};
 export struct PartiallyTrapped {};
 export struct StillAsleep {};
-export struct Used {
-	constexpr explicit Used(MoveName const selected_, bool miss_ = false):
+export struct VisibleMove {
+	constexpr explicit VisibleMove(MoveName const selected_, bool miss_ = false):
 		selected(selected_),
 		miss(miss_)
 	{
@@ -56,7 +56,7 @@ export using MoveResult = tv::variant<
 	PartiallyTrapped,
 	Recharging,
 	StillAsleep,
-	Used
+	VisibleMove
 >;
 
 } // namespace technicalmachine

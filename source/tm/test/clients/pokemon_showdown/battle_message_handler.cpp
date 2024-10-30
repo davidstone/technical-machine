@@ -86,8 +86,8 @@ auto handle_end_turn(ClientBattle & battle) -> void {
 	battle.end_turn(true, {false, false, false}, {false, false, false});
 }
 
-constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> Used {
-	auto result = Used(move);
+constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> VisibleMove {
+	auto result = VisibleMove(move);
 	result.damage = remaining;
 	return result;
 }
@@ -291,13 +291,13 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 
 		expected->use_move(
 			true,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 
 		expected->use_move(
 			false,
-			Used(MoveName::Spikes),
+			VisibleMove(MoveName::Spikes),
 			false
 		);
 
@@ -328,7 +328,7 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 
 		expected->use_move(
 			false,
-			Used(MoveName::Spikes),
+			VisibleMove(MoveName::Spikes),
 			false
 		);
 
@@ -365,7 +365,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 
 	expected->use_move(
 		true,
-		Used(MoveName::Baton_Pass),
+		VisibleMove(MoveName::Baton_Pass),
 		false
 	);
 
@@ -398,12 +398,12 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 
 	expected->use_move(
 		true,
-		Used(MoveName::Baton_Pass),
+		VisibleMove(MoveName::Baton_Pass),
 		false
 	);
 	expected->use_move(
 		false,
-		Used(MoveName::Splash),
+		VisibleMove(MoveName::Splash),
 		false
 	);
 
@@ -447,7 +447,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 
 		expected->use_move(
 			true,
-			Used(MoveName::Thunderbolt),
+			VisibleMove(MoveName::Thunderbolt),
 			false
 		);
 
@@ -514,13 +514,13 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 
 		expected->use_move(
 			false,
-			Used(MoveName::Toxic),
+			VisibleMove(MoveName::Toxic),
 			false
 		);
 
 		expected->use_move(
 			true,
-			Used(MoveName::Mind_Reader),
+			VisibleMove(MoveName::Mind_Reader),
 			false
 		);
 
@@ -584,13 +584,13 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 
 		expected->use_move(
 			true,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 
 		expected->use_move(
 			false,
-			Used(MoveName::Spikes),
+			VisibleMove(MoveName::Spikes),
 			false
 		);
 
@@ -615,7 +615,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 
 		expected->use_move(
 			true,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 
@@ -875,7 +875,7 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 	);
 	expected->use_move(
 		true,
-		Used(MoveName::Pain_Split),
+		VisibleMove(MoveName::Pain_Split),
 		false
 	);
 	expected->correct_hp(
@@ -916,10 +916,10 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 
 		expected->use_move(
 			true,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
-		auto thunder_wave = Used(MoveName::Thunder_Wave);
+		auto thunder_wave = VisibleMove(MoveName::Thunder_Wave);
 		thunder_wave.status = StatusName::paralysis;
 		expected->use_move(
 			false,
@@ -942,7 +942,7 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 
 		expected->use_move(
 			false,
-			Used(MoveName::Thunder_Wave),
+			VisibleMove(MoveName::Thunder_Wave),
 			false
 		);
 		expected->use_move(
@@ -999,7 +999,7 @@ TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
 		false
 	);
 	{
-		auto move = Used(MoveName::Blizzard);
+		auto move = VisibleMove(MoveName::Blizzard);
 		move.damage = visible_hp(77_bi, 100_bi);
 		move.status = StatusName::freeze;
 		expected->use_move(
@@ -1053,7 +1053,7 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 		ps::TurnMessage(2_bi),
 	}));
 
-	auto move = Used(MoveName::Ice_Beam);
+	auto move = VisibleMove(MoveName::Ice_Beam);
 	move.damage = visible_hp(662_bi, 713_bi);
 	move.status = StatusName::freeze;
 	expected->use_move(
@@ -1102,12 +1102,12 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 
 		expected->use_move(
 			true,
-			Used(MoveName::Sketch),
+			VisibleMove(MoveName::Sketch),
 			false
 		);
 		expected->use_move(
 			false,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 		handle_end_turn(*expected);
@@ -1137,7 +1137,7 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 		);
 		expected->use_move(
 			false,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 
@@ -1173,7 +1173,7 @@ TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
 
 	expected->use_move(
 		false,
-		Used(MoveName::Confuse_Ray),
+		VisibleMove(MoveName::Confuse_Ray),
 		false
 	);
 	expected->hit_self_in_confusion(
@@ -1218,12 +1218,12 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 
 		expected->use_move(
 			true,
-			Used(MoveName::Splash),
+			VisibleMove(MoveName::Splash),
 			false
 		);
 		expected->use_move(
 			false,
-			Used(MoveName::Spikes),
+			VisibleMove(MoveName::Spikes),
 			false
 		);
 

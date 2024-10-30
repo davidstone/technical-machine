@@ -26,7 +26,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<any_active_pokemon UserPokemon>
-constexpr auto get_side_effect(Used const move, UserPokemon const user, OtherTeam<AssociatedTeam<UserPokemon>> const & other, Environment const environment) {
+constexpr auto get_side_effect(VisibleMove const move, UserPokemon const user, OtherTeam<AssociatedTeam<UserPokemon>> const & other, Environment const environment) {
 	auto const side_effects = possible_side_effects(move.executed, user, other, environment);
 
 	if (containers::size(side_effects) == 1_bi) {
@@ -57,7 +57,7 @@ constexpr auto get_side_effect(Used const move, UserPokemon const user, OtherTea
 }
 
 export template<any_team UserTeam>
-constexpr auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Environment const environment) -> UsedMove<UserTeam> {
+constexpr auto to_used_move(VisibleMove const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Environment const environment) -> UsedMove<UserTeam> {
 	return UsedMove<UserTeam>(
 		move.selected,
 		move.executed,

@@ -56,8 +56,8 @@ constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
 	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
 }
 
-constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> Used {
-	auto result = Used(move);
+constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> VisibleMove {
+	auto result = VisibleMove(move);
 	result.damage = remaining;
 	return result;
 }
@@ -113,7 +113,7 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 
 	battle->use_move(
 		true,
-		Used(MoveName::Splash),
+		VisibleMove(MoveName::Splash),
 		false
 	);
 
@@ -121,7 +121,7 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 
 	battle->use_move(
 		false,
-		Used(MoveName::Splash),
+		VisibleMove(MoveName::Splash),
 		false
 	);
 

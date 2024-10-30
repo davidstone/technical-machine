@@ -65,7 +65,7 @@ using namespace std::string_view_literals;
 
 constexpr auto move_should_have_recoil(
 	Generation const generation,
-	Used const move,
+	VisibleMove const move,
 	auto const user_pokemon,
 	auto const other_pokemon
 ) -> bool {
@@ -95,7 +95,7 @@ constexpr auto move_should_have_recoil(
 
 constexpr auto ability_from_recoil(
 	Generation const generation,
-	Used const move,
+	VisibleMove const move,
 	auto const user_pokemon,
 	auto const other_pokemon
 ) -> tv::optional<Ability> {
@@ -130,7 +130,7 @@ constexpr auto other_action(PokemonType const other_pokemon, ActualDamage const 
 
 constexpr auto non_damaging_move_did_damage(MoveResult const move) -> bool {
 	return tv::visit(move, tv::overload(
-		[](Used const used) {
+		[](VisibleMove const used) {
 			if (is_damaging(used.executed)) {
 				return false;
 			}
@@ -254,7 +254,7 @@ struct Battle {
 
 			// TODO: Handle the other states better
 			auto const move = tv::visit(move_result, tv::overload(
-				[](Used const used) {
+				[](VisibleMove const used) {
 					return used;
 				},
 				[&](Recharging) {
@@ -262,10 +262,10 @@ struct Battle {
 					if (!last_move) {
 						throw std::runtime_error("Tried to recharge without having just used a move");
 					}
-					return Used(*last_move);
+					return VisibleMove(*last_move);
 				},
 				[](auto) {
-					return Used(MoveName::Struggle);
+					return VisibleMove(MoveName::Struggle);
 				}
 			));
 

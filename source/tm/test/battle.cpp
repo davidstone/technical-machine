@@ -40,8 +40,8 @@ constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
 	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
 }
 
-constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> Used {
-	auto result = Used(move);
+constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> VisibleMove {
+	auto result = VisibleMove(move);
 	result.damage = remaining;
 	return result;
 }
@@ -79,12 +79,12 @@ TEST_CASE("Perish Song", "[Battle]") {
 
 		battle.use_move(
 			false,
-			Used(MoveName::Recover),
+			VisibleMove(MoveName::Recover),
 			false
 		);
 		battle.use_move(
 			true,
-			Used(MoveName::Perish_Song),
+			VisibleMove(MoveName::Perish_Song),
 			false
 		);
 
@@ -160,13 +160,13 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 
 	battle.use_move(
 		false,
-		Used(MoveName::Toxic),
+		VisibleMove(MoveName::Toxic),
 		false
 	);
 
 	battle.use_move(
 		true,
-		Used(MoveName::Splash),
+		VisibleMove(MoveName::Splash),
 		false
 	);
 
@@ -220,7 +220,7 @@ TEST_CASE("Handle hitting self in confusion", "[Battle]") {
 
 	battle.use_move(
 		false,
-		Used(MoveName::Confuse_Ray),
+		VisibleMove(MoveName::Confuse_Ray),
 		false
 	);
 
