@@ -20,10 +20,12 @@ import tm.team;
 import tm.team_is_empty;
 
 import bounded;
+import containers;
 import std_module;
 import tv;
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
 using Signature = auto(
 	GenerationGeneric<Team> const &,
@@ -48,6 +50,12 @@ struct Wrapper {
 		LegalSelections const foe_selections,
 		Environment const environment
 	) const -> BothWeightedSelections {
+		if (containers::size(ai_selections) == 1_bi) {
+			return BothWeightedSelections(
+				WeightedSelections({{containers::front(ai_selections), 1.0}}),
+				WeightedSelections()
+			);
+		}
 		return tv::visit(
 			generic_ai,
 			generic_foe,
