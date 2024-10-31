@@ -181,7 +181,7 @@ TEST_CASE("expectimax one-turn damage", "[expectimax]") {
 
 TEST_CASE("expectimax BellyZard", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	auto const strategy = make_strategy(2_bi);
+	auto const strategy = make_strategy(8_bi);
 	auto const environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -218,7 +218,7 @@ TEST_CASE("expectimax BellyZard", "[expectimax]") {
 
 TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	auto const strategy = make_strategy(11_bi);
+	auto const strategy = make_strategy(55_bi);
 	auto const environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -420,7 +420,7 @@ TEST_CASE("expectimax Baton Pass middle of turn other has not moved", "[expectim
 
 TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	auto const strategy = make_strategy(3_bi);
+	auto const strategy = make_strategy(14_bi);
 	auto const environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -459,7 +459,7 @@ TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 
 TEST_CASE("expectimax replace fainted", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	auto const strategy = make_strategy(2_bi);
+	auto const strategy = make_strategy(6_bi);
 	auto environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -534,7 +534,7 @@ TEST_CASE("expectimax replace fainted", "[expectimax]") {
 
 TEST_CASE("expectimax Latias vs Suicune", "[expectimax]") {
 	constexpr auto generation = Generation::four;
-	auto const strategy = make_strategy(3_bi);
+	auto const strategy = make_strategy(18_bi);
 	auto const environment = Environment();
 
 	auto attacker = Team<generation>({{
@@ -725,7 +725,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectimax]") {
 		{
 			.species = Species::Gengar,
 			.moves = {{
-				MoveName::Thunderbolt,
+				MoveName::Substitute,
 			}}
 		},
 	}});
@@ -734,7 +734,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectimax]") {
 	defender.pokemon().switch_in(environment, true);
 
 	CHECK(determine_best_selection(make_strategy(1_bi), attacker, defender, environment).selection == MoveName::Psychic);
-	CHECK(determine_best_selection(make_strategy(2_bi), attacker, defender, environment).selection == MoveName::Psychic);
+	CHECK(determine_best_selection(make_strategy(7_bi), attacker, defender, environment).selection == MoveName::Psychic);
 }
 
 } // namespace

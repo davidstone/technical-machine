@@ -240,7 +240,7 @@ auto execute_move(
 								is_fully_paralyzed
 							);
 							if (auto const won = win(copy.ai, copy.foe)) {
-								return *won + double(depth.general - 1_bi);
+								return *won + double(depth.remaining_general());
 							}
 							return continuation(copy);
 						}
@@ -261,7 +261,7 @@ auto execute_switch(State<generation> state, Selector const select, Switch const
 		switch_.value()
 	);
 	if (auto const won = win(state.ai, state.foe)) {
-		return *won + double(depth.general - 1_bi);
+		return *won + double(depth.remaining_general());
 	}
 	return continuation(state);
 }
@@ -412,11 +412,12 @@ private:
 			}
 		}
 
+		auto const new_depth = depth.reduced(containers::size(ai_selections));
 		auto const actions = score_selections(
 			ai_selections,
 			foe_selections,
 			[&](Selection const ai_selection, Selection const foe_selection) {
-				return order_branch(state, ai_selection, foe_selection, depth);
+				return order_branch(state, ai_selection, foe_selection, new_depth);
 			}
 		);
 		if (m_transposition_table) {
@@ -448,6 +449,7 @@ private:
 				return *score;
 			}
 		}
+		auto const new_depth = depth.reduced(containers::size(ai_selections));
 		auto const actions = score_selections(
 			ai_selections,
 			foe_selections,
@@ -463,13 +465,13 @@ private:
 						is_fainted(selected.other) or
 						(generation <= Generation::three and is_fainted(selected.selection));
 					if (should_end_turn) {
-						return end_of_turn_flag_branch(updated, depth);
+						return end_of_turn_flag_branch(updated, new_depth);
 					} else {
 						return middle_of_turn_after_switch(
 							original,
 							updated,
 							selector.invert(),
-							depth,
+							new_depth,
 							forced_continuation
 						);
 					}
@@ -517,6 +519,7 @@ private:
 			last_selections,
 			first_selections
 		);
+		auto const new_depth = depth.reduced(containers::size(ai_selections));
 		return max_score(score_selections(
 			ai_selections,
 			get_foe_selections(state, ai_selections, foe_selections),
@@ -530,7 +533,7 @@ private:
 					get_other_action(old_select.other.pokemon()),
 					depth,
 					[&](State<generation> const & updated) {
-						return end_of_turn_flag_branch(updated, depth);
+						return end_of_turn_flag_branch(updated, new_depth);
 					}
 				);
 			}
@@ -579,12 +582,13 @@ private:
 		if constexpr (generation != Generation::two) {
 			std::unreachable();
 		} else {
+			auto const new_depth = depth.reduced(containers::size(ai_selections));
 			return replace_fainted_action(
 				original,
 				ai_selections,
 				foe_selections,
 				[&](State<generation> const & updated) {
-					return end_of_turn_flag_branch(updated, depth);
+					return end_of_turn_flag_branch(updated, new_depth);
 				}
 			);
 		}
@@ -596,12 +600,13 @@ private:
 		WeightedSelections const foe_selections,
 		Depth const depth
 	) -> ScoredSelections {
+		auto const new_depth = depth.reduced(containers::size(ai_selections));
 		return replace_fainted_action(
 			original,
 			ai_selections,
 			foe_selections,
 			[&](State<generation> const & updated) {
-				return finish_end_of_turn(updated, depth);
+				return finish_end_of_turn(updated, new_depth);
 			}
 		);
 	}
@@ -816,23 +821,24 @@ private:
 	auto finish_end_of_turn(State<generation> const & state, Depth const original_depth) -> double {
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
 			if (auto const won = win(state.ai, state.foe)) {
-				return *won + double(original_depth.general);
+				return *won + double(original_depth.remaining_general());
 			}
 			auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);
 			return max_score(after_end_of_turn_action(
 				state,
 				ai_selections,
 				get_foe_selections(state, ai_selections),
-				original_depth
+				original_depth.reduced(containers::size(ai_selections))
 			));
 		}
-		auto const depth = one_level_deeper(original_depth);
-		if (depth.general > 0_bi) {
-			return max_score(start_of_turn_action(state, depth));
-		} else if (depth.single > 0_bi) {
-			return generate_single_matchups(state, depth);
-		} else {
-			return static_cast<double>(m_evaluate(state.ai, state.foe));
+		auto const depth = original_depth.one_level_deeper();
+		switch (depth.search_type()) {
+			case SearchType::full:
+				return max_score(start_of_turn_action(state, depth));
+			case SearchType::single:
+				return generate_single_matchups(state, depth);
+			case SearchType::evaluate:
+				return static_cast<double>(m_evaluate(state.ai, state.foe));
 		}
 	}
 
@@ -861,7 +867,7 @@ private:
 		remove_all_but_index(state.ai, ai_index, state.foe);
 		remove_all_but_index(state.foe, foe_index, state.ai);
 		if (auto const won = win(state.ai, state.foe)) {
-			return *won + double(depth.general - 1_bi);
+			return *won;
 		}
 		return max_score(start_of_turn_action(state, depth));
 	}
