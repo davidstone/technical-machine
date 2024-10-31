@@ -41,6 +41,7 @@ import tm.status.status_name;
 
 import tm.type.effectiveness;
 import tm.type.move_type;
+import tm.type.type;
 
 import tm.ability;
 import tm.ability_blocks_move;
@@ -150,6 +151,9 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
 	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), environment)) {
+		if (containers::maybe_find(other_pokemon.types(), Type::Ghost)) {
+			user.pokemon().recharge();
+		}
 		return;
 	}
 
