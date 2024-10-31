@@ -35,6 +35,38 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 	}
 }
 
+template<std::size_t... indexes>
+constexpr auto hash(auto const & compressed_battle, std::index_sequence<indexes...>) -> TableIndex {
+	auto result = TableIndex(0_bi);
+	(..., update_hash(result, compressed_battle[bounded::constant<indexes>]));
+	return result;
+}
+
+template<typename Compressed>
+constexpr auto index(Compressed const & compressed_battle) -> TableIndex {
+	return hash(
+		compressed_battle,
+		bounded::make_index_sequence(tv::tuple_size<Compressed>)
+	);
+}
+
+template<Generation generation>
+struct ThreadSafeContainer {
+	auto operator[](this auto && self, CompressedBattle<generation> const & compressed_battle) {
+		return self.m_data[index(compressed_battle)].locked();
+	}
+private:
+	struct Value {
+		CompressedBattle<generation> compressed_battle = {};
+		Depth depth = Depth(0_bi, 0_bi);
+		ScoredSelections selections;
+	};
+	using Element = concurrent::locked_access<Value>;
+	using Container = containers::array<Element, table_size>;
+	static_assert(std::same_as<TableIndex, containers::index_type<Container>>);
+	Container m_data;
+};
+
 export template<Generation generation>
 struct TranspositionTable {
 	auto add_score(
@@ -42,7 +74,7 @@ struct TranspositionTable {
 		Depth const depth,
 		ScoredSelections selections
 	) -> void {
-		auto const entry = get_entry(compressed_battle);
+		auto const entry = m_container[compressed_battle];
 		auto & value = entry.value();
 		value.compressed_battle = compressed_battle;
 		value.depth = depth;
@@ -53,7 +85,7 @@ struct TranspositionTable {
 		CompressedBattle<generation> const & compressed_battle,
 		Depth const depth
 	) const -> tv::optional<ScoredSelections> {
-		auto const entry = get_entry(compressed_battle);
+		auto const entry = m_container[compressed_battle];
 		auto const & value = entry.value();
 		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
 			return value.selections;
@@ -62,31 +94,7 @@ struct TranspositionTable {
 	}
 
 private:
-	auto get_entry(this auto && self, CompressedBattle<generation> const & compressed_battle) {
-		return self.m_data[index(compressed_battle)].locked();
-	}
-	template<std::size_t... indexes>
-	static constexpr auto hash(CompressedBattle<generation> const & compressed_battle, std::index_sequence<indexes...>) -> TableIndex {
-		auto result = TableIndex(0_bi);
-		(..., update_hash(result, compressed_battle[bounded::constant<indexes>]));
-		return result;
-	}
-	static constexpr auto index(CompressedBattle<generation> const & compressed_battle) -> TableIndex {
-		return hash(
-			compressed_battle,
-			bounded::make_index_sequence(tv::tuple_size<CompressedBattle<generation>>)
-		);
-	}
-
-	struct Value {
-		CompressedBattle<generation> compressed_battle = {};
-		Depth depth = Depth(0_bi, 0_bi);
-		ScoredSelections selections;
-	};
-	using Element = concurrent::locked_access<Value>;
-	using Container = containers::array<Element, table_size>;
-	static_assert(std::same_as<TableIndex, containers::index_type<Container>>);
-	Container m_data;
+	ThreadSafeContainer<generation> m_container;
 };
 
 } // namespace technicalmachine
