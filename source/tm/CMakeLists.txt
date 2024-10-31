@@ -167,6 +167,7 @@ target_sources(tm_common PUBLIC
 		strategy/expectimax.cpp
 		strategy/max_damage.cpp
 		strategy/net_hp.cpp
+		strategy/parse_strategy.cpp
 		strategy/random_selection.cpp
 		strategy/statistical.cpp
 		strategy/strategy.cpp
