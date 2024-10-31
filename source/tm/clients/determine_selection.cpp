@@ -108,9 +108,11 @@ auto determine_selection(
 		state.environment
 	);
 
-	sort_selections(result.predicted_other);
-	stream << "Predicted:\n";
-	log_move_probabilities(stream, result.predicted_other, state.foe);
+	if (!containers::is_empty(result.predicted_other)) {
+		sort_selections(result.predicted_other);
+		stream << "Predicted:\n";
+		log_move_probabilities(stream, result.predicted_other, state.foe);
+	}
 	sort_selections(result.user);
 	stream << "Use:\n";
 	log_move_probabilities(stream, result.user, state.ai);
