@@ -5,7 +5,6 @@
 
 export module tm.strategy.expectimax;
 
-import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
 import tm.strategy.strategy;
@@ -13,7 +12,6 @@ import tm.strategy.strategy;
 namespace technicalmachine {
 
 export auto make_expectimax(
-	AllEvaluate all_evaluate,
 	Depth const depth,
 	Strategy foe_strategy
 ) -> Strategy;

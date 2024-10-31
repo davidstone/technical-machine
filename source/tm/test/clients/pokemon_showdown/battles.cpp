@@ -18,7 +18,6 @@ import tm.clients.ps.room_message_block;
 
 import tm.clients.determine_selection;
 
-import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
 import tm.strategy.expectimax;
@@ -68,7 +67,6 @@ struct Evaluator {
 	}
 private:
 	Strategy m_strategy = make_expectimax(
-		AllEvaluate(),
 		depth,
 		make_statistical()
 	);

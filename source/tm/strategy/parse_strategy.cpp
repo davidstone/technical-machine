@@ -10,7 +10,6 @@ module;
 
 export module tm.strategy.parse_strategy;
 
-import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
 import tm.strategy.expectimax;
@@ -58,7 +57,6 @@ export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 			throw std::runtime_error("expectimax strategy requires two depth arguments followed by a foe strategy");
 		}
 		return make_expectimax(
-			AllEvaluate(),
 			Depth(
 				bounded::to_integer<DepthInt>(argv[1]),
 				bounded::to_integer<DepthInt>(argv[2])

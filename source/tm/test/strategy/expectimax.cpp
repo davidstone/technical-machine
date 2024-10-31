@@ -7,12 +7,8 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
-import tm.evaluate.evaluate;
 import tm.evaluate.scored_selection;
-import tm.evaluate.state;
-import tm.evaluate.victory;
 
 import tm.move.actual_damage;
 import tm.move.call_move;
@@ -59,7 +55,6 @@ using namespace bounded::literal;
 
 auto make_strategy(DepthInt const depth) -> Strategy {
 	return make_expectimax(
-		AllEvaluate(),
 		Depth(depth, 0_bi),
 		make_random_selection()
 	);

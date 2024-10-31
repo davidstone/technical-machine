@@ -11,6 +11,7 @@ module;
 
 module tm.strategy.expectimax;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
@@ -972,11 +973,14 @@ auto to_weighted_selections(ScoredSelections selections) -> WeightedSelections {
 } // namespace
 
 auto make_expectimax(
-	AllEvaluate all_evaluate,
 	Depth const depth,
 	Strategy foe_strategy_
 ) -> Strategy {
-	return Strategy([=, foe_strategy = std::move(foe_strategy_)]<Generation generation>(
+	return Strategy([
+		depth,
+		all_evaluate = AllEvaluate(),
+		foe_strategy = std::move(foe_strategy_)
+	]<Generation generation>(
 		Team<generation> const & ai,
 		LegalSelections const ai_selections,
 		Team<generation> const & foe,

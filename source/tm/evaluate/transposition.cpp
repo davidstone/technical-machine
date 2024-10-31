@@ -8,7 +8,6 @@ export module tm.evaluate.transposition;
 import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
 import tm.evaluate.scored_selection;
-import tm.evaluate.state;
 
 import tm.move.move_name;
 
