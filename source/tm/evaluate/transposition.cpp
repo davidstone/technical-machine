@@ -84,12 +84,9 @@ private:
 		ScoredSelections selections;
 	};
 	using Element = concurrent::locked_access<Value>;
-	using Container = containers::dynamic_array<
-		Element,
-		bounded::constant_t<bounded::normalize<table_size>>
-	>;
+	using Container = containers::array<Element, table_size>;
 	static_assert(std::same_as<TableIndex, containers::index_type<Container>>);
-	Container m_data = Container(containers::repeat_default_n<Element>(table_size));
+	Container m_data;
 };
 
 } // namespace technicalmachine

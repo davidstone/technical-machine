@@ -360,9 +360,17 @@ constexpr auto get_other_action(any_active_pokemon auto const pokemon) -> OtherA
 
 template<Generation generation>
 struct Evaluator {
-	explicit Evaluator(Evaluate<generation> const evaluate, Strategy const & foe_strategy):
+	explicit Evaluator(
+		Evaluate<generation> const evaluate,
+		Strategy const & foe_strategy,
+		Depth const depth
+	):
 		m_evaluate(evaluate),
-		m_foe_strategy(foe_strategy)
+		m_foe_strategy(foe_strategy),
+		m_transposition_table(depth > Depth(1_bi, 1_bi) ?
+			std::make_unique<TranspositionTable<generation>>() :
+			nullptr
+		)
 	{
 	}
 
@@ -398,8 +406,10 @@ private:
 		check_is_valid_start_of_turn(state.foe);
 
 		auto const compressed_battle = compress_battle(state);
-		if (auto const score = m_transposition_table.get_score(compressed_battle, depth)) {
-			return *score;
+		if (m_transposition_table) {
+			if (auto const score = m_transposition_table->get_score(compressed_battle, depth)) {
+				return *score;
+			}
 		}
 
 		auto const actions = score_selections(
@@ -409,7 +419,9 @@ private:
 				return order_branch(state, ai_selection, foe_selection, depth);
 			}
 		);
-		m_transposition_table.add_score(compressed_battle, depth, actions);
+		if (m_transposition_table) {
+			m_transposition_table->add_score(compressed_battle, depth, actions);
+		}
 		return actions;
 	}
 
@@ -431,8 +443,10 @@ private:
 		tv::optional<Selection> const forced_continuation = tv::none
 	) -> ScoredSelections {
 		auto const compressed_battle = compress_battle(original);
-		if (auto const score = m_transposition_table.get_score(compressed_battle, depth)) {
-			return *score;
+		if (m_transposition_table) {
+			if (auto const score = m_transposition_table->get_score(compressed_battle, depth)) {
+				return *score;
+			}
 		}
 		auto const actions = score_selections(
 			ai_selections,
@@ -474,7 +488,9 @@ private:
 			}
 		);
 
-		m_transposition_table.add_score(compressed_battle, depth, actions);
+		if (m_transposition_table) {
+			m_transposition_table->add_score(compressed_battle, depth, actions);
+		}
 		return actions;
 	}
 
@@ -932,7 +948,7 @@ private:
 
 	Evaluate<generation> m_evaluate;
 	std::reference_wrapper<Strategy const> m_foe_strategy;
-	TranspositionTable<generation> m_transposition_table;
+	std::unique_ptr<TranspositionTable<generation>> m_transposition_table;
 };
 
 auto to_weighted_selections(ScoredSelections selections) -> WeightedSelections {
@@ -963,7 +979,8 @@ auto make_expectimax(
 	) -> BothWeightedSelections {
 		auto evaluator = Evaluator(
 			all_evaluate.get<generation>(),
-			foe_strategy
+			foe_strategy,
+			depth
 		);
 		auto const predicted_foe_selections = foe_strategy(
 			foe,
