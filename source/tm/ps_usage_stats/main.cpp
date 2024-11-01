@@ -6,16 +6,15 @@
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;
 import tm.ps_usage_stats.mode;
+import tm.ps_usage_stats.parallel_for_each;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.serialize;
 import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.usage_stats;
-import tm.ps_usage_stats.worker;
 
 import tm.string_conversions.generation;
 
@@ -128,26 +127,22 @@ auto populate_ratings_estimate(std::filesystem::path const & team_path) -> Glick
 
 auto make_correlations(Mode const mode, ThreadCount const thread_count, std::filesystem::path const & teams_file_path, Glicko1 const & ratings_estimate, UsageStats const & usage_stats) {
 	auto correlations = Correlations(usage_stats);
-	{
-		auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {
-			return make_worker<BattleResult>([&](BattleResult const & result) {
-				do_pass(
-					mode,
-					ratings_estimate,
-					result,
-					[&](auto const & team, double const weight) {
-						if (weight != 0.0) {
-							correlations.add(team, weight);
-						}
+	parallel_for_each(
+		thread_count,
+		battle_result_reader(teams_file_path),
+		[&](BattleResult const & result) {
+			do_pass(
+				mode,
+				ratings_estimate,
+				result,
+				[&](auto const & team, double const weight) {
+					if (weight != 0.0) {
+						correlations.add(team, weight);
 					}
-				);
-			});
-		}));
-		add_to_workers(
-			battle_result_reader(teams_file_path),
-			workers
-		);
-	}
+				}
+			);
+		}
+	);
 	return correlations;
 }
 

@@ -28,6 +28,7 @@ import tm.pokemon.species;
 import tm.ps_usage_stats.battle_log_to_messages;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.files_in_directory;
+import tm.ps_usage_stats.parallel_for_each;
 import tm.ps_usage_stats.parse_input_log;
 import tm.ps_usage_stats.parse_log;
 import tm.ps_usage_stats.rating;
@@ -310,39 +311,35 @@ auto write_to_file(std::ostream & stream, SelectionWeightsMaker const & weights)
 }
 
 auto create_selection_weights(SelectionWeightsMaker & weights, ThreadCount const thread_count, std::filesystem::path const & input_directory) -> void {
-	auto queue = concurrent::basic_blocking_queue<std::deque<std::filesystem::path>>(1000);
-	auto workers = containers::dynamic_array<std::jthread>(containers::generate_n(thread_count, [&] {
-		return std::jthread([&](std::stop_token token) {
-			while (auto input_file = queue.pop_one(token)) {
-				try {
-					auto const json = load_json_from_file(*input_file);
-					auto const battle_result = parse_log(json);
-					if (!battle_result) {
-						continue;
-					}
-					auto const battle_messages = battle_log_to_messages(json.at("log"));
-					auto const input_log = parse_input_log(json.at("inputLog"));
-					auto sides = containers::array({
-						RatedSide(Party(0_bi), battle_result->side1),
-						RatedSide(Party(1_bi), battle_result->side2)
-					});
-					for (auto const rated_side : sides) {
-						update_weights_for_one_side_of_battle(
-							weights,
-							rated_side,
-							battle_messages,
-							input_log
-						);
-					}
-				} catch (std::exception const & ex) {
-					std::cerr << "Unable to process " << input_file->string() << ": " << ex.what() << ", skipping\n";
+	parallel_for_each(
+		thread_count,
+		files_in_directory(input_directory),
+		[&](std::filesystem::path const & input_file) {
+			try {
+				auto const json = load_json_from_file(input_file);
+				auto const battle_result = parse_log(json);
+				if (!battle_result) {
+					return;
 				}
+				auto const battle_messages = battle_log_to_messages(json.at("log"));
+				auto const input_log = parse_input_log(json.at("inputLog"));
+				auto sides = containers::array({
+					RatedSide(Party(0_bi), battle_result->side1),
+					RatedSide(Party(1_bi), battle_result->side2)
+				});
+				for (auto const rated_side : sides) {
+					update_weights_for_one_side_of_battle(
+						weights,
+						rated_side,
+						battle_messages,
+						input_log
+					);
+				}
+			} catch (std::exception const & ex) {
+				std::cerr << "Unable to process " << input_file.string() << ": " << ex.what() << ", skipping\n";
 			}
-		});
-	}));
-	for (auto file : files_in_directory(input_directory)) {
-		queue.push(std::move(file));
-	}
+		}
+	);
 }
 
 } // namespace technicalmachine::ps_usage_stats

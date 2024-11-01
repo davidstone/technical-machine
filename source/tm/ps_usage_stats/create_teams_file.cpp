@@ -6,12 +6,11 @@
 #include <std_module/prelude.hpp>
 #include <filesystem>
 
-import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result_writer;
 import tm.ps_usage_stats.files_in_directory;
+import tm.ps_usage_stats.parallel_for_each;
 import tm.ps_usage_stats.parse_log;
 import tm.ps_usage_stats.thread_count;
-import tm.ps_usage_stats.worker;
 
 import tm.load_json_from_file;
 
@@ -53,8 +52,10 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadCount const thread_count, std::filesystem::path const & input_directory) -> void {
 	auto battle_result_writer = BattleResultWriter(output_file);
 	auto writer_mutex = std::mutex();
-	auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {
-		return make_worker<std::filesystem::path>([&](std::filesystem::path const & input_file) {
+	parallel_for_each(
+		thread_count,
+		files_in_directory(input_directory),
+		[&](std::filesystem::path const & input_file) {
 			try {
 				auto const battle_result = parse_log(load_json_from_file(input_file));
 				if (!battle_result) {
@@ -65,11 +66,7 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 			} catch (std::exception const & ex) {
 				throw std::runtime_error(containers::concatenate<std::string>("Error parsing "sv, input_file.string(), ": "sv, std::string_view(ex.what())));
 			}
-		});
-	}));
-	add_to_workers(
-		files_in_directory(input_directory),
-		workers
+		}
 	);
 }
 

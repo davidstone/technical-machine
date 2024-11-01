@@ -362,7 +362,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/sockets.cpp
 		clients/pokemon_showdown/to_packed_format.cpp
 
-		ps_usage_stats/add_to_workers.cpp
 		ps_usage_stats/battle_log_to_messages.cpp
 		ps_usage_stats/battle_result.cpp
 		ps_usage_stats/battle_result_reader.cpp
@@ -370,13 +369,13 @@ target_sources(tm_pokemon_showdown PUBLIC
 		ps_usage_stats/files_in_directory.cpp
 		ps_usage_stats/glicko1.cpp
 		ps_usage_stats/mode.cpp
+		ps_usage_stats/parallel_for_each.cpp
 		ps_usage_stats/parse_input_log.cpp
 		ps_usage_stats/parse_log.cpp
 		ps_usage_stats/rating.cpp
 		ps_usage_stats/serialize.cpp
 		ps_usage_stats/thread_count.cpp
 		ps_usage_stats/usage_stats.cpp
-		ps_usage_stats/worker.cpp
 )
 target_sources(tm_pokemon_showdown PRIVATE
 	clients/pokemon_showdown/battle_message_handler_impl.cpp
