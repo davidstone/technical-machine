@@ -201,50 +201,6 @@ struct RatedSide {
 	tv::optional<Rating> rating;
 };
 
-auto print_predicted(auto && all_predicted) {
-	std::cerr << "Predicted: " << '\n';
-	for (auto && predicted : all_predicted.predicted) {
-		std::cerr << '\t';
-		tv::visit(predicted.selection, tv::overload(
-			[](Switch const switch_) { std::cerr << "Switch" << switch_.value(); },
-			[](MoveName const move) { std::cerr << to_string(move); },
-			[](Pass) { std::cerr << "Pass"; }
-		));
-		std::cerr << ": " << predicted.weight << '\n';
-	}
-}
-
-auto print_actual(auto && all_actual) {
-	tv::visit(all_actual.selection, tv::overload(
-		[](MoveName const move) { std::cerr << "Use " << to_string(move); },
-		[](BattleResponseSwitch const move) { std::cerr << "Switch " << move; }
-	));
-	std::cerr << '\n';
-}
-
-auto print_all(
-	Strategy const & strategy,
-	AllUsageStats const & all_usage_stats,
-	RatedSide const & rated_side,
-	std::span<BattleMessage const> const battle_messages,
-	std::span<PlayerInput const> const player_inputs
-) -> void {
-	auto battle = BattleManager();
-	battle.handle_message(rated_side.side);
-	auto range = containers::zip_smallest(
-		predicted_selections(strategy, battle_messages, battle, all_usage_stats),
-		containers::filter(player_inputs, is_input_for(rated_side.side.party))
-	);
-	auto const last = containers::end(std::move(range));
-	for (auto it = containers::begin(std::move(range)); it != last; ++it) {
-		auto && values = *it;
-		print_predicted(values[0_bi]);
-		print_actual(values[1_bi]);
-		std::cerr << "Score: " << individual_brier_score(values) << '\n';
-		std::cerr << '\n';
-	}
-}
-
 auto score_one_side_of_battle(
 	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
@@ -252,7 +208,6 @@ auto score_one_side_of_battle(
 	std::span<BattleMessage const> const battle_messages,
 	std::span<PlayerInput const> const player_inputs
 ) -> WeightedScore {
-	//print_all(strategy, all_usage_stats, rated_side, battle_messages, player_inputs);
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
 	auto const scores = containers::vector(containers::transform(
