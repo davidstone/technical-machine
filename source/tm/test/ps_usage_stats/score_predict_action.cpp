@@ -293,8 +293,8 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 						input_log
 					);
 				}));
-				auto previous = score.load();
-				while (!score.compare_exchange_weak(previous, previous + individual)) {
+				auto previous = score.load(std::memory_order::relaxed);
+				while (!score.compare_exchange_weak(previous, previous + individual, std::memory_order::relaxed)) {
 				}
 			} catch (std::exception const & ex) {
 				std::cerr << "Unable to process " << input_file.string() << ": " << ex.what() << ", skipping\n";
