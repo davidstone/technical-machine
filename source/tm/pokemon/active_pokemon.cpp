@@ -606,6 +606,9 @@ public:
 	constexpr auto advance_disable() const {
 		this->m_flags.disable.advance_one_turn();
 	}
+	constexpr auto end_disable() const -> void {
+		this->m_flags.disable = {};
+	}
 	constexpr auto activate_embargo() const {
 		this->m_flags.embargo.activate();
 	}

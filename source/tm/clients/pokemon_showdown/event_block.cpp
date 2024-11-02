@@ -258,6 +258,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			[&](FromConfusion) -> tv::optional<ParsedMessage> {
 				return ConfusionEndedMessage(party);
 			},
+			[&](FromDisable) -> tv::optional<ParsedMessage> {
+				return DisableEndedMessage(party);
+			},
 			[](FromMiscellaneous) -> tv::optional<ParsedMessage> {
 				return tv::none;
 			},

@@ -148,6 +148,10 @@ struct ClientBattleImpl final : ClientBattle {
 		m_battle.hit_self_in_confusion(ai_is_user, damage);
 	}
 
+	auto end_disable(bool ai_is_user) & -> void final {
+		m_battle.end_disable(ai_is_user);
+	}
+
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.end_turn(ai_went_first, first_flags, last_flags);
 	}

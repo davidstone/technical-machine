@@ -98,6 +98,11 @@ export struct DisableMessage {
 	friend auto operator==(DisableMessage, DisableMessage) -> bool = default;
 };
 
+export struct DisableEndedMessage {
+	Party party;
+	friend auto operator==(DisableEndedMessage, DisableEndedMessage) -> bool = default;
+};
+
 export struct RechargingMessage {
 	Party party;
 	friend auto operator==(RechargingMessage, RechargingMessage) -> bool = default;
@@ -244,6 +249,7 @@ export using ParsedMessage = tv::variant<
 	PartiallyTrappedMessage,
 	StillAsleepMessage,
 	DisableMessage,
+	DisableEndedMessage,
 	RechargingMessage,
 	CriticalHitMessage,
 	StatusClearMessage,

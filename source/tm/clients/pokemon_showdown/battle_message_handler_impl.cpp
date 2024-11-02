@@ -205,6 +205,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				);
 				// TODO: Implement Generation 1 Disable
 			},
+			[&](DisableEndedMessage const message) {
+				m_client_battle->end_disable(message.party == m_party);
+			},
 			[&](RechargingMessage const message) {
 				use_previous_action();
 				auto & move_builder = make_move_builder();
