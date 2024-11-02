@@ -264,8 +264,9 @@ struct Battle {
 					}
 					return VisibleMove(*last_move);
 				},
-				[](auto) {
-					return VisibleMove(MoveName::Struggle);
+				[&](auto) {
+					auto const locked_in = user_pokemon.last_used_move().locked_in();
+					return VisibleMove(locked_in ? *locked_in : MoveName::Struggle);
 				}
 			));
 
