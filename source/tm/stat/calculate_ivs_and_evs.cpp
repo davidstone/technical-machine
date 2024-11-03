@@ -68,26 +68,19 @@ constexpr auto calculate_ivs_and_evs(
 		);
 	};
 	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::type_t<DVOrIV>, auto const to_ev) {
-		struct WithOptionalEV {
-			DVOrIV dv_or_iv;
-			tv::optional<EV> ev;
-		};
 		using WithEV = std::conditional_t<std::same_as<DVOrIV, DV>, DVAndEV, IVAndEV>;
 		return containers::make_static_vector(
-			containers::transform(
-				containers::filter(
-					containers::transform(
-						containers::reversed(possible),
-						[=](DVOrIV const dv_or_iv) {
-							return WithOptionalEV{
-								dv_or_iv,
-								to_ev(dv_or_iv)
-							};
+			containers::remove_none(
+				containers::transform(
+					containers::reversed(possible),
+					[=](DVOrIV const dv_or_iv) -> tv::optional<WithEV> {
+						auto const ev = to_ev(dv_or_iv);
+						if (!ev) {
+							return tv::none;
 						}
-					),
-					[](WithOptionalEV const value) { return static_cast<bool>(value.ev); }
-				),
-				[](WithOptionalEV const value) { return WithEV{value.dv_or_iv, *value.ev}; }
+						return WithEV(dv_or_iv, *ev);
+					}
+				)
 			)
 		);
 	};
@@ -242,7 +235,7 @@ constexpr auto calculate_ivs_and_evs(
 	Level const level,
 	Stats<stat_style_for(generation)> const stats,
 	tv::optional<HiddenPower<generation>> const hidden_power
-) {
+) -> CombinedStatsFor<generation> {
 	constexpr auto nature_range = generation <= Generation::two ?
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
