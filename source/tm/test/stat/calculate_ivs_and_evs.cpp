@@ -30,6 +30,43 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
+// Generation 1 min special
+static_assert([]{
+	constexpr auto generation = Generation::one;
+	constexpr auto species = Species::Snorlax;
+	constexpr auto level = Level(100_bi);
+	constexpr auto stats = Stats<stat_style_for(generation)>(
+		HP(521_bi),
+		318_bi,
+		228_bi,
+		135_bi,
+		135_bi,
+		158_bi
+	);
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
+
+	constexpr auto expected = CombinedStatsFor<generation>{
+		.dvs_or_ivs = DVs(
+			DV(15_bi),
+			DV(15_bi),
+			DV(15_bi),
+			DV(0_bi)
+		),
+		.evs = OldGenEVs(
+			EV(252_bi),
+			EV(252_bi),
+			EV(252_bi),
+			EV(252_bi),
+			EV(0_bi)
+		)
+	};
+
+	constexpr auto calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
+
+	return calculated == expected;
+}());
+
+
 // Calculate low Attack EVs
 static_assert([]{
 	constexpr auto generation = Generation::four;

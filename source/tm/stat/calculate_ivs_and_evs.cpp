@@ -121,7 +121,7 @@ constexpr auto calculate_ivs_and_evs(
 						// increase SpD to the correct value.
 						auto const spc_ev = bounded::max(*spa_ev, *spd_ev);
 
-						auto const dvs = DVs(atk.dv, def.dv, spc_dv, spe.dv);
+						auto const dvs = DVs(atk.dv, def.dv, spe.dv, spc_dv);
 						auto const hp_ev = hp_to_ev(stats.hp().max(), base.hp(), level, IV(dvs.hp()));
 						if (!hp_ev) {
 							continue;
