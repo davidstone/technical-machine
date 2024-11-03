@@ -232,6 +232,7 @@ using PerOther = UsageFor<Species, concurrent::locked_access<PerMatchup>>;
 using SelectionWeightsMaker = UsageFor<Species, PerOther>;
 
 auto update_weights_for_one_side_of_battle(
+	std::filesystem::path const & input_file,
 	SelectionWeightsMaker & weights,
 	RatedSide const & rated_side,
 	std::span<ps::BattleMessage const> const battle_messages,
@@ -245,44 +246,49 @@ auto update_weights_for_one_side_of_battle(
 	);
 	auto first = containers::begin(std::move(selections));
 	auto const last = containers::end(std::move(selections));
-	for (; first != last; ++first) {
-		auto const & [state, input] = *first;
-		auto & other_weights = weights[to_index(state.other)];
-		auto get_weight = [&] {
-			return other_weights[to_index(state.user.pokemon[to_index(state.user.active)])].locked();
-		};
-		tv::visit(input.selection, tv::overload(
-			[&](MoveName const move) {
-				auto const weight = get_weight();
-				for (auto const possible : state.user.moves) {
-					if (move == possible) {
-						weight.value().used(possible);
-					} else {
+	try {
+		for (; first != last; ++first) {
+			auto const & [state, input] = *first;
+			auto & other_weights = weights[to_index(state.other)];
+			auto get_weight = [&] {
+				return other_weights[to_index(state.user.pokemon[to_index(state.user.active)])].locked();
+			};
+			tv::visit(input.selection, tv::overload(
+				[&](MoveName const move) {
+					auto const weight = get_weight();
+					for (auto const possible : state.user.moves) {
+						if (move == possible) {
+							weight.value().used(possible);
+						} else {
+							weight.value().did_not_use(possible);
+						}
+					}
+				},
+				[&](ps::BattleResponseSwitch const switch_) {
+					auto const team_size = containers::size(state.user.pokemon);
+					for (auto const index : containers::integer_range(team_size)) {
+						if (index == state.user.active) {
+							continue;
+						}
+						auto const potential_replacement = state.user.pokemon[index];
+						auto const weight = other_weights[to_index(potential_replacement)].locked();
+						if (state.slot_memory.reverse_lookup(switch_) == index) {
+							weight.value().switched_in(bounded::assume_in_range<TeamSize>(team_size - 1_bi));
+						} else {
+							weight.value().did_not_switch_in();
+						}
+					}
+					auto const weight = get_weight();
+					for (auto const possible : state.user.moves) {
 						weight.value().did_not_use(possible);
 					}
+					weight.value().switched_out();
 				}
-			},
-			[&](ps::BattleResponseSwitch const switch_) {
-				auto const team_size = containers::size(state.user.pokemon);
-				for (auto const index : containers::integer_range(team_size)) {
-					if (index == state.user.active) {
-						continue;
-					}
-					auto const potential_replacement = state.user.pokemon[index];
-					auto const weight = other_weights[to_index(potential_replacement)].locked();
-					if (state.slot_memory.reverse_lookup(switch_) == index) {
-						weight.value().switched_in(bounded::assume_in_range<TeamSize>(team_size - 1_bi));
-					} else {
-						weight.value().did_not_switch_in();
-					}
-				}
-				auto const weight = get_weight();
-				for (auto const possible : state.user.moves) {
-					weight.value().did_not_use(possible);
-				}
-				weight.value().switched_out();
-			}
-		));
+			));
+		}
+	} catch (std::exception const & ex) {
+		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"sv : "p2"sv;
+		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
 	}
 }
 
@@ -315,28 +321,25 @@ auto create_selection_weights(SelectionWeightsMaker & weights, ThreadCount const
 		thread_count,
 		files_in_directory(input_directory),
 		[&](std::filesystem::path const & input_file) {
-			try {
-				auto const json = load_json_from_file(input_file);
-				auto const battle_result = parse_log(json);
-				if (!battle_result) {
-					return;
-				}
-				auto const battle_messages = battle_log_to_messages(json.at("log"));
-				auto const input_log = parse_input_log(json.at("inputLog"));
-				auto sides = containers::array({
-					RatedSide(Party(0_bi), battle_result->side1),
-					RatedSide(Party(1_bi), battle_result->side2)
-				});
-				for (auto const rated_side : sides) {
-					update_weights_for_one_side_of_battle(
-						weights,
-						rated_side,
-						battle_messages,
-						input_log
-					);
-				}
-			} catch (std::exception const & ex) {
-				std::cerr << "Unable to process " << input_file.string() << ": " << ex.what() << ", skipping\n";
+			auto const json = load_json_from_file(input_file);
+			auto const battle_result = parse_log(json);
+			if (!battle_result) {
+				return;
+			}
+			auto const battle_messages = battle_log_to_messages(json.at("log"));
+			auto const input_log = parse_input_log(json.at("inputLog"));
+			auto sides = containers::array({
+				RatedSide(Party(0_bi), battle_result->side1),
+				RatedSide(Party(1_bi), battle_result->side2)
+			});
+			for (auto const rated_side : sides) {
+				update_weights_for_one_side_of_battle(
+					input_file,
+					weights,
+					rated_side,
+					battle_messages,
+					input_log
+				);
 			}
 		}
 	);

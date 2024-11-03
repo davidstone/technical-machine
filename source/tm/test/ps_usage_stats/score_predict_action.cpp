@@ -202,50 +202,29 @@ struct RatedSide {
 };
 
 auto score_one_side_of_battle(
+	std::filesystem::path const & input_file,
 	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
 	std::span<BattleMessage const> const battle_messages,
 	std::span<PlayerInput const> const player_inputs
 ) -> WeightedScore {
+	auto const inputs_for_side = containers::filter(player_inputs, is_input_for(rated_side.side.party));
 	auto battle = BattleManager();
 	battle.handle_message(rated_side.side);
-	auto const scores = containers::vector(containers::transform(
-		containers::zip_smallest(
-			predicted_selections(strategy, battle_messages, battle, all_usage_stats),
-			containers::filter(player_inputs, is_input_for(rated_side.side.party))
-		),
-		individual_brier_score
-	));
-	return weighted_score(scores);
-}
-
-auto score_battle(
-	std::filesystem::path const & input_file,
-	nlohmann::json const & json,
-	BattleResult const & battle_result,
-	Strategy const & strategy,
-	AllUsageStats const & all_usage_stats
-) -> WeightedScore {
-	auto const input_log = parse_input_log(json.at("inputLog"));
 	try {
-		auto const battle_messages = battle_log_to_messages(json.at("log"));
-		auto sides = containers::array({
-			RatedSide(Party(0_bi), battle_result.side1),
-			RatedSide(Party(1_bi), battle_result.side2)
-		});
-		return containers::sum(containers::transform(sides, [&](RatedSide const & rated_side) {
-			return score_one_side_of_battle(
-				strategy,
-				all_usage_stats,
-				rated_side,
-				battle_messages,
-				input_log
-			);
-		}));
+		auto const scores = containers::vector(containers::transform(
+			containers::zip_smallest(
+				predicted_selections(strategy, battle_messages, battle, all_usage_stats),
+				inputs_for_side
+			),
+			individual_brier_score
+		));
+		return weighted_score(scores);
 	} catch (std::exception const & ex) {
-		std::cerr << "Unable to process " << input_file.string() << ": " << ex.what() << ", skipping\n";
-		auto const count = double(containers::size(input_log));
+		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"sv : "p2"sv;
+		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
+		auto const count = double(containers::linear_size(inputs_for_side));
 		return WeightedScore(count, count);
 	}
 }
@@ -262,13 +241,25 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 			if (!battle_result) {
 				return;
 			}
-			auto const individual = score_battle(
-				input_file,
-				json,
-				*battle_result,
-				strategy,
-				all_usage_stats
-			);
+			auto const input_log = parse_input_log(json.at("inputLog"));
+			auto const battle_messages = battle_log_to_messages(json.at("log"));
+			auto sides = containers::array({
+				RatedSide(Party(0_bi), battle_result->side1),
+				RatedSide(Party(1_bi), battle_result->side2)
+			});
+			auto const individual = containers::sum(containers::transform(
+				sides,
+				[&](RatedSide const & rated_side) {
+					return score_one_side_of_battle(
+						input_file,
+						strategy,
+						all_usage_stats,
+						rated_side,
+						battle_messages,
+						input_log
+					);
+				}
+			));
 			auto previous = score.load(std::memory_order::relaxed);
 			while (!score.compare_exchange_weak(previous, previous + individual, std::memory_order::relaxed)) {
 			}
