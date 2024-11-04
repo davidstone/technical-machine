@@ -76,7 +76,11 @@ constexpr auto is_contact_ability(Ability const ability) -> bool {
 
 
 export struct MoveStateBuilder {
-	auto party() const -> tv::optional<Party> {
+	constexpr explicit MoveStateBuilder(Party const party_):
+		m_party(party_)
+	{
+	}
+	auto party() const -> Party {
 		return m_party;
 	}
 	auto executed_move() const -> tv::optional<MoveName> {
@@ -93,9 +97,9 @@ export struct MoveStateBuilder {
 		));
 	}
 
-	auto use_move(Party const party, MoveName const move, bool const miss = false) -> void {
+	auto use_move(MoveName const move, bool const miss = false) & -> void {
 		if (!m_move) {
-			set_move_state(party, VisibleMove(move, miss));
+			set_move_state(VisibleMove(move, miss));
 			return;
 		}
 		tv::visit(*m_move, tv::overload(
@@ -112,7 +116,6 @@ export struct MoveStateBuilder {
 				m_move->emplace([&] { return VisibleMove(move, miss); });
 			},
 			[&](VisibleMove & used) {
-				check_party(party);
 				if (used.executed != used.selected) {
 					throw std::runtime_error("Tried to execute multiple moves");
 				}
@@ -123,11 +126,8 @@ export struct MoveStateBuilder {
 	}
 
 	auto move_damaged_self(Party const damaged_party) const -> bool {
-		if (!m_party) {
-			throw error();
-		}
 		auto const move_should_damage_self = move_damages_self(validated().executed);
-		auto const party_says_damaged_self = *m_party == damaged_party;
+		auto const party_says_damaged_self = m_party == damaged_party;
 		if (move_should_damage_self != party_says_damaged_self) {
 			throw error();
 		}
@@ -144,55 +144,49 @@ export struct MoveStateBuilder {
 		validated(party).damage = SubstituteBroke();
 	}
 
-	auto awaken(Party const party, Generation const generation) & -> void {
+	auto awaken(Generation const generation) & -> void {
 		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Tried to awaken after a status change");
 		}
 		if (generation == Generation::one) {
-			set_move_state(party, Awakening());
-		} else {
-			set_party(party);
+			set_move_state(Awakening());
 		}
-		set_expected(party, StatusName::clear);
+		tv::insert(m_user.status, StatusName::clear);
 		m_thaw_or_awaken = true;
 	}
-	auto thaw(Party const party) & -> void {
+	auto thaw() & -> void {
 		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Tried to thaw after a status change");
 		}
-		set_party(party);
-		set_expected(party, StatusName::clear);
+		tv::insert(m_user.status, StatusName::clear);
 		m_thaw_or_awaken = true;
 	}
-	auto confuse(Party const party) -> void {
+	auto confuse(Party const party) & -> void {
 		set_used_flag(party, "Tried to confuse a Pokemon twice", &VisibleMove::confuse);
 	}
-	auto critical_hit(Party const party) -> void {
+	auto critical_hit(Party const party) & -> void {
 		set_used_flag(party, "Tried to critical hit a Pokemon twice", &VisibleMove::critical_hit);
 	}
-	auto flinch(Party const party) -> void {
-		set_move_state(party, Flinched());
+	auto flinch() & -> void {
+		set_move_state(Flinched());
 	}
-	auto frozen_solid(Party const party) -> void {
-		set_move_state(party, FrozenSolid());
+	auto frozen_solid() & -> void {
+		set_move_state(FrozenSolid());
 	}
-	auto fully_paralyze(Party const party) -> void {
-		set_move_state(party, FullyParalyzed());
+	auto fully_paralyze() & -> void {
+		set_move_state(FullyParalyzed());
 	}
-	auto partial_trap(Party const party) -> void {
-		set_move_state(party, PartiallyTrapped());
+	auto partial_trap() & -> void {
+		set_move_state(PartiallyTrapped());
 	}
-	auto recharge(Party const party) -> void {
-		set_move_state(party, Recharging());
+	auto recharge() & -> void {
+		set_move_state(Recharging());
 	}
-	auto set_expected(Party const party, VisibleHP const hp) -> void {
-		if (!m_party) {
-			return;
-		}
-		auto & target = (*m_party == party) ? m_user : m_other;
+	auto set_expected(Party const party, VisibleHP const hp) & -> void {
+		auto & target = m_party == party ? m_user : m_other;
 		insert(target.hp, hp);
 	}
-	auto phazed_in(Party const party, TeamIndex const index) -> void {
+	auto phazed_in(Party const party, TeamIndex const index) & -> void {
 		auto & move = validated(party);
 		if (!is_phaze(move.executed)) {
 			throw std::runtime_error("We used a non-phazing move, but we were given phazing data");
@@ -202,27 +196,27 @@ export struct MoveStateBuilder {
 		}
 		move.phaze_index = index;
 	}
-	auto recoil(Party const party) -> void {
+	auto recoil(Party const party) & -> void {
 		set_used_flag(party, "Tried to recoil a Pokemon twice", &VisibleMove::recoil);
 	}
 
-	auto status_from_move(Party const party, StatusName const status) -> void {
+	auto status_from_move(Party const party, StatusName const status) & -> void {
 		auto & move = validated();
 		if (move.status) {
 			throw std::runtime_error("Tried to status a Pokemon twice");
 		}
 		if (move.executed == MoveName::Rest) {
-			if (party != *m_party) {
+			if (party != m_party) {
 				throw error();
 			}
 			tv::insert(m_user.status, status);
 		} else if (is_phaze(move.executed)) {
-			if (party != other(*m_party)) {
+			if (party != other(m_party)) {
 				throw error();
 			}
 			tv::insert(m_other.status, status);
 		} else if (clears_team_status(move.executed)) {
-			if (party != *m_party) {
+			if (party != m_party) {
 				throw error();
 			}
 			if (status != StatusName::clear) {
@@ -230,7 +224,7 @@ export struct MoveStateBuilder {
 			}
 			tv::insert(m_user.status, status);
 		} else {
-			if (party == *m_party) {
+			if (party == m_party) {
 				throw error();
 			}
 			tv::insert(m_other.status, status);
@@ -248,18 +242,15 @@ export struct MoveStateBuilder {
 		set_expected(party, status);
 	}
 
-	auto set_expected(Party const party, StatusName const status) -> void {
-		if (!m_party) {
-			return;
-		}
-		auto & target = (*m_party == party) ? m_user : m_other;
+	auto set_expected(Party const party, StatusName const status) & -> void {
+		auto & target = m_party == party ? m_user : m_other;
 		tv::insert(target.status, status);
 	}
-	auto still_asleep(Party const party) -> void {
+	auto still_asleep() & -> void {
 		if (m_thaw_or_awaken) {
 			throw std::runtime_error("Cannot be still asleep at this point");
 		}
-		set_move_state(party, StillAsleep());
+		set_move_state(StillAsleep());
 	}
 	auto phaze_index() const -> tv::optional<TeamIndex> {
 		if (!m_move) {
@@ -271,20 +262,17 @@ export struct MoveStateBuilder {
 		));
 	}
 
-	auto complete() -> tv::optional<MoveState> {
+	auto complete() const -> tv::optional<MoveState> {
 		if (!m_move) {
-			*this = {};
 			return tv::none;
 		}
-		auto const result = MoveState(
+		return MoveState(
 			*m_move,
 			m_user,
 			m_other,
-			*m_party,
+			m_party,
 			m_thaw_or_awaken
 		);
-		*this = {};
-		return result;
 	}
 
 private:
@@ -292,11 +280,6 @@ private:
 		return std::runtime_error("Received battle messages out of order");
 	}
 
-	auto check_party(Party const party) const -> void {
-		if (m_party != party) {
-			throw std::runtime_error("Inconsistent party");
-		}
-	}
 	auto check_is_used() const -> void {
 		if (!m_move or m_move->index() != bounded::type<VisibleMove>) {
 			throw error();
@@ -311,15 +294,10 @@ private:
 		return (*m_move)[bounded::type<VisibleMove>];
 	}
 	auto validated(Party const party) & -> VisibleMove & {
-		check_party(party);
-		return validated();
-	}
-	auto set_party(Party const party) & -> void {
-		if (m_party) {
-			check_party(party);
-		} else {
-			insert(m_party, party);
+		if (m_party != party) {
+			throw std::runtime_error("Inconsistent party");
 		}
+		return validated();
 	}
 
 	auto set_used_flag(
@@ -334,15 +312,14 @@ private:
 		flag = true;
 	}
 
-	auto set_move_state(Party const party, MoveResult const state) & -> void {
-		if (m_party or m_move) {
+	auto set_move_state(MoveResult const state) & -> void {
+		if (m_move) {
 			throw error();
 		}
-		tv::insert(m_party, party);
 		tv::insert(m_move, state);
 	}
 
-	tv::optional<Party> m_party;
+	Party m_party;
 	tv::optional<MoveResult> m_move;
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;

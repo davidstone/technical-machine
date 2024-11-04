@@ -133,9 +133,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 		));
 	};
 
-	auto make_move_builder = [&] -> MoveStateBuilder & {
+	auto make_move_builder = [&](Party const party) -> MoveStateBuilder & {
 		BOUNDED_ASSERT(action_builder.index() == bounded::type<Nothing>);
-		return action_builder.emplace(bounded::construct<MoveStateBuilder>);
+		return action_builder.emplace([=] { return MoveStateBuilder(party); });
 	};
 
 	struct Unknown {
@@ -174,31 +174,26 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](FlinchMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.flinch(message.party);
+				make_move_builder(message.party).flinch();
 			},
 			[](FocusPunchMessage) {
 				// TODO
 			},
 			[&](FrozenSolidMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.frozen_solid(message.party);
+				make_move_builder(message.party).frozen_solid();
 			},
 			[&](FullyParalyzedMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.fully_paralyze(message.party);
+				make_move_builder(message.party).fully_paralyze();
 			},
 			[&](PartiallyTrappedMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.partial_trap(message.party);
+				make_move_builder(message.party).partial_trap();
 			},
 			[&](StillAsleepMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.still_asleep(message.party);
+				make_move_builder(message.party).still_asleep();
 			},
 			[&](DisableMessage const message) {
 				m_client_battle->active_has(
@@ -212,8 +207,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](RechargingMessage const message) {
 				use_previous_action();
-				auto & move_builder = make_move_builder();
-				move_builder.recharge(message.party);
+				make_move_builder(message.party).recharge();
 			},
 			[&](CriticalHitMessage const message) {
 				get_move_builder().critical_hit(message.party);
@@ -230,12 +224,10 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 					auto natural_status_recovery = [&] {
 						switch (message.status) {
 							case StatusName::freeze:
-								use_previous_action();
-								make_move_builder().thaw(party);
+								make_move_builder(party).thaw();
 								break;
 							case StatusName::sleep:
-								use_previous_action();
-								make_move_builder().awaken(party, m_client_battle->generation());
+								make_move_builder(party).awaken(m_client_battle->generation());
 								break;
 							default:
 								throw std::runtime_error("Spontaneously recovered from status");
@@ -333,7 +325,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			},
 			[&](MoveMessage const message) {
 				use_previous_action();
-				make_move_builder().use_move(message.party, message.move, message.miss);
+				make_move_builder(message.party).use_move(message.move, message.miss);
 			},
 			[](EffectivenessMessage) {
 				// TODO
