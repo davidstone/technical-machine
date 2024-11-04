@@ -225,7 +225,7 @@ auto score_one_side_of_battle(
 		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"sv : "p2"sv;
 		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
 		auto const count = double(containers::linear_size(inputs_for_side));
-		return WeightedScore(count, count);
+		return WeightedScore(count * 2.0, count);
 	}
 }
 
