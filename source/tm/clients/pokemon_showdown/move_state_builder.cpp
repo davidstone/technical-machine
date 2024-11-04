@@ -97,7 +97,7 @@ export struct MoveStateBuilder {
 		));
 	}
 
-	auto use_move(MoveName const move, bool const miss = false) & -> void {
+	auto use_move(MoveName const move, bool const miss) & -> void {
 		if (!m_move) {
 			set_move_state(VisibleMove(move, miss));
 			return;
