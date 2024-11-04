@@ -952,13 +952,12 @@ public:
 	}
 
 	constexpr auto successfully_use_move(
-		MoveName const move,
+		MoveName const executed,
 		Ability const other_ability,
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
-		BOUNDED_ASSERT(move == MoveName::Struggle or containers::any_equal(this->regular_moves(), move));
 		auto const result = this->m_flags.last_used_move.successful_move(
-			move,
+			executed,
 			this->item(environment),
 			environment.effective_weather(this->ability(), other_ability)
 		);
@@ -978,8 +977,8 @@ public:
 			}
 		));
 	}
-	constexpr auto unsuccessfully_use_move(MoveName const move) const {
-		this->m_flags.last_used_move.unsuccessful_move(move);
+	constexpr auto unsuccessfully_use_move(MoveName const executed) const {
+		this->m_flags.last_used_move.unsuccessful_move(executed);
 	}
 	constexpr auto hit_self() const {
 		this->m_flags.last_used_move.hit_self();
