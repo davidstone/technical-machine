@@ -104,20 +104,22 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			if (auto const move_state = builder.complete()) {
 				use_move(*move_state);
 			}
+			action_builder = Nothing();
 		},
 		[&](Switches const switches) {
 			// TODO: Timing for both sides replacing a fainting Pokemon
 			for (auto const switch_ : containers::reversed(switches)) {
 				use_switch(switch_);
 			}
+			action_builder = Nothing();
 		},
 		[&](HitSelf const hit_self) {
 			hit_self_in_confusion(hit_self);
+			action_builder = Nothing();
 		}
 	);
 	auto use_previous_action = [&] -> void {
 		tv::visit(action_builder, do_action);
-		action_builder = Nothing();
 	};
 
 	auto get_move_builder = [&] -> MoveStateBuilder & {
@@ -436,7 +438,6 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 					},
 					[&](Switches const switches) {
 						do_action(switches);
-						action_builder = Nothing();
 					},
 					[](HitSelf) {
 						throw std::runtime_error("Should not be hitting self at the start of a turn");
