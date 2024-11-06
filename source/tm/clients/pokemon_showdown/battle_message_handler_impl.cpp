@@ -33,6 +33,7 @@ import tm.status.status_name;
 import tm.status.toxic_resets_on_switch;
 
 import tm.ability;
+import tm.any_team;
 import tm.generation;
 import tm.generation_generic;
 import tm.team_is_empty;
@@ -64,6 +65,19 @@ constexpr auto find_switch(auto & switches, Party const party) {
 	return containers::maybe_find_if(switches, [=](SwitchState const s) {
 		return s.party == party;
 	});
+}
+
+constexpr auto check_is_valid_start_of_turn(any_team auto const & team) -> void {
+	auto const pokemon = team.pokemon();
+	if (pokemon.hp().current() == 0_bi) {
+		throw std::runtime_error("Should not have a fainted Pokemon at the start of a turn");
+	}
+	if (team.size() == 0_bi) {
+		throw std::runtime_error("Should not have an empty team at the start of a turn");
+	}
+	if (pokemon.last_used_move().moved_this_turn()) {
+		throw std::runtime_error("Pokemon should not have moved at the start of a turn");
+	}
 }
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
@@ -468,7 +482,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 	return tv::visit(result, tv::overload(
 		[&](Unknown) -> Result {
 			handle_previous_data();
-			auto state = m_client_battle->state();
+			auto const state = m_client_battle->state();
 			auto const is_finished = tv::visit(state, [](auto const & s) {
 				return team_is_empty(s.ai) or team_is_empty(s.foe);
 			});
@@ -479,8 +493,13 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 		},
 		[&](TurnCount const turn_count) -> Result {
 			handle_previous_data();
+			auto const state = m_client_battle->state();
+			tv::visit(state, [](auto const & s) {
+				check_is_valid_start_of_turn(s.ai);
+				check_is_valid_start_of_turn(s.foe);
+			});
 			return StartOfTurn(
-				ActionRequired(m_client_battle->state(), m_slot_memory),
+				ActionRequired(state, m_slot_memory),
 				turn_count
 			);
 		},
