@@ -83,7 +83,12 @@ constexpr auto attacker() {
 
 	pokemon.defense_curl();
 	for (auto const _ : containers::integer_range(4_bi)) {
-		pokemon.successfully_use_move(move, Ability::Honey_Gather, Environment());
+		pokemon.successfully_use_move(
+			move,
+			move,
+			Ability::Honey_Gather,
+			Environment()
+		);
 	}
 
 	return team;
@@ -150,7 +155,12 @@ constexpr auto defender() {
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
 	pokemon.switch_in(environment, true);
-	pokemon.successfully_use_move(MoveName::Dive, Ability::Honey_Gather, environment);
+	pokemon.successfully_use_move(
+		MoveName::Dive,
+		MoveName::Dive,
+		Ability::Honey_Gather,
+		environment
+	);
 	return team;
 }
 

@@ -952,12 +952,14 @@ public:
 	}
 
 	constexpr auto successfully_use_move(
-		MoveName const executed,
+		MoveName const first_executed,
+		MoveName const last_executed,
 		Ability const other_ability,
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
 		auto const result = this->m_flags.last_used_move.successful_move(
-			executed,
+			first_executed,
+			last_executed,
 			this->item(environment),
 			environment.effective_weather(this->ability(), other_ability)
 		);

@@ -658,5 +658,69 @@ TEST_CASE("Generation 1 Hyper Beam KO", "[call_move]") {
 	CHECK(!user.pokemon().recharge());
 }
 
+TEST_CASE("Generation 1 Mirror Move Hyper Beam KO", "[call_move]") {
+	constexpr auto generation = Generation::one;
+	auto environment = Environment();
+
+	auto user = Team<generation>({{
+		{
+			.species = Species::Pidgeot,
+			.moves = {{
+				MoveName::Mirror_Move,
+			}}
+		},
+	}});
+	user.pokemon().switch_in(environment, true);
+
+	auto other = Team<generation>({{
+		{
+			.species = Species::Chansey,
+			.level = Level(40_bi),
+			.moves = {{
+				MoveName::Hyper_Beam,
+			}}
+		},
+		{
+			.species = Species::Slowbro,
+			.moves = {{
+				MoveName::Ice_Beam,
+			}}
+		},
+	}});
+	other.pokemon().switch_in(environment, true);
+
+	constexpr auto selected = MoveName::Mirror_Move;
+	constexpr auto executed = MoveName::Hyper_Beam;
+	auto const side_effects = possible_side_effects(
+		executed,
+		user.pokemon().as_const(),
+		other,
+		environment
+	);
+	CHECK(containers::size(side_effects) == 1_bi);
+	call_move(
+		user,
+		UsedMove<Team<generation>>(
+			selected,
+			executed,
+			false,
+			false,
+			ContactAbilityEffect::nothing,
+			containers::front(side_effects).function
+		),
+		other,
+		FutureSelection(false),
+		environment,
+		false,
+		damage,
+		false
+	);
+
+	CHECK(other.pokemon().hp().current() == 0_bi);
+
+	CHECK(!user.pokemon().last_used_move().locked_in());
+	CHECK(!user.pokemon().recharge());
+}
+
 } // namespace
 } // namespace technicalmachine

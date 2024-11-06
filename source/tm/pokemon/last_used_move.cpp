@@ -85,17 +85,21 @@ export struct LastUsedMove {
 		m_effects = Empty();
 	}
 
-	// Returns whether the item is consumed
+	// If the user selects Thunder, but is hit by Encore before it can move and
+	// is forced to execute Metronome, which calls Assist, which calls Tackle,
+	// Sleep Talk is `first_executed` and Tackle is `last_executed`
 	constexpr auto successful_move(
-		MoveName const move,
+		MoveName const first_executed,
+		MoveName const last_executed,
 		Item const item,
 		Weather const weather
 	) & -> SuccessfulMove {
 		auto check_valid_lock_in = [&] {
-			if (!successful_last_move(move)) {
+			// TODO: Choice Band can be weird
+			if (!successful_last_move(first_executed)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
 					"Tried to use "sv,
-					to_string(move),
+					to_string(first_executed),
 					" while locked into "sv,
 					m_move ? to_string(*m_move) : "nothing"sv
 				));
@@ -103,7 +107,7 @@ export struct LastUsedMove {
 		};
 		auto const result = tv::visit(m_effects, tv::overload(
 			[&](Empty) -> SuccessfulMove {
-				switch (move) {
+				switch (last_executed) {
 					case MoveName::Bide:
 						m_effects = Bide();
 						return DoNothing();
@@ -171,7 +175,6 @@ export struct LastUsedMove {
 				}
 			},
 			[&](Bide & bide) -> SuccessfulMove {
-				BOUNDED_ASSERT(m_move == MoveName::Bide);
 				check_valid_lock_in();
 				auto const damage = bide.advance_one_turn();
 				if (!damage) {
@@ -209,10 +212,11 @@ export struct LastUsedMove {
 			}
 		));
 
-		if (m_move == move) {
+		// TODO: ???
+		if (m_move == first_executed) {
 			saturating_increment(m_consecutive_successes);
 		} else {
-			m_move = move;
+			m_move = first_executed;
 			m_consecutive_successes = 1_bi;
 		}
 		m_moved_this_turn = true;

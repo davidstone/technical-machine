@@ -332,7 +332,12 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 
-	auto const released_damage = user_pokemon.successfully_use_move(move.executed, other_ability, environment);
+	auto const released_damage = user_pokemon.successfully_use_move(
+		move.selected,
+		move.executed,
+		other_ability,
+		environment
+	);
 
 	if (ability_blocks_move(generation, other_ability, known_move, other_pokemon.status().name(), other_pokemon.types())) {
 		handle_ability_blocks_move(other_pokemon, environment);

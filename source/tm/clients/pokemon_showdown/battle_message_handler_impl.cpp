@@ -100,7 +100,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 
 	auto const do_action = tv::overload(
 		[](Nothing) {},
-		[&](MoveStateBuilder & builder) -> void {
+		[&](MoveStateBuilder const builder) -> void {
 			if (auto const move_state = builder.complete()) {
 				use_move(*move_state);
 			}
@@ -324,8 +324,21 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				));
 			},
 			[&](MoveMessage const message) {
-				use_previous_action();
-				make_move_builder(message.party).use_move(message.move, message.miss);
+				auto & move_builder = tv::visit(action_builder, tv::overload(
+					[&](MoveStateBuilder & builder) -> MoveStateBuilder & {
+						if (message.party == builder.party()) {
+							return builder;
+						} else {
+							do_action(builder);
+							return make_move_builder(message.party);
+						}
+					},
+					[&](auto const builder) -> MoveStateBuilder & {
+						do_action(builder);
+						return make_move_builder(message.party);
+					}
+				));
+				move_builder.use_move(message.move, message.miss);
 			},
 			[](EffectivenessMessage) {
 				// TODO
