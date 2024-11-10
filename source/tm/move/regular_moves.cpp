@@ -61,7 +61,7 @@ export struct RegularMoves {
 					}),
 					", "sv
 				)),
-				"-- Tried to add "sv,
+				" -- Tried to add "sv,
 				to_string(move.name())
 			));
 		}
