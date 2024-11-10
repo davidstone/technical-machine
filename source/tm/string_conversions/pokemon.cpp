@@ -94,29 +94,40 @@ constexpr auto status_to_string(Status const status) -> containers::string {
 		containers::string("");
 };
 
-constexpr auto stat_to_string(std::string_view const type, auto const range, auto const get) {
-	bool is_first = true;
-	auto element_string = [&](auto const stat) {
-		auto const element = get(stat);
-		if (!element) {
-			return containers::string();
+template<typename StatNames>
+constexpr auto stat_to_string(
+	std::string_view const type,
+	StatNames const stat_names,
+	auto const get
+) -> containers::string {
+	using StatName = containers::range_value_t<StatNames>;
+	struct NamedStat {
+		constexpr auto to_string() const -> containers::string {
+			return containers::concatenate<containers::string>(
+				containers::to_string(value.value()),
+				" "sv,
+				technicalmachine::to_string(name)
+			);
 		}
-		auto const was_first = std::exchange(is_first, false);
-		return containers::concatenate<containers::string>(
-			was_first ? ""sv : " / "sv,
-			containers::to_string(element->value()),
-			" "sv,
-			to_string(stat)
-		);
+		StatName name;
+		std::decay_t<decltype(*get(StatName()))> value;
 	};
-	auto str = containers::string(containers::join(containers::transform_non_idempotent(range, element_string)));
-	return is_first ?
+	auto const used_stats = containers::remove_none(
+		containers::transform(stat_names, [&](StatName const stat) {
+			auto const value = get(stat);
+			return BOUNDED_CONDITIONAL(value, NamedStat(stat, *value), tv::none);
+		})
+	);
+	return containers::is_empty(used_stats) ?
 		containers::string() :
 		containers::concatenate<containers::string>(
 			"\t"sv,
 			type,
 			": "sv,
-			std::move(str),
+			containers::string(containers::join_with(
+				containers::transform(used_stats, &NamedStat::to_string),
+				" / "sv
+			)),
 			"\n"sv
 		);
 };
@@ -169,18 +180,15 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 }
 
 constexpr auto moves_to_string(RegularMoves const moves) -> containers::string {
-	auto is_first = true;
-	return containers::string(containers::join(containers::transform_non_idempotent(
-		moves,
-		[&](Move const move) {
-			auto const was_first = std::exchange(is_first, false);
+	return containers::string(containers::join_with(
+		containers::transform(moves, [](Move const move) {
 			return containers::concatenate<containers::string>(
-				was_first ? ""sv : "\n"sv,
 				"\t- "sv,
 				to_string(move.name())
 			);
-		}
-	)));
+		}),
+		"\n"sv
+	));
 };
 
 
@@ -194,10 +202,9 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 		return generation >= Generation::two ?
 			containers::concatenate<containers::string>(
 				" @ "sv,
-				to_string(pokemon.item(false, false)),
-				"\n"sv
+				to_string(pokemon.item(false, false))
 			) :
-			containers::string("\n");
+			containers::string();
 	};
 
 
@@ -207,6 +214,7 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 		hp_str,
 		"% HP)"sv,
 		item_to_string(),
+		"\n"sv,
 		ability_to_string(generation, pokemon.initial_ability()),
 		status_to_string(pokemon.status()),
 		stats_to_string(calculate_ivs_and_evs(pokemon)),

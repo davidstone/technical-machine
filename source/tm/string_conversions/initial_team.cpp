@@ -133,19 +133,16 @@ constexpr auto pp_ups_to_string(PP::pp_ups_type const pp_ups) -> containers::str
 }
 
 constexpr auto moves_to_string(InitialMoves const moves) -> containers::string {
-	auto result = containers::string();
-	auto separator = ""sv;
-	for (auto const move : moves) {
-		result = containers::concatenate<containers::string>(
-			std::move(result),
-			separator,
-			"- "sv,
-			to_string(move.name),
-			pp_ups_to_string(move.pp_ups)
-		);
-		separator = "\n"sv;
-	}
-	return result;
+	return containers::string(containers::join_with(
+		containers::transform(moves, [](InitialMove const move) {
+			return containers::concatenate<containers::string>(
+				"- "sv,
+				to_string(move.name),
+				pp_ups_to_string(move.pp_ups)
+			);
+		}),
+		"\n"sv
+	));
 };
 
 export template<SpecialStyle style>

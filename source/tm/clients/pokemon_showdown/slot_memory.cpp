@@ -46,11 +46,12 @@ export struct SlotMemory {
 				containers::to_string(index),
 				", possible values are "sv,
 				[&] {
-					auto result = containers::string();
-					for (auto const & value : m_container) {
-						result = containers::concatenate<containers::string>(std::move(result), containers::to_string(value), ", "sv);
-					}
-					return result;
+					return containers::string(containers::join_with(
+						containers::transform(m_container, [](Index const value) {
+							return containers::to_string(value);
+						}),
+						", "sv
+					));
 				}()
 			));
 		}
