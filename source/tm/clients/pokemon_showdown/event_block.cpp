@@ -359,13 +359,15 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		auto const party = party_from_player_id(message.pop());
 		auto const move = from_string<MoveName>(message.pop());
 		[[maybe_unused]] auto const target = message.pop();
-		auto const miss_or_nothing = message.pop();
-		// TODO: validate it's not some other string?
-		auto const missed = miss_or_nothing == "[miss]"sv;
+		constexpr auto miss_str = "[miss]"sv;
+		auto const first_part = message.pop();
+		auto const first_part_is_missed = first_part == miss_str;
+		auto const second_part = message.pop();
+		auto const second_part_is_missed = second_part == miss_str;
 		return MoveMessage(
 			party,
 			move,
-			missed
+			first_part_is_missed or second_part_is_missed
 		);
 	} else if (type == "-mustrecharge") {
 		// After moves like Hyper Beam
