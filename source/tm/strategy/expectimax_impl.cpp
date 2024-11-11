@@ -102,42 +102,46 @@ constexpr auto is_damaging(Selection const selection) -> bool {
 	));
 }
 
-constexpr double multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
-	auto const probability = [=](bool const is_first, bool const flag) {
-		auto const base = basic_probability(is_first);
-		BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
-		BOUNDED_ASSERT_OR_ASSUME(base <= 1.0);
-		return flag ? base : (1.0 - base);
-	};
+struct FlagProbability {
+	bool flag;
+	double probability;
+};
 
-	double average_score = 0.0;
-	for (auto const first_flag : {true, false}) {
-		auto const p1 = probability(true, first_flag);
-		if (p1 == 0.0) {
-			continue;
-		}
-		for (auto const last_flag : {true, false}) {
-			auto const p2 = probability(false, last_flag);
-			if (p2 == 0.0) {
-				continue;
+constexpr auto probabilities(auto const basic_probability, auto... args) {
+	return containers::filter(
+		containers::transform(
+			containers::array({true, false}),
+			[=](bool const flag) {
+				auto const base = basic_probability(args...);
+				BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
+				BOUNDED_ASSERT_OR_ASSUME(base <= 1.0);
+				return FlagProbability(
+					flag,
+					flag ? base : (1.0 - base)
+				);
 			}
-			average_score += p1 * p2 * next_branch(first_flag, last_flag);
+		),
+		[](FlagProbability const x) { return x.probability != 0.0; }
+	);
+};
+
+constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) -> double {
+	auto average_score = 0.0;
+	auto const first_probabilities = probabilities(basic_probability, true);
+	auto const last_probabilities = containers::make_static_vector(probabilities(basic_probability, false));
+	for (auto const first : first_probabilities) {
+		for (auto const last : last_probabilities) {
+			average_score += first.probability * last.probability * next_branch(first.flag, last.flag);
 		}
 	}
 	return average_score;
 }
 
-constexpr double generic_flag_branch(double const basic_probability, auto const & next_branch) {
-	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
-	double average_score = 0.0;
-	for (auto const flag : {false, true}) {
-		auto const probability = flag ? basic_probability : (1.0 - basic_probability);
-		if (probability == 0.0) {
-			continue;
-		}
-		average_score += probability * next_branch(flag);
-	}
-	return average_score;
+constexpr auto generic_flag_branch(double const basic_probability, auto const & next_branch) -> double {
+	return containers::sum(containers::transform(
+		probabilities(bounded::value_to_function(basic_probability)),
+		[&](FlagProbability const x) { return x.probability * next_branch(x.flag); }
+	));
 }
 
 constexpr auto moved(any_active_pokemon auto const pokemon) -> bool {
