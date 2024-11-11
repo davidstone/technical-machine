@@ -848,15 +848,36 @@ private:
 	}
 
 	auto generate_single_matchups(State<generation> const & state, Depth const depth) -> double {
+		// There are max_size^2 == 36 possible pairings, which can be divided into four categories (`ai` is the size of the AI's team, `foe` is the size of the foe's team):
+		// 1) ai * foe single matchups
+		// 2) ai * (max_size - foe) forced wins
+		// 3) foe * (max_size - ai) forced losses
+		// 4) (max_size - ai) * (max_size * foe) forced ties
+
+		// The nested for loop takes care of the first category.
 		auto score = 0.0;
 		for (auto const ai_index : containers::integer_range(state.ai.size())) {
 			for (auto const foe_index : containers::integer_range(state.foe.size())) {
 				score += evaluate_single_matchup(state, ai_index, foe_index, depth);
 			}
 		}
-		auto const difference = state.ai.size() - state.foe.size();
-		score += static_cast<double>(difference) * victory<generation> * static_cast<double>(bounded::max(state.ai.size(), state.foe.size()));
-		score /= static_cast<double>(max_pokemon_per_team * max_pokemon_per_team);
+		// The second category expands to
+		// max_size * ai - ai * foe
+		// And the third category expands to
+		// max_size * foe - ai * foe
+		// The score of a forced loss is the opposite of the score of a forced win, so we negate the count of forced losses and add it to the count of forced wins and we get
+		// max_size * ai - ai * foe - max_size * foe + ai * foe
+		// Which simplifies to
+		// max_size * ai - max_size * foe
+		// Which factors to
+		// max_size * (ai_size - foe_size)
+		score += double(max_pokemon_per_team * state.ai.size() - state.foe.size()) * victory<generation>;
+		// The last category has a score of 0.0 and thus needs no special handling.
+
+		// We divide by the total number of possible pairings to ensure that the
+		// score is normalized to remain in the range [-victory, victory] so
+		// that early returns still give the correct value.
+		score /= double(max_pokemon_per_team * max_pokemon_per_team);
 		return score;
 	}
 
