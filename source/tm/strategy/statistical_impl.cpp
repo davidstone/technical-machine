@@ -71,6 +71,10 @@ private:
 
 using PerOther = UsageFor<Species, PerMatchup>;
 
+constexpr auto with_minimum_weight(double const weight) -> double {
+	return weight == 0.0 ? 1.0 / 1'000'000.0 : weight;
+}
+
 struct SelectionWeights {
 	explicit SelectionWeights(Generation const generation) {
 		auto stream = open_binary_file_for_reading(
@@ -89,13 +93,16 @@ struct SelectionWeights {
 				auto const name = read_bytes<MoveName>(stream);
 				auto const weight = read_bytes<double>(stream);
 				BOUNDED_ASSERT(weight >= 0.0);
-				return containers::map_value_type<MoveName, double>(name, weight);
+				return containers::map_value_type<MoveName, double>(
+					name,
+					with_minimum_weight(weight)
+				);
 			}));
 			set(
 				other,
 				user,
-				switch_out_weight,
-				switch_in_multiplier,
+				with_minimum_weight(switch_out_weight),
+				with_minimum_weight(switch_in_multiplier),
 				std::move(moves)
 			);
 		}
@@ -182,15 +189,15 @@ struct Statistical {
 			weighted_selections,
 			&WeightedSelection::weight
 		));
+		BOUNDED_ASSERT(cummulative_weight > 0.0);
 
 		return WeightedSelections(containers::transform(
 			weighted_selections,
 			[&](WeightedSelection const value) {
-				auto const probability = cummulative_weight != 0.0 ?
-					value.weight / cummulative_weight :
-					1.0 / double(containers::size(weighted_selections));
-				BOUNDED_ASSERT(0.0 <= probability and probability <= 1.0);
-				return WeightedSelection(value.selection, probability);
+				return WeightedSelection(
+					value.selection,
+					value.weight / cummulative_weight
+				);
 			}
 		));
 	}
