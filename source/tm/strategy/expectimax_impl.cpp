@@ -291,25 +291,6 @@ constexpr auto team_matcher(Team<generation> const & team) {
 	};
 }
 
-constexpr auto remove_unlikely_foe_selections(WeightedSelections const foe_selections) {
-	auto const filtered = containers::filter(
-		foe_selections,
-		[](WeightedSelection const value) {
-			return value.weight > 0.05;
-		}
-	);
-	auto const cummulative_weight = containers::sum(containers::transform(
-		filtered,
-		&WeightedSelection::weight
-	));
-	return WeightedSelections(containers::transform(
-		filtered,
-		[=](WeightedSelection const value) {
-			return WeightedSelection(value.selection, value.weight / cummulative_weight);
-		}
-	));
-}
-
 constexpr auto is_pass(LegalSelections const selections) -> bool {
 	return selections == LegalSelections({pass});
 }
@@ -963,13 +944,13 @@ private:
 		LegalSelections const ai_selections,
 		LegalSelections const foe_selections
 	) const -> WeightedSelections {
-		return remove_unlikely_foe_selections(m_foe_strategy.get()(
+		return m_foe_strategy.get()(
 			state.foe,
 			foe_selections,
 			state.ai,
 			ai_selections,
 			state.environment
-		).user);
+		).user;
 	}
 	auto get_foe_selections(
 		State<generation> const & state,
@@ -1031,7 +1012,7 @@ auto make_expectimax(
 		auto const scored_selections = evaluator.select_type_of_action(
 			State<generation>(ai, foe, environment),
 			ai_selections,
-			remove_unlikely_foe_selections(predicted_foe_selections),
+			predicted_foe_selections,
 			depth
 		);
 		return BothWeightedSelections(
