@@ -10,7 +10,6 @@ import tm.move.selection;
 
 import bounded;
 import containers;
-import std_module;
 
 namespace technicalmachine {
 
@@ -40,15 +39,6 @@ struct bounded::tombstone_traits<technicalmachine::WeightedSelection> {
 namespace technicalmachine {
 
 export using WeightedSelections = containers::static_vector<WeightedSelection, maximum_possible_selections>;
-
-export auto pick_selection(WeightedSelections const selections, std::mt19937 & random_engine) -> Selection {
-	auto const weights = containers::transform(selections, &WeightedSelection::weight);
-	auto distribution = std::discrete_distribution(
-		containers::legacy_iterator(containers::begin(weights)),
-		containers::legacy_iterator(containers::end(weights))
-	);
-	return containers::at(selections, distribution(random_engine)).selection;
-}
 
 export struct BothWeightedSelections {
 	WeightedSelections user;

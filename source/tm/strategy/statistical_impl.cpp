@@ -184,22 +184,7 @@ struct Statistical {
 				));
 			}
 		));
-
-		auto const cummulative_weight = containers::sum(containers::transform(
-			weighted_selections,
-			&WeightedSelection::weight
-		));
-		BOUNDED_ASSERT(cummulative_weight > 0.0);
-
-		return WeightedSelections(containers::transform(
-			weighted_selections,
-			[&](WeightedSelection const value) {
-				return WeightedSelection(
-					value.selection,
-					value.weight / cummulative_weight
-				);
-			}
-		));
+		return weighted_selections;
 	}
 
 private:

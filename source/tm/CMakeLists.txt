@@ -170,6 +170,7 @@ target_sources(tm_common PUBLIC
 		strategy/net_hp.cpp
 		strategy/parse_strategy.cpp
 		strategy/random_selection.cpp
+		strategy/selection_probability.cpp
 		strategy/statistical.cpp
 		strategy/strategy.cpp
 		strategy/weighted_selection.cpp

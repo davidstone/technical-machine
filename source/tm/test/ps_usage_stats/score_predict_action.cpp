@@ -33,8 +33,8 @@ import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
 
 import tm.strategy.parse_strategy;
+import tm.strategy.selection_probability;
 import tm.strategy.strategy;
-import tm.strategy.weighted_selection;
 
 import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.team_predictor;
@@ -91,7 +91,7 @@ constexpr auto is_input_for(Party const party) {
 }
 
 struct PredictedSelection {
-	WeightedSelections predicted;
+	SelectionProbabilities predicted;
 	SlotMemory slot_memory;
 };
 
@@ -130,7 +130,7 @@ auto get_predicted_selection(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
-				if (selection.predicted == WeightedSelections({{pass, 1.0}})) {
+				if (selection.predicted == SelectionProbabilities({{pass, 1.0}})) {
 					return tv::none;
 				}
 				return selection;
@@ -151,9 +151,9 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 			return Switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
-	auto score_prediction = [&](WeightedSelection const predicted) {
+	auto score_prediction = [&](SelectionProbability const predicted) {
 		auto const actual_probability = actual == predicted.selection ? 1.0 : 0.0;
-		auto const value = predicted.weight - actual_probability;
+		auto const value = predicted.probability - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));

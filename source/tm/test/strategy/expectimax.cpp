@@ -32,8 +32,8 @@ import tm.status.status_name;
 
 import tm.strategy.expectimax;
 import tm.strategy.random_selection;
+import tm.strategy.selection_probability;
 import tm.strategy.strategy;
-import tm.strategy.weighted_selection;
 
 import tm.ability;
 import tm.end_of_turn;
@@ -61,7 +61,7 @@ auto make_strategy(DepthInt const depth) -> Strategy {
 }
 
 template<Generation generation>
-auto determine_best_selection(Strategy const & strategy, Team<generation> const & ai, Team<generation> const & foe, Environment const environment) -> WeightedSelection {
+auto determine_best_selection(Strategy const & strategy, Team<generation> const & ai, Team<generation> const & foe, Environment const environment) -> SelectionProbability {
 	auto const moves = strategy(
 		ai,
 		get_legal_selections(ai, foe, environment),
@@ -69,8 +69,8 @@ auto determine_best_selection(Strategy const & strategy, Team<generation> const 
 		get_legal_selections(foe, ai, environment),
 		environment
 	).user;
-	return *containers::max_element(moves, [](WeightedSelection const lhs, WeightedSelection const rhs) {
-		return lhs.weight > rhs.weight;
+	return *containers::max_element(moves, [](SelectionProbability const lhs, SelectionProbability const rhs) {
+		return lhs.probability > rhs.probability;
 	});
 }
 
@@ -112,7 +112,7 @@ TEST_CASE("expectimax OHKO", "[expectimax]") {
 	{
 		auto const best = determine_best_selection(strategy, team1, team2, environment);
 		CHECK(best.selection == MoveName::Thunderbolt);
-		CHECK(best.weight == 1.0);
+		CHECK(best.probability == 1.0);
 	}
 	
 	auto team3 = Team<generation>({{
@@ -133,7 +133,7 @@ TEST_CASE("expectimax OHKO", "[expectimax]") {
 	{
 		auto const best = determine_best_selection(strategy, team1, team3, environment);
 		CHECK(best.selection == MoveName::Shadow_Ball);
-		CHECK(best.weight == 1.0);
+		CHECK(best.probability == 1.0);
 	}
 }
 
@@ -208,7 +208,7 @@ TEST_CASE("expectimax BellyZard", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.weight == 1.0);
+	CHECK(best.probability == 1.0);
 }
 
 TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
@@ -268,7 +268,7 @@ TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Curse);
-	CHECK(best.weight == 1.0);
+	CHECK(best.probability == 1.0);
 }
 
 
@@ -448,7 +448,7 @@ TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.weight == 1.0);
+	CHECK(best.probability == 1.0);
 }
 
 

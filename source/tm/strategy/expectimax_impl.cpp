@@ -53,7 +53,7 @@ import tm.stat.faster;
 import tm.status.clears_status;
 import tm.status.status_name;
 
-import tm.strategy.weighted_selection;
+import tm.strategy.selection_probability;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;
@@ -294,8 +294,8 @@ constexpr auto team_matcher(Team<generation> const & team) {
 constexpr auto is_pass(LegalSelections const selections) -> bool {
 	return selections == LegalSelections({pass});
 }
-constexpr auto is_pass(WeightedSelections const selections) -> bool {
-	return selections == WeightedSelections({{pass, 1.0}});
+constexpr auto is_pass(SelectionProbabilities const selections) -> bool {
+	return selections == SelectionProbabilities({{pass, 1.0}});
 }
 
 constexpr auto check_is_valid_start_of_turn(any_team auto const & team) -> void {
@@ -365,7 +365,7 @@ struct Evaluator {
 	auto select_type_of_action(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		Depth const depth
 	) -> ScoredSelections {
 		BOUNDED_ASSERT(!team_is_empty(state.ai));
@@ -387,7 +387,7 @@ private:
 	auto start_of_turn_action(
 		State<generation> const & state,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		Depth const depth
 	) -> ScoredSelections {
 		check_is_valid_start_of_turn(state.ai);
@@ -427,7 +427,7 @@ private:
 	auto middle_of_turn_action(
 		State<generation> const & original,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		Depth const depth,
 		tv::optional<Selection> const forced_continuation = tv::none
 	) -> ScoredSelections {
@@ -531,7 +531,7 @@ private:
 	auto replace_fainted_action(
 		State<generation> const & original,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		auto const continuation
 	) -> ScoredSelections {
 		BOUNDED_ASSERT(is_fainted(original.ai) or is_pass(ai_selections));
@@ -564,7 +564,7 @@ private:
 	auto before_end_of_turn_action(
 		State<generation> const & original,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		Depth const depth
 	) -> ScoredSelections {
 		if constexpr (generation != Generation::two) {
@@ -585,7 +585,7 @@ private:
 	auto after_end_of_turn_action(
 		State<generation> const & original,
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		Depth const depth
 	) -> ScoredSelections {
 		auto const new_depth = depth.reduced(containers::size(ai_selections));
@@ -670,7 +670,7 @@ private:
 				state.foe,
 				state.environment
 			);
-			auto const foe_selections = WeightedSelections({{pass, 1.0}});
+			auto const foe_selections = SelectionProbabilities({{pass, 1.0}});
 			return max_score(middle_of_turn_action(
 				state,
 				ai_selections,
@@ -923,7 +923,7 @@ private:
 
 	auto score_selections(
 		LegalSelections const ai_selections,
-		WeightedSelections const foe_selections,
+		SelectionProbabilities const foe_selections,
 		auto const function
 	) const -> ScoredSelections {
 		return ScoredSelections(containers::transform(ai_selections, [&](Selection const ai_selection) {
@@ -931,8 +931,8 @@ private:
 				ai_selection,
 				parallel_sum(containers::transform(
 					foe_selections,
-					[&](WeightedSelection const predicted) {
-						return predicted.weight * function(ai_selection, predicted.selection);
+					[&](SelectionProbability const predicted) {
+						return predicted.probability * function(ai_selection, predicted.selection);
 					}
 				))
 			);
@@ -943,7 +943,7 @@ private:
 		State<generation> const & state,
 		LegalSelections const ai_selections,
 		LegalSelections const foe_selections
-	) const -> WeightedSelections {
+	) const -> SelectionProbabilities {
 		return m_foe_strategy.get()(
 			state.foe,
 			foe_selections,
@@ -955,7 +955,7 @@ private:
 	auto get_foe_selections(
 		State<generation> const & state,
 		LegalSelections const ai_selections
-	) const -> WeightedSelections {
+	) const -> SelectionProbabilities {
 		return get_foe_selections(
 			state,
 			ai_selections,
@@ -968,15 +968,15 @@ private:
 	std::unique_ptr<TranspositionTable<generation>> m_transposition_table;
 };
 
-auto to_weighted_selections(ScoredSelections selections) -> WeightedSelections {
+auto to_selection_probabilities(ScoredSelections selections) -> SelectionProbabilities {
 	auto const best = containers::max_element(
 		selections,
 		[](ScoredSelection const lhs, ScoredSelection const rhs) {
 			return lhs.score > rhs.score;
 		}
 	);
-	return WeightedSelections({
-		WeightedSelection(best->selection, 1.0)
+	return SelectionProbabilities({
+		SelectionProbability(best->selection, 1.0)
 	});
 }
 
@@ -996,7 +996,7 @@ auto make_expectimax(
 		Team<generation> const & foe,
 		LegalSelections const foe_selections,
 		Environment const environment
-	) -> BothWeightedSelections {
+	) -> BothSelectionProbabilities {
 		auto evaluator = Evaluator(
 			all_evaluate.get<generation>(),
 			foe_strategy,
@@ -1015,8 +1015,8 @@ auto make_expectimax(
 			predicted_foe_selections,
 			depth
 		);
-		return BothWeightedSelections(
-			to_weighted_selections(scored_selections),
+		return BothSelectionProbabilities(
+			to_selection_probabilities(scored_selections),
 			predicted_foe_selections
 		);
 	});

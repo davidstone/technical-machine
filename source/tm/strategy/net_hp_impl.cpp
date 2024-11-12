@@ -122,18 +122,17 @@ constexpr auto max_net_hp(
 			return lhs.score > rhs.score;
 		}
 	);
-	auto const all_best = containers::filter(
-		scores,
-		[&](ScoredSelection const element) {
-			return element.score == best->score;
+	return WeightedSelections(containers::transform(
+		containers::filter(
+			scores,
+			[&](ScoredSelection const element) {
+				return element.score == best->score;
+			}
+		),
+		[](ScoredSelection const element) {
+			return WeightedSelection(element.selection, 1.0);
 		}
-	);
-	auto const best_size = double(containers::linear_size(all_best));
-	return WeightedSelections(
-		containers::transform(all_best, [&](ScoredSelection const element) {
-			return WeightedSelection(element.selection, 1.0 / best_size);
-		})
-	);
+	));
 }
 
 auto make_net_hp() -> Strategy {

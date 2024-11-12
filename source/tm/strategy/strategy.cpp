@@ -11,6 +11,7 @@ export module tm.strategy.strategy;
 
 import tm.move.legal_selections;
 
+import tm.strategy.selection_probability;
 import tm.strategy.weighted_selection;
 
 import tm.environment;
@@ -27,15 +28,48 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
+export struct BothSelectionProbabilities {
+	SelectionProbabilities user;
+	// predicted_other can be empty
+	SelectionProbabilities predicted_other;
+};
+
 using Signature = auto(
 	GenerationGeneric<Team> const &,
 	LegalSelections,
 	GenerationGeneric<Team> const &,
 	LegalSelections,
 	Environment
-) const -> BothWeightedSelections;
+) const -> BothSelectionProbabilities;
 
 using Function = std::move_only_function<Signature>;
+
+template<typename StrategyResult>
+concept contains_both = requires(StrategyResult const result) {
+	result.user;
+	result.predicted_other;
+};
+
+constexpr auto to_selection_probabilities(WeightedSelections const weighted) -> SelectionProbabilities {
+	auto const cummulative_weight = containers::sum(containers::transform(
+		weighted,
+		&WeightedSelection::weight
+	));
+	BOUNDED_ASSERT(cummulative_weight > 0.0);
+
+	return SelectionProbabilities(containers::transform(
+		weighted,
+		[&](WeightedSelection const value) {
+			return SelectionProbability(
+				value.selection,
+				value.weight / cummulative_weight
+			);
+		}
+	));
+}
+constexpr auto to_selection_probabilities(SelectionProbabilities probabilities) -> SelectionProbabilities {
+	return probabilities;
+}
 
 template<typename Impl>
 struct Wrapper {
@@ -49,11 +83,11 @@ struct Wrapper {
 		GenerationGeneric<Team> const & generic_foe,
 		LegalSelections const foe_selections,
 		Environment const environment
-	) const -> BothWeightedSelections {
+	) const -> BothSelectionProbabilities {
 		if (containers::size(ai_selections) == 1_bi) {
-			return BothWeightedSelections(
-				WeightedSelections({{containers::front(ai_selections), 1.0}}),
-				WeightedSelections()
+			return BothSelectionProbabilities(
+				SelectionProbabilities({{containers::front(ai_selections), 1.0}}),
+				SelectionProbabilities()
 			);
 		}
 		return tv::visit(
@@ -63,7 +97,7 @@ struct Wrapper {
 				[&]<Generation generation>(
 					Team<generation> const & ai,
 					Team<generation> const & foe
-				) -> BothWeightedSelections {
+				) -> BothSelectionProbabilities {
 					BOUNDED_ASSERT(!team_is_empty(ai));
 					BOUNDED_ASSERT(!team_is_empty(foe));
 					auto result = m_impl(
@@ -73,13 +107,19 @@ struct Wrapper {
 						foe_selections,
 						environment
 					);
-					if constexpr (std::same_as<decltype(result), WeightedSelections>) {
-						return BothWeightedSelections(result, WeightedSelections());
+					if constexpr (contains_both<decltype(result)>) {
+						return BothSelectionProbabilities(
+							to_selection_probabilities(result.user),
+							to_selection_probabilities(result.predicted_other)
+						);
 					} else {
-						return result;
+						return BothSelectionProbabilities(
+							to_selection_probabilities(result),
+							SelectionProbabilities()
+						);
 					}
 				},
-				[](auto const &, auto const &) -> BothWeightedSelections {
+				[](auto const &, auto const &) -> BothSelectionProbabilities {
 					std::unreachable();
 				}
 			)

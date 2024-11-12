@@ -12,8 +12,8 @@ import tm.move.pass;
 import tm.move.selection;
 import tm.move.switch_;
 
+import tm.strategy.selection_probability;
 import tm.strategy.strategy;
-import tm.strategy.weighted_selection;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.selection;
@@ -42,13 +42,13 @@ using namespace bounded::literal;
 template<Generation generation>
 auto log_move_probabilities(
 	std::ostream & stream,
-	WeightedSelections const all_predicted,
+	SelectionProbabilities const all_predicted,
 	Team<generation> const & team
 ) -> void {
 	for (auto const predicted : all_predicted) {
 		stream
 			<< '\t'
-			<< predicted.weight * 100.0
+			<< predicted.probability * 100.0
 			<< "% chance: "
 			<< to_string(predicted.selection, team)
 			<< '\n';
@@ -67,10 +67,19 @@ auto predicted_state(
 	);
 }
 
-constexpr auto sort_selections(WeightedSelections & selections) -> void {
-	containers::sort(selections, [](WeightedSelection const lhs, WeightedSelection const rhs) {
-		return lhs.weight > rhs.weight;
+constexpr auto sort_selections(SelectionProbabilities & selections) -> void {
+	containers::sort(selections, [](SelectionProbability const lhs, SelectionProbability const rhs) {
+		return lhs.probability > rhs.probability;
 	});
+}
+
+auto pick_selection(SelectionProbabilities const selections, std::mt19937 & random_engine) -> Selection {
+	auto const probabilities = containers::transform(selections, &SelectionProbability::probability);
+	auto distribution = std::discrete_distribution(
+		containers::legacy_iterator(containers::begin(probabilities)),
+		containers::legacy_iterator(containers::end(probabilities))
+	);
+	return containers::at(selections, distribution(random_engine)).selection;
 }
 
 template<Generation generation>
