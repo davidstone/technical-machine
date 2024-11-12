@@ -5,6 +5,9 @@
 
 module tm.strategy.net_hp;
 
+import tm.evaluate.score;
+import tm.evaluate.scored_selection;
+
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.irrelevant_action;
@@ -31,17 +34,12 @@ import tv;
 
 namespace technicalmachine {
 
-struct SelectionAndScore {
-	Selection selection;
-	double score;
-};
-
 template<Generation generation>
-constexpr auto individual_score(Team<generation> const & team) -> double {
+constexpr auto individual_score(Team<generation> const & team) -> Score {
 	return containers::sum(containers::transform(
 		team.all_pokemon(),
-		[](Pokemon<generation> const & pokemon) -> double {
-			return double(pokemon.hp().current()) / double(pokemon.hp().max());
+		[](Pokemon<generation> const & pokemon) -> Score {
+			return Score(double(pokemon.hp().current()) / double(pokemon.hp().max()));
 		}
 	));
 }
@@ -55,9 +53,9 @@ constexpr auto max_net_hp(
 ) -> WeightedSelections {
 	auto const scores = containers::make_static_vector(containers::transform(
 		legal_selections,
-		[&](Selection const selection) -> SelectionAndScore {
+		[&](Selection const selection) -> ScoredSelection {
 			return tv::visit(selection, tv::overload(
-				[&](MoveName const move) -> SelectionAndScore {
+				[&](MoveName const move) -> ScoredSelection {
 					auto user = original_user;
 					auto other = original_other;
 					auto environment = original_environment;
@@ -93,12 +91,12 @@ constexpr auto max_net_hp(
 						actual_damage,
 						is_fully_paralyzed
 					);
-					return SelectionAndScore(
+					return ScoredSelection(
 						selection,
 						individual_score(user) - individual_score(other)
 					);
 				},
-				[&](Switch const switch_) -> SelectionAndScore {
+				[&](Switch const switch_) -> ScoredSelection {
 					auto user = original_user;
 					auto other = original_other;
 					auto environment = original_environment;
@@ -107,32 +105,32 @@ constexpr auto max_net_hp(
 						environment,
 						switch_.value()
 					);
-					return SelectionAndScore(
+					return ScoredSelection(
 						selection,
 						individual_score(user) - individual_score(other)
 					);
 				},
-				[](Pass) -> SelectionAndScore {
-					return SelectionAndScore(pass, 0.0);
+				[](Pass) -> ScoredSelection {
+					return ScoredSelection(pass, Score(0.0));
 				}
 			));
 		}
 	));
 	auto const best = containers::max_element(
 		scores,
-		[&](SelectionAndScore const lhs, SelectionAndScore const rhs) {
+		[&](ScoredSelection const lhs, ScoredSelection const rhs) {
 			return lhs.score > rhs.score;
 		}
 	);
 	auto const all_best = containers::filter(
 		scores,
-		[&](SelectionAndScore const element) {
+		[&](ScoredSelection const element) {
 			return element.score == best->score;
 		}
 	);
 	auto const best_size = double(containers::linear_size(all_best));
 	return WeightedSelections(
-		containers::transform(all_best, [&](SelectionAndScore const element) {
+		containers::transform(all_best, [&](ScoredSelection const element) {
 			return WeightedSelection(element.selection, 1.0 / best_size);
 		})
 	);

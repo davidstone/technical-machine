@@ -20,6 +20,7 @@ target_sources(tm_common PUBLIC
 		evaluate/extreme_element_value.cpp
 		evaluate/load_evaluate.cpp
 		evaluate/possible_executed_moves.cpp
+		evaluate/score.cpp
 		evaluate/scored_selection.cpp
 		evaluate/selector.cpp
 		evaluate/state.cpp

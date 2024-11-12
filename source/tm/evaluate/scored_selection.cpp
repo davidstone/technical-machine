@@ -6,6 +6,7 @@
 export module tm.evaluate.scored_selection;
 
 import tm.evaluate.extreme_element_value;
+import tm.evaluate.score;
 
 import tm.move.legal_selections;
 import tm.move.selection;
@@ -16,7 +17,7 @@ namespace technicalmachine {
 
 export struct ScoredSelection {
 	Selection selection;
-	double score;
+	Score score;
 };
 export using ScoredSelections = containers::static_vector<ScoredSelection, maximum_possible_selections>;
 

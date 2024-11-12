@@ -16,6 +16,7 @@ import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.possible_executed_moves;
+import tm.evaluate.score;
 import tm.evaluate.scored_selection;
 import tm.evaluate.selector;
 import tm.evaluate.state;
@@ -86,7 +87,7 @@ auto parallel_sum(auto && range) {
 		std::execution::par_unseq,
 		containers::legacy_iterator(containers::begin(range)),
 		containers::legacy_iterator(containers::end(range)),
-		0.0
+		Score(0.0)
 	);
 }
 
@@ -125,8 +126,8 @@ constexpr auto probabilities(auto const basic_probability, auto... args) {
 	);
 };
 
-constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) -> double {
-	auto average_score = 0.0;
+constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) -> Score {
+	auto average_score = Score(0.0);
 	auto const first_probabilities = probabilities(basic_probability, true);
 	auto const last_probabilities = containers::make_static_vector(probabilities(basic_probability, false));
 	for (auto const first : first_probabilities) {
@@ -137,7 +138,7 @@ constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto co
 	return average_score;
 }
 
-constexpr auto generic_flag_branch(double const basic_probability, auto const & next_branch) -> double {
+constexpr auto generic_flag_branch(double const basic_probability, auto const & next_branch) -> Score {
 	return containers::sum(containers::transform(
 		probabilities(bounded::value_to_function(basic_probability)),
 		[&](FlagProbability const x) { return x.probability * next_branch(x.flag); }
@@ -196,7 +197,7 @@ auto execute_move(
 	OtherAction const other_action,
 	Depth const depth,
 	auto const continuation
-) -> double {
+) -> Score {
 	auto const selected = select(state);
 	auto const user_pokemon = selected.selection.pokemon();
 	auto const other_pokemon = selected.other.pokemon();
@@ -218,47 +219,48 @@ auto execute_move(
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			return generic_flag_branch(chance_to_be_paralyzed, [&](bool const is_fully_paralyzed) {
-				auto score = 0.0;
-				for (auto const & side_effect : side_effects) {
-					score += side_effect.probability * generic_flag_branch(
-						hits ? ch_probability : 0.0,
-						[&](bool const critical_hit) {
-							auto copy = state;
-							auto const selected_copy = select(copy);
-							// TODO: https://github.com/davidstone/technical-machine/issues/24
-							constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
-							call_move(
-								selected_copy.selection,
-								UsedMove<Team<generation>>(
-									move.selected,
-									move.executed,
-									critical_hit,
-									!hits,
-									contact_ability_effect,
-									side_effect.function
-								),
-								selected_copy.other,
-								other_action,
-								copy.environment,
-								clear_status,
-								ActualDamage::Unknown{},
-								is_fully_paralyzed
-							);
-							if (auto const won = win(copy.ai, copy.foe)) {
-								return *won + double(depth.remaining_general());
+				return containers::sum(containers::transform(
+					side_effects,
+					[&](auto const & side_effect) {
+						return side_effect.probability * generic_flag_branch(
+							hits ? ch_probability : 0.0,
+							[&](bool const critical_hit) {
+								auto copy = state;
+								auto const selected_copy = select(copy);
+								// TODO: https://github.com/davidstone/technical-machine/issues/24
+								constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
+								call_move(
+									selected_copy.selection,
+									UsedMove<Team<generation>>(
+										move.selected,
+										move.executed,
+										critical_hit,
+										!hits,
+										contact_ability_effect,
+										side_effect.function
+									),
+									selected_copy.other,
+									other_action,
+									copy.environment,
+									clear_status,
+									ActualDamage::Unknown{},
+									is_fully_paralyzed
+								);
+								if (auto const won = win(copy.ai, copy.foe)) {
+									return *won + Score(double(depth.remaining_general()));
+								}
+								return continuation(copy);
 							}
-							return continuation(copy);
-						}
-					);
-				}
-				return score;
+						);
+					}
+				));
 			});
 		});
 	});
 }
 
 template<Generation generation>
-auto execute_switch(State<generation> state, Selector const select, Switch const switch_, Depth const depth, auto const continuation) -> double {
+auto execute_switch(State<generation> state, Selector const select, Switch const switch_, Depth const depth, auto const continuation) -> Score {
 	auto const selected = select(state);
 	selected.selection.switch_pokemon(
 		selected.other.pokemon(),
@@ -266,7 +268,7 @@ auto execute_switch(State<generation> state, Selector const select, Switch const
 		switch_.value()
 	);
 	if (auto const won = win(state.ai, state.foe)) {
-		return *won + double(depth.remaining_general());
+		return *won + Score(double(depth.remaining_general()));
 	}
 	return continuation(state);
 }
@@ -322,8 +324,8 @@ constexpr auto check_is_valid_start_of_turn(any_team auto const & team) -> void 
 	BOUNDED_ASSERT(pokemon.hp().current() != 0_bi);
 }
 
-constexpr auto average(auto... values) -> double {
-	return (... + values) / sizeof...(values);
+constexpr auto average(auto... values) -> Score {
+	return (... + values) / double(sizeof...(values));
 }
 
 constexpr auto is_delayed_switching(any_team auto const & team) -> bool {
@@ -463,7 +465,7 @@ private:
 				auto const is_ai = foe_selection == pass;
 				auto const selector = Selector(is_ai);
 				auto const selection = is_ai ? ai_selection : foe_selection;
-				auto continuation = [&](State<generation> const & updated) -> double {
+				auto continuation = [&](State<generation> const & updated) -> Score {
 					auto const selected = selector(updated);
 					auto const should_end_turn =
 						moved(selected.other) or
@@ -482,13 +484,13 @@ private:
 					}
 				};
 				return tv::visit(selection, tv::overload(
-					[&](Switch const switch_) -> double {
+					[&](Switch const switch_) -> Score {
 						return execute_switch(original, selector, switch_, depth, continuation);
 					},
-					[](MoveName) -> double {
+					[](MoveName) -> Score {
 						std::unreachable();
 					},
-					[](Pass) -> double {
+					[](Pass) -> Score {
 						std::unreachable();
 					}
 				));
@@ -507,7 +509,7 @@ private:
 		Selector const selector,
 		Depth const depth,
 		tv::optional<Selection> const forced_continuation
-	) -> double {
+	) -> Score {
 		BOUNDED_ASSERT(!moved(selector(state).selection));
 		BOUNDED_ASSERT(!is_fainted(selector(state).selection));
 		BOUNDED_ASSERT(moved(selector(state).other));
@@ -621,7 +623,7 @@ private:
 		Selection const ai_selection,
 		Selection const foe_selection,
 		Depth const depth
-	) -> double {
+	) -> Score {
 		auto ordered = Order(
 			state.ai,
 			ai_selection,
@@ -661,7 +663,7 @@ private:
 		Selection const first_selection,
 		Selection const last_selection,
 		Depth const depth
-	) -> double {
+	) -> Score {
 		return score_executed_actions(
 			original,
 			selector,
@@ -679,7 +681,7 @@ private:
 		Selector const selector,
 		Depth const depth,
 		tv::optional<Selection> const possible_forced_continuation
-	) -> double {
+	) -> Score {
 		auto const selected = selector(state);
 		if (is_delayed_switching(state.ai)) {
 			auto const ai_selections = get_legal_selections(
@@ -732,7 +734,7 @@ private:
 	auto end_of_turn_flag_branch(
 		State<generation> const & state,
 		Depth const depth
-	) -> double {
+	) -> Score {
 		auto shed_skin_probability = [&](bool const is_ai) {
 			auto const pokemon = (is_ai ? state.ai : state.foe).pokemon();
 			return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
@@ -774,7 +776,7 @@ private:
 		EndOfTurnFlags const ai_flags,
 		EndOfTurnFlags const foe_flags,
 		Depth const depth
-	) -> double {
+	) -> Score {
 		auto is_ai = team_matcher(state.ai);
 		auto get_flag = [&](Team<generation> const & match) {
 			return is_ai(match) ? ai_flags : foe_flags;
@@ -811,7 +813,7 @@ private:
 		EndOfTurnFlags const first_flag,
 		EndOfTurnFlags const last_flag,
 		Depth const depth
-	) -> double {
+	) -> Score {
 		auto const selected = select(state);
 		end_of_turn(
 			selected.selection,
@@ -823,10 +825,10 @@ private:
 		return finish_end_of_turn(state, depth);
 	}
 
-	auto finish_end_of_turn(State<generation> const & state, Depth const original_depth) -> double {
+	auto finish_end_of_turn(State<generation> const & state, Depth const original_depth) -> Score {
 		if (is_fainted(state.ai) or is_fainted(state.foe)) {
 			if (auto const won = win(state.ai, state.foe)) {
-				return *won + double(original_depth.remaining_general());
+				return *won + Score(double(original_depth.remaining_general()));
 			}
 			auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);
 			return max_score(after_end_of_turn_action(
@@ -843,11 +845,11 @@ private:
 			case SearchType::single:
 				return generate_single_matchups(state, depth);
 			case SearchType::evaluate:
-				return static_cast<double>(m_evaluate(state.ai, state.foe));
+				return Score(double(m_evaluate(state.ai, state.foe)));
 		}
 	}
 
-	auto generate_single_matchups(State<generation> const & state, Depth const depth) -> double {
+	auto generate_single_matchups(State<generation> const & state, Depth const depth) -> Score {
 		// There are max_size^2 == 36 possible pairings, which can be divided into four categories (`ai` is the size of the AI's team, `foe` is the size of the foe's team):
 		// 1) ai * foe single matchups
 		// 2) ai * (max_size - foe) forced wins
@@ -855,7 +857,7 @@ private:
 		// 4) (max_size - ai) * (max_size * foe) forced ties
 
 		// The nested for loop takes care of the first category.
-		auto score = 0.0;
+		auto score = Score(0.0);
 		for (auto const ai_index : containers::integer_range(state.ai.size())) {
 			for (auto const foe_index : containers::integer_range(state.foe.size())) {
 				score += evaluate_single_matchup(state, ai_index, foe_index, depth);
@@ -881,7 +883,7 @@ private:
 		return score;
 	}
 
-	auto evaluate_single_matchup(State<generation> state, TeamIndex const ai_index, TeamIndex const foe_index, Depth const depth) -> double {
+	auto evaluate_single_matchup(State<generation> state, TeamIndex const ai_index, TeamIndex const foe_index, Depth const depth) -> Score {
 		// TODO: Something involving switch order
 		auto remove_all_but_index = [&](Team<generation> & team, TeamIndex const index, Team<generation> & other) {
 			if (index != team.all_pokemon().index()) {
@@ -906,31 +908,33 @@ private:
 		OtherAction const other_action,
 		Depth const depth,
 		auto const continuation
-	) const -> double {
+	) const -> Score {
 		return tv::visit(selection, tv::overload(
-			[&](Switch const switch_) -> double {
+			[&](Switch const switch_) -> Score {
 				return execute_switch(state, select, switch_, depth, continuation);
 			},
-			[&](MoveName const selected) -> double {
+			[&](MoveName const selected) -> Score {
 				auto const & team = select(state).selection;
 				if (team.pokemon().hp().current() == 0_bi) {
 					return continuation(state);
 				}
-				double score = 0.0;
 				auto const executed_moves = possible_executed_moves(selected, team);
-				for (auto const executed : executed_moves) {
-					score += execute_move(
-						state,
-						select,
-						SelectedAndExecuted(selected, executed),
-						other_action,
-						depth,
-						continuation
-					);
-				}
-				return score / static_cast<double>(containers::size(executed_moves));
+				auto const sum = containers::sum(containers::transform(
+					executed_moves,
+					[&](MoveName const executed) {
+						return execute_move(
+							state,
+							select,
+							SelectedAndExecuted(selected, executed),
+							other_action,
+							depth,
+							continuation
+						);
+					}
+				));
+				return sum / double(containers::size(executed_moves));
 			},
-			[&](Pass) -> double {
+			[&](Pass) -> Score {
 				return continuation(state);
 			}
 		));
