@@ -56,7 +56,7 @@ using namespace bounded::literal;
 auto make_strategy(DepthInt const depth) -> Strategy {
 	return make_expectimax(
 		Depth(depth, 0_bi),
-		make_random_selection()
+		make_random_selection(0.19)
 	);
 }
 

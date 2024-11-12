@@ -25,43 +25,23 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-constexpr auto random_selection(LegalSelections const selections) -> WeightedSelections {
-	return WeightedSelections(containers::transform(selections, [](Selection const selection) {
-		return WeightedSelection(selection, 1.0);
-	}));
-}
-
 constexpr auto is_switch = [](Selection const selection) {
 	return selection.index() == bounded::type<Switch>;
 };
 
 constexpr auto random_selection(LegalSelections const selections, double const switch_probability) -> WeightedSelections {
-	auto const total_size = containers::size(selections);
-	auto const switches = containers::count_if(selections, is_switch);
-	return WeightedSelections(containers::transform(selections, [=](Selection const selection) {
-		return WeightedSelection(
-			selection,
-			is_switch(selection) ?
-				switch_probability / double(switches) :
-				(1.0 - switch_probability) / double(total_size - switches)
-		);
-	}));
+	return WeightedSelections(containers::transform(
+		selections,
+		[=](Selection const selection) {
+			return WeightedSelection(
+				selection,
+				is_switch(selection) ?
+					switch_probability :
+					1.0 - switch_probability
+			);
+		}
+	));
 }
-
-static_assert(
-	random_selection(LegalSelections({MoveName::Tackle})) ==
-	WeightedSelections({{MoveName::Tackle, 1.0}})
-);
-
-static_assert(
-	random_selection(LegalSelections({MoveName::Tackle, MoveName::Thunder})) ==
-	WeightedSelections({{MoveName::Tackle, 1.0}, {MoveName::Thunder, 1.0}})
-);
-
-static_assert(
-	random_selection(LegalSelections({MoveName::Tackle, Switch(0_bi)})) ==
-	WeightedSelections({{MoveName::Tackle, 1.0}, {Switch(0_bi), 1.0}})
-);
 
 static_assert(
 	random_selection(LegalSelections({MoveName::Tackle}), 0.2) ==
@@ -70,7 +50,7 @@ static_assert(
 
 static_assert(
 	random_selection(LegalSelections({MoveName::Tackle, MoveName::Thunder}), 0.2) ==
-	WeightedSelections({{MoveName::Tackle, 0.4}, {MoveName::Thunder, 0.4}})
+	WeightedSelections({{MoveName::Tackle, 0.8}, {MoveName::Thunder, 0.8}})
 );
 
 static_assert(
@@ -84,8 +64,8 @@ static_assert(
 		0.2
 	) ==
 	WeightedSelections({
-		{MoveName::Tackle, 0.4},
-		{MoveName::Thunder, 0.4},
+		{MoveName::Tackle, 0.8},
+		{MoveName::Thunder, 0.8},
 		{Switch(0_bi), 0.2}
 	})
 );
@@ -97,8 +77,8 @@ static_assert(
 	) ==
 	WeightedSelections({
 		{MoveName::Tackle, 0.8},
-		{Switch(0_bi), 0.1},
-		{Switch(1_bi), 0.1}
+		{Switch(0_bi), 0.2},
+		{Switch(1_bi), 0.2}
 	})
 );
 
@@ -106,18 +86,6 @@ static_assert(
 	random_selection(LegalSelections({Switch(0_bi)}), 0.2) ==
 	WeightedSelections({{Switch(0_bi), 0.2}})
 );
-
-export auto make_random_selection() -> Strategy {
-	return Strategy([]<Generation generation>(
-		[[maybe_unused]] Team<generation> const & ai,
-		LegalSelections const ai_selections,
-		[[maybe_unused]] Team<generation> const & foe,
-		[[maybe_unused]] LegalSelections const foe_selections,
-		[[maybe_unused]] Environment const environment
-	) -> WeightedSelections {
-		return random_selection(ai_selections);
-	});
-}
 
 export auto make_random_selection(double const switch_probability) -> Strategy {
 	return Strategy([=]<Generation generation>(

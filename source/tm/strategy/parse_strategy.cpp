@@ -28,13 +28,8 @@ using namespace std::string_view_literals;
 export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 	auto const name = std::string_view(argv[0]);
 	if (name == "random"sv) {
-		if (argc != 1) {
-			throw std::runtime_error("random strategy accepts no arguments");
-		}
-		return make_random_selection();
-	} else if (name == "random_weighted"sv) {
 		if (argc != 2) {
-			throw std::runtime_error("random_weighted strategy requires probability argument");
+			throw std::runtime_error("random strategy requires argument for switch weight");
 		}
 		return make_random_selection(std::stod(argv[1]));
 	} else if (name == "max_damage"sv) {
@@ -64,7 +59,7 @@ export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 			parse_strategy(argc - 3, argv + 3)
 		);
 	} else {
-		throw std::runtime_error("Selection strategy must be one of random, random_weighted, max_damage, net_hp, statistical, expectimax");
+		throw std::runtime_error("Selection strategy must be one of random, max_damage, net_hp, statistical, expectimax");
 	}
 }
 
