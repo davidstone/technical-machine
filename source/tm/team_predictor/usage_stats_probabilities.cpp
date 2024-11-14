@@ -15,6 +15,7 @@ import tm.pokemon.species;
 
 import tm.ability;
 import tm.item;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -26,7 +27,7 @@ export struct UsageStatsProbabilities {
 	template<typename T>
 	struct Data {
 		using key_type = T;
-		using mapped_type = float;
+		using mapped_type = Weight<float>;
 		using Map = containers::flat_map<key_type, mapped_type>;
 		Data() = default;
 
@@ -41,7 +42,7 @@ export struct UsageStatsProbabilities {
 
 		constexpr auto operator()(key_type const move) const -> mapped_type {
 			auto const element = containers::lookup(m_map, move);
-			return element ? *element : 0.0F;
+			return element ? *element : mapped_type(0.0F);
 		}
 
 		constexpr auto insert(auto && range) & {

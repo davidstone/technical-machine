@@ -30,6 +30,7 @@ import tm.contact_ability_effect;
 import tm.environment;
 import tm.generation;
 import tm.team;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -114,7 +115,7 @@ constexpr auto max_damage(
 			}
 		),
 		[](SelectionAndDamage const element) {
-			return WeightedSelection(element.selection, 1.0);
+			return WeightedSelection(element.selection, Weight(1.0));
 		}
 	));
 }

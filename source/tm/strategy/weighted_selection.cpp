@@ -8,6 +8,8 @@ export module tm.strategy.weighted_selection;
 import tm.move.legal_selections;
 import tm.move.selection;
 
+import tm.weight;
+
 import bounded;
 import containers;
 
@@ -15,7 +17,7 @@ namespace technicalmachine {
 
 export struct WeightedSelection {
 	Selection selection;
-	double weight;
+	Weight<double> weight;
 	friend auto operator==(WeightedSelection, WeightedSelection) -> bool = default;
 };
 
@@ -28,7 +30,7 @@ struct bounded::tombstone_traits<technicalmachine::WeightedSelection> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::WeightedSelection {
 		return technicalmachine::WeightedSelection(
 			tombstone_traits<technicalmachine::Selection>::make(index),
-			0.0
+			technicalmachine::Weight(0.0)
 		);
 	}
 	static constexpr auto index(technicalmachine::WeightedSelection const & value) noexcept {

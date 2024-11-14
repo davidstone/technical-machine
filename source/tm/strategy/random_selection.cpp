@@ -17,6 +17,7 @@ import tm.environment;
 import tm.generation;
 import tm.probability;
 import tm.team;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -37,8 +38,8 @@ constexpr auto random_selection(LegalSelections const selections, Probability co
 			return WeightedSelection(
 				selection,
 				is_switch(selection) ?
-					double(switch_probability) :
-					double(Probability(1.0) - switch_probability)
+					Weight(switch_probability) :
+					Weight(Probability(1.0) - switch_probability)
 			);
 		}
 	));
@@ -46,22 +47,22 @@ constexpr auto random_selection(LegalSelections const selections, Probability co
 
 static_assert(
 	random_selection(LegalSelections({MoveName::Tackle}), Probability(0.2)) ==
-	WeightedSelections({{MoveName::Tackle, 0.8}})
+	WeightedSelections({{MoveName::Tackle, Weight(0.8)}})
 );
 
 static_assert(
 	random_selection(LegalSelections({MoveName::Tackle, MoveName::Thunder}), Probability(0.2)) ==
 	WeightedSelections({
-		{MoveName::Tackle, 0.8},
-		{MoveName::Thunder, 0.8}
+		{MoveName::Tackle, Weight(0.8)},
+		{MoveName::Thunder, Weight(0.8)}
 	})
 );
 
 static_assert(
 	random_selection(LegalSelections({MoveName::Tackle, Switch(0_bi)}), Probability(0.2)) ==
 	WeightedSelections({
-		{MoveName::Tackle, 0.8},
-		{Switch(0_bi), 0.2}
+		{MoveName::Tackle, Weight(0.8)},
+		{Switch(0_bi), Weight(0.2)}
 	})
 );
 
@@ -71,9 +72,9 @@ static_assert(
 		Probability(0.2)
 	) ==
 	WeightedSelections({
-		{MoveName::Tackle, 0.8},
-		{MoveName::Thunder, 0.8},
-		{Switch(0_bi), 0.2}
+		{MoveName::Tackle, Weight(0.8)},
+		{MoveName::Thunder, Weight(0.8)},
+		{Switch(0_bi), Weight(0.2)}
 	})
 );
 
@@ -83,15 +84,15 @@ static_assert(
 		Probability(0.2)
 	) ==
 	WeightedSelections({
-		{MoveName::Tackle, 0.8},
-		{Switch(0_bi), 0.2},
-		{Switch(1_bi), 0.2}
+		{MoveName::Tackle, Weight(0.8)},
+		{Switch(0_bi), Weight(0.2)},
+		{Switch(1_bi), Weight(0.2)}
 	})
 );
 
 static_assert(
 	random_selection(LegalSelections({Switch(0_bi)}), Probability(0.2)) ==
-	WeightedSelections({{Switch(0_bi), 0.2}})
+	WeightedSelections({{Switch(0_bi), Weight(0.2)}})
 );
 
 export auto make_random_selection(Probability const switch_probability) -> Strategy {

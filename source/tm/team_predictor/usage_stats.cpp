@@ -21,6 +21,7 @@ import tm.ability;
 import tm.generation;
 import tm.item;
 import tm.read_bytes;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -116,15 +117,15 @@ auto checked_read(FileReader & reader) {
 }
 
 template<typename T>
-auto read_inner_probabilities(FileReader & reader, double const species_weight) {
+auto read_inner_probabilities(FileReader & reader, Weight<double> const species_weight) {
 	using Data = UsageStatsProbabilities::Data<T>;
 	using Map = Data::Map;
 	auto const elements = read_map<T>(reader);
 	return Data(containers::transform(elements, [&](T const key) {
-		auto const relative_weight = checked_read<double>(reader);
+		auto const relative_weight = Weight(checked_read<double>(reader));
 		return containers::range_value_t<Map>{
 			key,
-			static_cast<float>(species_weight * relative_weight)
+			Weight(float(species_weight * relative_weight))
 		};
 	}));
 }
@@ -133,7 +134,7 @@ template<std::same_as<UsageStatsProbabilities::Map>>
 auto checked_read(FileReader & reader) {
 	auto const all_species = read_map<Species>(reader);
 	return UsageStatsProbabilities::Map(containers::transform(all_species, [&](Species const species) {
-		auto const weight = checked_read<double>(reader);
+		auto const weight = Weight(checked_read<double>(reader));
 		return containers::range_value_t<UsageStatsProbabilities::Map>{
 			species,
 			{
@@ -157,7 +158,7 @@ export struct UsageStats {
 		auto probabilities = UsageStatsProbabilities::Map();
 
 		for (auto const species : read_map<Species>(reader)) {
-			auto const species_weight = checked_read<double>(reader);
+			auto const species_weight = Weight(checked_read<double>(reader));
 			checked_read<SpeedDistribution>(reader);
 			auto per_species_probabilities = checked_read<UsageStatsProbabilities::Map>(reader);
 			auto used_moves = UsedMoves();
@@ -182,11 +183,11 @@ export struct UsageStats {
 				bounded::construct<UsageStatsProbabilities::Inner>
 			);
 			for (auto const & move_name : read_map<MoveName>(reader)) {
-				auto const move_weight = checked_read<double>(reader);
+				auto const move_weight = Weight(checked_read<double>(reader));
 				checked_insert(
 					for_this_species.moves,
 					move_name,
-					bounded::value_to_function(static_cast<float>(move_weight))
+					bounded::value_to_function(Weight(float(move_weight)))
 				);
 				[[maybe_unused]] auto const speed_distribution = checked_read<SpeedDistribution>(reader);
 				auto teammates = checked_read<UsageStatsProbabilities::Map>(reader);
@@ -194,7 +195,7 @@ export struct UsageStats {
 				checked_insert(
 					probabilities_assuming_species.moves,
 					move_name,
-					bounded::value_to_function(static_cast<float>(weight))
+					bounded::value_to_function(Weight(float(weight)))
 				);
 				auto moves = read_inner_probabilities<MoveName>(reader, species_weight);
 				auto items = read_items();

@@ -277,6 +277,7 @@ target_sources(tm_common PUBLIC
 		visible_hp.cpp
 		visible_state.cpp
 		weather.cpp
+		weight.cpp
 		wish.cpp
 		write_bytes.cpp
 )

@@ -18,6 +18,7 @@ import tm.team_predictor.usage_stats;
 import tm.test.usage_bytes;
 
 import tm.generation;
+import tm.weight;
 
 import containers;
 import std_module;
@@ -31,7 +32,7 @@ TEST_CASE("Estimate", "[team_predictor]") {
 		auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(generation));
 		auto const ptr = usage_stats.assuming()(Species::Mew);
 		REQUIRE(ptr);
-		CHECK(containers::sum(containers::transform(ptr->moves.map(), containers::get_mapped)) > 0.0F);
+		CHECK(containers::sum(containers::transform(ptr->moves.map(), containers::get_mapped)) > Weight(0.0F));
 		auto estimate = Estimate(usage_stats);
 		CHECK(estimate.probability(Species::Mew) > 0.0);
 		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);

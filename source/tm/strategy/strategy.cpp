@@ -20,6 +20,7 @@ import tm.generation_generic;
 import tm.probability;
 import tm.team;
 import tm.team_is_empty;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -56,7 +57,10 @@ constexpr auto to_selection_probabilities(WeightedSelections const weighted) -> 
 		weighted,
 		&WeightedSelection::weight
 	));
-	BOUNDED_ASSERT(cummulative_weight > 0.0);
+	BOUNDED_ASSERT(containers::none(
+		weighted,
+		[](WeightedSelection const element) { return element.weight == Weight(0.0); }
+	));
 
 	return SelectionProbabilities(containers::transform(
 		weighted,

@@ -20,6 +20,7 @@ import tm.test.usage_bytes;
 import tm.ability;
 import tm.generation;
 import tm.item;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -36,9 +37,9 @@ TEST_CASE("Smallest generation 1 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
-	CHECK(ptr->items.map() == containers::flat_map<Item, float>());
-	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, Weight<float>>({{MoveName::Cut, Weight(1.0F)}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, Weight<float>>());
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, Weight<float>>());
 }
 
 TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
@@ -48,9 +49,9 @@ TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
-	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
-	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, Weight<float>>({{MoveName::Cut, Weight(1.0F)}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, Weight<float>>({{Item::None, Weight(1.0F)}}));
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, Weight<float>>());
 }
 
 TEST_CASE("Smallest generation 3 team", "[UsageStats]") {
@@ -60,9 +61,9 @@ TEST_CASE("Smallest generation 3 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
-	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
-	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>({{Ability::Synchronize, 1.0}}));
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, Weight<float>>({{MoveName::Cut, Weight(1.0F)}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, Weight<float>>({{Item::None, Weight(1.0F)}}));
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, Weight<float>>({{Ability::Synchronize, Weight(1.0F)}}));
 }
 
 } // namespace

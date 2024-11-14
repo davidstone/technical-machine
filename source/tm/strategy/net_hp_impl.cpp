@@ -28,6 +28,7 @@ import tm.strategy.weighted_selection;
 import tm.environment;
 import tm.generation;
 import tm.team;
+import tm.weight;
 
 import containers;
 import tv;
@@ -130,7 +131,7 @@ constexpr auto max_net_hp(
 			}
 		),
 		[](ScoredSelection const element) {
-			return WeightedSelection(element.selection, 1.0);
+			return WeightedSelection(element.selection, Weight(1.0));
 		}
 	));
 }

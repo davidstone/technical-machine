@@ -19,6 +19,7 @@ import tm.team_predictor.usage_stats;
 
 import tm.ability;
 import tm.item;
+import tm.weight;
 
 import bounded;
 import containers;
@@ -40,7 +41,7 @@ constexpr auto update_per_species(auto & data, auto const & per_species, auto co
 		// If users do something very surprising, we don't want to lower the
 		// odds of everything to 0.
 		auto const multiplier = bounded::max(
-			base == 0.0F ? 0.0 : static_cast<double>(per_species(element.key) / base),
+			base == Weight(0.0F) ? 0.0 : static_cast<double>(per_species(element.key) / base),
 			1.0 / 1'000'000.0
 		);
 		element.mapped *= multiplier;
@@ -208,17 +209,17 @@ private:
 			update_per_species(
 				per_species.mapped.moves,
 				species_estimate->moves,
-				[=](MoveName const move) { return base_per_species ? base_per_species->moves(move) : 0.0F; }
+				[=](MoveName const move) { return base_per_species ? base_per_species->moves(move) : Weight(0.0F); }
 			);
 			update_per_species(
 				per_species.mapped.items,
 				species_estimate->items,
-				[=](Item const item) { return base_per_species ? base_per_species->items(item) : 0.0F; }
+				[=](Item const item) { return base_per_species ? base_per_species->items(item) : Weight(0.0F); }
 			);
 			update_per_species(
 				per_species.mapped.abilities,
 				species_estimate->abilities,
-				[=](Ability const ability) { return base_per_species ? base_per_species->abilities(ability) : 0.0F; }
+				[=](Ability const ability) { return base_per_species ? base_per_species->abilities(ability) : Weight(0.0F); }
 			);
 			per_species.mapped.usage =
 				per_species.mapped.usage == 0.0 ?
