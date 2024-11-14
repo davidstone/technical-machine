@@ -43,6 +43,7 @@ import tm.gender;
 import tm.generation;
 import tm.get_legal_selections;
 import tm.item;
+import tm.probability;
 import tm.team;
 
 import bounded;
@@ -56,7 +57,7 @@ using namespace bounded::literal;
 auto make_strategy(DepthInt const depth) -> Strategy {
 	return make_expectimax(
 		Depth(depth, 0_bi),
-		make_random_selection(0.19)
+		make_random_selection(Probability(0.19))
 	);
 }
 
@@ -112,7 +113,7 @@ TEST_CASE("expectimax OHKO", "[expectimax]") {
 	{
 		auto const best = determine_best_selection(strategy, team1, team2, environment);
 		CHECK(best.selection == MoveName::Thunderbolt);
-		CHECK(best.probability == 1.0);
+		CHECK(best.probability == Probability(1.0));
 	}
 	
 	auto team3 = Team<generation>({{
@@ -133,7 +134,7 @@ TEST_CASE("expectimax OHKO", "[expectimax]") {
 	{
 		auto const best = determine_best_selection(strategy, team1, team3, environment);
 		CHECK(best.selection == MoveName::Shadow_Ball);
-		CHECK(best.probability == 1.0);
+		CHECK(best.probability == Probability(1.0));
 	}
 }
 
@@ -208,7 +209,7 @@ TEST_CASE("expectimax BellyZard", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.probability == 1.0);
+	CHECK(best.probability == Probability(1.0));
 }
 
 TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
@@ -268,7 +269,7 @@ TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Curse);
-	CHECK(best.probability == 1.0);
+	CHECK(best.probability == Probability(1.0));
 }
 
 
@@ -448,7 +449,7 @@ TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 
 	auto const best = determine_best_selection(strategy, attacker, defender, environment);
 	CHECK(best.selection == MoveName::Belly_Drum);
-	CHECK(best.probability == 1.0);
+	CHECK(best.probability == Probability(1.0));
 }
 
 

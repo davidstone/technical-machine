@@ -257,6 +257,7 @@ target_sources(tm_common PUBLIC
 		open_file.cpp
 		operators.cpp
 		other_team.cpp
+		probability.cpp
 		property_tree.cpp
 		rational.cpp
 		read_bytes.cpp

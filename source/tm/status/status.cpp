@@ -14,6 +14,7 @@ import tm.status.status_name;
 import tm.ability;
 import tm.compress;
 import tm.generation;
+import tm.probability;
 import tm.saturating_add;
 
 import bounded;
@@ -59,27 +60,30 @@ struct Rest {
 using SleepCounter = bounded::integer<0, 4>;
 
 // It's possible to acquire Early Bird in the middle of a sleep
-constexpr auto early_bird_probability(SleepCounter const turns_slept) {
+constexpr auto early_bird_probability(SleepCounter const turns_slept) -> Probability {
 	switch (turns_slept.value()) {
-		case 0:
-			return 1.0 / 4.0;
-		case 1:
-			return 1.0 / 2.0;
-		case 2:
-			return 2.0 / 3.0;
-		default: // case 3, 4
-			return 1.0;
+		case 0: return Probability(1.0 / 4.0);
+		case 1: return Probability(1.0 / 2.0);
+		case 2: return Probability(2.0 / 3.0);
+		default: return Probability(1.0); // case 3, 4
 	}
 }
 
-constexpr auto non_early_bird_probability(Generation const generation, SleepCounter const turns_slept) {
+constexpr auto non_early_bird_probability(
+	Generation const generation,
+	SleepCounter const turns_slept
+) -> Probability {
 	auto const adjusted_turns = BOUNDED_CONDITIONAL(generation == Generation::one, turns_slept - 1_bi, turns_slept);
 	return (adjusted_turns == 0_bi) ?
-		0.0 :
-		1.0 / static_cast<double>(numeric_traits::max_value<SleepCounter> + 1_bi - adjusted_turns);
+		Probability(0.0) :
+		Probability(1.0 / static_cast<double>(numeric_traits::max_value<SleepCounter> + 1_bi - adjusted_turns));
 }
 
-constexpr auto awaken_probability(Generation const generation, SleepCounter const turns_slept, Ability const ability) {
+constexpr auto awaken_probability(
+	Generation const generation,
+	SleepCounter const turns_slept,
+	Ability const ability
+) -> Probability {
 	return wakes_up_early(ability) ?
 		early_bird_probability(turns_slept) :
 		non_early_bird_probability(generation, turns_slept)
@@ -87,9 +91,12 @@ constexpr auto awaken_probability(Generation const generation, SleepCounter cons
 }
 
 // TODO: Make sure this is accurate with Early Bird
-constexpr auto rest_awaken_probability(Generation const generation, bounded::integer<0, 2> const turns_slept) {
+constexpr auto rest_awaken_probability(
+	Generation const generation,
+	bounded::integer<0, 2> const turns_slept
+) -> Probability {
 	auto const max_duration = BOUNDED_CONDITIONAL(generation == Generation::one, 1_bi, numeric_traits::max_value<decltype(turns_slept)>);
-	return turns_slept == max_duration ? 1.0 : 0.0;
+	return turns_slept == max_duration ? Probability(1.0) : Probability(0.0);
 }
 
 export struct Status {
@@ -140,12 +147,20 @@ export struct Status {
 	// status is freeze, returns the probability of thawing. Returns 0.0 if the
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
 	// will definitely not awaken.
-	constexpr auto probability_of_clearing(Generation const generation, Ability const ability) const -> double {
+	constexpr auto probability_of_clearing(Generation const generation, Ability const ability) const -> Probability {
 		return tv::visit(m_state, tv::overload(
-			[=](Sleep const sleep) { return awaken_probability(generation, sleep.turns_slept, ability); },
-			[=](Rest const sleep) { return rest_awaken_probability(generation, sleep.turns_slept); },
-			[=](Freeze) { return generation == Generation::one ? 0.0 : 0.2; },
-			[](auto) { return 0.0; }
+			[=](Sleep const sleep) {
+				return awaken_probability(generation, sleep.turns_slept, ability);
+			},
+			[=](Rest const sleep) {
+				return rest_awaken_probability(generation, sleep.turns_slept);
+			},
+			[=](Freeze) {
+				return generation == Generation::one ? Probability(0.0) : Probability(0.2);
+			},
+			[](auto) {
+				return Probability(0.0);
+			}
 		));
 	}
 

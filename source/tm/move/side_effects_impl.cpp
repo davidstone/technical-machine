@@ -45,6 +45,7 @@ import tm.generation;
 import tm.heal;
 import tm.item;
 import tm.other_team;
+import tm.probability;
 import tm.rational;
 import tm.weather;
 
@@ -61,7 +62,7 @@ template<any_team UserTeam>
 constexpr auto guaranteed_effect(SideEffectFunction<UserTeam> function) {
 	return SideEffects<UserTeam>({
 		SideEffect<UserTeam>{
-			1.0,
+			Probability(1.0),
 			function
 		}
 	});
@@ -97,11 +98,11 @@ template<any_team UserTeam>
 constexpr auto no_effect = guaranteed_effect<UserTeam>(no_effect_function);
 
 template<any_team UserTeam>
-constexpr auto basic_probability(double const probability, SideEffectFunction<UserTeam> function) {
-	return probability == 1.0 ?
+constexpr auto basic_probability(Probability const probability, SideEffectFunction<UserTeam> function) {
+	return probability == Probability(1.0) ?
 		guaranteed_effect<UserTeam>(function) :
 		SideEffects<UserTeam>({
-			SideEffect<UserTeam>{1.0 - probability, no_effect_function},
+			SideEffect<UserTeam>{Probability(1.0) - probability, no_effect_function},
 			SideEffect<UserTeam>{probability, function},
 		});
 }
@@ -140,7 +141,11 @@ private:
 };
 
 template<any_active_pokemon TargetPokemon>
-constexpr auto confusion_effect(double const probability, TargetPokemon const original_target, auto const... maybe_immune_type) {
+constexpr auto confusion_effect(
+	Probability const probability,
+	TargetPokemon const original_target,
+	auto const... maybe_immune_type
+) {
 	using UserTeam = OtherTeam<AssociatedTeam<TargetPokemon>>;
 	return (... or is_type(original_target, maybe_immune_type)) ?
 		no_effect<UserTeam> :
@@ -179,7 +184,13 @@ struct clear_status_function_t {
 constexpr auto clear_status_function = clear_status_function_t();
 
 template<StatusName status, any_active_pokemon UserPokemon>
-constexpr auto status_effect(double const probability, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_target, Environment const original_environment, auto const... immune_types) {
+constexpr auto status_effect(
+	Probability const probability,
+	UserPokemon const original_user,
+	OtherTeam<AssociatedTeam<UserPokemon>> const & original_target,
+	Environment const original_environment,
+	auto const... immune_types
+) {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	auto const weather = original_environment.effective_weather(original_user.ability(), original_target.pokemon().ability());
 	return status_can_apply(status, original_user, original_target, weather, immune_types...) ?
@@ -189,7 +200,12 @@ constexpr auto status_effect(double const probability, UserPokemon const origina
 
 
 template<any_active_pokemon UserPokemon>
-constexpr auto thaw_and_burn_effect(double const probability, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_target, Environment const original_environment) {
+constexpr auto thaw_and_burn_effect(
+	Probability const probability,
+	UserPokemon const original_user,
+	OtherTeam<AssociatedTeam<UserPokemon>> const & original_target,
+	Environment const original_environment
+) {
 	auto const original_target_pokemon = original_target.pokemon();
 	auto const target_status = original_target_pokemon.status().name();
 	auto const weather = original_environment.effective_weather(original_user.ability(), original_target_pokemon.ability());
@@ -200,9 +216,9 @@ constexpr auto thaw_and_burn_effect(double const probability, UserPokemon const 
 
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	return
-		can_burn and probability == 1.0 ? guaranteed_effect<UserTeam>(set_status_function<StatusName::burn>) :
+		can_burn and probability == Probability(1.0) ? guaranteed_effect<UserTeam>(set_status_function<StatusName::burn>) :
 		can_burn and will_thaw ? SideEffects<UserTeam>({
-			SideEffect<UserTeam>{1.0 - probability, clear_status_function},
+			SideEffect<UserTeam>{Probability(1.0) - probability, clear_status_function},
 			SideEffect<UserTeam>{probability, set_status_function<StatusName::burn>},
 		}) :
 		can_burn ? basic_probability<UserTeam>(probability, set_status_function<StatusName::burn>) :
@@ -231,12 +247,12 @@ constexpr auto fang_effects(UserPokemon const original_user, OtherTeam<Associate
 	auto const weather = original_environment.effective_weather(original_user.ability(), original_target.pokemon().ability());
 	return status_can_apply(status, original_user, original_target, weather, immune_type) ?
 		SideEffects<UserTeam>({
-			{0.81, no_effect_function},
-			{0.09, set_status_function<status>},
-			{0.09, flinch},
-			{0.01, status_and_flinch_function}
+			{Probability(0.81), no_effect_function},
+			{Probability(0.09), set_status_function<status>},
+			{Probability(0.09), flinch},
+			{Probability(0.01), status_and_flinch_function}
 		}) :
-		basic_probability<UserTeam>(0.1, flinch);
+		basic_probability<UserTeam>(Probability(0.1), flinch);
 }
 
 template<StatusName status, any_active_pokemon UserPokemon>
@@ -249,8 +265,8 @@ constexpr auto recoil_status(UserPokemon const original_user, OtherTeam<Associat
 	auto const weather = original_environment.effective_weather(original_user.ability(), original_target.pokemon().ability());
 	return status_can_apply(status, original_user, original_target, weather, immune_type) ?
 		SideEffects<UserTeam>({
-			{0.9, RecoilEffect(3_bi)},
-			{0.1, recoil_and_status}
+			{Probability(0.9), RecoilEffect(3_bi)},
+			{Probability(0.1), recoil_and_status}
 		}) :
 		guaranteed_effect<UserTeam>(RecoilEffect(3_bi));
 }
@@ -273,23 +289,23 @@ constexpr auto tri_attack_effect(UserPokemon const original_user, OtherTeam<Asso
 		return no_effect<UserTeam>;
 	}
 	constexpr auto generation = generation_from<UserPokemon>;
-	constexpr auto burn = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<StatusName::burn>});
-	constexpr auto freeze = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<StatusName::freeze>});
-	constexpr auto paralysis = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<StatusName::paralysis>});
+	constexpr auto burn = SideEffect<UserTeam>({Probability(1.0 / 15.0), set_status_function<StatusName::burn>});
+	constexpr auto freeze = SideEffect<UserTeam>({Probability(1.0 / 15.0), set_status_function<StatusName::freeze>});
+	constexpr auto paralysis = SideEffect<UserTeam>({Probability(1.0 / 15.0), set_status_function<StatusName::paralysis>});
 
-	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<UserTeam>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
-	constexpr auto burn_freeze_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, burn, freeze});
-	constexpr auto burn_paralysis_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
-	constexpr auto freeze_paralysis_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
-	constexpr auto burn_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, burn});
-	constexpr auto freeze_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, freeze});
-	constexpr auto paralysis_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, paralysis});
+	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<UserTeam>({{Probability(12.0 / 15.0), no_effect_function}, burn, freeze, paralysis});
+	constexpr auto burn_freeze_probabilities = SideEffects<UserTeam>({{Probability(13.0 / 15.0), no_effect_function}, burn, freeze});
+	constexpr auto burn_paralysis_probabilities = SideEffects<UserTeam>({{Probability(13.0 / 15.0), no_effect_function}, burn, paralysis});
+	constexpr auto freeze_paralysis_probabilities = SideEffects<UserTeam>({{Probability(13.0 / 15.0), no_effect_function}, freeze, paralysis});
+	constexpr auto burn_probabilities = SideEffects<UserTeam>({{Probability(14.0 / 15.0), no_effect_function}, burn});
+	constexpr auto freeze_probabilities = SideEffects<UserTeam>({{Probability(14.0 / 15.0), no_effect_function}, freeze});
+	constexpr auto paralysis_probabilities = SideEffects<UserTeam>({{Probability(14.0 / 15.0), no_effect_function}, paralysis});
 
 	switch (generation) {
 		case Generation::one:
 			return no_effect<UserTeam>;
 		case Generation::two: {
-			constexpr auto thaw = SideEffect<UserTeam>{4.0 / 15.0, [](auto &, auto & target, auto &, auto) {
+			constexpr auto thaw = SideEffect<UserTeam>{Probability(4.0 / 15.0), [](auto &, auto & target, auto &, auto) {
 				target.pokemon().clear_status();
 			}};
 			auto const freeze_claused = team_has_status(original_target, StatusName::freeze);
@@ -299,7 +315,7 @@ constexpr auto tri_attack_effect(UserPokemon const original_user, OtherTeam<Asso
 						burn_paralysis_probabilities :
 						burn_freeze_paralysis_probabilities;
 				case StatusName::freeze:
-					return SideEffects<UserTeam>({{10.0 / 15.0, no_effect_function}, thaw, burn});
+					return SideEffects<UserTeam>({{Probability(10.0 / 15.0), no_effect_function}, thaw, burn});
 				default:
 					return no_effect<UserTeam>;
 			}
@@ -419,9 +435,13 @@ struct sequence {};
 template<any_active_pokemon TargetPokemon>
 constexpr auto acupressure_effect(TargetPokemon const target) {
 	using UserTeam = AssociatedTeam<TargetPokemon>;
-	auto result = SideEffects<UserTeam>();
 	auto const stages = target.stages();
-	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
+	auto const boostable = containers::count_if(stages, stat_can_boost);
+	if (boostable == 0_bi) {
+		return no_effect<UserTeam>;
+	}
+	auto result = SideEffects<UserTeam>();
+	auto const probability = Probability(1.0 / double(boostable));
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
 		if (stat_can_boost(stages[stat])) {
@@ -464,7 +484,7 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 		return index != target.all_pokemon().index();
 	};
 
-	auto const probability = 1.0 / double(target.size() - 1_bi);
+	auto const probability = Probability(1.0 / double(target.size() - 1_bi));
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		if (is_not_active(index) and index < target.size()) {
@@ -501,7 +521,7 @@ template<any_team UserTeam>
 constexpr auto random_spite = [] {
 	constexpr auto min_reduction = 2;
 	constexpr auto max_reduction = 5;
-	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
+	constexpr auto probability = Probability(1.0 / double(max_reduction - min_reduction + 1));
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, reduce_pp<index>});
@@ -571,9 +591,9 @@ auto possible_side_effects(
 			return guaranteed_effect<UserTeam>(RecoilEffect(4_bi));
 
 		case MoveName::Metal_Claw:
-			return basic_probability<UserTeam>(0.1, boost_user_stat<BoostableStat::atk, 1>);
+			return basic_probability<UserTeam>(Probability(0.1), boost_user_stat<BoostableStat::atk, 1>);
 		case MoveName::Meteor_Mash:
-			return basic_probability<UserTeam>(0.2, boost_user_stat<BoostableStat::atk, 1>);
+			return basic_probability<UserTeam>(Probability(0.2), boost_user_stat<BoostableStat::atk, 1>);
 		case MoveName::Howl:
 		case MoveName::Meditate:
 		case MoveName::Sharpen:
@@ -584,13 +604,13 @@ auto possible_side_effects(
 		case MoveName::Feather_Dance:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -2>);
 		case MoveName::Aurora_Beam:
-			return basic_probability<UserTeam>(generation == Generation::one ? 0.332 : 0.1, boost_target_stat<BoostableStat::atk, -1>);
+			return basic_probability<UserTeam>(generation == Generation::one ? Probability(0.332) : Probability(0.1), boost_target_stat<BoostableStat::atk, -1>);
 		case MoveName::Breaking_Swipe:
 		case MoveName::Growl:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -1>);
 
 		case MoveName::Steel_Wing:
-			return basic_probability<UserTeam>(0.1, boost_user_stat<BoostableStat::def, 1>);
+			return basic_probability<UserTeam>(Probability(0.1), boost_user_stat<BoostableStat::def, 1>);
 		case MoveName::Harden:
 		case MoveName::Withdraw:
 			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 1>);
@@ -601,15 +621,15 @@ auto possible_side_effects(
 		case MoveName::Screech:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::def, -2>);
 		case MoveName::Iron_Tail:
-			return basic_probability<UserTeam>(0.3, boost_target_stat<BoostableStat::def, -1>);
+			return basic_probability<UserTeam>(Probability(0.3), boost_target_stat<BoostableStat::def, -1>);
 		case MoveName::Crunch: {
 			constexpr auto stat = generation <= Generation::three ? BoostableStat::spd : BoostableStat::def;
-			return basic_probability<UserTeam>(0.2, boost_target_stat<stat, -1>);
+			return basic_probability<UserTeam>(Probability(0.2), boost_target_stat<stat, -1>);
 		}
 		case MoveName::Crush_Claw:
 		case MoveName::Razor_Shell:
 		case MoveName::Rock_Smash:
-			return basic_probability<UserTeam>(0.5, boost_target_stat<BoostableStat::def, -1>);
+			return basic_probability<UserTeam>(Probability(0.5), boost_target_stat<BoostableStat::def, -1>);
 		case MoveName::Grav_Apple:
 		case MoveName::Leer:
 		case MoveName::Tail_Whip:
@@ -622,9 +642,9 @@ auto possible_side_effects(
 		case MoveName::Psycho_Boost:
 			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, -2>);
 		case MoveName::Mist_Ball:
-			return basic_probability<UserTeam>(0.5, boost_user_stat<BoostableStat::spa, 1>);
+			return basic_probability<UserTeam>(Probability(0.5), boost_user_stat<BoostableStat::spa, 1>);
 		case MoveName::Charge_Beam:
-			return basic_probability<UserTeam>(0.7, boost_user_stat<BoostableStat::spa, 1>);
+			return basic_probability<UserTeam>(Probability(0.7), boost_user_stat<BoostableStat::spa, 1>);
 		case MoveName::Nasty_Plot:
 		case MoveName::Tail_Glow:
 			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 2>);
@@ -635,7 +655,7 @@ auto possible_side_effects(
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spa, -1>);
 
 		case MoveName::Seed_Flare:
-			return basic_probability<UserTeam>(0.4, boost_target_stat<BoostableStat::spd, -2>);
+			return basic_probability<UserTeam>(Probability(0.4), boost_target_stat<BoostableStat::spd, -2>);
 		case MoveName::Fake_Tears:
 		case MoveName::Metal_Sound:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -2>);
@@ -648,9 +668,9 @@ auto possible_side_effects(
 		case MoveName::Energy_Ball:
 		case MoveName::Flash_Cannon:
 		case MoveName::Focus_Blast:
-			return basic_probability<UserTeam>(0.1, boost_target_stat<BoostableStat::spd, -1>);
+			return basic_probability<UserTeam>(Probability(0.1), boost_target_stat<BoostableStat::spd, -1>);
 		case MoveName::Shadow_Ball:
-			return basic_probability<UserTeam>(0.2, boost_target_stat<BoostableStat::spd, -1>);
+			return basic_probability<UserTeam>(Probability(0.2), boost_target_stat<BoostableStat::spd, -1>);
 		case MoveName::Apple_Acid:
 		case MoveName::Luster_Purge:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -1>);
@@ -672,7 +692,7 @@ auto possible_side_effects(
 		case MoveName::Bubble_Beam:
 		case MoveName::Constrict:
 			return basic_probability<UserTeam>(
-				generation == Generation::one ? 0.332 : 0.1,
+				generation == Generation::one ? Probability(0.332) : Probability(0.1),
 				boost_target_stat<BoostableStat::spe, -1>
 			);
 		case MoveName::Drum_Beating:
@@ -681,18 +701,18 @@ auto possible_side_effects(
 		case MoveName::Mud_Shot:
 		case MoveName::Rock_Tomb:
 			return generation <= Generation::two ?
-				basic_probability<UserTeam>(0.996, boost_target_stat<BoostableStat::spe, -1>) :
+				basic_probability<UserTeam>(Probability(0.996), boost_target_stat<BoostableStat::spe, -1>) :
 				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -1>);
 
 		case MoveName::Leaf_Tornado:
 		case MoveName::Mirror_Shot:
 		case MoveName::Mud_Bomb:
 		case MoveName::Muddy_Water:
-			return basic_probability<UserTeam>(0.3, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(Probability(0.3), boost_target_stat<BoostableStat::acc, -1>);
 		case MoveName::Night_Daze:
-			return basic_probability<UserTeam>(0.4, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(Probability(0.4), boost_target_stat<BoostableStat::acc, -1>);
 		case MoveName::Octazooka:
-			return basic_probability<UserTeam>(0.5, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(Probability(0.5), boost_target_stat<BoostableStat::acc, -1>);
 		case MoveName::Flash:
 		case MoveName::Kinesis:
 		case MoveName::Sand_Attack:
@@ -700,7 +720,7 @@ auto possible_side_effects(
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::acc, -1>);
 		case MoveName::Mud_Slap:
 			return generation <= Generation::two ?
-				basic_probability<UserTeam>(0.996, boost_target_stat<BoostableStat::acc, -1>) :
+				basic_probability<UserTeam>(Probability(0.996), boost_target_stat<BoostableStat::acc, -1>) :
 				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::acc, -1>);
 
 		case MoveName::Double_Team:
@@ -711,7 +731,7 @@ auto possible_side_effects(
 				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::eva, -2>);
 
 		case MoveName::Acid: {
-			constexpr auto probability = generation == Generation::one ? 0.332 : 0.1;
+			constexpr auto probability = generation == Generation::one ? Probability(0.332) : Probability(0.1);
 			constexpr auto stat = generation <= Generation::three ? BoostableStat::def : BoostableStat::spd;
 			return basic_probability<UserTeam>(probability, boost_target_stat<stat, -1>);
 		}
@@ -729,7 +749,7 @@ auto possible_side_effects(
 		case MoveName::Ancient_Power:
 		case MoveName::Ominous_Wind:
 		case MoveName::Silver_Wind:
-			return basic_probability<UserTeam>(0.1, [](auto & user, auto &, auto &, auto) {
+			return basic_probability<UserTeam>(Probability(0.1), [](auto & user, auto &, auto &, auto) {
 				boost_regular(user.pokemon().stages(), 1_bi);
 			});
 		case MoveName::Belly_Drum:
@@ -809,12 +829,12 @@ auto possible_side_effects(
 			});
 		case MoveName::Psychic:
 			return generation == Generation::one ?
-				basic_probability<UserTeam>(0.332, [](auto &, auto & other, auto &, auto) {
+				basic_probability<UserTeam>(Probability(0.332), [](auto &, auto & other, auto &, auto) {
 					auto & stages = other.pokemon().stages();
 					stages[BoostableStat::spa] -= 1_bi;
 					stages[BoostableStat::spd] -= 1_bi;
 				}) :
-				basic_probability<UserTeam>(0.1, boost_target_stat<BoostableStat::spd, -1>);
+				basic_probability<UserTeam>(Probability(0.1), boost_target_stat<BoostableStat::spd, -1>);
 		case MoveName::Quiver_Dance:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
@@ -902,13 +922,13 @@ auto possible_side_effects(
 		case MoveName::Headbutt:
 		case MoveName::Hyper_Fang:
 		case MoveName::Stomp:
-			return basic_probability<UserTeam>(0.1, flinch);
+			return basic_probability<UserTeam>(Probability(0.1), flinch);
 		case MoveName::Dark_Pulse:
 		case MoveName::Dragon_Rush:
 		case MoveName::Fiery_Wrath:
 		case MoveName::Twister:
 		case MoveName::Zen_Headbutt:
-			return basic_probability<UserTeam>(0.2, flinch);
+			return basic_probability<UserTeam>(Probability(0.2), flinch);
 		case MoveName::Air_Slash:
 		case MoveName::Astonish:
 		case MoveName::Icicle_Crash:
@@ -917,17 +937,17 @@ auto possible_side_effects(
 		case MoveName::Snore:
 		case MoveName::Steamroller:
 		case MoveName::Needle_Arm:
-			return basic_probability<UserTeam>(0.3, flinch);
+			return basic_probability<UserTeam>(Probability(0.3), flinch);
 		case MoveName::Fake_Out:
 			return guaranteed_effect<UserTeam>(flinch);
 		case MoveName::Bite:
-			return basic_probability<UserTeam>(generation <= Generation::one ? 0.1 : 0.3, flinch);
+			return basic_probability<UserTeam>(generation <= Generation::one ? Probability(0.1) : Probability(0.3), flinch);
 		case MoveName::Rock_Slide:
-			return generation == Generation::one ? no_effect<UserTeam> : basic_probability<UserTeam>(0.3, flinch);
+			return generation == Generation::one ? no_effect<UserTeam> : basic_probability<UserTeam>(Probability(0.3), flinch);
 		case MoveName::Waterfall:
-			return generation <= Generation::three ? no_effect<UserTeam> : basic_probability<UserTeam>(0.2, flinch);
+			return generation <= Generation::three ? no_effect<UserTeam> : basic_probability<UserTeam>(Probability(0.2), flinch);
 		case MoveName::Low_Kick:
-			return generation <= Generation::two ? basic_probability<UserTeam>(0.3, flinch) : no_effect<UserTeam>;
+			return generation <= Generation::two ? basic_probability<UserTeam>(Probability(0.3), flinch) : no_effect<UserTeam>;
 
 		case MoveName::Aromatherapy:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
@@ -993,122 +1013,122 @@ auto possible_side_effects(
 		case MoveName::Flamethrower:
 		case MoveName::Heat_Wave:
 		case MoveName::Pyro_Ball:
-			return thaw_and_burn_effect(0.1, original_user, original_other, original_environment);
+			return thaw_and_burn_effect(Probability(0.1), original_user, original_other, original_environment);
 		case MoveName::Lava_Plume:
 		case MoveName::Scald:
 		case MoveName::Scorching_Sands:
 		case MoveName::Searing_Shot:
-			return thaw_and_burn_effect(0.3, original_user, original_other, original_environment);
+			return thaw_and_burn_effect(Probability(0.3), original_user, original_other, original_environment);
 		case MoveName::Sacred_Fire:
-			return thaw_and_burn_effect(0.5, original_user, original_other, original_environment);
+			return thaw_and_burn_effect(Probability(0.5), original_user, original_other, original_environment);
 		case MoveName::Inferno:
 		case MoveName::Will_O_Wisp:
-			return thaw_and_burn_effect(1.0, original_user, original_other, original_environment);
+			return thaw_and_burn_effect(Probability(1.0), original_user, original_other, original_environment);
 		case MoveName::Fire_Blast:
-			return thaw_and_burn_effect(generation == Generation::one ? 0.3 : 0.1, original_user, original_other, original_environment);
+			return thaw_and_burn_effect(generation == Generation::one ? Probability(0.3) : Probability(0.1), original_user, original_other, original_environment);
 
 		case MoveName::Blizzard:
 		case MoveName::Freezing_Glare:
 		case MoveName::Ice_Beam:
 		case MoveName::Ice_Punch:
 		case MoveName::Powder_Snow:
-			return status_effect<StatusName::freeze>(0.1, original_user, original_other, original_environment, Type::Ice);
+			return status_effect<StatusName::freeze>(Probability(0.1), original_user, original_other, original_environment, Type::Ice);
 
 		case MoveName::Dragon_Breath:
-			return status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment);
+			return status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment);
 		case MoveName::Force_Palm:
 		case MoveName::Secret_Power:
-			return status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Ghost);
+			return status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Ghost);
 		case MoveName::Discharge:
 		case MoveName::Spark:
-			return status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Ground);
+			return status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Ground);
 		case MoveName::Thunder_Wave:
 		case MoveName::Zap_Cannon:
 			return generation <= Generation::two ?
-				status_effect<StatusName::paralysis>(0.996, original_user, original_other, original_environment, Type::Ground) :
-				status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment, Type::Ground);
+				status_effect<StatusName::paralysis>(Probability(0.996), original_user, original_other, original_environment, Type::Ground) :
+				status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment, Type::Ground);
 		case MoveName::Body_Slam:
 			return generation == Generation::one ?
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Ghost, Type::Normal) :
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Ghost);
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Ghost, Type::Normal) :
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Ghost);
 		case MoveName::Lick:
 			return generation == Generation::one ?
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Normal, Type::Ghost) :
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Normal);
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Normal, Type::Ghost) :
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Normal);
 		case MoveName::Thunderbolt:
 		case MoveName::Thunder_Punch:
 		case MoveName::Thunder_Shock:
 			return generation == Generation::one ?
-				status_effect<StatusName::paralysis>(0.1, original_user, original_other, original_environment, Type::Ground, Type::Electric) :
-				status_effect<StatusName::paralysis>(0.1, original_user, original_other, original_environment, Type::Ground);
+				status_effect<StatusName::paralysis>(Probability(0.1), original_user, original_other, original_environment, Type::Ground, Type::Electric) :
+				status_effect<StatusName::paralysis>(Probability(0.1), original_user, original_other, original_environment, Type::Ground);
 		case MoveName::Thunder:
 			return generation == Generation::one ?
-				status_effect<StatusName::paralysis>(0.1, original_user, original_other, original_environment, Type::Ground, Type::Electric) :
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment, Type::Ground);
+				status_effect<StatusName::paralysis>(Probability(0.1), original_user, original_other, original_environment, Type::Ground, Type::Electric) :
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment, Type::Ground);
 		case MoveName::Stun_Spore:
 			return generation <= Generation::five ?
-				status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment) :
-				status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment, Type::Grass);
+				status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment) :
+				status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment, Type::Grass);
 		case MoveName::Glare:
 			switch (generation) {
 				case Generation::one:
-					return status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment);
+					return status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment);
 				case Generation::two:
 				case Generation::three:
-					return status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment, Type::Ghost);
+					return status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment, Type::Ghost);
 				case Generation::four:
 				case Generation::five:
-					return status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment);
+					return status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment);
 				case Generation::six:
 				case Generation::seven:
 				case Generation::eight:
-					return status_effect<StatusName::paralysis>(1.0, original_user, original_other, original_environment, Type::Electric);
+					return status_effect<StatusName::paralysis>(Probability(1.0), original_user, original_other, original_environment, Type::Electric);
 			}
 
 		case MoveName::Cross_Poison:
 		case MoveName::Poison_Tail:
 		case MoveName::Sludge_Wave:
-			return status_effect<StatusName::poison>(0.1, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(Probability(0.1), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Shell_Side_Arm:
-			return status_effect<StatusName::poison>(0.2, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(Probability(0.2), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Gunk_Shot:
 		case MoveName::Poison_Jab:
 		case MoveName::Sludge_Bomb:
-			return status_effect<StatusName::poison>(0.3, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(Probability(0.3), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Smog:
-			return status_effect<StatusName::poison>(0.4, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(Probability(0.4), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Poison_Gas:
 		case MoveName::Poison_Powder:
 			return generation <= Generation::five ?
-				status_effect<StatusName::poison>(1.0, original_user, original_other, original_environment, Type::Poison, Type::Steel) :
-				status_effect<StatusName::poison>(1.0, original_user, original_other, original_environment, Type::Grass, Type::Poison, Type::Steel);
+				status_effect<StatusName::poison>(Probability(1.0), original_user, original_other, original_environment, Type::Poison, Type::Steel) :
+				status_effect<StatusName::poison>(Probability(1.0), original_user, original_other, original_environment, Type::Grass, Type::Poison, Type::Steel);
 		case MoveName::Poison_Sting:
-			return status_effect<StatusName::poison>(generation == Generation::one ? 0.2 : 0.3, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(generation == Generation::one ? Probability(0.2) : Probability(0.3), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Sludge:
-			return status_effect<StatusName::poison>(generation == Generation::one ? 0.4 : 0.3, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::poison>(generation == Generation::one ? Probability(0.4) : Probability(0.3), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		case MoveName::Twineedle:
 			return generation == Generation::two ?
-				status_effect<StatusName::poison>(0.2, original_user, original_other, original_environment, Type::Poison) :
-				status_effect<StatusName::poison>(0.2, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+				status_effect<StatusName::poison>(Probability(0.2), original_user, original_other, original_environment, Type::Poison) :
+				status_effect<StatusName::poison>(Probability(0.2), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 
 		case MoveName::Poison_Fang: {
-			constexpr auto probability = generation <= Generation::five ? 0.3 : 0.5;
+			constexpr auto probability = generation <= Generation::five ? Probability(0.3) : Probability(0.5);
 			return status_effect<StatusName::toxic>(probability, original_user, original_other, original_environment, Type::Poison, Type::Steel);
 		}
 		case MoveName::Toxic:
-			return status_effect<StatusName::toxic>(1.0, original_user, original_other, original_environment, Type::Poison, Type::Steel);
+			return status_effect<StatusName::toxic>(Probability(1.0), original_user, original_other, original_environment, Type::Poison, Type::Steel);
 
 		case MoveName::Dark_Void:
 		case MoveName::Grass_Whistle:
 		case MoveName::Hypnosis:
 		case MoveName::Lovely_Kiss:
 		case MoveName::Sing:
-			return status_effect<StatusName::sleep>(1.0, original_user, original_other, original_environment);
+			return status_effect<StatusName::sleep>(Probability(1.0), original_user, original_other, original_environment);
 		case MoveName::Sleep_Powder:
 		case MoveName::Spore:
 			return generation <= Generation::five ?
-				status_effect<StatusName::sleep>(1.0, original_user, original_other, original_environment) :
-				status_effect<StatusName::sleep>(1.0, original_user, original_other, original_environment, Type::Grass);
+				status_effect<StatusName::sleep>(Probability(1.0), original_user, original_other, original_environment) :
+				status_effect<StatusName::sleep>(Probability(1.0), original_user, original_other, original_environment, Type::Grass);
 		case MoveName::Yawn:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().hit_with_yawn();
@@ -1132,31 +1152,31 @@ auto possible_side_effects(
 			return tri_attack_effect(original_user, original_other, original_environment);
 
 		case MoveName::Signal_Beam:
-			return confusion_effect(0.1, original_other.pokemon());
+			return confusion_effect(Probability(0.1), original_other.pokemon());
 		case MoveName::Confusion:
 		case MoveName::Psybeam:
-			return confusion_effect(0.1, original_other.pokemon(), Type::Dark);
+			return confusion_effect(Probability(0.1), original_other.pokemon(), Type::Dark);
 		case MoveName::Rock_Climb:
 		case MoveName::Strange_Steam:
 		case MoveName::Water_Pulse:
-			return confusion_effect(0.2, original_other.pokemon());
+			return confusion_effect(Probability(0.2), original_other.pokemon());
 		case MoveName::Confuse_Ray:
 		case MoveName::Supersonic:
 		case MoveName::Sweet_Kiss:
 		case MoveName::Teeter_Dance:
-			return confusion_effect(1.0, original_other.pokemon());
+			return confusion_effect(Probability(1.0), original_other.pokemon());
 		case MoveName::Dynamic_Punch:
 			if constexpr (generation <= Generation::two) {
-				return confusion_effect(0.996, original_other.pokemon(), Type::Ghost);
+				return confusion_effect(Probability(0.996), original_other.pokemon(), Type::Ghost);
 			} else {
-				return confusion_effect(1.0, original_other.pokemon(), Type::Ghost);
+				return confusion_effect(Probability(1.0), original_other.pokemon(), Type::Ghost);
 			}
 		case MoveName::Dizzy_Punch:
 			return generation == Generation::one ?
 				no_effect<UserTeam> :
-				confusion_effect(0.2, original_other.pokemon(), Type::Ghost);
+				confusion_effect(Probability(0.2), original_other.pokemon(), Type::Ghost);
 		case MoveName::Chatter: {
-			constexpr auto probability = generation <= Generation::five ? 0.31 : 1.0;
+			constexpr auto probability = generation <= Generation::five ? Probability(0.31) : Probability(1.0);
 			return can_confuse_with_chatter(original_user.species()) ?
 				confusion_effect(probability, original_other.pokemon(), Type::Ghost) :
 				no_effect<UserTeam>;
@@ -1187,7 +1207,7 @@ auto possible_side_effects(
 		case MoveName::Bounce:
 			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
-				status_effect<StatusName::paralysis>(0.3, original_user, original_other, original_environment);
+				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment);
 		case MoveName::Shadow_Force:
 			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
@@ -1211,8 +1231,8 @@ auto possible_side_effects(
 			return original_user.last_used_move().is_charging_up() ?
 				no_effect<UserTeam> :
 				SideEffects<UserTeam>({
-					SideEffect<UserTeam>{0.7, no_effect_function},
-					SideEffect<UserTeam>{0.3, flinch}
+					SideEffect<UserTeam>{Probability(0.7), no_effect_function},
+					SideEffect<UserTeam>{Probability(0.3), flinch}
 				});
 
 		case MoveName::Gravity:
@@ -1343,21 +1363,21 @@ auto possible_side_effects(
 			return no_effect<UserTeam>;
 #if 0
 			return Probabilities{
-				{10_bi, 0.05}, // Magnitude 4
-				{30_bi, 0.1}, // Magnitude 5
-				{50_bi, 0.2}, // Magnitude 6
-				{70_bi, 0.3}, // Magnitude 7
-				{90_bi, 0.2}, // Magnitude 8
-				{110_bi, 0.1}, // Magnitude 9
-				{150_bi, 0.05} // Magnitude 10
+				{10_bi, Probability(0.05)}, // Magnitude 4
+				{30_bi, Probability(0.1)}, // Magnitude 5
+				{50_bi, Probability(0.2)}, // Magnitude 6
+				{70_bi, Probability(0.3)}, // Magnitude 7
+				{90_bi, Probability(0.2)}, // Magnitude 8
+				{110_bi, Probability(0.1)}, // Magnitude 9
+				{150_bi, Probability(0.05)} // Magnitude 10
 			};
 #endif
 		case MoveName::Present:
 			// TODO: Figure out how to represent variable damage
-			// heal 80: 0.25
-			// 40 power: 0.25
-			// 80 power: 0.25
-			// 120 power: 0.25
+			// heal 80: Probability(0.25)
+			// 40 power: Probability(0.25)
+			// 80 power: Probability(0.25)
+			// 120 power: Probability(0.25)
 			return no_effect<UserTeam>;
 		case MoveName::Psywave:
 			return no_effect<UserTeam>;
@@ -1366,7 +1386,7 @@ auto possible_side_effects(
 				auto const range = containers::inclusive_integer_range(min_value, max_value);
 				Probabilities probabilities;
 				for (auto const n : range) {
-					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(containers::size(range)));
+					containers::emplace_back(probabilities, Variable{n}, Probability(1.0 / static_cast<double>(containers::size(range))));
 				}
 				return probabilities;
 			};

@@ -69,6 +69,7 @@ import tm.end_of_turn_flags;
 import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
+import tm.probability;
 import tm.switch_decision_required;
 import tm.team;
 import tm.team_is_empty;
@@ -105,7 +106,7 @@ constexpr auto is_damaging(Selection const selection) -> bool {
 
 struct FlagProbability {
 	bool flag;
-	double probability;
+	Probability probability;
 };
 
 constexpr auto probabilities(auto const basic_probability, auto... args) {
@@ -114,15 +115,13 @@ constexpr auto probabilities(auto const basic_probability, auto... args) {
 			containers::array({true, false}),
 			[=](bool const flag) {
 				auto const base = basic_probability(args...);
-				BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
-				BOUNDED_ASSERT_OR_ASSUME(base <= 1.0);
 				return FlagProbability(
 					flag,
-					flag ? base : (1.0 - base)
+					flag ? base : Probability(1.0) - base
 				);
 			}
 		),
-		[](FlagProbability const x) { return x.probability != 0.0; }
+		[](FlagProbability const x) { return x.probability != Probability(0.0); }
 	);
 };
 
@@ -138,7 +137,7 @@ constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto co
 	return average_score;
 }
 
-constexpr auto generic_flag_branch(double const basic_probability, auto const & next_branch) -> Score {
+constexpr auto generic_flag_branch(Probability const basic_probability, auto const & next_branch) -> Score {
 	return containers::sum(containers::transform(
 		probabilities(bounded::value_to_function(basic_probability)),
 		[&](FlagProbability const x) { return x.probability * next_branch(x.flag); }
@@ -185,8 +184,8 @@ struct SelectedAndExecuted {
 	MoveName executed;
 };
 
-constexpr auto paralysis_probability(StatusName const status) -> double {
-	return status == StatusName::paralysis ? 0.25 : 0.0;
+constexpr auto paralysis_probability(StatusName const status) -> Probability {
+	return status == StatusName::paralysis ? Probability(0.25) : Probability(0.0);
 }
 
 template<Generation generation>
@@ -223,7 +222,7 @@ auto execute_move(
 					side_effects,
 					[&](auto const & side_effect) {
 						return side_effect.probability * generic_flag_branch(
-							hits ? ch_probability : 0.0,
+							hits ? ch_probability : Probability(0.0),
 							[&](bool const critical_hit) {
 								auto copy = state;
 								auto const selected_copy = select(copy);
@@ -295,7 +294,7 @@ constexpr auto is_pass(LegalSelections const selections) -> bool {
 	return selections == LegalSelections({pass});
 }
 constexpr auto is_pass(SelectionProbabilities const selections) -> bool {
-	return selections == SelectionProbabilities({{pass, 1.0}});
+	return selections == SelectionProbabilities({{pass, Probability(1.0)}});
 }
 
 constexpr auto check_is_valid_start_of_turn(any_team auto const & team) -> void {
@@ -670,7 +669,7 @@ private:
 				state.foe,
 				state.environment
 			);
-			auto const foe_selections = SelectionProbabilities({{pass, 1.0}});
+			auto const foe_selections = SelectionProbabilities({{pass, Probability(1.0)}});
 			return max_score(middle_of_turn_action(
 				state,
 				ai_selections,
@@ -718,20 +717,20 @@ private:
 	) -> Score {
 		auto shed_skin_probability = [&](bool const is_ai) {
 			auto const pokemon = (is_ai ? state.ai : state.foe).pokemon();
-			return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
+			return can_clear_status(pokemon.ability(), pokemon.status().name()) ? Probability(0.3) : Probability(0.0);
 		};
 		auto const teams = Faster<generation>(state.ai, state.foe, state.environment);
 		return multi_generic_flag_branch(shed_skin_probability, [&](bool const ai_shed_skin, bool const foe_shed_skin) {
 			return multi_generic_flag_branch(
 				// TODO
-				[&](bool) { return true; },
+				[&](bool) { return Probability(1.0); },
 				[&](bool const ai_lock_in_ends, bool const foe_lock_in_ends) {
 					auto thaws = [&](bool const is_ai) {
 						if constexpr (generation == Generation::two) {
 							auto const pokemon = (is_ai ? state.ai : state.foe).pokemon();
-							return pokemon.status().name() == StatusName::freeze ? 0.1 : 0.0;
+							return pokemon.status().name() == StatusName::freeze ? Probability(0.1) : Probability(0.0);
 						} else {
-							return 0.0;
+							return Probability(0.0);
 						}
 					};
 					return multi_generic_flag_branch(
@@ -976,7 +975,7 @@ auto to_selection_probabilities(ScoredSelections selections) -> SelectionProbabi
 		}
 	);
 	return SelectionProbabilities({
-		SelectionProbability(best->selection, 1.0)
+		SelectionProbability(best->selection, Probability(1.0))
 	});
 }
 

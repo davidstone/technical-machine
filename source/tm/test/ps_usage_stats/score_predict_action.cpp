@@ -44,6 +44,7 @@ import tm.generation;
 import tm.get_legal_selections;
 import tm.load_json_from_file;
 import tm.open_file;
+import tm.probability;
 import tm.team;
 import tm.team_is_empty;
 import tm.visible_state;
@@ -130,7 +131,7 @@ auto get_predicted_selection(
 					tv::visit(result.state, function),
 					result.slot_memory
 				);
-				if (selection.predicted == SelectionProbabilities({{pass, 1.0}})) {
+				if (selection.predicted == SelectionProbabilities({{pass, Probability(1.0)}})) {
 					return tv::none;
 				}
 				return selection;
@@ -153,7 +154,7 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 	));
 	auto score_prediction = [&](SelectionProbability const predicted) {
 		auto const actual_probability = actual == predicted.selection ? 1.0 : 0.0;
-		auto const value = predicted.probability - actual_probability;
+		auto const value = double(predicted.probability) - actual_probability;
 		return value * value;
 	};
 	return containers::sum(containers::transform(evaluated.predicted, score_prediction));

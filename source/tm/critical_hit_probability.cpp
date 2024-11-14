@@ -17,11 +17,12 @@ import tm.pokemon.substitute;
 
 import tm.stat.base_stats;
 
-import tm.rational;
 import tm.ability;
 import tm.environment;
 import tm.generation;
 import tm.item;
+import tm.rational;
+import tm.probability;
 
 import bounded;
 import std_module;
@@ -940,11 +941,14 @@ constexpr auto generation_one_move_critical_hit_multiplier(MoveCriticalHit const
 	}
 }
 
-constexpr auto gen_one_critical_hit(any_active_pokemon auto const attacker, MoveCriticalHit const move_adjustment) {
+constexpr auto gen_one_critical_hit(
+	any_active_pokemon auto const attacker,
+	MoveCriticalHit const move_adjustment
+) -> Probability {
 	auto const initial = BaseStats(Generation::one, attacker.species()).spe() / 2_bi;
 	auto const focused = BOUNDED_CONDITIONAL(attacker.has_focused_energy(), initial / 2_bi, initial * 2_bi);
 	auto const final = bounded::min(255_bi, focused * generation_one_move_critical_hit_multiplier(move_adjustment));
-	return double(final) / 256.0;
+	return Probability(double(final) / 256.0);
 }
 
 constexpr auto move_stage(Generation const generation, MoveCriticalHit const move_adjustment) -> bounded::integer<0, 2> {
@@ -982,7 +986,10 @@ constexpr auto boosted_stage(ActivePokemonType const attacker) {
 	return BOUNDED_CONDITIONAL(attacker.has_focused_energy(), boosted_value, 0_bi);
 }
 
-constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded::integer<0, 7> const stage) {
+constexpr auto critical_hit_rate_from_stage(
+	Generation const generation,
+	bounded::integer<0, 7> const stage
+) -> Probability {
 	switch (generation) {
 		case Generation::one:
 			std::unreachable();
@@ -991,36 +998,40 @@ constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded
 		case Generation::four:
 		case Generation::five:
 			switch (stage.value()) {
-				case 0: return 1.0 / 16.0;
-				case 1: return 1.0 / 8.0;
-				case 2: return 1.0 / 4.0;
-				case 3: return 1.0 / 3.0;
-				default: return 1.0 / 2.0;
+				case 0: return Probability(1.0 / 16.0);
+				case 1: return Probability(1.0 / 8.0);
+				case 2: return Probability(1.0 / 4.0);
+				case 3: return Probability(1.0 / 3.0);
+				default: return Probability(1.0 / 2.0);
 			}
 		case Generation::six:
 			switch (stage.value()) {
-				case 0: return 1.0 / 16.0;
-				case 1: return 1.0 / 8.0;
-				case 2: return 1.0 / 2.0;
-				default: return 1.0;
+				case 0: return Probability(1.0 / 16.0);
+				case 1: return Probability(1.0 / 8.0);
+				case 2: return Probability(1.0 / 2.0);
+				default: return Probability(1.0);
 			}
 		case Generation::seven:
 		case Generation::eight:
 			switch (stage.value()) {
-				case 0: return 1.0 / 24.0;
-				case 1: return 1.0 / 8.0;
-				case 2: return 1.0 / 2.0;
-				default: return 1.0;
+				case 0: return Probability(1.0 / 24.0);
+				case 1: return Probability(1.0 / 8.0);
+				case 2: return Probability(1.0 / 2.0);
+				default: return Probability(1.0);
 			}
 	}
 }
 
 template<any_active_pokemon ActivePokemonType>
-constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCriticalHit const move_adjustment, Environment const environment) {
+constexpr auto new_gen_critical_hit(
+	ActivePokemonType const attacker,
+	MoveCriticalHit const move_adjustment,
+	Environment const environment
+) -> Probability {
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	switch (move_adjustment) {
 		case MoveCriticalHit::never:
-			return 0.0;
+			return Probability(0.0);
 		case MoveCriticalHit::normal:
 		case MoveCriticalHit::high:
 		case MoveCriticalHit::very_high:
@@ -1034,12 +1045,16 @@ constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCritic
 				)
 			);
 		case MoveCriticalHit::always:
-			return 1.0;
+			return Probability(1.0);
 	}
 }
 
 template<any_active_pokemon ActivePokemonType>
-constexpr auto base_critical_hit_probability(ActivePokemonType const attacker, MoveName const move_name, Environment const environment) {
+constexpr auto base_critical_hit_probability(
+	ActivePokemonType const attacker,
+	MoveName const move_name,
+	Environment const environment
+) -> Probability {
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const move_adjustment = move_critical_hit(generation, move_name);
 	switch (generation) {
@@ -1056,11 +1071,16 @@ constexpr auto base_critical_hit_probability(ActivePokemonType const attacker, M
 	}
 }
 
-export constexpr auto critical_hit_probability(any_active_pokemon auto const attacker, MoveName const move, Ability const defender_ability, Environment const environment) -> double {
+export constexpr auto critical_hit_probability(
+	any_active_pokemon auto const attacker,
+	MoveName const move,
+	Ability const defender_ability,
+	Environment const environment
+) -> Probability {
 	switch (defender_ability) {
 		case Ability::Battle_Armor:
 		case Ability::Shell_Armor:
-			return 0.0;
+			return Probability(0.0);
 		default:
 			return base_critical_hit_probability(attacker, move, environment);
 	}

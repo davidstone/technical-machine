@@ -26,6 +26,7 @@ import tm.ability;
 import tm.environment;
 import tm.generation;
 import tm.item;
+import tm.probability;
 import tm.rational;
 import tm.weather;
 
@@ -33,8 +34,6 @@ import bounded;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-export using ChanceToHit = double;
 
 template<any_active_pokemon ActivePokemonType>
 auto move_can_miss(ActivePokemonType const user, MoveName const move, Accuracy const accuracy, ActivePokemonType const target) -> bool {
@@ -94,14 +93,20 @@ auto ability_evasion_modifier(any_active_pokemon auto const target, Weather cons
 }
 
 export template<any_active_pokemon ActivePokemonType>
-auto chance_to_hit(ActivePokemonType const user, KnownMove const move, ActivePokemonType const target, Environment const environment, bool target_moved) -> ChanceToHit {
+auto chance_to_hit(
+	ActivePokemonType const user,
+	KnownMove const move,
+	ActivePokemonType const target,
+	Environment const environment,
+	bool const target_moved
+) -> Probability {
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
 	auto const weather = environment.effective_weather(target_ability, user_ability);
 	auto const base_accuracy = accuracy(generation, move.name, weather, is_type(user, Type::Poison));
 	if (!move_can_miss(user, move.name, base_accuracy, target)) {
-		return 1.0;
+		return Probability(1.0);
 	}
 	constexpr auto gravity_denominator = 3_bi;
 	auto const gravity_numerator = BOUNDED_CONDITIONAL(environment.gravity(), 5_bi, gravity_denominator);
@@ -117,7 +122,10 @@ auto chance_to_hit(ActivePokemonType const user, KnownMove const move, ActivePok
 	;
 	
 	constexpr auto max = 100_bi;
-	return static_cast<double>(bounded::clamp(calculated_accuracy, 0_bi, max)) / static_cast<double>(max);
+	return Probability(
+		double(bounded::clamp(calculated_accuracy, 0_bi, max)) /
+		double(max)
+	);
 }
 
 } // namespace technicalmachine

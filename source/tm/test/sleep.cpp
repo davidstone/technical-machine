@@ -31,6 +31,7 @@ import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.probability;
 import tm.team;
 
 import bounded;
@@ -98,7 +99,7 @@ struct Sleeper {
 	void use_move(MoveName const selected, MoveName const executed) {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
-		CHECK((probability_of_awakening == 0.0 or probability_of_awakening == 1.0));
+		CHECK((probability_of_awakening == Probability(0.0) or probability_of_awakening == Probability(1.0)));
 		auto const side_effects = possible_side_effects(executed, pokemon.as_const(), m_other, m_environment);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
@@ -114,7 +115,7 @@ struct Sleeper {
 			m_other,
 			FutureSelection(false),
 			m_environment,
-			probability_of_awakening == 1.0,
+			probability_of_awakening == Probability(1.0),
 			ActualDamage::Unknown(),
 			false
 		);

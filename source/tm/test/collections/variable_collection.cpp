@@ -26,6 +26,7 @@ import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.probability;
 import tm.team;
 
 import bounded;
@@ -62,7 +63,7 @@ constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool 
 		BOUNDED_ASSERT(containers::size(side_effects) == expected_size);
 		for (auto const effect_index : containers::integer_range(expected_size)) {
 			auto const & side_effect = side_effects[effect_index];
-			BOUNDED_ASSERT(side_effect.probability == 1.0 / double(team.size() - 1_bi));
+			BOUNDED_ASSERT(side_effect.probability == Probability(1.0 / double(team.size() - 1_bi)));
 			team.all_pokemon().set_index(current_index);
 			side_effect.function(user, team, environment, 0_bi);
 			validate(team, EffectIndex(effect_index), current_index);

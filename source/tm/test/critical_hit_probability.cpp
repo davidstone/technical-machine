@@ -16,6 +16,7 @@ import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.probability;
 import tm.team;
 
 import bounded;
@@ -24,7 +25,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-constexpr auto individual_test(Species const species, MoveName const move_name, Item const item, bool const focus_energy, double const rate) -> bool {
+constexpr auto individual_test(Species const species, MoveName const move_name, Item const item, bool const focus_energy, Probability const rate) -> bool {
 	auto environment = Environment();
 	auto attacker = Team<generation>({{
 		{
@@ -49,18 +50,18 @@ constexpr auto individual_test(Species const species, MoveName const move_name, 
 	return ch_rate == rate;
 }
 
-static_assert(individual_test<Generation::one>(Species::Slowpoke, MoveName::Water_Gun, Item::None, true, 1.0 / 256.0));
-static_assert(individual_test<Generation::one>(Species::Tauros, MoveName::Body_Slam, Item::None, false, 55.0 / 256.0));
-static_assert(individual_test<Generation::one>(Species::Electrode, MoveName::Thunderbolt, Item::None, false, 70.0 / 256.0));
-static_assert(individual_test<Generation::one>(Species::Electrode, MoveName::Slash, Item::None, false, 255.0 / 256.0));
-static_assert(individual_test<Generation::one>(Species::Sandslash, MoveName::Slash, Item::None, false, 255.0 / 256.0));
-static_assert(individual_test<Generation::one>(Species::Goldeen, MoveName::Slash, Item::None, false, 248.0 / 256.0));
-static_assert(individual_test<Generation::two>(Species::Pikachu, MoveName::Thunder, Item::None, false, 1.0 / 16.0));
-static_assert(individual_test<Generation::two>(Species::Smeargle, MoveName::Slash, Item::None, false, 1.0 / 4.0));
-static_assert(individual_test<Generation::two>(Species::Sandshrew, MoveName::Slash, Item::None, true, 1.0 / 3.0));
-static_assert(individual_test<Generation::two>(Species::Farfetchd, MoveName::Slash, Item::Stick, true, 1.0 / 2.0));
-static_assert(individual_test<Generation::three>(Species::Smeargle, MoveName::Slash, Item::None, false, 1.0 / 8.0));
-static_assert(individual_test<Generation::three>(Species::Sandshrew, MoveName::Slash, Item::None, true, 1.0 / 3.0));
-static_assert(individual_test<Generation::three>(Species::Farfetchd, MoveName::Slash, Item::Stick, true, 1.0 / 2.0));
+static_assert(individual_test<Generation::one>(Species::Slowpoke, MoveName::Water_Gun, Item::None, true, Probability(1.0 / 256.0)));
+static_assert(individual_test<Generation::one>(Species::Tauros, MoveName::Body_Slam, Item::None, false, Probability(55.0 / 256.0)));
+static_assert(individual_test<Generation::one>(Species::Electrode, MoveName::Thunderbolt, Item::None, false, Probability(70.0 / 256.0)));
+static_assert(individual_test<Generation::one>(Species::Electrode, MoveName::Slash, Item::None, false, Probability(255.0 / 256.0)));
+static_assert(individual_test<Generation::one>(Species::Sandslash, MoveName::Slash, Item::None, false, Probability(255.0 / 256.0)));
+static_assert(individual_test<Generation::one>(Species::Goldeen, MoveName::Slash, Item::None, false, Probability(248.0 / 256.0)));
+static_assert(individual_test<Generation::two>(Species::Pikachu, MoveName::Thunder, Item::None, false, Probability(1.0 / 16.0)));
+static_assert(individual_test<Generation::two>(Species::Smeargle, MoveName::Slash, Item::None, false, Probability(1.0 / 4.0)));
+static_assert(individual_test<Generation::two>(Species::Sandshrew, MoveName::Slash, Item::None, true, Probability(1.0 / 3.0)));
+static_assert(individual_test<Generation::two>(Species::Farfetchd, MoveName::Slash, Item::Stick, true, Probability(1.0 / 2.0)));
+static_assert(individual_test<Generation::three>(Species::Smeargle, MoveName::Slash, Item::None, false, Probability(1.0 / 8.0)));
+static_assert(individual_test<Generation::three>(Species::Sandshrew, MoveName::Slash, Item::None, true, Probability(1.0 / 3.0)));
+static_assert(individual_test<Generation::three>(Species::Farfetchd, MoveName::Slash, Item::Stick, true, Probability(1.0 / 2.0)));
 
 } // namespace technicalmachine

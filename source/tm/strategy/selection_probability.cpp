@@ -8,6 +8,8 @@ export module tm.strategy.selection_probability;
 import tm.move.legal_selections;
 import tm.move.selection;
 
+import tm.probability;
+
 import bounded;
 import containers;
 
@@ -15,7 +17,7 @@ namespace technicalmachine {
 
 export struct SelectionProbability {
 	Selection selection;
-	double probability;
+	Probability probability;
 	friend constexpr auto operator==(SelectionProbability, SelectionProbability) -> bool = default;
 };
 
@@ -28,7 +30,7 @@ struct bounded::tombstone_traits<technicalmachine::SelectionProbability> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::SelectionProbability {
 		return technicalmachine::SelectionProbability(
 			tombstone_traits<technicalmachine::Selection>::make(index),
-			0.0
+			technicalmachine::Probability(0.0)
 		);
 	}
 	static constexpr auto index(technicalmachine::SelectionProbability const & value) noexcept {

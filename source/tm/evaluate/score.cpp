@@ -9,6 +9,8 @@ module;
 
 export module tm.evaluate.score;
 
+import tm.probability;
+
 import std_module;
 
 namespace technicalmachine {
@@ -36,6 +38,12 @@ export struct Score {
 	}
 	friend constexpr auto operator*(double const lhs, Score const rhs) -> Score {
 		return Score(lhs * rhs.m_value);
+	}
+	friend constexpr auto operator*(Score const lhs, Probability const rhs) -> Score {
+		return Score(lhs.m_value * double(rhs));
+	}
+	friend constexpr auto operator*(Probability const lhs, Score const rhs) -> Score {
+		return Score(double(lhs) * rhs.m_value);
 	}
 
 	friend constexpr auto operator/(Score const lhs, double const rhs) -> Score {

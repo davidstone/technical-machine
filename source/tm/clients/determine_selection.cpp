@@ -48,8 +48,8 @@ auto log_move_probabilities(
 	for (auto const predicted : all_predicted) {
 		stream
 			<< '\t'
-			<< predicted.probability * 100.0
-			<< "% chance: "
+			<< predicted.probability
+			<< " chance: "
 			<< to_string(predicted.selection, team)
 			<< '\n';
 	}
@@ -74,7 +74,12 @@ constexpr auto sort_selections(SelectionProbabilities & selections) -> void {
 }
 
 auto pick_selection(SelectionProbabilities const selections, std::mt19937 & random_engine) -> Selection {
-	auto const probabilities = containers::transform(selections, &SelectionProbability::probability);
+	auto const probabilities = containers::transform(
+		selections,
+		[](SelectionProbability const element) {
+			return double(element.probability);
+		}
+	);
 	auto distribution = std::discrete_distribution(
 		containers::legacy_iterator(containers::begin(probabilities)),
 		containers::legacy_iterator(containers::end(probabilities))

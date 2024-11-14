@@ -19,6 +19,8 @@ import tm.strategy.random_selection;
 import tm.strategy.statistical;
 import tm.strategy.strategy;
 
+import tm.probability;
+
 import bounded;
 import std_module;
 
@@ -31,7 +33,7 @@ export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 		if (argc != 2) {
 			throw std::runtime_error("random strategy requires argument for switch weight");
 		}
-		return make_random_selection(std::stod(argv[1]));
+		return make_random_selection(Probability(std::stod(argv[1])));
 	} else if (name == "max_damage"sv) {
 		if (argc != 1) {
 			throw std::runtime_error("max_damage strategy accepts no arguments");

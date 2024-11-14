@@ -15,6 +15,7 @@ import tm.strategy.weighted_selection;
 
 import tm.environment;
 import tm.generation;
+import tm.probability;
 import tm.team;
 
 import bounded;
@@ -29,39 +30,45 @@ constexpr auto is_switch = [](Selection const selection) {
 	return selection.index() == bounded::type<Switch>;
 };
 
-constexpr auto random_selection(LegalSelections const selections, double const switch_probability) -> WeightedSelections {
+constexpr auto random_selection(LegalSelections const selections, Probability const switch_probability) -> WeightedSelections {
 	return WeightedSelections(containers::transform(
 		selections,
 		[=](Selection const selection) {
 			return WeightedSelection(
 				selection,
 				is_switch(selection) ?
-					switch_probability :
-					1.0 - switch_probability
+					double(switch_probability) :
+					double(Probability(1.0) - switch_probability)
 			);
 		}
 	));
 }
 
 static_assert(
-	random_selection(LegalSelections({MoveName::Tackle}), 0.2) ==
+	random_selection(LegalSelections({MoveName::Tackle}), Probability(0.2)) ==
 	WeightedSelections({{MoveName::Tackle, 0.8}})
 );
 
 static_assert(
-	random_selection(LegalSelections({MoveName::Tackle, MoveName::Thunder}), 0.2) ==
-	WeightedSelections({{MoveName::Tackle, 0.8}, {MoveName::Thunder, 0.8}})
+	random_selection(LegalSelections({MoveName::Tackle, MoveName::Thunder}), Probability(0.2)) ==
+	WeightedSelections({
+		{MoveName::Tackle, 0.8},
+		{MoveName::Thunder, 0.8}
+	})
 );
 
 static_assert(
-	random_selection(LegalSelections({MoveName::Tackle, Switch(0_bi)}), 0.2) ==
-	WeightedSelections({{MoveName::Tackle, 0.8}, {Switch(0_bi), 0.2}})
+	random_selection(LegalSelections({MoveName::Tackle, Switch(0_bi)}), Probability(0.2)) ==
+	WeightedSelections({
+		{MoveName::Tackle, 0.8},
+		{Switch(0_bi), 0.2}
+	})
 );
 
 static_assert(
 	random_selection(
 		LegalSelections({MoveName::Tackle, MoveName::Thunder, Switch(0_bi)}),
-		0.2
+		Probability(0.2)
 	) ==
 	WeightedSelections({
 		{MoveName::Tackle, 0.8},
@@ -73,7 +80,7 @@ static_assert(
 static_assert(
 	random_selection(
 		LegalSelections({MoveName::Tackle, Switch(0_bi), Switch(1_bi)}),
-		0.2
+		Probability(0.2)
 	) ==
 	WeightedSelections({
 		{MoveName::Tackle, 0.8},
@@ -83,11 +90,11 @@ static_assert(
 );
 
 static_assert(
-	random_selection(LegalSelections({Switch(0_bi)}), 0.2) ==
+	random_selection(LegalSelections({Switch(0_bi)}), Probability(0.2)) ==
 	WeightedSelections({{Switch(0_bi), 0.2}})
 );
 
-export auto make_random_selection(double const switch_probability) -> Strategy {
+export auto make_random_selection(Probability const switch_probability) -> Strategy {
 	return Strategy([=]<Generation generation>(
 		[[maybe_unused]] Team<generation> const & ai,
 		LegalSelections const ai_selections,

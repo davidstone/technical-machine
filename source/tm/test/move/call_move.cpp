@@ -36,6 +36,7 @@ import tm.gender;
 import tm.generation;
 import tm.get_legal_selections;
 import tm.item;
+import tm.probability;
 import tm.switch_decision_required;
 import tm.team;
 
@@ -97,7 +98,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		auto const side_effects = possible_side_effects(MoveName::Belly_Drum, attacker.pokemon().as_const(), defender, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
-		CHECK(side_effect.probability == 1.0);
+		CHECK(side_effect.probability == Probability(1.0));
 
 		call_move(
 			attacker,

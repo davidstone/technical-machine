@@ -17,6 +17,7 @@ import tm.strategy.weighted_selection;
 import tm.environment;
 import tm.generation;
 import tm.generation_generic;
+import tm.probability;
 import tm.team;
 import tm.team_is_empty;
 
@@ -62,7 +63,7 @@ constexpr auto to_selection_probabilities(WeightedSelections const weighted) -> 
 		[&](WeightedSelection const value) {
 			return SelectionProbability(
 				value.selection,
-				value.weight / cummulative_weight
+				Probability(value.weight / cummulative_weight)
 			);
 		}
 	));
@@ -86,7 +87,7 @@ struct Wrapper {
 	) const -> BothSelectionProbabilities {
 		if (containers::size(ai_selections) == 1_bi) {
 			return BothSelectionProbabilities(
-				SelectionProbabilities({{containers::front(ai_selections), 1.0}}),
+				SelectionProbabilities({{containers::front(ai_selections), Probability(1.0)}}),
 				SelectionProbabilities()
 			);
 		}

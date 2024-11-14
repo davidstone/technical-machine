@@ -22,6 +22,7 @@ import tm.any_team;
 import tm.associated_team;
 import tm.environment;
 import tm.other_team;
+import tm.probability;
 
 import bounded;
 import containers;
@@ -31,9 +32,32 @@ using namespace bounded::literal;
 
 template<any_team UserTeam>
 struct SideEffect {
-	double probability;
+	Probability probability;
 	SideEffectFunction<UserTeam> function;
 };
+
+} // namespace technicalmachine
+
+template<technicalmachine::any_team UserTeam>
+struct bounded::tombstone_traits<technicalmachine::SideEffect<UserTeam>> {
+private:
+	using T = technicalmachine::SideEffect<UserTeam>;
+	using base = tombstone_traits<technicalmachine::SideEffectFunction<UserTeam>>;
+public:
+	static constexpr auto spare_representations = base::spare_representations;
+
+	static constexpr auto make(bounded::constant_t<0>) noexcept {
+		return T(
+			technicalmachine::Probability(0.0),
+			base::make(0_bi)
+		);
+	}
+	static constexpr auto index(T const & value) noexcept {
+		return base::index(value.function);
+	}
+};
+
+namespace technicalmachine {
 
 template<any_team UserTeam>
 using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15_bi>;
