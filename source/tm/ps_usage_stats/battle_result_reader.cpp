@@ -7,8 +7,8 @@ export module tm.ps_usage_stats.battle_result_reader;
 
 import tm.ps_usage_stats.battle_result;
 
+import tm.binary_file_reader;
 import tm.open_file;
-import tm.read_bytes;
 
 import bounded;
 import containers;
@@ -33,7 +33,7 @@ export auto battle_result_reader(std::filesystem::path const & path) {
 			if (!file) {
 				throw std::runtime_error("Inconsistent file size");
 			}
-			return read_bytes<BattleResult>(file);
+			return std::bit_cast<BattleResult>(read_bytes(file, bounded::size_of<BattleResult>));
 		}
 	);
 }

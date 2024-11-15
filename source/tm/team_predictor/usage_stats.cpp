@@ -18,9 +18,9 @@ import tm.ps_usage_stats.header;
 import tm.team_predictor.usage_stats_probabilities;
 
 import tm.ability;
+import tm.binary_file_reader;
 import tm.generation;
 import tm.item;
-import tm.read_bytes;
 import tm.weight;
 
 import bounded;
@@ -31,69 +31,72 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-struct FileReader {
-	explicit FileReader(std::istream & stream):
-		m_stream(stream)
-	{
-	}
-	template<typename T>
-	auto read() {
-		return read_bytes<T>(m_stream);
-	}
-private:
-	std::istream & m_stream;
-};
-
-template<bounded::bounded_integer T>
-auto checked_read(FileReader & reader) {
-	return bounded::check_in_range<T>(reader.read<typename T::underlying_type>());
-}
-
-template<typename T> requires std::is_enum_v<T>
-auto checked_read(FileReader & reader) {
-	return T(checked_read<decltype(bounded::integer(T()))>(reader));
-}
-
-template<std::floating_point T>
-auto checked_read(FileReader & reader) {
-	auto const value = reader.read<T>();
-	if (value < 0.0 or !std::isfinite(value)) {
-		throw std::runtime_error("Invalid floating point value");
-	}
-	return value;
-}
-
-template<typename T>
-auto read_count_for(FileReader & reader) {
-	using Count = bounded::integer<0, bounded::normalize<bounded::number_of<T>>>;
-	return checked_read<Count>(reader);
-}
-
-template<typename Key>
-struct CheckedRead {
-	explicit constexpr CheckedRead(FileReader & reader):
-		m_reader(reader)
-	{
-	}
-	constexpr auto operator()() const {
-		return checked_read<Key>(m_reader);
-	}
-private:
-	std::reference_wrapper<FileReader> m_reader;
-};
-template<typename Key>
-auto read_map(FileReader & reader) {
-	return containers::generate_n(read_count_for<Key>(reader), CheckedRead<Key>(reader));
-}
-
-auto checked_header_read(FileReader & reader) -> void {
-	auto str = reader.read<decltype(usage_stats_magic_string)>();
+auto check_header(std::istream & stream) -> void {
+	auto str = read_bytes(stream, containers::size(usage_stats_magic_string));
 	if (str != usage_stats_magic_string) {
 		throw std::runtime_error("Invalid magic string");
 	}
-	if (checked_read<UsageStatsVersion>(reader) != 0_bi) {
+	if (read<UsageStatsVersion>(stream) != 0_bi) {
 		throw std::runtime_error("Invalid version");
 	}
+}
+
+struct SpeedDistribution {
+};
+
+auto read_speed_distribution(std::istream & stream) -> SpeedDistribution {
+	auto const distribution = map_reader<InitialSpeed>(stream, [&] { return read_weight(stream); });
+	for ([[maybe_unused]] auto const value : distribution) {
+	}
+	return SpeedDistribution();
+}
+
+template<typename T>
+auto read_inner_probabilities(std::istream & stream, Weight<double> const species_weight) {
+	return UsageStatsProbabilities::Data<T>(map_reader<T>(stream, [&] {
+		auto const relative_weight = read_weight(stream);
+		return Weight<float>(species_weight * relative_weight);
+	}));
+}
+
+auto read_probabilities_map(std::istream & stream) -> UsageStatsProbabilities::Map {
+	return UsageStatsProbabilities::Map(map_reader<Species>(stream, [&] {
+		auto const weight = read_weight(stream);
+		return UsageStatsProbabilities::Inner(
+			read_inner_probabilities<MoveName>(stream, weight),
+			UsageStatsProbabilities::Data<Item>(),
+			UsageStatsProbabilities::Data<Ability>()
+		);
+	}));
+}
+
+template<typename Key>
+auto read_map(std::istream & stream) {
+	using Count = bounded::integer<0, bounded::normalize<bounded::number_of<Key>>>;
+	return containers::generate_n(
+		read<Count>(stream),
+		[&] { return read<Key>(stream); }
+	);
+}
+
+auto read_items(
+	std::istream & stream,
+	Generation const generation,
+	Weight<double> const species_weight
+) -> UsageStatsProbabilities::Data<Item> {
+	return generation >= Generation::two ?
+		read_inner_probabilities<Item>(stream, species_weight) :
+		UsageStatsProbabilities::Data<Item>();
+}
+
+auto read_abilities(
+	std::istream & stream,
+	Generation const generation,
+	Weight<double> const species_weight
+) -> UsageStatsProbabilities::Data<Ability> {
+	return generation >= Generation::three ?
+		read_inner_probabilities<Ability>(stream, species_weight) :
+		UsageStatsProbabilities::Data<Ability>();
 }
 
 template<typename Container>
@@ -105,73 +108,50 @@ constexpr auto checked_insert(Container & container, typename Container::key_typ
 	return containers::get_mapped(*result.iterator);
 }
 
-struct SpeedDistribution {
+struct ReadMoveData {
+	[[no_unique_address]] Weight<double> weight;
+	[[no_unique_address]] SpeedDistribution speed_distribution;
+	[[no_unique_address]] UsageStatsProbabilities::Map teammates;
 };
 
-template<std::same_as<SpeedDistribution>>
-auto checked_read(FileReader & reader) {
-	for ([[maybe_unused]] auto const value : read_map<InitialSpeed>(reader)) {
-		checked_read<double>(reader);
-	}
-	return SpeedDistribution();
-}
-
-template<typename T>
-auto read_inner_probabilities(FileReader & reader, Weight<double> const species_weight) {
-	using Data = UsageStatsProbabilities::Data<T>;
-	using Map = Data::Map;
-	auto const elements = read_map<T>(reader);
-	return Data(containers::transform(elements, [&](T const key) {
-		auto const relative_weight = Weight(checked_read<double>(reader));
-		return containers::range_value_t<Map>{
-			key,
-			Weight(float(species_weight * relative_weight))
-		};
-	}));
-}
-
-template<std::same_as<UsageStatsProbabilities::Map>>
-auto checked_read(FileReader & reader) {
-	auto const all_species = read_map<Species>(reader);
-	return UsageStatsProbabilities::Map(containers::transform(all_species, [&](Species const species) {
-		auto const weight = Weight(checked_read<double>(reader));
-		return containers::range_value_t<UsageStatsProbabilities::Map>{
+auto move_reader(std::istream & stream, Generation const generation, Species const species, Weight<double> const species_weight) {
+	return map_reader<MoveName>(stream, [=, &stream] {
+		auto const weight = read_weight(stream);
+		auto speed_distribution = read_speed_distribution(stream);
+		auto teammates = read_probabilities_map(stream);
+		checked_insert(
+			teammates,
 			species,
-			{
-				read_inner_probabilities<MoveName>(reader, weight),
-				UsageStatsProbabilities::Data<Item>(),
-				UsageStatsProbabilities::Data<Ability>()
+			[&] {
+				return UsageStatsProbabilities::Inner{
+					read_inner_probabilities<MoveName>(stream, species_weight),
+					read_items(stream, generation, species_weight),
+					read_abilities(stream, generation, species_weight)
+				};
 			}
+		);
+		return ReadMoveData{
+			weight,
+			std::move(speed_distribution),
+			std::move(teammates)
 		};
-	}));
+	});
 }
 
 } // namespace
 
 export struct UsageStats {
 	static auto make(std::istream && stream) -> UsageStats {
-		auto reader = FileReader(stream);
-		checked_header_read(reader);
+		check_header(stream);
 		// TODO: Confirm this is the expected generation?
-		auto const generation = checked_read<Generation>(reader);
+		auto const generation = read<Generation>(stream);
 		auto data = Data();
 		auto probabilities = UsageStatsProbabilities::Map();
 
-		for (auto const species : read_map<Species>(reader)) {
-			auto const species_weight = Weight(checked_read<double>(reader));
-			checked_read<SpeedDistribution>(reader);
-			auto per_species_probabilities = checked_read<UsageStatsProbabilities::Map>(reader);
-			auto used_moves = UsedMoves();
-			auto read_items = [&] {
-				return generation >= Generation::two ?
-					read_inner_probabilities<Item>(reader, species_weight) :
-					UsageStatsProbabilities::Data<Item>();
-			};
-			auto read_abilities = [&] {
-				return generation >= Generation::three ?
-					read_inner_probabilities<Ability>(reader, species_weight) :
-					UsageStatsProbabilities::Data<Ability>();
-			};
+		for (auto const species : read_map<Species>(stream)) {
+			auto const species_weight = read_weight(stream);
+			[[maybe_unused]] auto speed_distribution = read_speed_distribution(stream);
+			auto per_species_probabilities = read_probabilities_map(stream);
 			auto & for_this_species = checked_insert(
 				per_species_probabilities,
 				species,
@@ -182,44 +162,27 @@ export struct UsageStats {
 				species,
 				bounded::construct<UsageStatsProbabilities::Inner>
 			);
-			for (auto const & move_name : read_map<MoveName>(reader)) {
-				auto const move_weight = Weight(checked_read<double>(reader));
+			auto used_moves = UsedMoves();
+			for (auto move : move_reader(stream, generation, species, species_weight)) {
 				checked_insert(
 					for_this_species.moves,
-					move_name,
-					bounded::value_to_function(Weight(float(move_weight)))
+					move.key,
+					bounded::value_to_function(Weight<float>(move.mapped.weight))
 				);
-				[[maybe_unused]] auto const speed_distribution = checked_read<SpeedDistribution>(reader);
-				auto teammates = checked_read<UsageStatsProbabilities::Map>(reader);
-				auto const weight = species_weight * move_weight;
 				checked_insert(
 					probabilities_assuming_species.moves,
-					move_name,
-					bounded::value_to_function(Weight(float(weight)))
-				);
-				auto moves = read_inner_probabilities<MoveName>(reader, species_weight);
-				auto items = read_items();
-				auto abilities = read_abilities();
-				checked_insert(
-					teammates,
-					species,
-					[&] {
-						return UsageStatsProbabilities::Inner{
-							std::move(moves),
-							std::move(items),
-							std::move(abilities)
-						};
-					}
+					move.key,
+					bounded::value_to_function(Weight<float>(species_weight * move.mapped.weight))
 				);
 				checked_insert(
 					used_moves,
-					move_name,
-					[&] { return UsageStatsProbabilities(std::move(teammates)); }
+					move.key,
+					[&] { return UsageStatsProbabilities(std::move(move.mapped.teammates)); }
 				);
 			}
-			for_this_species.items = read_items();
+			for_this_species.items = read_items(stream, generation, species_weight);
 			probabilities_assuming_species.items = for_this_species.items;
-			for_this_species.abilities = read_abilities();
+			for_this_species.abilities = read_abilities(stream, generation, species_weight);
 			probabilities_assuming_species.abilities = for_this_species.abilities;
 			checked_insert(data, species, [&] {
 				return PerSpecies{

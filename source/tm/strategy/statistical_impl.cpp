@@ -21,11 +21,11 @@ import tm.strategy.weighted_selection;
 
 import tm.string_conversions.generation;
 
+import tm.binary_file_reader;
 import tm.environment;
 import tm.generation;
 import tm.get_directory;
 import tm.open_file;
-import tm.read_bytes;
 import tm.team;
 import tm.to_index;
 import tm.usage_for;
@@ -82,19 +82,12 @@ struct SelectionWeights {
 			get_usage_stats_directory() / to_string(generation) / "OU.tmsw"
 		);
 		while (stream.peek() != std::char_traits<char>::eof()) {
-			auto const other = read_bytes<Species>(stream);
-			auto const user = read_bytes<Species>(stream);
-			auto const switch_out_weight = Weight(read_bytes<double>(stream));
-			auto const switch_in_multiplier = Weight(read_bytes<double>(stream));
-			using MoveCount = bounded::integer<0, bounded::normalize<bounded::number_of<MoveName>>>;
-			auto const move_count = read_bytes<MoveCount>(stream);
-			auto moves = MoveData(containers::generate_n(move_count, [&] {
-				auto const name = read_bytes<MoveName>(stream);
-				auto const weight = Weight(read_bytes<double>(stream));
-				return containers::map_value_type<MoveName, Weight<double>>(
-					name,
-					with_minimum_weight(weight)
-				);
+			auto const other = read<Species>(stream);
+			auto const user = read<Species>(stream);
+			auto const switch_out_weight = read_weight(stream);
+			auto const switch_in_multiplier = read_weight(stream);
+			auto moves = MoveData(map_reader<MoveName>(stream, [&] {
+				return with_minimum_weight(read_weight(stream));
 			}));
 			set(
 				other,

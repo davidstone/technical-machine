@@ -224,6 +224,7 @@ target_sources(tm_common PUBLIC
 		apply_entry_hazards.cpp
 		associated_team.cpp
 		battle.cpp
+		binary_file_reader.cpp
 		bit_view.cpp
 		blocks_selection_and_execution.cpp
 		boost_networking.cpp
@@ -260,7 +261,6 @@ target_sources(tm_common PUBLIC
 		probability.cpp
 		property_tree.cpp
 		rational.cpp
-		read_bytes.cpp
 		saturating_add.cpp
 		screen.cpp
 		screens.cpp
