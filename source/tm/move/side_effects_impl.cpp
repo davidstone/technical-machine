@@ -1450,6 +1450,7 @@ auto possible_side_effects(
 				no_effect<UserTeam>;
 		case MoveName::Bind:
 		case MoveName::Clamp:
+		case MoveName::Infestation:
 		case MoveName::Sand_Tomb:
 		case MoveName::Snap_Trap:
 		case MoveName::Thunder_Cage:
@@ -2131,7 +2132,6 @@ auto possible_side_effects(
 		case MoveName::Baby_Doll_Eyes:
 		case MoveName::Nuzzle:
 		case MoveName::Hold_Back:
-		case MoveName::Infestation:
 		case MoveName::Power_Up_Punch:
 		case MoveName::Oblivion_Wing:
 		case MoveName::Thousand_Arrows:
