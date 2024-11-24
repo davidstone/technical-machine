@@ -351,8 +351,9 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/parse_set_hp_message.cpp
 		clients/pokemon_showdown/parse_status.cpp
 		clients/pokemon_showdown/parse_switch.cpp
-		clients/pokemon_showdown/parse_team_from_request.cpp
+		clients/pokemon_showdown/parse_request.cpp
 		clients/pokemon_showdown/parsed_message.cpp
+		clients/pokemon_showdown/parsed_request.cpp
 		clients/pokemon_showdown/parsed_side.cpp
 		clients/pokemon_showdown/parsed_stats.cpp
 		clients/pokemon_showdown/parsed_team.cpp
@@ -430,7 +431,7 @@ target_sources(tm_test PRIVATE
 		test/clients/pokemon_showdown/message_block.cpp
 		test/clients/pokemon_showdown/packed_team.cpp
 		test/clients/pokemon_showdown/parse_switch.cpp
-		test/clients/pokemon_showdown/parse_team_from_request.cpp
+		test/clients/pokemon_showdown/parse_request.cpp
 		
 		test/clients/shoddy_battle/read_team_file.cpp
 

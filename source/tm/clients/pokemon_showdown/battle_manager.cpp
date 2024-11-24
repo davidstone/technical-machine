@@ -18,6 +18,7 @@ import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.parsed_message;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.start_of_turn;
@@ -44,12 +45,12 @@ using BattleState = tv::variant<
 	BattleMessageHandler
 >;
 
-// We essentially create a state machine.
+// We create a state machine.
 // (nothing) + CreateBattle => BattleExists
-// BattleExists + ParsedSide => ParsedSide
-// ParsedSide + ParsedSide => ParsedSide (check they are the same)
+// BattleExists + ParsedRequest => ParsedSide
+// ParsedSide + ParsedRequest => ParsedSide (check they are the same)
 // ParsedSide + BattleInitMessage => BattleMessageHandler
-// BattleMessageHandler + ParsedSide => BattleMessageHandler (check they are the same)
+// BattleMessageHandler + ParsedRequest => BattleMessageHandler (check they are the same)
 // BattleMessageHandler + EventBlock => BattleMessageHandler or (nothing)
 
 export struct BattleManager {
@@ -64,10 +65,10 @@ export struct BattleManager {
 		BattleResponseError
 	>;
 
-	constexpr auto handle_message(ParsedSide const message) -> Result {
+	constexpr auto handle_message(ParsedRequest const message) -> Result {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists) {
-				m_battle = message;
+				m_battle = message.side;
 			},
 			[&](ParsedSide const &) {
 				throw std::runtime_error("Got two teams while handling messages");

@@ -14,7 +14,7 @@ import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.make_battle_init_message;
-import tm.clients.ps.parse_team_from_request;
+import tm.clients.ps.parse_request;
 
 import bounded;
 import containers;
@@ -57,7 +57,7 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 		if (json_str.empty()) {
 			return tv::none;
 		}
-		return parse_team_from_request(json_str);
+		return parse_request(json_str);
 	} else if (matches("teamsize"sv)) {
 		// This never starts a block in the real stream. However, we have to
 		// filter out all the "player" messages when parsing PS logs due to bugs

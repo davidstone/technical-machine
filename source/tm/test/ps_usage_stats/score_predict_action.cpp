@@ -13,6 +13,7 @@ import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.in_message;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 
@@ -212,7 +213,7 @@ auto score_one_side_of_battle(
 ) -> WeightedScore {
 	auto const inputs_for_side = containers::filter(player_inputs, is_input_for(rated_side.side.party));
 	auto battle = BattleManager();
-	battle.handle_message(rated_side.side);
+	battle.handle_message(parsed_side_to_request(rated_side.side));
 	try {
 		auto const scores = containers::vector(containers::transform(
 			containers::zip_smallest(

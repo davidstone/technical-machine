@@ -10,6 +10,7 @@ import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 
@@ -239,7 +240,7 @@ auto update_weights_for_one_side_of_battle(
 	std::span<PlayerInput const> const player_inputs
 ) -> void {
 	auto battle = ps::BattleManager();
-	battle.handle_message(rated_side.side);
+	battle.handle_message(parsed_side_to_request(rated_side.side));
 	auto selections = containers::zip_smallest(
 		battle_states_requiring_selection(battle_messages, battle),
 		containers::filter(player_inputs, is_input_for(rated_side.side.party))
