@@ -917,6 +917,7 @@ constexpr auto base_pp(Generation const generation, MoveName const move) -> tv::
 export struct PP {
 	using pp_ups_type = pp_ups_type;
 	using max_type = max_type;
+	using current_type = bounded::integer<0, bounded::normalize<numeric_traits::max_value<max_type>>>;
 
 	constexpr PP(Generation const generation, MoveName const move, pp_ups_type const pp_ups):
 		m_max(calculate_max(base_pp(generation, move), pp_ups)),
@@ -962,7 +963,6 @@ private:
 	{
 	}
 
-	using current_type = bounded::integer<0, bounded::normalize<numeric_traits::max_value<max_type>>>;
 	// TODO: Use optional<pair> instead of pair<optional>
 	tv::optional<max_type> m_max;
 	tv::optional<current_type> m_current;
