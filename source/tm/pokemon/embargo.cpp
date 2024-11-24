@@ -12,7 +12,10 @@ import tm.generation;
 namespace technicalmachine {
 
 export template<Generation generation>
-using EmbargoCounter = EndOfTurnCounter<generation >= Generation::four, 5>;
+using EmbargoCounter = EndOfTurnCounter<
+	generation >= Generation::four,
+	5
+>;
 
 static_assert(!EmbargoCounter<Generation::one>().is_active());
 static_assert(!EmbargoCounter<Generation::five>().is_active());
