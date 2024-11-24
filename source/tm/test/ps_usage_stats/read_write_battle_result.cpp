@@ -6,6 +6,7 @@
 #include <std_module/prelude.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import tm.clients.ps.parsed_stats;
 import tm.clients.ps.parsed_team;
 
 import tm.ps_usage_stats.battle_result;

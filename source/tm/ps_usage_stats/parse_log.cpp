@@ -13,6 +13,7 @@ export module tm.ps_usage_stats.parse_log;
 import tm.clients.ps.parse_gender;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.parse_moves;
+import tm.clients.ps.parsed_stats;
 import tm.clients.ps.parsed_team;
 
 import tm.move.move_name;

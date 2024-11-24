@@ -5,6 +5,8 @@
 
 export module tm.clients.ps.parsed_team;
 
+import tm.clients.ps.parsed_stats;
+
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.move_names;
@@ -14,9 +16,6 @@ import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.species;
 
-import tm.stat.initial_stat;
-import tm.stat.stat_style;
-
 import tm.status.status_name;
 
 import tm.type.type;
@@ -24,7 +23,6 @@ import tm.type.type;
 import tm.ability;
 import tm.gender;
 import tm.item;
-import tm.visible_hp;
 
 import bounded;
 import containers;
@@ -32,19 +30,6 @@ import tv;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
-
-// PS always sends split-special stats
-export using ParsedStat = InitialStat<SpecialStyle::split>;
-
-export struct ParsedStats {
-	VisibleHP hp;
-	ParsedStat atk;
-	ParsedStat def;
-	ParsedStat spa;
-	ParsedStat spd;
-	ParsedStat spe;
-	friend auto operator==(ParsedStats, ParsedStats) -> bool = default;
-};
 
 export struct ParsedPokemon {
 	Species species;

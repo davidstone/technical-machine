@@ -354,6 +354,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/parse_team_from_request.cpp
 		clients/pokemon_showdown/parsed_message.cpp
 		clients/pokemon_showdown/parsed_side.cpp
+		clients/pokemon_showdown/parsed_stats.cpp
 		clients/pokemon_showdown/parsed_team.cpp
 		clients/pokemon_showdown/parsed_team_to_known_team.cpp
 		clients/pokemon_showdown/party_from_player_id.cpp
