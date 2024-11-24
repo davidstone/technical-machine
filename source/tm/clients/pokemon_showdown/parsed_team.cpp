@@ -45,6 +45,29 @@ export struct ParsedPokemon {
 	friend auto operator==(ParsedPokemon, ParsedPokemon) -> bool = default;
 };
 
+} // namespace techniclalmachine::ps
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::ps::ParsedPokemon> {
+private:
+	using base = tombstone_traits<technicalmachine::ps::ParsedStats>;
+public:
+	static constexpr auto spare_representations = base::spare_representations;
+
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::ps::ParsedPokemon {
+		return technicalmachine::ps::ParsedPokemon{
+			.species = {},
+			.stats = base::make(index),
+			.moves = {}
+		};
+	}
+	static constexpr auto index(technicalmachine::ps::ParsedPokemon const & value) noexcept {
+		return base::index(value.stats);
+	}
+};
+
+namespace technicalmachine::ps {
+
 export using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
 
 } // namespace technicalmachine::ps
