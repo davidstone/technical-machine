@@ -246,10 +246,26 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
+	auto regular = [&] -> damage_type {
+		return bounded::assume_in_range<damage_type>(regular_damage(
+			attacker_team,
+			executed,
+			move_weakened_from_item,
+			defender_team,
+			environment
+		));
+	};
 	switch (executed.move.name) {
 		case MoveName::Bide:
 			// TODO: Determine the damage here
 			return 0_bi;
+		case MoveName::Bind:
+		case MoveName::Clamp:
+		case MoveName::Fire_Spin:
+		case MoveName::Wrap:
+			return generation == Generation::one and attacker.last_used_move().is_immobilizing() ?
+				defender.direct_damage_received() :
+				regular();
 		case MoveName::Counter:
 			return defender_action.is_counterable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case MoveName::Dragon_Rage:
@@ -277,13 +293,7 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 		case MoveName::Super_Fang:
 			return defender.hp().current() / 2_bi;
 		default:
-			return bounded::assume_in_range<damage_type>(regular_damage(
-				attacker_team,
-				executed,
-				move_weakened_from_item,
-				defender_team,
-				environment
-			));
+			return regular();
 	}
 }
 

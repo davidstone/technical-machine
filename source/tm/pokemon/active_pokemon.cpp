@@ -219,7 +219,7 @@ private:
 	[[no_unique_address]] LastUsedMove last_used_move;
 	[[no_unique_address]] MagnetRise<generation> magnet_rise;
 	[[no_unique_address]] Substitute substitute;
-	[[no_unique_address]] PartialTrap partial_trap;
+	[[no_unique_address]] PartialTrap<generation> partial_trap;
 	[[no_unique_address]] PerishSong<generation> perish_song;
 	[[no_unique_address]] Stages stages;
 	[[no_unique_address]] ActiveStatus status;
@@ -723,7 +723,7 @@ public:
 		this->m_flags.partial_trap.activate();
 	}
 	constexpr auto partial_trap_damage(Environment const environment) const {
-		this->m_flags.partial_trap.damage(*this, environment);
+		this->m_flags.partial_trap.end_of_turn_damage(*this, environment);
 	}
 	constexpr auto activate_perish_song() const {
 		this->m_flags.perish_song.activate();
@@ -939,6 +939,7 @@ public:
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
 		auto const result = this->m_flags.last_used_move.successful_move(
+			generation,
 			first_executed,
 			last_executed,
 			this->item(environment),

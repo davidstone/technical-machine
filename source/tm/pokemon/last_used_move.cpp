@@ -10,6 +10,7 @@ module;
 
 export module tm.pokemon.last_used_move;
 
+import tm.pokemon.immobilize;
 import tm.pokemon.rampage;
 import tm.pokemon.uproar;
 
@@ -89,6 +90,7 @@ export struct LastUsedMove {
 	// is forced to execute Metronome, which calls Assist, which calls Tackle,
 	// Sleep Talk is `first_executed` and Tackle is `last_executed`
 	constexpr auto successful_move(
+		Generation const generation,
 		MoveName const first_executed,
 		MoveName const last_executed,
 		Item const item,
@@ -139,6 +141,14 @@ export struct LastUsedMove {
 						}
 						m_effects = ChargingUp();
 						return DoNothing();
+					case MoveName::Bind:
+					case MoveName::Clamp:
+					case MoveName::Fire_Spin:
+					case MoveName::Wrap:
+						if (generation == Generation::one) {
+							m_effects = Immobilize();
+						}
+						return DoNothing();
 					case MoveName::Detect:
 					case MoveName::Protect:
 						m_effects = Protecting();
@@ -178,6 +188,10 @@ export struct LastUsedMove {
 			[&](ChargingUp) -> SuccessfulMove {
 				check_valid_lock_in();
 				m_effects = Empty();
+				return DoNothing();
+			},
+			[&](Immobilize) -> SuccessfulMove {
+				check_valid_lock_in();
 				return DoNothing();
 			},
 			[&](Protecting) -> SuccessfulMove {
@@ -279,24 +293,27 @@ export struct LastUsedMove {
 	constexpr auto locked_in() const -> tv::optional<MoveName> {
 		return m_effects.index() != bounded::type<Empty> ? m_move : tv::none;
 	}
-	// Returns whether the use should get confused
+	// Returns whether the user should get confused
 	constexpr auto advance_lock_in(bool const ending) & -> bool {
+		auto common = [&](auto & element) {
+			if (ending) {
+				m_effects = Empty();
+				return true;
+			} else {
+				element.advance_one_turn();
+				return false;
+			}
+		};
 		return tv::visit(m_effects, tv::overload(
+			[&](Immobilize & immobilize) {
+				common(immobilize);
+				return false;
+			},
 			[&](Rampage & rampage) {
-				if (ending) {
-					m_effects = Empty();
-					return true;
-				} else {
-					rampage.advance_one_turn();
-					return false;
-				}
+				return common(rampage);
 			},
 			[&](UproarCounter & uproar) {
-				if (ending) {
-					m_effects = Empty();
-				} else {
-					uproar.advance_one_turn();
-				}
+				common(uproar);
 				return false;
 			},
 			[](auto const &) {
@@ -359,6 +376,9 @@ export struct LastUsedMove {
 		return result;
 	}
 
+	constexpr auto is_immobilizing() const -> bool {
+		return m_effects.index() == bounded::type<Immobilize>;
+	}
 	constexpr auto is_uproaring() const -> bool {
 		return m_effects.index() == bounded::type<UproarCounter>;
 	}
@@ -408,6 +428,7 @@ private:
 		Empty,
 		Bide,
 		ChargingUp,
+		Immobilize,
 		Protecting,
 		Rampage,
 		Recharging,

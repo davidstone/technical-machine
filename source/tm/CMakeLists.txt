@@ -95,6 +95,7 @@ target_sources(tm_common PUBLIC
 		pokemon/heal_block.cpp
 		pokemon/hidden_power.cpp
 		pokemon/hp_ratio.cpp
+		pokemon/immobilize.cpp
 		pokemon/indirect_status_can_apply.cpp
 		pokemon/initial_pokemon.cpp
 		pokemon/is_genderless.cpp

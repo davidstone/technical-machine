@@ -65,7 +65,7 @@ constexpr auto potential_switches(TeamSize const team_size, TeamIndex const acti
 }
 
 constexpr auto must_repeat(any_active_pokemon auto const user, Environment const environment) {
-	return user.is_encored() or is_choice_item(user.item(environment));
+	return user.is_encored() or is_choice_item(user.item(environment)) or user.last_used_move().is_immobilizing();
 }
 
 constexpr auto must_repeat_different_move(any_active_pokemon auto const user, MoveName const move, Environment const environment) {

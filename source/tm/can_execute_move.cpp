@@ -40,8 +40,16 @@ constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, Move
 }
 
 export constexpr auto can_attempt_move_execution(any_active_pokemon auto const user, Move const move, any_active_pokemon auto const other, bool const user_was_asleep) -> bool {
-	auto const blocked_due_to_status = is_blocked_due_to_status(user, move.name(), user_was_asleep);
-	if (blocked_due_to_status or blocks_selection_and_execution_attempt(user, move, other) or user.is_loafing()) {
+	if (other.last_used_move().is_immobilizing()) {
+		return false;
+	}
+	if (is_blocked_due_to_status(user, move.name(), user_was_asleep)) {
+		return false;
+	}
+	if (blocks_selection_and_execution_attempt(user, move, other)) {
+		return false;
+	}
+	if (user.is_loafing()) {
 		return false;
 	}
 	return true;
