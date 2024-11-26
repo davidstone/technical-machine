@@ -156,13 +156,9 @@ export struct LastUsedMove {
 						return DoNothing();
 					case MoveName::Outrage:
 					case MoveName::Petal_Dance:
-					case MoveName::Thrash: {
-						// TODO: Have it be active when it is constructed
-						auto rampage = Rampage();
-						rampage.activate();
-						m_effects = rampage;
+					case MoveName::Thrash:
+						m_effects = Rampage();
 						return DoNothing();
-					}
 					case MoveName::Uproar: {
 						// TODO: Have it be active when it is constructed
 						auto counter = UproarCounter();
