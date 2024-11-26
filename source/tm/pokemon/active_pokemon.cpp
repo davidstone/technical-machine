@@ -29,7 +29,6 @@ import tm.pokemon.happiness;
 import tm.pokemon.heal_block;
 import tm.pokemon.hidden_power;
 import tm.pokemon.hp_ratio;
-import tm.pokemon.indirect_status_can_apply;
 import tm.pokemon.is_type;
 import tm.pokemon.last_used_move;
 import tm.pokemon.level;
@@ -492,13 +491,6 @@ constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, En
 	pokemon.remove_item();
 }
 
-constexpr auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
-	return
-		!sleep_clause_activates and
-		!either_is_uproaring and
-		indirect_status_can_apply(StatusName::sleep, target, weather);
-}
-
 // A mutable reference to the currently active Pokemon
 export template<typename PokemonType>
 struct AnyMutableActivePokemon : ActivePokemonImpl<PokemonType> {
@@ -903,21 +895,13 @@ public:
 		this->m_flags.yawn.activate();
 	}
 	constexpr auto try_to_activate_yawn(Environment const environment, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
-		auto is_active = [&] {
-			return this->m_flags.yawn.is_active();
-		};
-		auto const was_active = is_active();
-		if (!was_active) {
-			return;
-		}
-		this->m_flags.yawn.advance_one_turn();
-		// TODO: There are a lot of edge cases in different generations
-		if (is_active()) {
-			return;
-		}
-		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {
-			set_status(StatusName::sleep, environment);
-		}
+		this->m_flags.yawn.advance_one_turn(
+			*this,
+			environment,
+			weather,
+			either_is_uproaring,
+			sleep_clause_activates
+		);
 	}
 
 	constexpr auto set_hp(Environment const environment, auto const new_hp) const -> void {
