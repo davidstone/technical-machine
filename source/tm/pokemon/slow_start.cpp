@@ -14,7 +14,7 @@ namespace technicalmachine {
 export template<Generation generation>
 using SlowStart = EndOfTurnCounter<
 	generation >= Generation::four,
-	4
+	5
 >;
 
 } // namespace technicalmachine
