@@ -156,10 +156,10 @@ struct ActivePokemonFlags {
 			compress_combine(
 				value.ability,
 				value.confusion,
-				value.disable
+				value.disable,
+				value.embargo
 			),
 			compress_combine(
-				value.embargo,
 				value.encore,
 				value.heal_block,
 				value.last_used_move,
