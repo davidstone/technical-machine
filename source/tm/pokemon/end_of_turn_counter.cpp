@@ -15,9 +15,11 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export enum class Resettable { no, yes };
 
-export template<bool is_supported_this_generation, int max_turns, Resettable resettable = Resettable::yes>
+export template<
+	bool is_supported_this_generation,
+	int max_turns
+>
 struct EndOfTurnCounter {
 	constexpr auto is_active() const -> bool {
 		if constexpr (is_supported_this_generation) {
@@ -28,9 +30,6 @@ struct EndOfTurnCounter {
 	}
 	constexpr auto activate() & -> void {
 		if constexpr (is_supported_this_generation) {
-			if (resettable == Resettable::no and m_turns_active) {
-				return;
-			}
 			m_turns_active = 0_bi;
 		}
 	}
