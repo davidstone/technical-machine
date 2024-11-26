@@ -510,7 +510,12 @@ public:
 		return this->m_pokemon.add_move(move);
 	}
 	constexpr auto reduce_pp(MoveName const move_name, Environment const environment, bounded::bounded_integer auto const amount) const -> void {
-		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), environment.magic_room(), amount);
+		this->m_pokemon.reduce_pp(
+			move_name,
+			this->m_flags.embargo.is_active(),
+			environment.magic_room(),
+			amount
+		);
 	}
 
 	constexpr auto stages() const -> Stages & {
