@@ -10,10 +10,15 @@ import tm.generation;
 
 namespace technicalmachine {
 
+// TODO:
+// Ends if PP runs out
+// Gen 2,3: 2-6
+// Gen 4: 4-8
+// Gen 5+: 3
 export template<Generation generation>
 using EncoreCounter = EndOfTurnCounter<
 	generation >= Generation::two,
-	7
+	8
 >;
 
 } // namespace technicalmachine
