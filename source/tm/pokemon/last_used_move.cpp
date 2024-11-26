@@ -159,13 +159,9 @@ export struct LastUsedMove {
 					case MoveName::Thrash:
 						m_effects = Rampage();
 						return DoNothing();
-					case MoveName::Uproar: {
-						// TODO: Have it be active when it is constructed
-						auto counter = UproarCounter();
-						counter.advance_one_turn();
-						m_effects = counter;
+					case MoveName::Uproar:
+						m_effects = UproarCounter();
 						return DoNothing();
-					}
 					default:
 						return DoNothing();
 				}
@@ -195,10 +191,9 @@ export struct LastUsedMove {
 				check_valid_lock_in();
 				return DoNothing();
 			},
-			[&](UproarCounter & uproar) -> SuccessfulMove {
+			[&](UproarCounter) -> SuccessfulMove {
 				BOUNDED_ASSERT(m_move == MoveName::Uproar);
 				check_valid_lock_in();
-				uproar.advance_one_turn();
 				return DoNothing();
 			},
 			[&](Vanishing) -> SuccessfulMove {
