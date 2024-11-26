@@ -729,15 +729,7 @@ public:
 		this->m_flags.perish_song.activate();
 	}
 	constexpr auto perish_song_turn() const -> void {
-		auto is_active = [&] {
-			return this->m_flags.perish_song.is_active();
-		};
-
-		auto const was_active = is_active();
-		this->m_flags.perish_song.advance_one_turn();
-		if (was_active and !is_active()) {
-			faint(*this);
-		}
+		this->m_flags.perish_song.advance_one_turn(*this);
 	}
 	constexpr auto activate_power_trick() const {
 		this->m_flags.power_trick_is_active = !this->m_flags.power_trick_is_active;

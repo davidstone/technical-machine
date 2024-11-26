@@ -5,49 +5,36 @@
 
 export module tm.pokemon.perish_song;
 
+import tm.pokemon.any_pokemon;
 import tm.pokemon.end_of_turn_counter;
+import tm.pokemon.faint;
 
 import tm.generation;
 
-import bounded;
-import containers;
-
 namespace technicalmachine {
-using namespace bounded::literal;
 
 export template<Generation generation>
-using PerishSong = EndOfTurnCounter<
-	generation >= Generation::two,
-	3,
-	Resettable::no
->;
-
-static_assert(!PerishSong<Generation::three>().is_active());
-
-constexpr auto perish_song_is_active_after(auto const turns) {
-	auto perish_song = PerishSong<Generation::three>();
-	perish_song.activate();
-	for (auto const _ : containers::integer_range(turns)) {
-		perish_song.advance_one_turn();
+struct PerishSong {
+	constexpr auto activate() & -> void {
+		if (!m_counter.is_active()) {
+			m_counter.activate();
+		}
 	}
-	return perish_song.is_active();
-}
-
-static_assert(perish_song_is_active_after(0_bi));
-static_assert(perish_song_is_active_after(1_bi));
-static_assert(perish_song_is_active_after(2_bi));
-static_assert(perish_song_is_active_after(3_bi));
-static_assert(!perish_song_is_active_after(4_bi));
-
-static_assert([]{
-	auto perish_song = PerishSong<Generation::three>();
-	perish_song.activate();
-	perish_song.advance_one_turn();
-	perish_song.activate();
-	for (auto const _ : containers::integer_range(3_bi)) {
-		perish_song.advance_one_turn();
+	constexpr auto advance_one_turn(any_mutable_active_pokemon auto const pokemon) & -> void {
+		if (!m_counter.is_active()) {
+			return;
+		}
+		m_counter.advance_one_turn();
+		if (!m_counter.is_active()) {
+			faint(pokemon);
+		}
 	}
-	return !perish_song.is_active();
-}());
+	friend auto operator==(PerishSong, PerishSong) -> bool = default;
+	friend constexpr auto compress(PerishSong const value) {
+		return compress(value.m_counter);
+	}
+private:
+	[[no_unique_address]] EndOfTurnCounter<generation >= Generation::two, 3> m_counter;
+};
 
 } // namespace technicalmachine

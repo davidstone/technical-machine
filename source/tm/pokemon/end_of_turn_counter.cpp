@@ -9,6 +9,7 @@ import tm.compress;
 import tm.exists_if;
 
 import bounded;
+import containers;
 import tv;
 
 namespace technicalmachine {
@@ -52,4 +53,25 @@ private:
 	[[no_unique_address]] ExistsIf<Counter, is_supported_this_generation> m_turns_active{tv::none};
 };
 
+namespace {
+
+using Example = EndOfTurnCounter<true, 2>;
+
+static_assert(!Example().is_active());
+
+constexpr auto example_is_active_after(auto const turns) {
+	auto example = Example();
+	example.activate();
+	for (auto const _ : containers::integer_range(turns)) {
+		example.advance_one_turn();
+	}
+	return example.is_active();
+}
+
+static_assert(example_is_active_after(0_bi));
+static_assert(example_is_active_after(1_bi));
+static_assert(example_is_active_after(2_bi));
+static_assert(!example_is_active_after(3_bi));
+
+} // namespace
 } // namespace technicalmachine
