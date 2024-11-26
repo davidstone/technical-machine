@@ -11,10 +11,14 @@ import tm.generation;
 
 namespace technicalmachine {
 
+// TODO:
+// Gen 3: 2
+// Gen 4: 3-5
+// Gen 5: 4 target actions
 export template<Generation generation>
 using TauntCounter = EndOfTurnCounter<
 	generation >= Generation::three,
-	2
+	5
 >;
 
 } // namespace technicalmachine
