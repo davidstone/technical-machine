@@ -67,8 +67,8 @@ auto make_response(
 	}
 }
 
-struct Connection {
-	explicit Connection(
+struct HTTPConnection {
+	explicit HTTPConnection(
 		tcp::socket socket,
 		[[clang::lifetimebound]] std::filesystem::path const & root
 	):
@@ -78,7 +78,7 @@ struct Connection {
 		do_read();
 	}
 
-	Connection(Connection &&) = delete;
+	HTTPConnection(HTTPConnection &&) = delete;
 
 	auto is_open() const -> bool {
 		return m_socket.is_open();
@@ -134,7 +134,7 @@ private:
 
 struct MakeConnection {
 	auto operator()(tcp::socket socket) const {
-		return std::make_unique<Connection>(std::move(socket), m_root);
+		return std::make_unique<HTTPConnection>(std::move(socket), m_root);
 	}
 private:
 	std::filesystem::path m_root = get_client_directory();
