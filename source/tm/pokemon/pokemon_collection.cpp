@@ -16,6 +16,8 @@ import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon_not_found;
 import tm.pokemon.species;
 
+import tm.stat.stat_style;
+
 import tm.compress;
 import tm.exists_if;
 import tm.generation;
