@@ -967,8 +967,8 @@ private:
 	tv::optional<max_type> m_max;
 	tv::optional<current_type> m_current;
 
-	friend bounded::tombstone_traits<PP>;
-	friend bounded::tombstone_traits_composer<&PP::m_max>;
+	friend bounded::tombstone<PP>;
+	friend bounded::tombstone_member<&PP::m_max>;
 };
 
 export constexpr auto no_pp(PP const pp) {
@@ -979,5 +979,5 @@ export constexpr auto no_pp(PP const pp) {
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::PP> : bounded::tombstone_traits_composer<&technicalmachine::PP::m_max> {
+struct bounded::tombstone<technicalmachine::PP> : bounded::tombstone_member<&technicalmachine::PP::m_max> {
 };

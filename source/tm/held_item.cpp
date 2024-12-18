@@ -973,15 +973,13 @@ private:
 		m_tombstone(true)
 	{
 	}
-	friend bounded::tombstone_traits<HeldItem>;
+	friend bounded::tombstone<HeldItem>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::HeldItem> {
-	static constexpr auto spare_representations = 1_bi;
-
+struct bounded::tombstone<technicalmachine::HeldItem> {
 	static constexpr auto make(bounded::constant_t<0>) noexcept -> technicalmachine::HeldItem {
 		return technicalmachine::HeldItem(tombstone_tag());
 	}

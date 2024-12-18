@@ -117,12 +117,12 @@ private:
 	{
 	}
 
-	friend bounded::tombstone_traits<Stats<stat_style>>;
-	friend bounded::tombstone_traits_composer<&Stats<stat_style>::m_hp>;
+	friend bounded::tombstone<Stats<stat_style>>;
+	friend bounded::tombstone_member<&Stats<stat_style>::m_hp>;
 };
 
 } // namespace technicalmachine
 
 template<technicalmachine::StatStyle stat_style>
-struct bounded::tombstone_traits<technicalmachine::Stats<stat_style>> : bounded::tombstone_traits_composer<&technicalmachine::Stats<stat_style>::m_hp> {
+struct bounded::tombstone<technicalmachine::Stats<stat_style>> : bounded::tombstone_member<&technicalmachine::Stats<stat_style>::m_hp> {
 };

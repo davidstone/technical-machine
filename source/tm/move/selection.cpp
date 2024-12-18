@@ -84,12 +84,12 @@ private:
 		m_value(make())
 	{
 	}
-	friend bounded::tombstone_traits<Selection>;
-	friend bounded::tombstone_traits_composer<&Selection::m_value>;
+	friend bounded::tombstone<Selection>;
+	friend bounded::tombstone_member<&Selection::m_value>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::Selection> : bounded::tombstone_traits_composer<&technicalmachine::Selection::m_value> {
+struct bounded::tombstone<technicalmachine::Selection> : bounded::tombstone_member<&technicalmachine::Selection::m_value> {
 };

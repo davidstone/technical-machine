@@ -201,8 +201,8 @@ private:
 	Pokemon<generation> m_pokemon;
 	Nickname m_nickname;
 
-	friend bounded::tombstone_traits<KnownPokemon<generation>>;
-	friend bounded::tombstone_traits_composer<&KnownPokemon<generation>::m_pokemon>;
+	friend bounded::tombstone<KnownPokemon<generation>>;
+	friend bounded::tombstone_member<&KnownPokemon<generation>::m_pokemon>;
 };
 
 template<Generation generation>
@@ -211,7 +211,7 @@ constexpr auto is_known_pokemon<KnownPokemon<generation>> = true;
 } // namespace technicalmachine
 
 template<technicalmachine::Generation generation>
-struct bounded::tombstone_traits<technicalmachine::KnownPokemon<generation>> : bounded::tombstone_traits_composer<&technicalmachine::KnownPokemon<generation>::m_pokemon> {
+struct bounded::tombstone<technicalmachine::KnownPokemon<generation>> : bounded::tombstone_member<&technicalmachine::KnownPokemon<generation>::m_pokemon> {
 };
 
 namespace technicalmachine {

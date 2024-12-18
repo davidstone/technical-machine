@@ -48,12 +48,10 @@ export struct ParsedPokemon {
 } // namespace techniclalmachine::ps
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::ps::ParsedPokemon> {
+struct bounded::tombstone<technicalmachine::ps::ParsedPokemon> {
 private:
 	using base = tombstone_traits<technicalmachine::ps::ParsedStats>;
 public:
-	static constexpr auto spare_representations = base::spare_representations;
-
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::ps::ParsedPokemon {
 		return technicalmachine::ps::ParsedPokemon{
 			.species = {},

@@ -24,9 +24,7 @@ export struct SelectionProbability {
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::SelectionProbability> {
-	static constexpr auto spare_representations = tombstone_traits<technicalmachine::Selection>::spare_representations;
-
+struct bounded::tombstone<technicalmachine::SelectionProbability> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::SelectionProbability {
 		return technicalmachine::SelectionProbability(
 			tombstone_traits<technicalmachine::Selection>::make(index),

@@ -60,12 +60,12 @@ private:
 	MoveName m_name;
 	PP m_pp;
 
-	friend bounded::tombstone_traits<Move>;
-	friend bounded::tombstone_traits_composer<&Move::m_pp>;
+	friend bounded::tombstone<Move>;
+	friend bounded::tombstone_member<&Move::m_pp>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::Move> : bounded::tombstone_traits_composer<&technicalmachine::Move::m_pp> {
+struct bounded::tombstone<technicalmachine::Move> : bounded::tombstone_member<&technicalmachine::Move::m_pp> {
 };

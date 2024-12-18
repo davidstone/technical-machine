@@ -27,12 +27,12 @@ private:
 		m_index(make())
 	{
 	}
-	friend bounded::tombstone_traits<Switch>;
-	friend bounded::tombstone_traits_composer<&Switch::m_index>;
+	friend bounded::tombstone<Switch>;
+	friend bounded::tombstone_member<&Switch::m_index>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::Switch> : bounded::tombstone_traits_composer<&technicalmachine::Switch::m_index> {
+struct bounded::tombstone<technicalmachine::Switch> : bounded::tombstone_member<&technicalmachine::Switch::m_index> {
 };

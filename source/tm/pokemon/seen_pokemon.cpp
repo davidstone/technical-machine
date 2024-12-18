@@ -321,8 +321,8 @@ private:
 
 	// TODO: Possible Hidden Power types
 
-	friend bounded::tombstone_traits<SeenPokemon<generation>>;
-	friend bounded::tombstone_traits_composer<&SeenPokemon<generation>::m_regular_moves>;
+	friend bounded::tombstone<SeenPokemon<generation>>;
+	friend bounded::tombstone_member<&SeenPokemon<generation>::m_regular_moves>;
 };
 
 template<Generation generation>
@@ -331,5 +331,5 @@ constexpr auto is_seen_pokemon<SeenPokemon<generation>> = true;
 } // namespace technicalmachine
 
 template<technicalmachine::Generation generation>
-struct bounded::tombstone_traits<technicalmachine::SeenPokemon<generation>> : bounded::tombstone_traits_composer<&technicalmachine::SeenPokemon<generation>::m_regular_moves> {
+struct bounded::tombstone<technicalmachine::SeenPokemon<generation>> : bounded::tombstone_member<&technicalmachine::SeenPokemon<generation>::m_regular_moves> {
 };

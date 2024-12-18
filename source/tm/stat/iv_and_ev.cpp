@@ -29,9 +29,7 @@ export struct DVAndEV {
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::IVAndEV>  {
-	static constexpr auto spare_representations = tombstone_traits<technicalmachine::IV>::spare_representations;
-
+struct bounded::tombstone<technicalmachine::IVAndEV>  {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::IVAndEV {
 		return technicalmachine::IVAndEV(
 			tombstone_traits<technicalmachine::IV>::make(index),
@@ -44,9 +42,7 @@ struct bounded::tombstone_traits<technicalmachine::IVAndEV>  {
 };
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::DVAndEV>  {
-	static constexpr auto spare_representations = tombstone_traits<technicalmachine::DV>::spare_representations;
-
+struct bounded::tombstone<technicalmachine::DVAndEV>  {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::DVAndEV {
 		return technicalmachine::DVAndEV(
 			tombstone_traits<technicalmachine::DV>::make(index),

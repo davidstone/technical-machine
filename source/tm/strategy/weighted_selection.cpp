@@ -24,9 +24,7 @@ export struct WeightedSelection {
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::WeightedSelection> {
-	static constexpr auto spare_representations = tombstone_traits<technicalmachine::Selection>::spare_representations;
-
+struct bounded::tombstone<technicalmachine::WeightedSelection> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::WeightedSelection {
 		return technicalmachine::WeightedSelection(
 			tombstone_traits<technicalmachine::Selection>::make(index),

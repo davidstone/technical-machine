@@ -69,8 +69,8 @@ private:
 		m_current()
 	{
 	}
-	friend bounded::tombstone_traits<HP>;
-	friend bounded::tombstone_traits_composer<&HP::m_max>;
+	friend bounded::tombstone<HP>;
+	friend bounded::tombstone_member<&HP::m_max>;
 };
 
 static_assert(HP(100_bi).max() == 100_bi);
@@ -81,5 +81,5 @@ static_assert(HP(250_bi, Level(100_bi), IV(30_bi), EV(252_bi)).max() == 703_bi);
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::HP> : bounded::tombstone_traits_composer<&technicalmachine::HP::m_max> {
+struct bounded::tombstone<technicalmachine::HP> : bounded::tombstone_member<&technicalmachine::HP::m_max> {
 };

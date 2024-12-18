@@ -33,12 +33,12 @@ private:
 		m_value(make())
 	{
 	}
-	friend bounded::tombstone_traits<Level>;
-	friend bounded::tombstone_traits_composer<&Level::m_value>;
+	friend bounded::tombstone<Level>;
+	friend bounded::tombstone_member<&Level::m_value>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::Level> : bounded::tombstone_traits_composer<&technicalmachine::Level::m_value> {
+struct bounded::tombstone<technicalmachine::Level> : bounded::tombstone_member<&technicalmachine::Level::m_value> {
 };

@@ -295,8 +295,8 @@ private:
 
 	bool m_has_been_seen;
 
-	friend bounded::tombstone_traits<Pokemon<generation>>;
-	friend bounded::tombstone_traits_composer<&Pokemon<generation>::m_regular_moves>;
+	friend bounded::tombstone<Pokemon<generation>>;
+	friend bounded::tombstone_member<&Pokemon<generation>::m_regular_moves>;
 };
 
 template<Generation generation>
@@ -305,5 +305,5 @@ constexpr auto is_real_pokemon<Pokemon<generation>> = true;
 } // namespace technicalmachine
 
 template<technicalmachine::Generation generation>
-struct bounded::tombstone_traits<technicalmachine::Pokemon<generation>> : bounded::tombstone_traits_composer<&technicalmachine::Pokemon<generation>::m_regular_moves> {
+struct bounded::tombstone<technicalmachine::Pokemon<generation>> : bounded::tombstone_member<&technicalmachine::Pokemon<generation>::m_regular_moves> {
 };

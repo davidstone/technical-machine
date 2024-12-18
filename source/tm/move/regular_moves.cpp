@@ -80,12 +80,12 @@ private:
 	}
 	containers::static_vector<Move, max_moves_per_pokemon> m_moves;
 
-	friend bounded::tombstone_traits<RegularMoves>;
-	friend bounded::tombstone_traits_composer<&RegularMoves::m_moves>;
+	friend bounded::tombstone<RegularMoves>;
+	friend bounded::tombstone_member<&RegularMoves::m_moves>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::RegularMoves> : bounded::tombstone_traits_composer<&technicalmachine::RegularMoves::m_moves> {
+struct bounded::tombstone<technicalmachine::RegularMoves> : bounded::tombstone_member<&technicalmachine::RegularMoves::m_moves> {
 };

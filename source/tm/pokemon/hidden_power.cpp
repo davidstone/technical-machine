@@ -211,8 +211,8 @@ private:
 	[[no_unique_address]] Power m_power;
 	Type m_type;
 
-	friend bounded::tombstone_traits<HiddenPower<generation>>;
-	friend bounded::tombstone_traits_composer<&HiddenPower<generation>::m_power>;
+	friend bounded::tombstone<HiddenPower<generation>>;
+	friend bounded::tombstone_member<&HiddenPower<generation>::m_power>;
 };
 
 export template<Generation generation>
@@ -229,7 +229,7 @@ constexpr auto calculate_hidden_power(DVsOrIVs<special_style_for(generation)> dv
 } // namespace technicalmachine
 
 template<technicalmachine::Generation generation>
-struct bounded::tombstone_traits<technicalmachine::HiddenPower<generation>> : bounded::tombstone_traits_composer<&technicalmachine::HiddenPower<generation>::m_power> {
+struct bounded::tombstone<technicalmachine::HiddenPower<generation>> : bounded::tombstone_member<&technicalmachine::HiddenPower<generation>::m_power> {
 };
 
 namespace technicalmachine {

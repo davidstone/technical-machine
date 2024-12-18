@@ -39,13 +39,11 @@ struct SideEffect {
 } // namespace technicalmachine
 
 template<technicalmachine::any_team UserTeam>
-struct bounded::tombstone_traits<technicalmachine::SideEffect<UserTeam>> {
+struct bounded::tombstone<technicalmachine::SideEffect<UserTeam>> {
 private:
 	using T = technicalmachine::SideEffect<UserTeam>;
 	using base = tombstone_traits<technicalmachine::SideEffectFunction<UserTeam>>;
 public:
-	static constexpr auto spare_representations = base::spare_representations;
-
 	static constexpr auto make(bounded::constant_t<0>) noexcept {
 		return T(
 			technicalmachine::Probability(0.0),

@@ -35,13 +35,13 @@ private:
 		pp_ups(make())
 	{
 	}
-	friend bounded::tombstone_traits_composer<&InitialMove::pp_ups>;
+	friend bounded::tombstone_member<&InitialMove::pp_ups>;
 };
 
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::InitialMove> : bounded::tombstone_traits_composer<&technicalmachine::InitialMove::pp_ups> {
+struct bounded::tombstone<technicalmachine::InitialMove> : bounded::tombstone_member<&technicalmachine::InitialMove::pp_ups> {
 };
 
 namespace technicalmachine {

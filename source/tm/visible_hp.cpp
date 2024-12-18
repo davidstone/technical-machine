@@ -39,8 +39,8 @@ private:
 
 	CurrentHP m_value;
 
-	friend bounded::tombstone_traits<CurrentVisibleHP>;
-	friend bounded::tombstone_traits_composer<&CurrentVisibleHP::m_value>;
+	friend bounded::tombstone<CurrentVisibleHP>;
+	friend bounded::tombstone_member<&CurrentVisibleHP::m_value>;
 };
 
 export struct MaxVisibleHP {
@@ -63,8 +63,8 @@ private:
 
 	MaxHP m_value;
 
-	friend bounded::tombstone_traits<MaxVisibleHP>;
-	friend bounded::tombstone_traits_composer<&MaxVisibleHP::m_value>;
+	friend bounded::tombstone<MaxVisibleHP>;
+	friend bounded::tombstone_member<&MaxVisibleHP::m_value>;
 };
 
 export constexpr auto operator<=>(CurrentVisibleHP const lhs, MaxVisibleHP const rhs) {
@@ -86,20 +86,18 @@ export struct VisibleHP {
 } // namespace technicalmachine
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::CurrentVisibleHP> : bounded::tombstone_traits_composer<&technicalmachine::CurrentVisibleHP::m_value> {
+struct bounded::tombstone<technicalmachine::CurrentVisibleHP> : bounded::tombstone_member<&technicalmachine::CurrentVisibleHP::m_value> {
 };
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::MaxVisibleHP> : bounded::tombstone_traits_composer<&technicalmachine::MaxVisibleHP::m_value> {
+struct bounded::tombstone<technicalmachine::MaxVisibleHP> : bounded::tombstone_member<&technicalmachine::MaxVisibleHP::m_value> {
 };
 
 template<>
-struct bounded::tombstone_traits<technicalmachine::VisibleHP> {
+struct bounded::tombstone<technicalmachine::VisibleHP> {
 private:
 	using base = tombstone_traits<technicalmachine::MaxVisibleHP>;
 public:
-	static constexpr auto spare_representations = base::spare_representations;
-
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::VisibleHP {
 		return technicalmachine::VisibleHP{
 			.current = tombstone_traits<technicalmachine::CurrentVisibleHP>::make(0_bi),

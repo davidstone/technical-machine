@@ -46,9 +46,8 @@ struct InitialPokemon {
 } // namespace technicalmachine
 
 template<technicalmachine::SpecialStyle style>
-struct bounded::tombstone_traits<technicalmachine::InitialPokemon<style>> {
+struct bounded::tombstone<technicalmachine::InitialPokemon<style>> {
 	using base = tombstone_traits<technicalmachine::InitialMoves>;
-	static constexpr auto spare_representations = base::spare_representations;
 
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::InitialPokemon<style> {
 		return {
