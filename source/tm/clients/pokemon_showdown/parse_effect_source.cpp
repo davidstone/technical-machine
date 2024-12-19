@@ -26,6 +26,7 @@ using namespace std::string_view_literals;
 
 export struct MainEffect {};
 export struct FromMove {};
+export struct FromBide {};
 export struct FromConfusion {};
 export struct FromDisable {};
 export struct FromEntryHazards {};
@@ -38,6 +39,7 @@ export using EffectSource = tv::variant<
 	Item,
 	Ability,
 	FromMove,
+	FromBide,
 	FromConfusion,
 	FromDisable,
 	FromEntryHazards,
@@ -53,6 +55,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 		(type == "ability") ? EffectSource(from_string<Ability>(source)) :
 		(type == "move") ? EffectSource(FromMove()) :
 		(type == "confusion") ? EffectSource(FromConfusion()) :
+		(type == "Bide") ? EffectSource(FromBide()) :
 		(type == "Disable") ? EffectSource(FromDisable()) :
 		(type == "Recoil") ? EffectSource(FromRecoil()) :
 		(type == "Spikes") ? EffectSource(FromEntryHazards()) :
@@ -68,7 +71,6 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 			type == "perish1" or
 			type == "perish0" or
 			type == "trapped" or
-			type == "Bide" or
 			type == "Encore" or
 			type == "Hail" or
 			type == "Leech Seed" or

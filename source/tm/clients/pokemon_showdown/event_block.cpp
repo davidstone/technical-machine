@@ -103,6 +103,14 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			[](MainEffect) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -activate source MainEffect");
 			},
+			[&](FromBide) -> tv::optional<ParsedMessage> {
+				return MoveMessage(
+					party_from_player_id(player_id),
+					MoveName::Bide,
+					false,
+					false
+				);
+			},
 			[](FromConfusion) -> tv::optional<ParsedMessage> {
 				// This means that I did not snap out of confusion
 				// TODO: Should I send this as a message?
@@ -213,6 +221,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			[&](MainEffect) -> tv::optional<ParsedMessage> {
 				return DamageMessage(parsed.party, parsed.status, parsed.hp);
 			},
+			[](FromBide) -> tv::optional<ParsedMessage> {
+				throw std::runtime_error("Damage should come in separately from Bide message");
+			},
 			[&](FromConfusion) -> tv::optional<ParsedMessage> {
 				return HitSelfMessage(parsed.party, parsed.status, parsed.hp);
 			},
@@ -260,6 +271,14 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			},
 			[&](FromDisable) -> tv::optional<ParsedMessage> {
 				return DisableEndedMessage(party);
+			},
+			[&](FromBide) -> tv::optional<ParsedMessage> {
+				return MoveMessage(
+					party,
+					MoveName::Bide,
+					false,
+					true
+				);
 			},
 			[](FromMiscellaneous) -> tv::optional<ParsedMessage> {
 				return tv::none;
@@ -486,6 +505,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			},
 			[&](MainEffect) -> tv::optional<ParsedMessage> {
 				return MoveStatus(party, status);
+			},
+			[](FromBide) -> tv::optional<ParsedMessage> {
+				throw std::runtime_error("Bide cannot cause a status");
 			},
 			[](FromDisable) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Disable cannot cause a status");

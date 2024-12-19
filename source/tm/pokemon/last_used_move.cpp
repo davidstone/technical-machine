@@ -93,7 +93,7 @@ struct LastUsedMove {
 	constexpr auto successful_move(
 		MoveName const first_executed,
 		MoveName const last_executed,
-		bool const,
+		bool const end_effect,
 		Item const item,
 		Weather const weather
 	) & -> SuccessfulMove {
@@ -112,7 +112,7 @@ struct LastUsedMove {
 			[&](Empty) -> SuccessfulMove {
 				switch (last_executed) {
 					case MoveName::Bide:
-						m_effects = Bide();
+						m_effects = Bide<generation>();
 						return DoNothing();
 					case MoveName::Bounce:
 					case MoveName::Dig:
@@ -177,14 +177,15 @@ struct LastUsedMove {
 						return DoNothing();
 				}
 			},
-			[&](Bide & bide) -> SuccessfulMove {
+			[&](Bide<generation> & bide) -> SuccessfulMove {
 				check_valid_lock_in();
-				auto const damage = bide.advance_one_turn();
-				if (!damage) {
+				if (!end_effect) {
+					bide.advance_one_turn();
 					return DoNothing();
 				}
+				auto const damage = bide.release();
 				m_effects = Empty();
-				return CurrentHP(*damage);
+				return CurrentHP(damage);
 			},
 			[&](ChargingUp) -> SuccessfulMove {
 				check_valid_lock_in();
@@ -253,7 +254,7 @@ struct LastUsedMove {
 
 	constexpr auto direct_damage(CurrentHP const damage) & -> void {
 		tv::visit(m_effects, tv::overload(
-			[=](Bide & bide) { bide.add_damage(damage); },
+			[=](Bide<generation> & bide) { bide.add_damage(damage); },
 			[](auto) {}
 		));
 	}
@@ -433,7 +434,7 @@ private:
 
 	tv::variant<
 		Empty,
-		Bide,
+		Bide<generation>,
 		ChargingUp,
 		Immobilize,
 		Protecting,
