@@ -168,7 +168,7 @@ struct LastUsedMove {
 					case MoveName::Outrage:
 					case MoveName::Petal_Dance:
 					case MoveName::Thrash:
-						m_effects = Rampage();
+						m_effects = Rampage<generation>();
 						return DoNothing();
 					case MoveName::Uproar:
 						m_effects = UproarCounter();
@@ -198,7 +198,7 @@ struct LastUsedMove {
 			[&](Protecting) -> SuccessfulMove {
 				throw std::runtime_error("Cannot use a move while protecting");
 			},
-			[&](Rampage) -> SuccessfulMove {
+			[&](Rampage<generation>) -> SuccessfulMove {
 				check_valid_lock_in();
 				return DoNothing();
 			},
@@ -310,7 +310,7 @@ struct LastUsedMove {
 				common(immobilize);
 				return false;
 			},
-			[&](Rampage & rampage) {
+			[&](Rampage<generation> & rampage) {
 				return common(rampage);
 			},
 			[&](UproarCounter & uproar) {
@@ -437,7 +437,7 @@ private:
 		ChargingUp,
 		Immobilize,
 		Protecting,
-		Rampage,
+		Rampage<generation>,
 		Recharging,
 		UproarCounter,
 		Vanishing

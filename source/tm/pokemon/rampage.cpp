@@ -6,6 +6,7 @@
 export module tm.pokemon.rampage;
 
 import tm.compress;
+import tm.generation;
 
 import bounded;
 import numeric_traits;
@@ -16,7 +17,8 @@ using namespace bounded::literal;
 
 // Outrage, Petal Dance, and Thrash
 // TODO: Ends if it fails to execute (FP, flinch), which only confuses in Gen 5+
-export struct Rampage {
+export template<Generation generation>
+struct Rampage {
 	constexpr auto advance_one_turn() & -> void {
 		if (m_turns_active == numeric_traits::max_value<Counter>) {
 			// TODO: Check this in the client and make this an assert
@@ -30,10 +32,7 @@ export struct Rampage {
 		return compress(value.m_turns_active);
 	}
 private:
-	// TODO: Change range in different generations
-	// Gen 1: 3-4
-	// Gen 2+: 2-3
-	using Counter = bounded::integer<0, 4>;
+	using Counter = bounded::integer<0, generation == Generation::one ? 4 : 3>;
 	Counter m_turns_active;
 };
 
