@@ -6,6 +6,7 @@
 export module tm.pokemon.immobilize;
 
 import tm.compress;
+import tm.probability;
 
 import bounded;
 import numeric_traits;
@@ -24,17 +25,28 @@ export struct Immobilize {
 		++m_counter;
 	}
 
+	constexpr auto end_of_turn_end_probability() const -> Probability {
+		// 2: 37.5%
+		// 3: 37.5%
+		// 4: 12.5%
+		// 5: 12.5%
+		switch (m_counter.value()) {
+			case 0: return Probability(0.0);
+			case 1: return Probability(0.0);
+			case 2: return Probability(0.375);
+			case 3: return Probability(0.6);
+			case 4: return Probability(0.5);
+			case 5: return Probability(1.0);
+			default: std::unreachable();
+		}
+	}
+
 	friend auto operator==(Immobilize, Immobilize) -> bool = default;
 	friend constexpr auto compress(Immobilize const value) {
 		return compress(value.m_counter);
 	}
 
 private:
-	// TODO:
-	// 2: 37.5%
-	// 3: 37.5%
-	// 4: 12.5%
-	// 5: 12.5%
 	using Counter = bounded::integer<0, 5>;
 	Counter m_counter = 0_bi;
 };

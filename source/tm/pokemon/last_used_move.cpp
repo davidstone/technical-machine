@@ -27,6 +27,7 @@ import tm.string_conversions.move_name;
 import tm.compress;
 import tm.generation;
 import tm.item;
+import tm.probability;
 import tm.rational;
 import tm.saturating_add;
 import tm.weather;
@@ -49,6 +50,16 @@ export using SuccessfulMove = tv::variant<
 	ConsumeItem,
 	CurrentHP
 >;
+
+template<typename T>
+concept ends_at_action = requires(T const & value) {
+	value.action_end_probability();
+};
+
+template<typename T>
+concept ends_at_end_of_turn = requires(T const & value) {
+	value.end_of_turn_end_probability();
+};
 
 struct Empty {
 	friend auto operator==(Empty, Empty) -> bool = default;
@@ -295,6 +306,16 @@ struct LastUsedMove {
 	constexpr auto locked_in() const -> tv::optional<MoveName> {
 		return m_effects.index() != bounded::type<Empty> ? m_move : tv::none;
 	}
+	constexpr auto action_end_probability() const -> Probability {
+		return tv::visit(m_effects, tv::overload(
+			[](ends_at_action auto const value) -> Probability {
+				return value.action_end_probability();
+			},
+			[](auto) -> Probability {
+				return Probability(0.0);
+			}
+		));
+	}
 	// Returns whether the user should get confused
 	constexpr auto advance_lock_in(bool const ending) & -> bool {
 		auto common = [&](auto & element) {
@@ -320,6 +341,16 @@ struct LastUsedMove {
 			},
 			[](auto const &) {
 				return false;
+			}
+		));
+	}
+	constexpr auto end_of_turn_end_probability() const -> Probability {
+		return tv::visit(m_effects, tv::overload(
+			[](ends_at_end_of_turn auto const value) -> Probability {
+				return value.end_of_turn_end_probability();
+			},
+			[](auto) -> Probability {
+				return Probability(0.0);
 			}
 		));
 	}

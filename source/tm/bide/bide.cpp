@@ -12,6 +12,7 @@ import tm.stat.current_hp;
 
 import tm.compress;
 import tm.generation;
+import tm.probability;
 
 import tv;
 
@@ -29,6 +30,10 @@ struct Bide {
 
 	constexpr auto release() & {
 		return m_damage.release();
+	}
+
+	constexpr auto action_end_probability() const -> Probability {
+		return m_duration.action_end_probability();
 	}
 
 	friend auto operator==(Bide, Bide) -> bool = default;

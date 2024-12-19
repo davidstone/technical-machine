@@ -215,45 +215,48 @@ auto execute_move(
 	);
 	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed, other_pokemon.ability(), state.environment);
 	auto const chance_to_be_paralyzed = paralysis_probability(user_pokemon.status().name());
+	auto const action_end_probability = user_pokemon.last_used_move().action_end_probability();
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			return generic_flag_branch(chance_to_be_paralyzed, [&](bool const is_fully_paralyzed) {
-				return containers::sum(containers::transform(
-					side_effects,
-					[&](auto const & side_effect) {
-						return side_effect.probability * generic_flag_branch(
-							hits ? ch_probability : Probability(0.0),
-							[&](bool const critical_hit) {
-								auto copy = state;
-								auto const selected_copy = select(copy);
-								// TODO: https://github.com/davidstone/technical-machine/issues/24
-								constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
-								call_move(
-									selected_copy.selection,
-									UsedMove<Team<generation>>(
-										move.selected,
-										move.executed,
-										critical_hit,
-										!hits,
-										false,
-										contact_ability_effect,
-										side_effect.function
-									),
-									selected_copy.other,
-									other_action,
-									copy.environment,
-									clear_status,
-									ActualDamage::Unknown{},
-									is_fully_paralyzed
-								);
-								if (auto const won = win(copy.ai, copy.foe)) {
-									return *won + Score(double(depth.remaining_general()));
+				return generic_flag_branch(action_end_probability, [&](bool const action_ends) {
+					return containers::sum(containers::transform(
+						side_effects,
+						[&](auto const & side_effect) {
+							return side_effect.probability * generic_flag_branch(
+								hits ? ch_probability : Probability(0.0),
+								[&](bool const critical_hit) {
+									auto copy = state;
+									auto const selected_copy = select(copy);
+									// TODO: https://github.com/davidstone/technical-machine/issues/24
+									constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
+									call_move(
+										selected_copy.selection,
+										UsedMove<Team<generation>>(
+											move.selected,
+											move.executed,
+											critical_hit,
+											!hits,
+											action_ends,
+											contact_ability_effect,
+											side_effect.function
+										),
+										selected_copy.other,
+										other_action,
+										copy.environment,
+										clear_status,
+										ActualDamage::Unknown{},
+										is_fully_paralyzed
+									);
+									if (auto const won = win(copy.ai, copy.foe)) {
+										return *won + Score(double(depth.remaining_general()));
+									}
+									return continuation(copy);
 								}
-								return continuation(copy);
-							}
-						);
-					}
-				));
+							);
+						}
+					));
+				});
 			});
 		});
 	});
@@ -723,8 +726,10 @@ private:
 		auto const teams = Faster<generation>(state.ai, state.foe, state.environment);
 		return multi_generic_flag_branch(shed_skin_probability, [&](bool const ai_shed_skin, bool const foe_shed_skin) {
 			return multi_generic_flag_branch(
-				// TODO
-				[&](bool) { return Probability(1.0); },
+				[&](bool const is_ai) {
+					auto const pokemon = (is_ai ? state.ai : state.foe).pokemon();
+					return pokemon.last_used_move().end_of_turn_end_probability();
+				},
 				[&](bool const ai_lock_in_ends, bool const foe_lock_in_ends) {
 					auto thaws = [&](bool const is_ai) {
 						if constexpr (generation == Generation::two) {

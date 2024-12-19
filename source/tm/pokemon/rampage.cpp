@@ -7,6 +7,7 @@ export module tm.pokemon.rampage;
 
 import tm.compress;
 import tm.generation;
+import tm.probability;
 
 import bounded;
 import numeric_traits;
@@ -25,6 +26,29 @@ struct Rampage {
 			throw std::runtime_error("Tried to advance Rampage too much");
 		}
 		++m_turns_active;
+	}
+
+	constexpr auto end_of_turn_end_probability() const -> Probability {
+		if constexpr (generation == Generation::one) {
+			// 3-4 turns
+			switch (m_turns_active.value()) {
+				case 0: return Probability(0.0);
+				case 1: return Probability(0.0);
+				case 2: return Probability(0.0);
+				case 3: return Probability(0.5);
+				case 4: return Probability(1.0);
+				default: std::unreachable();
+			}
+		} else {
+			// 2-3 turns
+			switch (m_turns_active.value()) {
+				case 0: return Probability(0.0);
+				case 1: return Probability(0.0);
+				case 2: return Probability(0.5);
+				case 3: return Probability(1.0);
+				default: std::unreachable();
+			}
+		}
 	}
 
 	friend auto operator==(Rampage, Rampage) -> bool = default;
