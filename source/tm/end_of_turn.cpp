@@ -210,6 +210,12 @@ auto other_effects(TeamType & team, ActivePokemonFromTeam<OtherTeam<TeamType>> c
 	}
 }
 
+template<any_team TeamType> requires(generation_from<TeamType> == Generation::one)
+void generation_1_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last_team, EndOfTurnFlags const last_flags, Environment const environment) {
+	first_team.pokemon().advance_lock_in(first_flags.lock_in_ends, environment);
+	last_team.pokemon().advance_lock_in(last_flags.lock_in_ends, environment);
+}
+
 template<any_team TeamType> requires(generation_from<TeamType> == Generation::two)
 void generation_2_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last_team, EndOfTurnFlags const last_flags, Environment & environment) {
 	auto const first = first_team.pokemon();
@@ -254,6 +260,9 @@ void generation_2_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_
 
 	first.advance_encore();
 	last.advance_encore();
+
+	first.advance_lock_in(first_flags.lock_in_ends, environment);
+	last.advance_lock_in(last_flags.lock_in_ends, environment);
 }
 
 template<any_team TeamType>
@@ -282,6 +291,7 @@ export template<any_team TeamType>
 void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags const last_flags, Environment & environment) {
 	constexpr auto generation = generation_from<TeamType>;
 	if constexpr (generation == Generation::one) {
+		generation_1_end_of_turn(first, first_flags, last, last_flags, environment);
 	} else if constexpr (generation == Generation::two) {
 		generation_2_end_of_turn(first, first_flags, last, last_flags, environment);
 	} else {
