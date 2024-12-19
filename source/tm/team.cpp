@@ -133,6 +133,7 @@ struct TeamImpl {
 	constexpr auto switch_pokemon(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Environment & environment, TeamIndex const replacement) -> void {
 		auto original_pokemon = pokemon();
 		original_pokemon.switch_out();
+		other.foe_switched(original_pokemon.last_used_move().is_baton_passing());
 		if constexpr (generation == Generation::one) {
 			shatter_screens();
 		}

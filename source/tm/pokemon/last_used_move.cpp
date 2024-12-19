@@ -377,6 +377,13 @@ export struct LastUsedMove {
 		return result;
 	}
 
+	constexpr auto foe_switched() & -> void {
+		tv::visit(m_effects, tv::overload(
+			[&](Immobilize) { m_effects = Empty(); },
+			[](auto) { }
+		));
+	}
+
 	constexpr auto is_immobilizing() const -> bool {
 		return m_effects.index() == bounded::type<Immobilize>;
 	}

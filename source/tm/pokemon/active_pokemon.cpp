@@ -824,15 +824,12 @@ public:
 		if (clears_status_on_switch(this->ability())) {
 			clear_status();
 		}
-		// TODO: remove some of these when the foe switches, too
 		if (!this->last_used_move().is_baton_passing()) {
 			this->m_flags.aqua_ring = false;
 			this->m_flags.confusion = {};
 			this->m_flags.is_cursed = false;
 			this->m_flags.embargo = {};
-			if constexpr (generation <= Generation::four) {
-				this->m_flags.fully_trapped = false;
-			}
+			this->m_flags.fully_trapped = false;
 			this->m_flags.gastro_acid = false;
 			this->m_flags.has_focused_energy = false;
 			this->m_flags.ingrained = false;
@@ -850,9 +847,6 @@ public:
 		this->m_flags.encore = {};
 		this->m_flags.flash_fire = false;
 		this->m_flags.flinched = false;
-		if constexpr (generation >= Generation::five) {
-			this->m_flags.fully_trapped = false;
-		}
 		this->m_flags.heal_block = {};
 		this->m_flags.identified = false;
 		this->m_flags.used_imprison = false;
@@ -868,6 +862,20 @@ public:
 		this->m_flags.water_sport = false;
 		this->m_flags.taunt = {};
 		this->m_flags.yawn = {};
+	}
+
+	constexpr auto foe_switched(bool const is_baton_passing) const -> void {
+		if (!is_baton_passing) {
+			if constexpr (generation <= Generation::four) {
+				this->m_flags.fully_trapped = false;
+			}
+		}
+		this->m_flags.attracted = false;
+		if constexpr (generation >= Generation::five) {
+			this->m_flags.fully_trapped = false;
+		}
+		this->m_flags.partial_trap = {};
+		this->m_flags.last_used_move.foe_switched();
 	}
 
 
