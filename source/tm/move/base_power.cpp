@@ -1364,7 +1364,7 @@ constexpr auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 		case MoveName::Swagger: return 0_bi;
 		case MoveName::Milk_Drink: return 0_bi;
 		case MoveName::Spark: return 65_bi;
-		case MoveName::Fury_Cutter: return attacker.last_used_move().fury_cutter_power(generation);
+		case MoveName::Fury_Cutter: return attacker.last_used_move().fury_cutter_power();
 		case MoveName::Steel_Wing: return 70_bi;
 		case MoveName::Mean_Look: return 0_bi;
 		case MoveName::Attract: return 0_bi;

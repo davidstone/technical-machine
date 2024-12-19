@@ -216,7 +216,7 @@ private:
 	[[no_unique_address]] EmbargoCounter<generation> embargo;
 	[[no_unique_address]] EncoreCounter<generation> encore;
 	[[no_unique_address]] HealBlock<generation> heal_block;
-	[[no_unique_address]] LastUsedMove last_used_move;
+	[[no_unique_address]] LastUsedMove<generation> last_used_move;
 	[[no_unique_address]] MagnetRise<generation> magnet_rise;
 	[[no_unique_address]] Substitute substitute;
 	[[no_unique_address]] PartialTrap<generation> partial_trap;
@@ -286,7 +286,7 @@ public:
 		return m_pokemon.stat(stat_name);
 	}
 
-	constexpr auto last_used_move() const -> LastUsedMove {
+	constexpr auto last_used_move() const -> LastUsedMove<generation> {
 		return m_flags.last_used_move;
 	}
 	constexpr auto substitute() const -> Substitute const & {
@@ -948,7 +948,6 @@ public:
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
 		auto const result = this->m_flags.last_used_move.successful_move(
-			generation,
 			first_executed,
 			last_executed,
 			end_effect,

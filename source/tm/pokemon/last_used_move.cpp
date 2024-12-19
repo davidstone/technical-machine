@@ -63,7 +63,8 @@ struct Vanishing {
 	friend auto operator==(Vanishing, Vanishing) -> bool = default;
 };
 
-export struct LastUsedMove {
+export template<Generation generation>
+struct LastUsedMove {
 	constexpr auto name() const -> tv::optional<MoveName> {
 		return m_move;
 	}
@@ -90,7 +91,6 @@ export struct LastUsedMove {
 	// is forced to execute Metronome, which calls Assist, which calls Tackle,
 	// Sleep Talk is `first_executed` and Tackle is `last_executed`
 	constexpr auto successful_move(
-		Generation const generation,
 		MoveName const first_executed,
 		MoveName const last_executed,
 		bool const,
@@ -146,7 +146,7 @@ export struct LastUsedMove {
 					case MoveName::Clamp:
 					case MoveName::Fire_Spin:
 					case MoveName::Wrap:
-						if (generation == Generation::one) {
+						if constexpr (generation == Generation::one) {
 							m_effects = Immobilize();
 						}
 						return DoNothing();
@@ -281,10 +281,10 @@ export struct LastUsedMove {
 		return moved_this_turn() and successful_last_move(MoveName::Endure);
 	}
 
-	constexpr auto fury_cutter_power(Generation const generation) const {
-		auto const base =
-			BOUNDED_CONDITIONAL(generation <= Generation::four, 10_bi,
-			BOUNDED_CONDITIONAL(generation <= Generation::five, 20_bi,
+	constexpr auto fury_cutter_power() const {
+		constexpr auto base = 
+			bounded::conditional_function<generation <= Generation::four>(10_bi,
+			bounded::conditional_function<generation <= Generation::five>(20_bi,
 			40_bi
 		));
 		// base * 2 ^ n
@@ -330,9 +330,8 @@ export struct LastUsedMove {
 	}
 
 	// TODO: Does Metronome boost Struggle?
-	constexpr auto metronome_boost(Generation const generation) const {
-		auto const boost = BOUNDED_CONDITIONAL(
-			generation <= Generation::four,
+	constexpr auto metronome_boost() const {
+		auto const boost = bounded::conditional_function<generation <= Generation::four>(
 			m_consecutive_successes,
 			2_bi * bounded::min(m_consecutive_successes, 5_bi)
 		);
@@ -391,8 +390,8 @@ export struct LastUsedMove {
 		return m_effects.index() == bounded::type<UproarCounter>;
 	}
 
-	constexpr auto vanish_doubles_power(Generation const generation, MoveName const move_name) const -> bool {
-		if (generation <= Generation::one) {
+	constexpr auto vanish_doubles_power(MoveName const move_name) const -> bool {
+		if constexpr (generation == Generation::one) {
 			return false;
 		}
 		if (m_effects.index() != bounded::type<Vanishing>) {

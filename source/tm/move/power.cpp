@@ -64,7 +64,7 @@ constexpr auto doubling(AttackerPokemon const attacker, MoveName const move, any
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 	constexpr auto generation = generation_from<AttackerPokemon>;
-	if (defender.last_used_move().vanish_doubles_power(generation, move)) {
+	if (defender.last_used_move().vanish_doubles_power(move)) {
 		return true;
 	}
 	auto weather = [&] {

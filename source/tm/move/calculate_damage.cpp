@@ -99,13 +99,12 @@ constexpr auto calculate_flash_fire_modifier(any_active_pokemon auto const attac
 }
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-template<any_active_pokemon PokemonType>
-constexpr auto calculate_item_modifier(PokemonType const attacker, Environment const environment) -> ItemModifier {
+constexpr auto calculate_item_modifier(any_active_pokemon auto const attacker, Environment const environment) -> ItemModifier {
 	switch (attacker.item(environment)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
-			return attacker.last_used_move().metronome_boost(generation_from<PokemonType>);
+			return attacker.last_used_move().metronome_boost();
 		default:
 			return rational(10_bi, 10_bi);
 	}
