@@ -32,9 +32,10 @@ export struct FullyParalyzed {};
 export struct PartiallyTrapped {};
 export struct StillAsleep {};
 export struct VisibleMove {
-	constexpr explicit VisibleMove(MoveName const selected_, bool miss_ = false):
+	constexpr explicit VisibleMove(MoveName const selected_, bool miss_ = false, bool action_ends_ = false):
 		selected(selected_),
-		miss(miss_)
+		miss(miss_),
+		action_ends(action_ends_)
 	{
 	}
 	MoveName selected;
@@ -45,6 +46,7 @@ export struct VisibleMove {
 	ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
 	bool critical_hit = false;
 	bool miss = false;
+	bool action_ends = false;
 	bool confuse = false;
 	bool recoil = false;
 };

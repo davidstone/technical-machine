@@ -313,6 +313,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			MoveName::Substitute,
 			false,
 			false,
+			false,
 			ContactAbilityEffect::nothing,
 			containers::front(side_effects).function
 		),
@@ -357,6 +358,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 		UsedMove<Team<generation>>(
 			MoveName::Scratch,
 			MoveName::Scratch,
+			false,
 			false,
 			false,
 			ContactAbilityEffect::paralysis,
@@ -704,6 +706,7 @@ TEST_CASE("Generation 1 Mirror Move Hyper Beam KO", "[call_move]") {
 		UsedMove<Team<generation>>(
 			selected,
 			executed,
+			false,
 			false,
 			false,
 			ContactAbilityEffect::nothing,

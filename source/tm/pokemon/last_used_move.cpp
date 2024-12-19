@@ -93,6 +93,7 @@ export struct LastUsedMove {
 		Generation const generation,
 		MoveName const first_executed,
 		MoveName const last_executed,
+		bool const,
 		Item const item,
 		Weather const weather
 	) & -> SuccessfulMove {

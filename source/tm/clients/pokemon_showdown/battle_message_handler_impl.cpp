@@ -352,7 +352,11 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 						return make_move_builder(message.party);
 					}
 				));
-				move_builder.use_move(message.move, message.miss);
+				move_builder.use_move(
+					message.move,
+					message.miss,
+					message.action_ends
+				);
 			},
 			[](EffectivenessMessage) {
 				// TODO

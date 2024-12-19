@@ -165,6 +165,7 @@ export struct MoveMessage {
 	Party party;
 	MoveName move;
 	bool miss;
+	bool action_ends = false;
 	friend auto operator==(MoveMessage, MoveMessage) -> bool = default;
 };
 

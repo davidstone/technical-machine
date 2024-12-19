@@ -235,6 +235,7 @@ auto execute_move(
 										move.executed,
 										critical_hit,
 										!hits,
+										false,
 										contact_ability_effect,
 										side_effect.function
 									),

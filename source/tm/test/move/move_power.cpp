@@ -86,6 +86,7 @@ constexpr auto attacker() {
 		pokemon.successfully_use_move(
 			move,
 			move,
+			false,
 			Ability::Honey_Gather,
 			Environment()
 		);
@@ -158,6 +159,7 @@ constexpr auto defender() {
 	pokemon.successfully_use_move(
 		MoveName::Dive,
 		MoveName::Dive,
+		false,
 		Ability::Honey_Gather,
 		environment
 	);

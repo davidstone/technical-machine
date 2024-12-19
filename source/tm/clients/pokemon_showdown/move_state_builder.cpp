@@ -97,9 +97,13 @@ export struct MoveStateBuilder {
 		));
 	}
 
-	auto use_move(MoveName const move, bool const miss) & -> void {
+	auto use_move(
+		MoveName const move,
+		bool const miss,
+		bool const action_ends
+	) & -> void {
 		if (!m_move) {
-			set_move_state(VisibleMove(move, miss));
+			set_move_state(VisibleMove(move, miss, action_ends));
 			return;
 		}
 		tv::visit(*m_move, tv::overload(

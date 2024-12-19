@@ -335,6 +335,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 	auto const released_damage = user_pokemon.successfully_use_move(
 		move.selected,
 		move.executed,
+		move.action_ends,
 		other_ability,
 		environment
 	);

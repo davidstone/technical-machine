@@ -20,6 +20,7 @@ struct UsedMove {
 		MoveName const executed_,
 		bool const critical_hit_,
 		bool const miss_,
+		bool const action_ends_,
 		ContactAbilityEffect const contact_ability_effect_,
 		SideEffectFunction<UserTeam> const side_effect_
 	):
@@ -28,6 +29,7 @@ struct UsedMove {
 		executed(executed_),
 		critical_hit(critical_hit_),
 		miss(miss_),
+		action_ends(action_ends_),
 		contact_ability_effect(contact_ability_effect_)
 	{
 	}
@@ -38,6 +40,7 @@ struct UsedMove {
 		executed(selected),
 		critical_hit(false),
 		miss(false),
+		action_ends(false),
 		contact_ability_effect(ContactAbilityEffect::nothing)
 	{
 	}
@@ -47,6 +50,7 @@ struct UsedMove {
 	MoveName executed;
 	bool critical_hit;
 	bool miss;
+	bool action_ends;
 	ContactAbilityEffect contact_ability_effect;
 };
 

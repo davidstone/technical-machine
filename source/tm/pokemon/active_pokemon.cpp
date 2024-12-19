@@ -935,6 +935,7 @@ public:
 	constexpr auto successfully_use_move(
 		MoveName const first_executed,
 		MoveName const last_executed,
+		bool const end_effect,
 		Ability const other_ability,
 		Environment const environment
 	) const -> tv::optional<CurrentHP> {
@@ -942,6 +943,7 @@ public:
 			generation,
 			first_executed,
 			last_executed,
+			end_effect,
 			this->item(environment),
 			environment.effective_weather(this->ability(), other_ability)
 		);

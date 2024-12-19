@@ -63,6 +63,7 @@ constexpr auto to_used_move(VisibleMove const move, UserTeam const & user, Other
 		move.executed,
 		move.critical_hit,
 		move.miss,
+		move.action_ends,
 		move.contact_ability_effect,
 		get_side_effect(move, user.pokemon(), other, environment)
 	);

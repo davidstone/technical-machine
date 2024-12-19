@@ -49,7 +49,13 @@ constexpr auto use_move_that_kos(
 		environment,
 		other.hp().current().value()
 	);
-	user.successfully_use_move(move_name, move_name, other.ability(), environment);
+	user.successfully_use_move(
+		move_name,
+		move_name,
+		false,
+		other.ability(),
+		environment
+	);
 }
 
 namespace one_action {
@@ -168,6 +174,7 @@ namespace already_acted {
 		team.pokemon().successfully_use_move(
 			MoveName::Splash,
 			MoveName::Splash,
+			false,
 			Ability::Honey_Gather,
 			environment
 		);
@@ -205,6 +212,7 @@ namespace using_baton_pass {
 		team.pokemon().successfully_use_move(
 			MoveName::Baton_Pass,
 			MoveName::Baton_Pass,
+			false,
 			Ability::Honey_Gather,
 			environment
 		);
@@ -262,6 +270,7 @@ static_assert([]{
 	user.pokemon().successfully_use_move(
 		MoveName::Thunderbolt,
 		MoveName::Thunderbolt,
+		false,
 		Ability::Honey_Gather,
 		environment
 	);
@@ -316,6 +325,7 @@ static_assert([]{
 	user.pokemon().successfully_use_move(
 		MoveName::Thunderbolt,
 		MoveName::Thunderbolt,
+		false,
 		Ability::Honey_Gather,
 		environment
 	);

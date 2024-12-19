@@ -90,6 +90,7 @@ constexpr auto attacker() {
 		pokemon.successfully_use_move(
 			move,
 			move,
+			false,
 			Ability::Honey_Gather,
 			Environment()
 		);
@@ -175,6 +176,7 @@ constexpr auto attacker() {
 		pokemon.successfully_use_move(
 			move,
 			move,
+			false,
 			Ability::Honey_Gather,
 			environment()
 		);

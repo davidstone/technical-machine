@@ -75,6 +75,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			MoveName::Thunderbolt,
 			false,
 			false,
+			false,
 			ContactAbilityEffect::nothing,
 			no_effect_function
 		),
@@ -107,6 +108,7 @@ struct Sleeper {
 			UsedMove<Team<generation>>(
 				selected,
 				executed,
+				false,
 				false,
 				false,
 				ContactAbilityEffect::nothing,
