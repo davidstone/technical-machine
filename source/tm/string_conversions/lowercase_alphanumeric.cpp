@@ -5,6 +5,7 @@
 
 export module tm.string_conversions.lowercase_alphanumeric;
 
+import bounded;
 import containers;
 import std_module;
 
@@ -49,7 +50,10 @@ struct fixed_capacity_lowercase_and_digit_string {
 	{
 	}
 	constexpr operator std::string_view() const {
-		return std::string_view(containers::data(m_data), containers::size(m_data).value());
+		return std::string_view(
+			containers::data(m_data),
+			bounded::assume_in_range<std::size_t>(containers::size(m_data))
+		);
 	}
 
 private:
