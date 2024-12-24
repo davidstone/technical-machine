@@ -47,7 +47,7 @@ constexpr auto use_move_that_kos(
 		move_name,
 		user,
 		environment,
-		other.hp().current().value()
+		other.hp().current()
 	);
 	user.successfully_use_move(
 		move_name,
