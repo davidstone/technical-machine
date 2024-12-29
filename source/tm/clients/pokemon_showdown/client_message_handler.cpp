@@ -303,14 +303,6 @@ private:
 		}
 	}
 
-	auto send_channel_message(std::string_view const channel, std::string_view const message) -> void {
-		m_send_message(containers::concatenate<containers::string>(channel, "|/msg "sv, message));
-	}
-
-	auto join_channel(std::string_view const channel) -> void {
-		m_send_message(containers::concatenate<containers::string>("|/join "sv, channel));
-	}
-
 	auto authenticate(std::string_view const challstr) -> void {
 		// In theory, if we ever support session cookies, make HTTP GET:
 		// http://play.pokemonshowdown.com/api/upkeep?challstr=CHALLSTR
