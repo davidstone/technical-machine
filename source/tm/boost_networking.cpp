@@ -114,8 +114,7 @@ export auto websocket_write(Websocket & websocket, std::string_view const str) -
 	websocket.write(boost::asio::buffer(str));
 }
 
-// `const &` until https://github.com/boostorg/compat/pull/15
-using Continuation = auto(boost::beast::error_code const &, std::size_t const &) const -> void;
+using Continuation = auto(boost::beast::error_code, std::size_t) const -> void;
 
 // Work around boost headers declaring some functions `static`
 export auto websocket_async_read(
