@@ -12,6 +12,7 @@ module;
 export module tm.clients.ps.client_message_handler;
 
 import tm.clients.ps.action_required;
+import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.battles;
@@ -128,7 +129,10 @@ export struct ClientMessageHandler {
 		if (is_chat_message_block(messages)) {
 		} else if (is_battle_message(block.room())) {
 			log_battle_messages(m_battles_directory, block);
-			handle_battle_messages(block.room(), messages);
+			auto const battle_message = make_battle_message(messages);
+			if (battle_message) {
+				handle_battle_message(block.room(), *battle_message);
+			}
 		} else {
 			for (auto const message : messages) {
 				handle_message(block.room(), message);
@@ -160,14 +164,10 @@ private:
 		));
 	}
 
-	auto handle_battle_messages(Room const room, MessageBlock const block) -> void {
-		auto const battle_message = make_battle_message(block);
-		if (!battle_message) {
-			return;
-		}
+	auto handle_battle_message(Room const room, BattleMessage const & battle_message) -> void {
 		auto const result = m_battles.handle_message(
 			room,
-			*battle_message
+			battle_message
 		);
 		auto analysis_logger = open_text_file(m_battles_directory / room / "analysis.txt");
 		auto determine_and_send_selection = [&](ActionRequired const & value) {
