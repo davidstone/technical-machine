@@ -82,16 +82,6 @@ namespace technicalmachine {
 export namespace http = boost::beast::http;
 export using boost::asio::ip::tcp;
 
-export auto http_read(tcp::socket & socket, boost::beast::flat_buffer & buffer) -> http::request<http::string_body> {
-	auto request = http::request<http::string_body>();
-	http::read(socket, buffer, request);
-	return request;
-}
-
-export auto http_write(tcp::socket & socket, http::response<http::basic_dynamic_body<boost::beast::flat_buffer>> const & response) -> void {
-	http::write(socket, response);
-}
-
 export auto create_http_post(std::string_view const host, std::string_view const target, std::string_view const data) -> http::request<http::string_body> {
 	constexpr auto version = 11U;
 	auto request = http::request<http::string_body>(http::verb::post, target, version, data);
