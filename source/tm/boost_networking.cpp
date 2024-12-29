@@ -102,7 +102,7 @@ export auto create_http_post(std::string_view const host, std::string_view const
 	return request;
 }
 
-export using Websocket = boost::beast::websocket::stream<boost::beast::ssl_stream<tcp::socket>>;
+export using Websocket = boost::beast::websocket::stream<boost::asio::ssl::stream<tcp::socket>>;
 export using InsecureWebsocket = boost::beast::websocket::stream<tcp::socket>;
 
 // Work around boost headers declaring some functions `static`
