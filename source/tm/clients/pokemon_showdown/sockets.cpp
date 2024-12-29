@@ -3,13 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <std_module/prelude.hpp>
-
-#include <openssl/err.h>
-#include <openssl/ssl.h>
-
 export module tm.clients.ps.sockets;
 
 import tm.boost_networking;
@@ -34,21 +27,7 @@ export struct Sockets {
 		m_ssl(make_ssl_context()),
 		m_websocket(m_io, m_ssl)
 	{
-		auto resolver = tcp::resolver(m_io);
-		boost::asio::connect(boost::beast::get_lowest_layer(m_websocket), resolver.resolve(host, port));
-		// Set SNI Hostname (many hosts need this to handshake successfully)
-		if(!SSL_set_tlsext_host_name(m_websocket.next_layer().native_handle(), std::string(host).c_str())) {
-			throw boost::beast::system_error(
-				boost::beast::error_code(
-					static_cast<int>(::ERR_get_error()),
-					boost::asio::error::get_ssl_category()
-				),
-				"Failed to set SNI Hostname"
-			);
-		}
-
-        m_websocket.next_layer().handshake(ssl::stream_base::client);
-
+		connect_ssl_socket(m_io, m_websocket.next_layer(), host, port);
 		m_websocket.handshake(
 			std::string_view(containers::concatenate<containers::string>(host, ":"sv, port)),
 			resource

@@ -19,15 +19,12 @@ module;
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+
 export module tm.boost_networking;
 
 import containers;
-
-namespace boost::asio::error {
-
-export using ::boost::asio::error::get_ssl_category;
-
-} // namespace boost::asio::error
 
 namespace boost::asio::ip {
 
@@ -38,7 +35,6 @@ export using ::boost::asio::ip::tcp;
 namespace boost::asio::ssl {
 
 export using ::boost::asio::ssl::context;
-export using ::boost::asio::ssl::stream_base;
 
 } // namespace boost::asio::ssl
 
@@ -72,8 +68,6 @@ namespace boost::beast {
 export using ::boost::beast::async_write;
 export using ::boost::beast::error_code;
 export using ::boost::beast::flat_buffer;
-export using ::boost::beast::get_lowest_layer;
-export using ::boost::beast::system_error;
 
 } // namespace boost::beast
 
@@ -81,6 +75,27 @@ namespace technicalmachine {
 
 export namespace http = boost::beast::http;
 export using boost::asio::ip::tcp;
+
+export auto connect_ssl_socket(
+	boost::asio::io_context & context,
+	boost::asio::ssl::stream<tcp::socket> & socket,
+	std::string_view const host,
+	std::string_view const port
+) -> void {
+	auto resolver = tcp::resolver(context);
+	boost::asio::connect(socket.next_layer(), resolver.resolve(host, port));
+	// Set SNI Hostname (many hosts need this to handshake successfully)
+	if(!SSL_set_tlsext_host_name(socket.native_handle(), std::string(host).c_str())) {
+		throw boost::beast::system_error(
+			boost::beast::error_code(
+				static_cast<int>(::ERR_get_error()),
+				boost::asio::error::get_ssl_category()
+			),
+			"Failed to set SNI Hostname"
+		);
+	}
+	socket.handshake(boost::asio::ssl::stream_base::client);
+}
 
 export auto create_http_post(std::string_view const host, std::string_view const target, std::string_view const data) -> http::request<http::string_body> {
 	constexpr auto version = 11U;
