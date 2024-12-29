@@ -280,7 +280,7 @@ private:
 			"/api/login",
 			containers::concatenate<containers::string>("name="sv, m_settings.username, "&pass="sv, m_settings.password, "&challstr="sv, challstr)
 		);
-		auto const response = m_authenticate(host, "80", request);
+		auto const response = m_authenticate(host, "443", request);
 
 		// Response begins with ']' followed by JSON object.
 		auto const body = std::string_view(response.body()).substr(1);

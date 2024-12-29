@@ -35,13 +35,13 @@ export using ::boost::asio::ip::tcp;
 namespace boost::asio::ssl {
 
 export using ::boost::asio::ssl::context;
+export using ::boost::asio::ssl::stream;
 
 } // namespace boost::asio::ssl
 
 namespace boost::asio {
 
 export using ::boost::asio::buffer;
-export using ::boost::asio::connect;
 export using ::boost::asio::io_context;
 
 } // namespace boost::asio

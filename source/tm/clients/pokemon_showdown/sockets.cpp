@@ -50,10 +50,13 @@ export struct Sockets {
 		websocket_write(m_websocket, message);
 	}
 
-	auto authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {
-		auto socket = tcp::socket(m_io);
-		auto resolver = tcp::resolver(m_io);
-		boost::asio::connect(socket, resolver.resolve(host, port));
+	auto authenticate(
+		std::string_view const host,
+		std::string_view const port,
+		http::request<http::string_body> const & request
+) -> http::response<http::string_body> {
+		auto socket = ssl::stream<tcp::socket>(m_io, m_ssl);
+		connect_ssl_socket(m_io, socket, host, port);
 
 		http::write(socket, request);
 
