@@ -24,7 +24,7 @@ import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room;
 import tm.clients.ps.room_message_block;
 import tm.clients.ps.send_message_function;
-import tm.clients.ps.slot_memory;
+import tm.clients.ps.send_selection;
 import tm.clients.ps.start_of_turn;
 import tm.clients.ps.to_packed_format;
 
@@ -36,13 +36,6 @@ import tm.clients.determine_selection;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 import tm.clients.turn_count;
-
-import tm.move.move_name;
-import tm.move.pass;
-import tm.move.selection;
-import tm.move.switch_;
-
-import tm.string_conversions.move_name;
 
 import tm.strategy.strategy;
 
@@ -177,16 +170,23 @@ private:
 			*battle_message
 		);
 		auto analysis_logger = open_text_file(m_battles_directory / room / "analysis.txt");
-		auto call_determine_and_send_action = [&](ActionRequired const & value) {
-			determine_and_send_action(room, value.state, value.slot_memory, analysis_logger);
+		auto determine_and_send_selection = [&](ActionRequired const & value) {
+			auto const selection = determine_selection(
+				value.state,
+				analysis_logger,
+				m_all_usage_stats,
+				m_strategy,
+				m_random_engine
+			);
+			send_selection(selection, m_send_message, room, value.slot_memory);
 		};
 		tv::visit(result, tv::overload(
 			[&](ActionRequired const & value) {
-				call_determine_and_send_action(value);
+				determine_and_send_selection(value);
 			},
 			[&](StartOfTurn const & value) {
 				print_begin_turn(analysis_logger, value.turn_count);
-				call_determine_and_send_action(value);
+				determine_and_send_selection(value);
 			},
 			[](BattleContinues) {
 			},
@@ -197,7 +197,7 @@ private:
 				));
 			},
 			[&](BattleStarted const & value) {
-				call_determine_and_send_action(value);
+				determine_and_send_selection(value);
 				if (m_settings.style.index() == bounded::type<SettingsFile::Ladder>) {
 					m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
 				}
@@ -207,39 +207,6 @@ private:
 				send_challenge();
 			},
 			[](BattleAlreadyFinished) {
-			}
-		));
-	}
-
-	auto determine_and_send_action(
-		Room const room,
-		GenerationGeneric<VisibleState> const & state,
-		SlotMemory const slot_memory,
-		std::ostream & analysis_logger
-	) -> void {
-		auto const action = determine_selection(
-			state,
-			analysis_logger,
-			m_all_usage_stats,
-			m_strategy,
-			m_random_engine
-		);
-		tv::visit(action, tv::overload(
-			[&](Switch const switch_) {
-				m_send_message(containers::concatenate<containers::string>(
-					room,
-					"|/choose switch "sv,
-					containers::to_string(slot_memory[switch_.value()])
-				));
-			},
-			[&](MoveName const move) {
-				m_send_message(containers::concatenate<containers::string>(
-					room,
-					"|/choose move "sv,
-					to_string(move)
-				));
-			},
-			[](Pass) {
 			}
 		));
 	}

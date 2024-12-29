@@ -363,6 +363,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/room.cpp
 		clients/pokemon_showdown/room_message_block.cpp
 		clients/pokemon_showdown/send_message_function.cpp
+		clients/pokemon_showdown/send_selection.cpp
 		clients/pokemon_showdown/slot_memory.cpp
 		clients/pokemon_showdown/start_of_turn.cpp
 		clients/pokemon_showdown/switch_message.cpp
