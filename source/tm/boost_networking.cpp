@@ -65,7 +65,6 @@ export using ::boost::beast::http::write;
 
 namespace boost::beast {
 
-export using ::boost::beast::async_write;
 export using ::boost::beast::error_code;
 export using ::boost::beast::flat_buffer;
 
