@@ -82,11 +82,6 @@ export struct FullyParalyzedMessage {
 	friend auto operator==(FullyParalyzedMessage, FullyParalyzedMessage) -> bool = default;
 };
 
-export struct PartiallyTrappedMessage {
-	Party party;
-	friend auto operator==(PartiallyTrappedMessage, PartiallyTrappedMessage) -> bool = default;
-};
-
 export struct StillAsleepMessage {
 	Party party;
 	friend auto operator==(StillAsleepMessage, StillAsleepMessage) -> bool = default;
@@ -169,6 +164,11 @@ export struct MoveMessage {
 	friend auto operator==(MoveMessage, MoveMessage) -> bool = default;
 };
 
+export struct ImmobilizedMessage {
+	Party party;
+	friend auto operator==(ImmobilizedMessage, ImmobilizedMessage) -> bool = default;
+};
+
 export struct EffectivenessMessage {
 	enum class Value : std::uint8_t {
 		immune, not_very, super
@@ -247,7 +247,6 @@ export using ParsedMessage = tv::variant<
 	FocusPunchMessage,
 	FrozenSolidMessage,
 	FullyParalyzedMessage,
-	PartiallyTrappedMessage,
 	StillAsleepMessage,
 	DisableMessage,
 	DisableEndedMessage,
@@ -261,6 +260,7 @@ export using ParsedMessage = tv::variant<
 	TauntEndedMessage,
 	HPMessage,
 	MoveMessage,
+	ImmobilizedMessage,
 	EffectivenessMessage,
 	ScreenEndMessage,
 	SwitchMessage,

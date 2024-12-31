@@ -111,7 +111,7 @@ export struct MoveStateBuilder {
 			[](Flinched) { throw std::runtime_error("Tried to use a move while flinching"); },
 			[](FrozenSolid) { throw std::runtime_error("Tried to use a move while frozen solid"); },
 			[](FullyParalyzed) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
-			[](PartiallyTrapped) { throw std::runtime_error("Tried to use a move while partially trapped in Gen 1"); },
+			[](Immobilized) { throw std::runtime_error("Tried to use a move while immobilized"); },
 			[](Recharging) { throw std::runtime_error("Tried to use a move while recharging"); },
 			[&](StillAsleep) {
 				if (!usable_while_sleeping(move)) {
@@ -180,8 +180,8 @@ export struct MoveStateBuilder {
 	auto fully_paralyze() & -> void {
 		set_move_state(FullyParalyzed());
 	}
-	auto partial_trap() & -> void {
-		set_move_state(PartiallyTrapped());
+	auto immobilize() & -> void {
+		set_move_state(Immobilized());
 	}
 	auto recharge() & -> void {
 		set_move_state(Recharging());

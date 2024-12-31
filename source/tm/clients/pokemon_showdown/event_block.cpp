@@ -175,7 +175,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		} else if (reason == "par") {
 			return FullyParalyzedMessage(party);
 		} else if (reason == "partiallytrapped") {
-			return PartiallyTrappedMessage(party);
+			return ImmobilizedMessage(party);
 		} else if (reason == "slp") {
 			return StillAsleepMessage(party);
 		} else if (reason == "recharge") {

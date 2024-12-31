@@ -201,9 +201,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				use_previous_action();
 				make_move_builder(message.party).fully_paralyze();
 			},
-			[&](PartiallyTrappedMessage const message) {
+			[&](ImmobilizedMessage const message) {
 				use_previous_action();
-				make_move_builder(message.party).partial_trap();
+				make_move_builder(message.party).immobilize();
 			},
 			[&](StillAsleepMessage const message) {
 				use_previous_action();
