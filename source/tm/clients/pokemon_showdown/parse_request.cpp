@@ -122,22 +122,22 @@ auto is_force_switch(nlohmann::json const & json) -> bool {
 
 export auto parse_request(std::string_view const str) -> ParsedRequest {
 	auto const json = nlohmann::json::parse(str);
-	auto get_side = [&] {
-		return parse_team_from_request(json.at("side"));
-	};
+	auto side = parse_team_from_request(json.at("side"));
 	if (json.value("wait", false)) {
 		// The only legal selection is pass
 		return ParsedRequest(
 			ParsedMoves(),
 			SwitchPossibilities::trapped,
-			get_side()
+			side.party,
+			std::move(side).team
 		);
 	}
 	if (is_force_switch(json)) {
 		return ParsedRequest(
 			ParsedMoves(),
 			SwitchPossibilities::forced,
-			get_side()
+			side.party,
+			std::move(side).team
 		);
 	}
 	auto const & all_active = json.at("active");
@@ -148,7 +148,8 @@ export auto parse_request(std::string_view const str) -> ParsedRequest {
 	return ParsedRequest(
 		parse_active_moves(active.at("moves")),
 		parse_switching_allowed(active),
-		get_side()
+		side.party,
+		std::move(side).team
 	);
 }
 

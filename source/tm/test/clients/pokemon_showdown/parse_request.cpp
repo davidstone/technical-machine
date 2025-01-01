@@ -12,7 +12,6 @@ export module tm.test.parse_request;
 
 import tm.clients.ps.parse_request;
 import tm.clients.ps.parsed_request;
-import tm.clients.ps.parsed_side;
 
 import tm.clients.party;
 
@@ -55,116 +54,114 @@ TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 			{MoveName::Thunderbolt, 24_bi, true},
 		}),
 		ps::SwitchPossibilities::allowed,
-		ps::ParsedSide(
-			Party(0_bi),
-			{{
-				{
-					.species = Species::Koffing,
-					.level = Level(88_bi),
-					.stats = {
-						.hp = visible_hp(250_bi, 250_bi),
-						.atk = 201_bi,
-						.def = 254_bi,
-						.spa = 192_bi,
-						.spd = 192_bi,
-						.spe = 148_bi
-					},
-					.moves = {{
-						MoveName::Fire_Blast,
-						MoveName::Sludge,
-						MoveName::Explosion,
-						MoveName::Thunderbolt,
-					}},
+		Party(0_bi),
+		{{
+			{
+				.species = Species::Koffing,
+				.level = Level(88_bi),
+				.stats = {
+					.hp = visible_hp(250_bi, 250_bi),
+					.atk = 201_bi,
+					.def = 254_bi,
+					.spa = 192_bi,
+					.spd = 192_bi,
+					.spe = 148_bi
 				},
-				{
-					.species = Species::Sandslash,
-					.level = Level(74_bi),
-					.stats = {
-						.hp = visible_hp(263_bi, 263_bi),
-						.atk = 221_bi,
-						.def = 236_bi,
-						.spa = 155_bi,
-						.spd = 155_bi,
-						.spe = 170_bi
-					},
-					.moves = {{
-						MoveName::Earthquake,
-						MoveName::Body_Slam,
-						MoveName::Rock_Slide,
-						MoveName::Swords_Dance,
-					}}
+				.moves = {{
+					MoveName::Fire_Blast,
+					MoveName::Sludge,
+					MoveName::Explosion,
+					MoveName::Thunderbolt,
+				}},
+			},
+			{
+				.species = Species::Sandslash,
+				.level = Level(74_bi),
+				.stats = {
+					.hp = visible_hp(263_bi, 263_bi),
+					.atk = 221_bi,
+					.def = 236_bi,
+					.spa = 155_bi,
+					.spd = 155_bi,
+					.spe = 170_bi
 				},
-				{
-					.species = Species::Ditto,
-					.level = Level(88_bi),
-					.stats = {
-						.hp = visible_hp(264_bi, 264_bi),
-						.atk = 171_bi,
-						.def = 171_bi,
-						.spa = 171_bi,
-						.spd = 171_bi,
-						.spe = 171_bi
-					},
-					.moves = {{
-						MoveName::Transform,
-					}}
+				.moves = {{
+					MoveName::Earthquake,
+					MoveName::Body_Slam,
+					MoveName::Rock_Slide,
+					MoveName::Swords_Dance,
+				}}
+			},
+			{
+				.species = Species::Ditto,
+				.level = Level(88_bi),
+				.stats = {
+					.hp = visible_hp(264_bi, 264_bi),
+					.atk = 171_bi,
+					.def = 171_bi,
+					.spa = 171_bi,
+					.spd = 171_bi,
+					.spe = 171_bi
 				},
-				{
-					.species = Species::Pikachu,
-					.level = Level(88_bi),
-					.stats = {
-						.hp = visible_hp(241_bi, 241_bi),
-						.atk = 183_bi,
-						.def = 139_bi,
-						.spa = 174_bi,
-						.spd = 174_bi,
-						.spe = 245_bi
-					},
-					.moves = {{
-						MoveName::Agility,
-						MoveName::Thunderbolt,
-						MoveName::Surf,
-						MoveName::Thunder_Wave,
-					}}
+				.moves = {{
+					MoveName::Transform,
+				}}
+			},
+			{
+				.species = Species::Pikachu,
+				.level = Level(88_bi),
+				.stats = {
+					.hp = visible_hp(241_bi, 241_bi),
+					.atk = 183_bi,
+					.def = 139_bi,
+					.spa = 174_bi,
+					.spd = 174_bi,
+					.spe = 245_bi
 				},
-				{
-					.species = Species::Jynx,
-					.level = Level(68_bi),
-					.stats = {
-						.hp = visible_hp(229_bi, 229_bi),
-						.atk = 136_bi,
-						.def = 115_bi,
-						.spa = 197_bi,
-						.spd = 197_bi,
-						.spe = 197_bi
-					},
-					.moves = {{
-						MoveName::Seismic_Toss,
-						MoveName::Lovely_Kiss,
-						MoveName::Psychic,
-						MoveName::Blizzard,
-					}}
+				.moves = {{
+					MoveName::Agility,
+					MoveName::Thunderbolt,
+					MoveName::Surf,
+					MoveName::Thunder_Wave,
+				}}
+			},
+			{
+				.species = Species::Jynx,
+				.level = Level(68_bi),
+				.stats = {
+					.hp = visible_hp(229_bi, 229_bi),
+					.atk = 136_bi,
+					.def = 115_bi,
+					.spa = 197_bi,
+					.spd = 197_bi,
+					.spe = 197_bi
 				},
-				{
-					.species = Species::Slowbro,
-					.level = Level(68_bi),
-					.stats = {
-						.hp = visible_hp(270_bi, 270_bi),
-						.atk = 170_bi,
-						.def = 217_bi,
-						.spa = 177_bi,
-						.spd = 177_bi,
-						.spe = 109_bi
-					},
-					.moves = {{
-						MoveName::Psychic,
-						MoveName::Surf,
-						MoveName::Thunder_Wave,
-						MoveName::Amnesia,
-					}}
+				.moves = {{
+					MoveName::Seismic_Toss,
+					MoveName::Lovely_Kiss,
+					MoveName::Psychic,
+					MoveName::Blizzard,
+				}}
+			},
+			{
+				.species = Species::Slowbro,
+				.level = Level(68_bi),
+				.stats = {
+					.hp = visible_hp(270_bi, 270_bi),
+					.atk = 170_bi,
+					.def = 217_bi,
+					.spa = 177_bi,
+					.spd = 177_bi,
+					.spe = 109_bi
 				},
-			}}
-		)
+				.moves = {{
+					MoveName::Psychic,
+					MoveName::Surf,
+					MoveName::Thunder_Wave,
+					MoveName::Amnesia,
+				}}
+			},
+		}}
 	);
 
 	constexpr auto initial =
@@ -182,131 +179,129 @@ TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
 			{MoveName::Return, 32_bi, true},
 		}),
 		ps::SwitchPossibilities::allowed,
-		ps::ParsedSide(
-			Party(0_bi),
-			{{
-				{
-					.species = Species::Noctowl,
-					.level = Level(80_bi),
-					.gender = Gender::male,
-					.stats = {
-						.hp = visible_hp(324_bi, 324_bi),
-						.atk = 159_bi,
-						.def = 159_bi,
-						.spa = 201_bi,
-						.spd = 233_bi,
-						.spe = 191_bi
-					},
-					.moves = {{
-						MoveName::Thief,
-						MoveName::Hypnosis,
-						MoveName::Night_Shade,
-						MoveName::Return,
-					}}
+		Party(0_bi),
+		{{
+			{
+				.species = Species::Noctowl,
+				.level = Level(80_bi),
+				.gender = Gender::male,
+				.stats = {
+					.hp = visible_hp(324_bi, 324_bi),
+					.atk = 159_bi,
+					.def = 159_bi,
+					.spa = 201_bi,
+					.spd = 233_bi,
+					.spe = 191_bi
 				},
-				{
-					.species = Species::Qwilfish,
-					.level = Level(74_bi),
-					.gender = Gender::male,
-					.item = Item::Leftovers,
-					.stats = {
-						.hp = visible_hp(249_bi, 249_bi),
-						.atk = 214_bi,
-						.def = 184_bi,
-						.spa = 155_bi,
-						.spd = 155_bi,
-						.spe = 199_bi
-					},
-					.moves = {{
-						MoveName::Spikes,
-						MoveName::Sludge_Bomb,
-						MoveName::Surf,
-						MoveName::Curse,
-					}}
+				.moves = {{
+					MoveName::Thief,
+					MoveName::Hypnosis,
+					MoveName::Night_Shade,
+					MoveName::Return,
+				}}
+			},
+			{
+				.species = Species::Qwilfish,
+				.level = Level(74_bi),
+				.gender = Gender::male,
+				.item = Item::Leftovers,
+				.stats = {
+					.hp = visible_hp(249_bi, 249_bi),
+					.atk = 214_bi,
+					.def = 184_bi,
+					.spa = 155_bi,
+					.spd = 155_bi,
+					.spe = 199_bi
 				},
-				{
-					.species = Species::Hypno,
-					.level = Level(74_bi),
-					.gender = Gender::male,
-					.item = Item::Leftovers,
-					.stats = {
-						.hp = visible_hp(278_bi, 278_bi),
-						.atk = 181_bi,
-						.def = 177_bi,
-						.spa = 181_bi,
-						.spd = 244_bi,
-						.spe = 172_bi
-					},
-					.moves = {{
-						MoveName::Curse,
-						MoveName::Body_Slam,
-						MoveName::Psychic,
-						MoveName::Rest,
-					}}
+				.moves = {{
+					MoveName::Spikes,
+					MoveName::Sludge_Bomb,
+					MoveName::Surf,
+					MoveName::Curse,
+				}}
+			},
+			{
+				.species = Species::Hypno,
+				.level = Level(74_bi),
+				.gender = Gender::male,
+				.item = Item::Leftovers,
+				.stats = {
+					.hp = visible_hp(278_bi, 278_bi),
+					.atk = 181_bi,
+					.def = 177_bi,
+					.spa = 181_bi,
+					.spd = 244_bi,
+					.spe = 172_bi
 				},
-				{
-					.species = Species::Misdreavus,
-					.level = Level(68_bi),
-					.gender = Gender::male,
-					.item = Item::Leftovers,
-					.stats = {
-						.hp = visible_hp(222_bi, 222_bi),
-						.atk = 149_bi,
-						.def = 149_bi,
-						.spa = 183_bi,
-						.spd = 183_bi,
-						.spe = 183_bi
-					},
-					.moves = {{
-						MoveName::Thunderbolt,
-						MoveName::Shadow_Ball,
-						MoveName::Hypnosis,
-						MoveName::Pain_Split,
-					}}
+				.moves = {{
+					MoveName::Curse,
+					MoveName::Body_Slam,
+					MoveName::Psychic,
+					MoveName::Rest,
+				}}
+			},
+			{
+				.species = Species::Misdreavus,
+				.level = Level(68_bi),
+				.gender = Gender::male,
+				.item = Item::Leftovers,
+				.stats = {
+					.hp = visible_hp(222_bi, 222_bi),
+					.atk = 149_bi,
+					.def = 149_bi,
+					.spa = 183_bi,
+					.spd = 183_bi,
+					.spe = 183_bi
 				},
-				{
-					.species = Species::Machamp,
-					.level = Level(68_bi),
-					.gender = Gender::male,
-					.item = Item::Leftovers,
-					.stats = {
-						.hp = visible_hp(263_bi, 263_bi),
-						.atk = 245_bi,
-						.def = 177_bi,
-						.spa = 156_bi,
-						.spd = 183_bi,
-						.spe = 143_bi
-					},
-					.moves = {{
-						MoveName::Rest,
-						MoveName::Sleep_Talk,
-						MoveName::Cross_Chop,
-						MoveName::Curse,
-					}}
+				.moves = {{
+					MoveName::Thunderbolt,
+					MoveName::Shadow_Ball,
+					MoveName::Hypnosis,
+					MoveName::Pain_Split,
+				}}
+			},
+			{
+				.species = Species::Machamp,
+				.level = Level(68_bi),
+				.gender = Gender::male,
+				.item = Item::Leftovers,
+				.stats = {
+					.hp = visible_hp(263_bi, 263_bi),
+					.atk = 245_bi,
+					.def = 177_bi,
+					.spa = 156_bi,
+					.spd = 183_bi,
+					.spe = 143_bi
 				},
-				{
-					.species = Species::Sunflora,
-					.level = Level(80_bi),
-					.gender = Gender::male,
-					.item = Item::Leftovers,
-					.stats = {
-						.hp = visible_hp(284_bi, 284_bi),
-						.atk = 199_bi,
-						.def = 164_bi,
-						.spa = 247_bi,
-						.spd = 215_bi,
-						.spe = 127_bi
-					},
-					.moves = {{
-						MoveName::Growth,
-						MoveName::Giga_Drain,
-						MoveName::Synthesis,
-						MoveName::Hidden_Power,
-					}},
-					.hidden_power_type = Type::Ice
+				.moves = {{
+					MoveName::Rest,
+					MoveName::Sleep_Talk,
+					MoveName::Cross_Chop,
+					MoveName::Curse,
+				}}
+			},
+			{
+				.species = Species::Sunflora,
+				.level = Level(80_bi),
+				.gender = Gender::male,
+				.item = Item::Leftovers,
+				.stats = {
+					.hp = visible_hp(284_bi, 284_bi),
+					.atk = 199_bi,
+					.def = 164_bi,
+					.spa = 247_bi,
+					.spd = 215_bi,
+					.spe = 127_bi
 				},
-			}}
-		)
+				.moves = {{
+					MoveName::Growth,
+					MoveName::Giga_Drain,
+					MoveName::Synthesis,
+					MoveName::Hidden_Power,
+				}},
+				.hidden_power_type = Type::Ice
+			},
+		}}
 	);
 
 	constexpr auto initial =

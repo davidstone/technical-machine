@@ -6,6 +6,9 @@
 export module tm.clients.ps.parsed_request;
 
 import tm.clients.ps.parsed_side;
+import tm.clients.ps.parsed_team;
+
+import tm.clients.party;
 
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
@@ -36,7 +39,8 @@ export enum class SwitchPossibilities {
 export struct ParsedRequest {
 	ParsedMoves moves;
 	SwitchPossibilities switches;
-	ParsedSide side;
+	Party party;
+	ParsedTeam team;
 	friend auto operator==(ParsedRequest, ParsedRequest) -> bool = default;
 };
 
@@ -44,7 +48,8 @@ export constexpr auto parsed_side_to_request(ParsedSide side) -> ParsedRequest {
 	return ParsedRequest(
 		ParsedMoves(),
 		SwitchPossibilities::maybe_trapped,
-		std::move(side)
+		std::move(side).party,
+		std::move(side).team,
 	);
 }
 

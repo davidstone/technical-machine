@@ -7,7 +7,7 @@ module tm.clients.ps.make_battle_message_handler;
 
 import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
-import tm.clients.ps.parsed_side;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_team_to_known_team;
 
 import tm.clients.party;
@@ -35,15 +35,15 @@ constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> 
 }
 
 auto make_battle_message_handler(
-	ParsedSide const & side,
+	ParsedRequest const & request,
 	BattleInitMessage const message
 ) -> BattleMessageHandler {
 	return BattleMessageHandler(
-		side.party,
+		request.party,
 		constant_generation(message.generation, [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<Teams> {
 			return Teams<generation>(
-				parsed_team_to_known_team<generation>(side.team),
-				make_foe<generation>(message.team[other(side.party).value()])
+				parsed_team_to_known_team<generation>(request.team),
+				make_foe<generation>(message.team[other(request.party).value()])
 			);
 		})
 	);

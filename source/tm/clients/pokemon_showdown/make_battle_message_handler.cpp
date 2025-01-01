@@ -7,12 +7,12 @@ export module tm.clients.ps.make_battle_message_handler;
 
 import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
-import tm.clients.ps.parsed_side;
+import tm.clients.ps.parsed_request;
 
 namespace technicalmachine::ps {
 
 export auto make_battle_message_handler(
-	ParsedSide const &,
+	ParsedRequest const &,
 	BattleInitMessage
 ) -> BattleMessageHandler;
 

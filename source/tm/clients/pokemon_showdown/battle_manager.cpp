@@ -19,7 +19,6 @@ import tm.clients.ps.battle_started;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.parsed_message;
 import tm.clients.ps.parsed_request;
-import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.start_of_turn;
 
@@ -41,17 +40,15 @@ struct BattleExists {
 
 using BattleState = tv::variant<
 	BattleExists,
-	ParsedSide,
+	ParsedRequest,
 	BattleMessageHandler
 >;
 
 // We create a state machine.
-// (nothing) + CreateBattle => BattleExists
-// BattleExists + ParsedRequest => ParsedSide
-// ParsedSide + ParsedRequest => ParsedSide (check they are the same)
-// ParsedSide + BattleInitMessage => BattleMessageHandler
-// BattleMessageHandler + ParsedRequest => BattleMessageHandler (check they are the same)
-// BattleMessageHandler + EventBlock => BattleMessageHandler or (nothing)
+// BattleExists + ParsedRequest => ParsedRequest
+// ParsedRequest + BattleInitMessage => BattleMessageHandler
+// BattleMessageHandler + ParsedRequest => BattleMessageHandler
+// BattleMessageHandler + EventBlock => BattleMessageHandler
 
 export struct BattleManager {
 	BattleManager() = default;
@@ -65,19 +62,15 @@ export struct BattleManager {
 		BattleResponseError
 	>;
 
-	constexpr auto handle_message(ParsedRequest const message) -> Result {
+	constexpr auto handle_message(ParsedRequest const & message) -> Result {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists) {
-				m_battle = message.side;
+				m_battle = message;
 			},
-			[&](ParsedSide const &) {
+			[](ParsedRequest const &) {
 				throw std::runtime_error("Got two teams while handling messages");
 			},
-			[&](BattleMessageHandler const &) {
-				// We get this message too early to do anything with it. We
-				// could save it for later, but instead just wait for the
-				// resolution of
-				// https://github.com/smogon/pokemon-showdown/issues/8546
+			[&](BattleMessageHandler & handler) {
 			}
 		));
 		return BattleContinues();
@@ -88,10 +81,10 @@ export struct BattleManager {
 			[](BattleExists) -> BattleStarted {
 				throw std::runtime_error("Received a BattleInitMessage before getting a team");
 			},
-			[&](ParsedSide & side) -> BattleStarted {
+			[&](ParsedRequest const & request) -> BattleStarted {
 				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
 					return make_battle_message_handler(
-						side,
+						request,
 						message
 					);
 				});
@@ -108,7 +101,7 @@ export struct BattleManager {
 			[](BattleExists) -> Result {
 				throw std::runtime_error("Received an event before getting a team");
 			},
-			[](ParsedSide const &) -> Result {
+			[](ParsedRequest const &) -> Result {
 				throw std::runtime_error("Received an event before a BattleInitMessage");
 			},
 			[&](BattleMessageHandler & handler) -> Result {
