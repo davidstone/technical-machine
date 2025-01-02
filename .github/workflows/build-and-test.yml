@@ -25,10 +25,10 @@ jobs:
     - name: Get boost
       run: |
         cd ..
-        wget https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_1_86_0.tar.bz2
-        tar xf boost_1_86_0.tar.bz2
+        wget https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2
+        tar xf boost_1_87_0.tar.bz2
         mkdir -p boost/include
-        ln -s $PWD/boost_1_86_0/boost boost/include/boost
+        ln -s $PWD/boost_1_87_0/boost boost/include/boost
     - uses: davidstone/cmake_strict_defaults@main
       with:
         dependencies: 'libtbb-dev'
