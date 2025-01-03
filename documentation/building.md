@@ -5,7 +5,7 @@
 * clang trunk
 * mold linker (recommended) or lld linker (if using mold, you will need to build clang with the gold plugin)
 * libstdc++ (gcc's standard library, currently tested against 14.2.1)
-* Boost 1.67.0+
+* Boost 1.86.0+
 * CMake 3.28+
 * ninja 1.10+
 
