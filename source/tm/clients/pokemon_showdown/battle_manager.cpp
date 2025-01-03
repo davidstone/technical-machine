@@ -70,7 +70,7 @@ export struct BattleManager {
 			[](ParsedRequest const &) {
 				throw std::runtime_error("Got two teams while handling messages");
 			},
-			[&](BattleMessageHandler & handler) {
+			[&](BattleMessageHandler &) {
 			}
 		));
 		return BattleContinues();
