@@ -25,8 +25,24 @@ constexpr auto make_stats(
 	Level const level,
 	CombinedStats<to_input_style(stat_style)> const inputs
 ) -> Stats<stat_style> {
-	auto const hp = HP(base.hp(), level, IV(inputs.dvs_or_ivs.hp()), inputs.evs.hp());
-	if constexpr (stat_style == StatStyle::gen1 or stat_style == StatStyle::gen2) {
+	auto const hp = HP(base.hp(), level, IV(get_hp(inputs.dvs_or_ivs)), inputs.evs.hp);
+	if constexpr (stat_style == StatStyle::gen1) {
+		auto make = [=](auto const stat_name) {
+			return initial_stat(
+				base[stat_name],
+				level,
+				IV(inputs.dvs_or_ivs[stat_name]),
+				inputs.evs[stat_name]
+			);
+		};
+		return Stats<stat_style>{
+			.hp = hp,
+			.atk = make(SpecialRegularStat::atk),
+			.def = make(SpecialRegularStat::def),
+			.spe = make(SpecialRegularStat::spe),
+			.spc = make(SpecialRegularStat::spc),
+		};
+	} else if constexpr (stat_style == StatStyle::gen2) {
 		auto make = [=](auto const stat_name) {
 			return initial_stat(
 				base[stat_name],
@@ -35,14 +51,14 @@ constexpr auto make_stats(
 				inputs.evs[to_combined(stat_name)]
 			);
 		};
-		return Stats<stat_style>(
-			hp,
-			make(SplitSpecialRegularStat::atk),
-			make(SplitSpecialRegularStat::def),
-			make(SplitSpecialRegularStat::spa),
-			make(SplitSpecialRegularStat::spd),
-			make(SplitSpecialRegularStat::spe)
-		);
+		return Stats<stat_style>{
+			.hp = hp,
+			.atk = make(SplitSpecialRegularStat::atk),
+			.def = make(SplitSpecialRegularStat::def),
+			.spa = make(SplitSpecialRegularStat::spa),
+			.spd = make(SplitSpecialRegularStat::spd),
+			.spe = make(SplitSpecialRegularStat::spe),
+		};
 	} else {
 		auto make = [=](auto const stat_name) {
 			return initial_stat(
@@ -53,14 +69,14 @@ constexpr auto make_stats(
 				inputs.evs[stat_name]
 			);
 		};
-		return Stats<stat_style>(
-			hp,
-			make(SplitSpecialRegularStat::atk),
-			make(SplitSpecialRegularStat::def),
-			make(SplitSpecialRegularStat::spa),
-			make(SplitSpecialRegularStat::spd),
-			make(SplitSpecialRegularStat::spe)
-		);
+		return Stats<stat_style>{
+			.hp = hp,
+			.atk = make(SplitSpecialRegularStat::atk),
+			.def = make(SplitSpecialRegularStat::def),
+			.spa = make(SplitSpecialRegularStat::spa),
+			.spd = make(SplitSpecialRegularStat::spd),
+			.spe = make(SplitSpecialRegularStat::spe),
+		};
 	}
 }
 

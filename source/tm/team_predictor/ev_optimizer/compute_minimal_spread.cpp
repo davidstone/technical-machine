@@ -176,7 +176,7 @@ constexpr auto combine(
 }
 
 constexpr auto get_attack(PossibleDVs const all, bool const include_attack) -> DV {
-	auto const dvs = all.atk();
+	auto const dvs = all.atk;
 	auto const is_odd = [](DV const dv) -> bool {
 		return dv.value() % 2_bi == 1_bi;
 	};
@@ -200,9 +200,9 @@ constexpr auto combined_special_minimal_spread(PossibleDVs const dvs, bool const
 		Nature::Hardy,
 		DVs(
 			get_attack(dvs, include_attack),
-			containers::back(dvs.def()),
-			containers::back(dvs.spe()),
-			containers::back(dvs.spc())
+			containers::back(dvs.def),
+			containers::back(dvs.spe),
+			containers::back(dvs.spc)
 		),
 		OldGenEVs(
 			EV(EV::useful_max),
@@ -230,15 +230,15 @@ constexpr auto split_special_minimal_spread(
 			OffensiveEVAtk(
 				base_stats.atk(),
 				include_attack ?
-					possible_optimized_ivs(ivs.atk()) :
-					possible_optimized_ivs(containers::reversed(ivs.atk())),
-				stats.atk(),
+					possible_optimized_ivs(ivs.atk) :
+					possible_optimized_ivs(containers::reversed(ivs.atk)),
+				stats.atk,
 				include_attack
 			),
 			OffensiveEVSpA(
 				base_stats.spa(),
-				possible_optimized_ivs(ivs.spa()),
-				stats.spa(),
+				possible_optimized_ivs(ivs.spa),
+				stats.spa,
 				include_special_attack
 			)
 		),
@@ -246,23 +246,23 @@ constexpr auto split_special_minimal_spread(
 			level,
 			DefensiveEVHP(
 				base_stats.hp(),
-				possible_optimized_ivs(ivs.hp()),
-				stats.hp().max()
+				possible_optimized_ivs(ivs.hp),
+				stats.hp.max()
 			),
 			DefensiveEVDef(
 				base_stats.def(),
-				possible_optimized_ivs(ivs.def()),
-				stats.def()
+				possible_optimized_ivs(ivs.def),
+				stats.def
 			),
 			DefensiveEVSpD(
 				base_stats.spd(),
-				possible_optimized_ivs(ivs.spd()),
-				stats.spd()
+				possible_optimized_ivs(ivs.spd),
+				stats.spd
 			)
 		),
 		SpeedEVs(
 			level,
-			{base_stats.spe(), possible_optimized_ivs(ivs.spe()), stats.spe()}
+			{base_stats.spe(), possible_optimized_ivs(ivs.spe), stats.spe}
 		),
 		hidden_power
 	);

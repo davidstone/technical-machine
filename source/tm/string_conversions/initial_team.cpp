@@ -60,6 +60,15 @@ constexpr auto to_string(SpecialPermanentStat const stat) -> std::string_view {
 	}
 }
 
+constexpr auto to_string(SpecialRegularStat const stat) -> std::string_view {
+	switch (stat) {
+		case SpecialRegularStat::atk: return "Atk"sv;
+		case SpecialRegularStat::def: return "Def"sv;
+		case SpecialRegularStat::spe: return "Spe"sv;
+		case SpecialRegularStat::spc: return "Spc"sv;
+	}
+}
+
 template<typename Index>
 constexpr auto stats_to_string(
 	std::string_view const name,
@@ -99,7 +108,7 @@ constexpr auto stats_to_string(
 }
 
 constexpr auto ivs_to_string(DVs const dvs) -> containers::string {
-	return stats_to_string<SpecialPermanentStat>(
+	return stats_to_string<SpecialRegularStat>(
 		"DVs: "sv,
 		dvs,
 		numeric_traits::max_value<DV::value_type>

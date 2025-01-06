@@ -35,30 +35,29 @@ static_assert([]{
 	constexpr auto generation = Generation::one;
 	constexpr auto species = Species::Snorlax;
 	constexpr auto level = Level(100_bi);
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(521_bi),
-		318_bi,
-		228_bi,
-		135_bi,
-		135_bi,
-		158_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(521_bi),
+		.atk = 318_bi,
+		.def = 228_bi,
+		.spe = 158_bi,
+		.spc = 135_bi,
+	};
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 
 	constexpr auto expected = CombinedStatsFor<generation>{
-		.dvs_or_ivs = DVs(
-			DV(15_bi),
-			DV(15_bi),
-			DV(15_bi),
-			DV(0_bi)
-		),
-		.evs = OldGenEVs(
-			EV(252_bi),
-			EV(252_bi),
-			EV(252_bi),
-			EV(252_bi),
-			EV(0_bi)
-		)
+		.dvs_or_ivs = DVs{
+			.atk = DV(15_bi),
+			.def = DV(15_bi),
+			.spe = DV(15_bi),
+			.spc = DV(0_bi),
+		},
+		.evs = OldGenEVs{
+			.hp = EV(252_bi),
+			.atk = EV(252_bi),
+			.def = EV(252_bi),
+			.spe = EV(252_bi),
+			.spc = EV(0_bi),
+		}
 	};
 
 	constexpr auto calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
@@ -72,14 +71,14 @@ static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Tentacruel;
 	constexpr auto level = Level(100_bi);
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(364_bi),
-		133_bi,
-		177_bi,
-		196_bi,
-		352_bi,
-		245_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(364_bi),
+		.atk = 133_bi,
+		.def = 177_bi,
+		.spa = 196_bi,
+		.spd = 352_bi,
+		.spe = 245_bi,
+	};
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto nature = Nature::Calm;
 
@@ -87,22 +86,22 @@ static_assert([]{
 
 	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
-		IVs(
-			IV(31_bi),
-			IV(3_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi)
-		),
-		EVs(
-			EV(252_bi),
-			EV(0_bi),
-			EV(44_bi),
-			EV(0_bi),
-			EV(176_bi),
-			EV(36_bi)
-		)
+		IVs{
+			.hp = IV(31_bi),
+			.atk = IV(3_bi),
+			.def = IV(31_bi),
+			.spa = IV(31_bi),
+			.spd = IV(31_bi),
+			.spe = IV(31_bi),
+		},
+		EVs{
+			.hp = EV(252_bi),
+			.atk = EV(0_bi),
+			.def = EV(44_bi),
+			.spa = EV(0_bi),
+			.spd = EV(176_bi),
+			.spe = EV(36_bi),
+		}
 	};
 	return calculated == expected;
 }());
@@ -113,33 +112,33 @@ static_assert([]{
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Sunflora;
 	constexpr auto level = Level(80_bi);
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(284_bi),
-		199_bi,
-		164_bi,
-		247_bi,
-		215_bi,
-		127_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(284_bi),
+		.atk = 199_bi,
+		.def = 164_bi,
+		.spa = 247_bi,
+		.spd = 215_bi,
+		.spe = 127_bi,
+	};
 	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Ice));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
 
 	constexpr auto expected = CombinedStatsFor<generation>{
 		Nature::Hardy,
-		DVs(
-			DV(15_bi),
-			DV(13_bi),
-			DV(15_bi),
-			DV(15_bi)
-		),
-		OldGenEVs(
-			EV(252_bi),
-			EV(252_bi),
-			EV(252_bi),
-			EV(252_bi),
-			EV(252_bi)
-		)
+		DVs{
+			.atk = DV(15_bi),
+			.def = DV(13_bi),
+			.spe = DV(15_bi),
+			.spc = DV(15_bi),
+		},
+		OldGenEVs{
+			.hp = EV(252_bi),
+			.atk = EV(252_bi),
+			.def = EV(252_bi),
+			.spe = EV(252_bi),
+			.spc = EV(252_bi),
+		}
 	};
 	return calculated == expected;
 }());
@@ -150,36 +149,36 @@ static_assert([]{
 	constexpr auto species = Species::Kingler;
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Jolly;
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(251_bi),
-		359_bi,
-		265_bi,
-		122_bi,
-		136_bi,
-		273_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(251_bi),
+		.atk = 359_bi,
+		.def = 265_bi,
+		.spa = 122_bi,
+		.spd = 136_bi,
+		.spe = 273_bi,
+	};
 	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Ghost));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
 
 	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
-		IVs(
-			IV(31_bi),
-			IV(31_bi),
-			IV(30_bi),
-			IV(31_bi),
-			IV(30_bi),
-			IV(31_bi)
-		),
-		EVs(
-			EV(0_bi),
-			EV(252_bi),
-			EV(0_bi),
-			EV(0_bi),
-			EV(4_bi),
-			EV(252_bi)
-		)
+		IVs{
+			.hp = IV(31_bi),
+			.atk = IV(31_bi),
+			.def = IV(30_bi),
+			.spa = IV(31_bi),
+			.spd = IV(30_bi),
+			.spe = IV(31_bi),
+		},
+		EVs{
+			.hp = EV(0_bi),
+			.atk = EV(252_bi),
+			.def = EV(0_bi),
+			.spa = EV(0_bi),
+			.spd = EV(4_bi),
+			.spe = EV(252_bi),
+		}
 	};
 	return calculated == expected;
 }());
@@ -189,14 +188,14 @@ static_assert([]{
 	constexpr auto generation = Generation::three;
 	constexpr auto species = Species::Gengar;
 	constexpr auto level = Level(1_bi);
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(12_bi),
-		6_bi,
-		7_bi,
-		8_bi,
-		7_bi,
-		8_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(12_bi),
+		.atk = 6_bi,
+		.def = 7_bi,
+		.spa = 8_bi,
+		.spd = 7_bi,
+		.spe = 8_bi,
+	};
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>(tv::none);
 	constexpr auto nature = Nature::Hardy;
 
@@ -204,22 +203,22 @@ static_assert([]{
 
 	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
-		IVs(
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi)
-		),
-		EVs(
-			EV(0_bi),
-			EV(0_bi),
-			EV(196_bi),
-			EV(36_bi),
-			EV(76_bi),
-			EV(196_bi)
-		)
+		IVs{
+			.hp = IV(31_bi),
+			.atk = IV(31_bi),
+			.def = IV(31_bi),
+			.spa = IV(31_bi),
+			.spd = IV(31_bi),
+			.spe = IV(31_bi),
+		},
+		EVs{
+			.hp = EV(0_bi),
+			.atk = EV(0_bi),
+			.def = EV(196_bi),
+			.spa = EV(36_bi),
+			.spd = EV(76_bi),
+			.spe = EV(196_bi),
+		}
 	};
 	return calculated == expected;
 }());
@@ -229,36 +228,36 @@ static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Roserade;
 	constexpr auto level = Level(75_bi);
-	constexpr auto stats = Stats<stat_style_for(generation)>(
-		HP(245_bi),
-		100_bi,
-		131_bi,
-		236_bi,
-		191_bi,
-		185_bi
-	);
+	constexpr auto stats = Stats<stat_style_for(generation)>{
+		.hp = HP(245_bi),
+		.atk = 100_bi,
+		.def = 131_bi,
+		.spa = 236_bi,
+		.spd = 191_bi,
+		.spe = 185_bi,
+	};
 	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Dark));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(Nature::Modest, Nature::Modest));
 
 	constexpr auto expected = CombinedStatsFor<generation>{
 		Nature::Modest,
-		IVs(
-			IV(31_bi),
-			IV(3_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi),
-			IV(31_bi)
-		),
-		EVs(
-			EV(252_bi),
-			EV(0_bi),
-			EV(108_bi),
-			EV(0_bi),
-			EV(28_bi),
-			EV(116_bi)
-		)
+		IVs{
+			.hp = IV(31_bi),
+			.atk = IV(3_bi),
+			.def = IV(31_bi),
+			.spa = IV(31_bi),
+			.spd = IV(31_bi),
+			.spe = IV(31_bi),
+		},
+		EVs{
+			.hp = EV(252_bi),
+			.atk = EV(0_bi),
+			.def = EV(108_bi),
+			.spa = EV(0_bi),
+			.spd = EV(28_bi),
+			.spe = EV(116_bi),
+		}
 	};
 	return calculated == expected;
 }());

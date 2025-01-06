@@ -110,7 +110,7 @@ struct Pokemon {
 	}
 
 	constexpr auto hp() const {
-		return m_stats.hp();
+		return m_stats.hp;
 	}
 	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
 		return m_stats;
@@ -142,7 +142,7 @@ struct Pokemon {
 	}
 
 	constexpr void set_hp(bounded::bounded_integer auto const hp) & {
-		m_stats.hp() = hp;
+		m_stats.hp = hp;
 	}
 
 	constexpr auto initial_ability() const {
@@ -235,7 +235,7 @@ struct Pokemon {
 	friend constexpr auto compress(Pokemon const value) {
 		return compress_combine(
 			value.m_regular_moves,
-			value.m_stats.hp().current(),
+			value.m_stats.hp.current(),
 			value.m_item,
 			value.m_status,
 			value.m_has_been_seen

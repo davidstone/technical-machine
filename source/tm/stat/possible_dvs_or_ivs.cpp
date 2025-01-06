@@ -666,12 +666,12 @@ static_assert(possible_dvs_or_ivs(tv::optional(HiddenPower<Generation::four>(70_
 }));
 
 constexpr auto hp_ghost_54 = possible_dvs_or_ivs(tv::optional(HiddenPower<Generation::three>(54_bi, Type::Ghost)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(29_bi)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(31_bi)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(30_bi)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(29_bi)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(30_bi)));
-static_assert(containers::maybe_find(hp_ghost_54.hp(), IV(29_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(29_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(31_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(30_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(29_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(30_bi)));
+static_assert(containers::maybe_find(hp_ghost_54.hp, IV(29_bi)));
 
 static_assert(possible_power_sums(64_bi) == PossiblePowerSums({54_bi, 55_bi}));
 

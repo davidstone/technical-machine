@@ -89,7 +89,7 @@ constexpr auto parse_pokemon = [](Generation const generation, nlohmann::json co
 	auto const ivs = parse_stats<IV>(pokemon.at("ivs"));
 	auto const base_stats = BaseStats(generation, species);
 	auto get_hp = [=] {
-		auto const hp = HP(base_stats.hp(), level, ivs.hp(), evs.hp());
+		auto const hp = HP(base_stats.hp(), level, ivs.hp, evs.hp);
 		return VisibleHP(
 			CurrentVisibleHP(hp.current()),
 			MaxVisibleHP(hp.max())

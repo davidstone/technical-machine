@@ -2143,11 +2143,19 @@ export struct BaseStats {
 
 	constexpr auto operator[](SplitSpecialRegularStat const stat_name) const -> regular_value_type {
 		switch (stat_name) {
-			case SplitSpecialRegularStat::atk: return atk();
-			case SplitSpecialRegularStat::def: return def();
-			case SplitSpecialRegularStat::spa: return spa();
-			case SplitSpecialRegularStat::spd: return spd();
-			case SplitSpecialRegularStat::spe: return spe();
+			case SplitSpecialRegularStat::atk: return m_atk;
+			case SplitSpecialRegularStat::def: return m_def;
+			case SplitSpecialRegularStat::spa: return m_spa;
+			case SplitSpecialRegularStat::spd: return m_spd;
+			case SplitSpecialRegularStat::spe: return m_spe;
+		}
+	}
+	constexpr auto operator[](SpecialRegularStat const stat_name) const -> regular_value_type {
+		switch (stat_name) {
+			case SpecialRegularStat::atk: return m_atk;
+			case SpecialRegularStat::def: return m_def;
+			case SpecialRegularStat::spc: return m_spa;
+			case SpecialRegularStat::spe: return m_spe;
 		}
 	}
 

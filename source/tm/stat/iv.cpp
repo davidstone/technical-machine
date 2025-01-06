@@ -55,8 +55,6 @@ export constexpr auto default_iv(Generation const generation) {
 	return generation <= Generation::two ? IV(30_bi) : IV(31_bi);
 }
 
-export using IVs = GenericStats<IV>;
-
 export struct DV {
 	using value_type = bounded::integer<0, 15>;
 
@@ -91,80 +89,48 @@ private:
 	friend bounded::tombstone_member<&DV::m_value>;
 };
 
-export struct DVs {
-	constexpr DVs(DV const atk_, DV const def_, DV const spe_, DV const spc_):
-		m_atk(atk_),
-		m_def(def_),
-		m_spe(spe_),
-		m_spc(spc_)
-	{
-	}
+export using IVs = GenericStats<IV>;
+export using DVs = GenericDVStats<DV>;
 
-	constexpr auto atk() const {
-		return m_atk;
-	}
-	constexpr auto def() const {
-		return m_def;
-	}
-	constexpr auto spe() const {
-		return m_spe;
-	}
-	constexpr auto spc() const {
-		return m_spc;
-	}
-	constexpr auto spa() const {
-		return m_spc;
-	}
-	constexpr auto spd() const {
-		return m_spc;
-	}
-	constexpr auto hp() const {
-		return DV(
-			((atk().value() % 2_bi) << 3_bi) +
-			((def().value() % 2_bi) << 2_bi) +
-			((spe().value() % 2_bi) << 1_bi) +
-			((spc().value() % 2_bi) << 0_bi)
-		);
-	}
+export constexpr auto get_hp(IVs const ivs) -> IV {
+	return ivs.hp;
+}
+export constexpr auto get_hp(DVs const dvs) -> DV {
+	return DV(
+		((dvs.atk.value() % 2_bi) << 3_bi) +
+		((dvs.def.value() % 2_bi) << 2_bi) +
+		((dvs.spe.value() % 2_bi) << 1_bi) +
+		((dvs.spc.value() % 2_bi) << 0_bi)
+	);
+}
 
-	constexpr explicit operator IVs() const {
-		return IVs(
-			IV(hp()),
-			IV(atk()),
-			IV(def()),
-			IV(spc()),
-			IV(spc()),
-			IV(spe())
-		);
-	}
-
-	constexpr auto operator[](auto const index) const {
-		return index_stat(*this, index);
-	}
-	friend auto operator==(DVs, DVs) -> bool = default;
-
-private:
-	DV m_atk;
-	DV m_def;
-	DV m_spe;
-	DV m_spc;
-};
+constexpr auto to_ivs(DVs const dvs) -> IVs {
+	return IVs(
+		IV(get_hp(dvs)),
+		IV(dvs.atk),
+		IV(dvs.def),
+		IV(dvs.spc),
+		IV(dvs.spc),
+		IV(dvs.spe)
+	);
+}
 
 export constexpr auto to_dvs_using_spa_as_spc(GenericStats<DV> const stats) -> DVs {
-	auto const result = DVs(stats.atk(), stats.def(), stats.spe(), stats.spa());
-	if (result.hp() != stats.hp()) {
+	auto const result = DVs(stats.atk, stats.def, stats.spe, stats.spa);
+	auto const hp_dv = get_hp(result);
+	if (hp_dv != stats.hp) {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Invalid DVs. Calculated HP DV of "sv,
-			containers::to_string(result.hp().value()),
+			containers::to_string(hp_dv.value()),
 			" but received "sv,
-			containers::to_string(stats.hp().value())
+			containers::to_string(stats.hp.value())
 		));
 	}
 	return result;
 }
 
 export constexpr auto to_dvs(GenericStats<DV> const stats) -> DVs {
-	if (stats.spa() != stats.spd()) {
+	if (stats.spa != stats.spd) {
 		throw std::runtime_error("Mismatched SpA and SpD DVs in old generation");
 	}
 	return to_dvs_using_spa_as_spc(stats);
@@ -196,10 +162,10 @@ constexpr auto max_dvs_or_ivs = [] {
 export template<SpecialInputStyle style>
 using DVsOrIVs = std::conditional_t<style == SpecialInputStyle::combined, DVs, IVs>;
 
-static_assert(DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)).hp() == DV(15_bi));
-static_assert(DVs(DV(15_bi), DV(14_bi), DV(15_bi), DV(15_bi)).hp() == DV(11_bi));
-static_assert(DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)).hp() == DV(15_bi));
-static_assert(DVs(DV(14_bi), DV(14_bi), DV(14_bi), DV(14_bi)).hp() == DV(0_bi));
+static_assert(get_hp(DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi))) == DV(15_bi));
+static_assert(get_hp(DVs(DV(15_bi), DV(14_bi), DV(15_bi), DV(15_bi))) == DV(11_bi));
+static_assert(get_hp(DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi))) == DV(15_bi));
+static_assert(get_hp(DVs(DV(14_bi), DV(14_bi), DV(14_bi), DV(14_bi))) == DV(0_bi));
 
 } // namespace technicalmachine
 

@@ -35,7 +35,7 @@ namespace simple {
 	constexpr auto level = Level(100_bi);
 	constexpr auto base_spe = 30_bi;
 	constexpr auto original_value = initial_stat(base_spe, level, NatureEffect::neutral, IV(31_bi), EV(76_bi));
-	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(tv::optional<HiddenPower<generation>>()).spe());
+	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(tv::optional<HiddenPower<generation>>()).spe);
 	constexpr auto calculated = SpeedEVs(level, {base_spe, possible_ivs, original_value});
 
 	constexpr auto expected = containers::array({

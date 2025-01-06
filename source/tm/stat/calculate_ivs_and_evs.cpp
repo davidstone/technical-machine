@@ -47,6 +47,40 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
+template<bool combine>
+constexpr auto fix_if(SplitSpecialRegularStat const stat_name) {
+	if constexpr (combine) {
+		return to_combined(stat_name);
+	} else {
+		return stat_name;
+	}
+}
+
+constexpr auto to_string(auto const stats) -> containers::string {
+	auto const hp_str = containers::to_string(stats.hp.max());
+	auto const atk_str = containers::to_string(stats.atk);
+	auto const def_str = containers::to_string(stats.def);
+	auto const spe_str = containers::to_string(stats.spe);
+	if constexpr (requires { stats.spc; }) {
+		return containers::concatenate<containers::string>(
+			"HP: "sv, hp_str,
+			", Attack: "sv, atk_str,
+			", Defense: "sv, def_str,
+			", Speed: "sv, spe_str,
+			", Special: "sv, containers::to_string(stats.spc)
+		);
+	} else {
+		return containers::concatenate<containers::string>(
+			"HP: "sv, hp_str,
+			", Attack: "sv, atk_str,
+			", Defense: "sv, def_str,
+			", Special Attack: "sv, containers::to_string(stats.spa),
+			", Special Defense: "sv, containers::to_string(stats.spd),
+			", Speed: "sv, spe_str
+		);
+	}
+}
+
 export template<Generation generation>
 constexpr auto calculate_ivs_and_evs(
 	Species const species,
@@ -60,7 +94,7 @@ constexpr auto calculate_ivs_and_evs(
 	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
 	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
 		return stat_to_ev(
-			stats[stat_name],
+			stats[fix_if<generation == Generation::one>(stat_name)],
 			base[stat_name],
 			level,
 			to_nature_effect(nature, stat_name),
@@ -88,7 +122,7 @@ constexpr auto calculate_ivs_and_evs(
 		constexpr auto nature = Nature::Hardy;
 		auto const dv_ev_range = [=](SplitSpecialRegularStat const stat_name) {
 			return dv_or_iv_ev_range(
-				dvs_or_ivs[stat_name],
+				dvs_or_ivs[fix_if<true>(stat_name)],
 				bounded::type<DV>,
 				[=](DV const dv) { return compute_ev(stat_name, nature, dv); }
 			);
@@ -99,7 +133,7 @@ constexpr auto calculate_ivs_and_evs(
 		for (auto const atk : atk_range) {
 			for (auto const def : def_range) {
 				for (auto const spe : spe_range) {
-					for (auto const spc_dv : containers::reversed(dvs_or_ivs.spc())) {
+					for (auto const spc_dv : containers::reversed(dvs_or_ivs.spc)) {
 						auto const spa_ev = compute_ev(SplitSpecialRegularStat::spa, nature, spc_dv);
 						if (!spa_ev) {
 							continue;
@@ -115,7 +149,7 @@ constexpr auto calculate_ivs_and_evs(
 						auto const spc_ev = bounded::max(*spa_ev, *spd_ev);
 
 						auto const dvs = DVs(atk.dv, def.dv, spe.dv, spc_dv);
-						auto const hp_ev = hp_to_ev(stats.hp().max(), base.hp(), level, IV(dvs.hp()));
+						auto const hp_ev = hp_to_ev(stats.hp.max(), base.hp(), level, IV(get_hp(dvs)));
 						if (!hp_ev) {
 							continue;
 						}
@@ -143,9 +177,9 @@ constexpr auto calculate_ivs_and_evs(
 			return (... + evs.value()) <= max_total_evs(special_input_style_for(generation));
 		};
 		auto const hp_range = dv_or_iv_ev_range(
-			dvs_or_ivs.hp(),
+			dvs_or_ivs.hp,
 			bounded::type<IV>,
-			[=](IV const iv) { return hp_to_ev(stats.hp().max(), base.hp(), level, iv); }
+			[=](IV const iv) { return hp_to_ev(stats.hp.max(), base.hp(), level, iv); }
 		);
 		for (auto const hp : hp_range) {
 			for (auto const nature : nature_range) {
@@ -219,12 +253,7 @@ constexpr auto calculate_ivs_and_evs(
 		": Species: "sv, to_string(species),
 		", Level: "sv, containers::to_string(level()),
 		", Possible Natures: "sv, nature_string,
-		", HP: "sv, containers::to_string(stats.hp().max()),
-		", Attack: "sv, containers::to_string(stats.atk()),
-		", Defense: "sv, containers::to_string(stats.def()),
-		", Special Attack: "sv, containers::to_string(stats.spa()),
-		", Special Defense: "sv, containers::to_string(stats.spd()),
-		", Speed: "sv, containers::to_string(stats.spe()),
+		", "sv, to_string(stats),
 		", Hidden Power: "sv, hidden_power_string
 	));
 }

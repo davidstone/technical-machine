@@ -7,130 +7,141 @@ export module tm.stat.generic_stats;
 
 import tm.stat.stat_names;
 
+import bounded;
+
 namespace technicalmachine {
 
 export template<typename HP, typename Stat = HP>
 struct GenericStats {
-	constexpr GenericStats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
-		m_hp(hp_),
-		m_atk(atk_),
-		m_def(def_),
-		m_spa(spa_),
-		m_spd(spd_),
-		m_spe(spe_)
-	{
+	constexpr auto operator[](
+		[[clang::lifetimebound]] this auto && stats,
+		SplitSpecialPermanentStat const index
+	) -> auto && {
+		using enum SplitSpecialPermanentStat;
+		switch (index) {
+			case hp: return stats.hp;
+			case atk: return stats.atk;
+			case def: return stats.def;
+			case spa: return stats.spa;
+			case spd: return stats.spd;
+			case spe: return stats.spe;
+		}
 	}
-
-	constexpr auto && hp() const {
-		return m_hp;
+	constexpr auto operator[](
+		[[clang::lifetimebound]] this auto && stats,
+		SplitSpecialRegularStat const index
+	) -> auto && {
+		using enum SplitSpecialRegularStat;
+		switch (index) {
+			case atk: return stats.atk;
+			case def: return stats.def;
+			case spa: return stats.spa;
+			case spd: return stats.spd;
+			case spe: return stats.spe;
+		}
 	}
-	constexpr auto && atk() const {
-		return m_atk;
-	}
-	constexpr auto && def() const {
-		return m_def;
-	}
-	constexpr auto && spa() const {
-		return m_spa;
-	}
-	constexpr auto && spd() const {
-		return m_spd;
-	}
-	constexpr auto && spe() const {
-		return m_spe;
-	}
-	constexpr auto && hp() {
-		return m_hp;
-	}
-	constexpr auto && atk() {
-		return m_atk;
-	}
-	constexpr auto && def() {
-		return m_def;
-	}
-	constexpr auto && spa() {
-		return m_spa;
-	}
-	constexpr auto && spd() {
-		return m_spd;
-	}
-	constexpr auto && spe() {
-		return m_spe;
-	}
-
-	constexpr auto && operator[](auto const index) const {
-		return index_stat(*this, index);
-	}
-	constexpr auto && operator[](auto const index) {
-		return index_stat(*this, index);
-	}
-
 	friend auto operator==(GenericStats, GenericStats) -> bool = default;
 
-private:
-	HP m_hp;
-	Stat m_atk;
-	Stat m_def;
-	Stat m_spa;
-	Stat m_spd;
-	Stat m_spe;
+	HP hp;
+	Stat atk;
+	Stat def;
+	Stat spa;
+	Stat spd;
+	Stat spe;
+};
+
+constexpr auto index_stat(
+	[[clang::lifetimebound]] auto && stats,
+	SpecialRegularStat const index
+) -> auto && {
+	using enum SpecialRegularStat;
+	switch (index) {
+		case atk: return stats.atk;
+		case def: return stats.def;
+		case spe: return stats.spe;
+		case spc: return stats.spc;
+	}
+}
+
+export template<typename HP, typename Stat = HP>
+struct GenericCombinedStats {
+	constexpr auto operator[](
+		[[clang::lifetimebound]] this auto && stats,
+		SpecialPermanentStat const index
+	) -> auto && {
+		using enum SpecialPermanentStat;
+		switch (index) {
+			case hp: return stats.hp;
+			case atk: return stats.atk;
+			case def: return stats.def;
+			case spe: return stats.spe;
+			case spc: return stats.spc;
+		}
+	}
+	constexpr auto operator[](
+		[[clang::lifetimebound]] this auto && stats,
+		SpecialRegularStat const index
+	) -> auto && {
+		return index_stat(stats, index);
+	}
+	friend auto operator==(GenericCombinedStats, GenericCombinedStats) -> bool = default;
+
+	HP hp;
+	Stat atk;
+	Stat def;
+	Stat spe;
+	Stat spc;
 };
 
 export template<typename Stat>
 struct GenericDVStats {
-	constexpr GenericDVStats(Stat const atk_, Stat const def_, Stat const spe_, Stat const spc_):
-		m_atk(atk_),
-		m_def(def_),
-		m_spe(spe_),
-		m_spc(spc_)
-	{
+	constexpr auto operator[](
+		[[clang::lifetimebound]] this auto && stats,
+		SpecialRegularStat const index
+	) -> auto && {
+		return index_stat(stats, index);
 	}
-
-	constexpr auto && atk() const {
-		return m_atk;
-	}
-	constexpr auto && def() const {
-		return m_def;
-	}
-	constexpr auto && spe() const {
-		return m_spe;
-	}
-	constexpr auto && spc() const {
-		return m_spc;
-	}
-	constexpr auto && spa() const {
-		return m_spc;
-	}
-	constexpr auto && spd() const {
-		return m_spc;
-	}
-	constexpr auto && atk() {
-		return m_atk;
-	}
-	constexpr auto && def() {
-		return m_def;
-	}
-	constexpr auto && spe() {
-		return m_spe;
-	}
-	constexpr auto && spc() {
-		return m_spc;
-	}
-
-	constexpr auto && operator[](auto const index) const {
-		return index_stat(*this, index);
-	}
-	constexpr auto && operator[](auto const index) {
-		return index_stat(*this, index);
-	}
-
 	friend auto operator==(GenericDVStats, GenericDVStats) -> bool = default;
 
-private:
-	Stat m_atk;
-	Stat m_def;
-	Stat m_spe;
-	Stat m_spc;
+	Stat atk;
+	Stat def;
+	Stat spe;
+	Stat spc;
 };
 
 } // namespace technicalmachine
+
+template<typename HP, typename Stat>
+struct bounded::tombstone<technicalmachine::GenericStats<HP, Stat>> {
+	using base = tombstone<HP>;
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::GenericStats<HP, Stat> {
+		return technicalmachine::GenericStats<HP, Stat>{
+			.hp = base::make(index),
+			.atk = {},
+			.def = {},
+			.spa = {},
+			.spd = {},
+			.spe = {},
+		};
+	}
+	static constexpr auto index(technicalmachine::GenericStats<HP, Stat> const & value) noexcept {
+		return base::index(value.hp);
+	}
+};
+
+template<typename HP, typename Stat>
+struct bounded::tombstone<technicalmachine::GenericCombinedStats<HP, Stat>> {
+	using base = tombstone<HP>;
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::GenericCombinedStats<HP, Stat> {
+		return technicalmachine::GenericCombinedStats<HP, Stat>{
+			.hp = base::make(index),
+			.atk = {},
+			.def = {},
+			.spe = {},
+			.spc = {},
+		};
+	}
+	static constexpr auto index(technicalmachine::GenericCombinedStats<HP, Stat> const & value) noexcept {
+		return base::index(value.hp);
+	}
+};

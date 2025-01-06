@@ -34,12 +34,12 @@ export using HiddenPowerIVPower = bounded::integer<30, 70>;
 
 constexpr auto sum_stats(IVs const ivs, auto const transform) {
 	return
-		transform(0_bi, ivs.hp()) +
-		transform(1_bi, ivs.atk()) +
-		transform(2_bi, ivs.def()) +
-		transform(3_bi, ivs.spe()) +
-		transform(4_bi, ivs.spa()) +
-		transform(5_bi, ivs.spd());
+		transform(0_bi, ivs.hp) +
+		transform(1_bi, ivs.atk) +
+		transform(2_bi, ivs.def) +
+		transform(3_bi, ivs.spe) +
+		transform(4_bi, ivs.spa) +
+		transform(5_bi, ivs.spd);
 }
 
 constexpr auto calculate_type_impl(bounded::integer<0, 15> const index) -> Type {
@@ -67,8 +67,8 @@ constexpr auto calculate_type_impl(bounded::integer<0, 15> const index) -> Type 
 constexpr auto calculate_type(DVs const dvs) -> Type {
 	constexpr auto get_base_four_digit = [](DV const dv) { return dv.value() % 4_bi; };
 	return calculate_type_impl(
-		(get_base_four_digit(dvs.atk()) * 4_bi) +
-		(get_base_four_digit(dvs.def()) * 1_bi)
+		(get_base_four_digit(dvs.atk) * 4_bi) +
+		(get_base_four_digit(dvs.def) * 1_bi)
 	);
 }
 
@@ -107,11 +107,11 @@ constexpr auto is_valid_type(Type const type) -> bool {
 constexpr auto calculate_power(DVs const dvs) {
 	auto const bit = [](DV const dv) { return BOUNDED_CONDITIONAL(dv.value() < 8_bi, 0_bi, 1_bi); };
 	auto const x =
-		(bit(dvs.atk()) << 3_bi) +
-		(bit(dvs.def()) << 2_bi) +
-		(bit(dvs.spe()) << 1_bi) +
-		(bit(dvs.spc()) << 0_bi);
-	auto const y = bounded::min(dvs.spc().value(), 3_bi);
+		(bit(dvs.atk) << 3_bi) +
+		(bit(dvs.def) << 2_bi) +
+		(bit(dvs.spe) << 1_bi) +
+		(bit(dvs.spc) << 0_bi);
+	auto const y = bounded::min(dvs.spc.value(), 3_bi);
 	return (5_bi * x + y) / 2_bi + 31_bi;
 }
 

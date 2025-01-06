@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <operators/forward.hpp>
-
 export module tm.stat.stat_names;
 
 import numeric_traits;
@@ -56,43 +52,13 @@ export enum class SplitSpecialRegularStat {
 	spe,
 };
 
-export constexpr decltype(auto) index_stat(auto && stats, SpecialPermanentStat const index) {
-	switch (index) {
-		case SpecialPermanentStat::hp: return OPERATORS_FORWARD(stats).hp();
-		case SpecialPermanentStat::atk: return OPERATORS_FORWARD(stats).atk();
-		case SpecialPermanentStat::def: return OPERATORS_FORWARD(stats).def();
-		case SpecialPermanentStat::spe: return OPERATORS_FORWARD(stats).spe();
-		case SpecialPermanentStat::spc: return OPERATORS_FORWARD(stats).spc();
-	}
-}
-
-export constexpr decltype(auto) index_stat(auto && stats, SplitSpecialPermanentStat const index) {
-	switch (index) {
-		case SplitSpecialPermanentStat::hp: return OPERATORS_FORWARD(stats).hp();
-		case SplitSpecialPermanentStat::atk: return OPERATORS_FORWARD(stats).atk();
-		case SplitSpecialPermanentStat::def: return OPERATORS_FORWARD(stats).def();
-		case SplitSpecialPermanentStat::spa: return OPERATORS_FORWARD(stats).spa();
-		case SplitSpecialPermanentStat::spd: return OPERATORS_FORWARD(stats).spd();
-		case SplitSpecialPermanentStat::spe: return OPERATORS_FORWARD(stats).spe();
-	}
-}
-
-export constexpr decltype(auto) index_stat(auto && stats, SpecialRegularStat const index) {
-	switch (index) {
-		case SpecialRegularStat::atk: return OPERATORS_FORWARD(stats).atk();
-		case SpecialRegularStat::def: return OPERATORS_FORWARD(stats).def();
-		case SpecialRegularStat::spe: return OPERATORS_FORWARD(stats).spe();
-		case SpecialRegularStat::spc: return OPERATORS_FORWARD(stats).spc();
-	}
-}
-
-export constexpr decltype(auto) index_stat(auto && stats, SplitSpecialRegularStat const index) {
-	switch (index) {
-		case SplitSpecialRegularStat::atk: return OPERATORS_FORWARD(stats).atk();
-		case SplitSpecialRegularStat::def: return OPERATORS_FORWARD(stats).def();
-		case SplitSpecialRegularStat::spa: return OPERATORS_FORWARD(stats).spa();
-		case SplitSpecialRegularStat::spd: return OPERATORS_FORWARD(stats).spd();
-		case SplitSpecialRegularStat::spe: return OPERATORS_FORWARD(stats).spe();
+export constexpr auto to_combined(SplitSpecialRegularStat const stat_name) -> SpecialRegularStat {
+	switch (stat_name) {
+		case SplitSpecialRegularStat::atk: return SpecialRegularStat::atk;
+		case SplitSpecialRegularStat::def: return SpecialRegularStat::def;
+		case SplitSpecialRegularStat::spa: return SpecialRegularStat::spc;
+		case SplitSpecialRegularStat::spd: return SpecialRegularStat::spc;
+		case SplitSpecialRegularStat::spe: return SpecialRegularStat::spe;
 	}
 }
 

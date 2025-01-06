@@ -185,6 +185,10 @@ constexpr auto special_defense_ability_modifier(any_active_pokemon auto const po
 	return rational(numerator, denominator);
 }
 
+template<SpecialRegularStat>
+constexpr auto offensive_ability_modifier(any_active_pokemon auto, Type, Weather) {
+	return rational(1_bi, 1_bi);
+}
 template<SplitSpecialRegularStat stat>
 constexpr auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Weather const weather) {
 	if constexpr (stat == SplitSpecialRegularStat::atk) {
@@ -195,6 +199,10 @@ constexpr auto offensive_ability_modifier(any_active_pokemon auto const pokemon,
 	}
 }
 
+template<SpecialRegularStat, any_active_pokemon PokemonType>
+constexpr auto item_modifier(PokemonType, Environment) {
+	return rational(1_bi, 1_bi);
+}
 template<SplitSpecialRegularStat stat, any_active_pokemon PokemonType>
 constexpr auto item_modifier(PokemonType const pokemon, Environment const environment) {
 	constexpr auto generation = generation_from<PokemonType>;
@@ -260,31 +268,33 @@ constexpr auto item_modifier(PokemonType const pokemon, Environment const enviro
 	return rational(numerator, denominator);
 }
 
-constexpr auto applies_to_physical(SplitSpecialRegularStat const stat) {
+template<typename StatName>
+constexpr auto is_physical(StatName const stat) {
 	switch (stat) {
-		case SplitSpecialRegularStat::atk:
-		case SplitSpecialRegularStat::def:
+		case StatName::atk:
+		case StatName::def:
 			return true;
 		default:
 			return false;
 	}
 }
 
-constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
+template<typename StatName>
+constexpr auto other_physical_stat(StatName const stat) {
 	switch (stat) {
-		case SplitSpecialRegularStat::atk: return SplitSpecialRegularStat::def;
-		case SplitSpecialRegularStat::def: return SplitSpecialRegularStat::atk;
+		case StatName::atk: return StatName::def;
+		case StatName::def: return StatName::atk;
 		default: std::unreachable();
 	}
 }
 
-constexpr auto determine_initial_stat(SplitSpecialRegularStat const name, any_active_pokemon auto const pokemon) {
-	return !applies_to_physical(name) or !pokemon.power_trick_is_active() ?
-		pokemon.stats()[name] :
-		pokemon.stats()[other_physical_stat(name)];
+constexpr auto determine_initial_stat(auto const name, any_active_pokemon auto const pokemon) {
+	return is_physical(name) and pokemon.power_trick_is_active() ?
+		pokemon.stats()[other_physical_stat(name)] :
+		pokemon.stats()[name];
 }
 
-template<SplitSpecialRegularStat stat>
+template<auto stat>
 constexpr auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit) {
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
@@ -295,31 +305,92 @@ constexpr auto calculate_common_offensive_stat(any_active_pokemon auto const pok
 	return bounded::max(attack, 1_bi);
 }
 
-export constexpr auto calculate_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
+
+template<Generation generation>
+constexpr auto attack_stat() {
+	if constexpr (generation == Generation::one) {
+		return SpecialRegularStat::atk;
+	} else {
+		return SplitSpecialRegularStat::atk;
+	}
+}
+
+export template<any_active_pokemon PokemonType>
+constexpr auto calculate_attack(
+	PokemonType const attacker,
+	Type const move_type,
+	Ability const other_ability,
+	Environment const environment,
+	bool const critical_hit = false
+) {
+	constexpr auto generation = generation_from<PokemonType>;
 	// Cast here because it looks as though the strongest attacker would hold a
 	// Light Ball, but because of the restriction on the attacker being Pikachu,
 	// it is better to use a Power Trick Shuckle with a Choice Band.
 	return bounded::assume_in_range(
-		calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, environment, critical_hit),
+		calculate_common_offensive_stat<attack_stat<generation>()>(
+			attacker,
+			move_type,
+			other_ability,
+			environment,
+			critical_hit
+		),
 		1_bi,
 		7368_bi
 	);
 }
 
 
-export constexpr auto calculate_special_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
+template<Generation generation>
+constexpr auto special_attack_stat() {
+	if constexpr (generation == Generation::one) {
+		return SpecialRegularStat::spc;
+	} else {
+		return SplitSpecialRegularStat::spa;
+	}
+}
+
+export template<any_active_pokemon PokemonType>
+constexpr auto calculate_special_attack(
+	PokemonType const attacker,
+	Type const move_type,
+	Ability const other_ability,
+	Environment const environment,
+	bool const critical_hit = false
+) {
+	constexpr auto generation = generation_from<PokemonType>;
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
 	return bounded::assume_in_range(
-		calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, environment, critical_hit),
+		calculate_common_offensive_stat<special_attack_stat<generation>()>(
+			attacker,
+			move_type,
+			other_ability,
+			environment,
+			critical_hit
+		),
 		1_bi,
 		4536_bi
 	);
 }
 
-
-export constexpr auto calculate_defense(any_active_pokemon auto const defender, Environment const environment, bool const is_self_ko, bool const critical_hit = false) {
-	constexpr auto stat = SplitSpecialRegularStat::def;
+template<Generation generation>
+constexpr auto defense_stat() {
+	if constexpr (generation == Generation::one) {
+		return SpecialRegularStat::def;
+	} else {
+		return SplitSpecialRegularStat::def;
+	}
+}
+export template<any_active_pokemon PokemonType>
+constexpr auto calculate_defense(
+	PokemonType const defender,
+	Environment const environment,
+	bool const is_self_ko,
+	bool const critical_hit = false
+) {
+	constexpr auto generation = generation_from<PokemonType>;
+	constexpr auto stat = defense_stat<generation>();
 	auto const defense =
 		determine_initial_stat(stat, defender) *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
@@ -339,18 +410,32 @@ export constexpr auto calculate_defense(any_active_pokemon auto const defender, 
 
 template<any_active_pokemon PokemonType>
 constexpr auto special_defense_sandstorm_boost(PokemonType const defender, Weather const weather) {
-	auto const is_boosted =
-		generation_from<PokemonType> >= Generation::four and
-		is_type(defender, Type::Rock) and
-		weather == Weather::sand;
-	return rational(
-		BOUNDED_CONDITIONAL(is_boosted, 3_bi, 2_bi),
-		2_bi
-	);
+	if constexpr (generation_from<PokemonType> <= Generation::three) {
+		return rational(1_bi, 1_bi);
+	} else {
+		auto const is_boosted =
+			weather == Weather::sand and
+			is_type(defender, Type::Rock);
+		return rational(
+			BOUNDED_CONDITIONAL(is_boosted, 3_bi, 2_bi),
+			2_bi
+		);
+	}
 }
 
-export constexpr auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
-	constexpr auto stat = SplitSpecialRegularStat::spd;
+template<Generation generation>
+constexpr auto special_defense_stat() {
+	if constexpr (generation == Generation::one) {
+		return SpecialRegularStat::spc;
+	} else {
+		return SplitSpecialRegularStat::spd;
+	}
+}
+
+export template<any_active_pokemon PokemonType>
+constexpr auto calculate_special_defense(PokemonType const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
+	constexpr auto generation = generation_from<PokemonType>;
+	constexpr auto stat = special_defense_stat<generation>();
 	auto const weather = environment.effective_weather(defender.ability(), attacker_ability);
 	auto const defense =
 		defender.stats()[stat] *

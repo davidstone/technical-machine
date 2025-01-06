@@ -79,14 +79,14 @@ struct SeenPokemon {
 
 	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
 		auto result = m_stats;
-		result.hp() = hp();
+		result.hp = hp();
 		return result;
 	}
 	constexpr auto visible_hp() const -> VisibleHP {
 		return m_hp;
 	}
 	constexpr auto hp() const -> HP {
-		auto const max_hp = m_stats.hp().max();
+		auto const max_hp = m_stats.hp.max();
 		auto temp = HP(max_hp);
 		temp = to_real_hp(max_hp, visible_hp()).value;
 		return temp;
@@ -104,7 +104,7 @@ struct SeenPokemon {
 		m_hp.current = visible_hp;
 	}
 	constexpr auto set_hp(bounded::bounded_integer auto const given_real_hp) & -> void {
-		auto const max_real_hp = m_stats.hp().max();
+		auto const max_real_hp = m_stats.hp.max();
 		auto const real_hp = bounded::clamp(given_real_hp, 0_bi, max_real_hp);
 		set_hp(CurrentVisibleHP(bounded::assume_in_range(m_hp.max.value() * real_hp / max_real_hp, 0_bi, m_hp.max.value())));
 	}

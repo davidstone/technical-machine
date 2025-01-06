@@ -39,23 +39,31 @@ constexpr auto parsed_team_to_known_team(ParsedTeam const & team) -> KnownTeam<g
 		team,
 		[](auto const & pokemon) {
 			auto stats = [&] {
-				if constexpr (generation == Generation::one) {
-					if (pokemon.stats.spa != pokemon.stats.spd) {
-						throw std::runtime_error("Special Attack and Special Defense do not match.");
-					}
-				}
 				auto get = [](auto const stat) {
 					using Stat = InitialStat<special_input_style_for(generation)>;
 					return bounded::check_in_range<Stat>(stat);
 				};
-				return Stats<stat_style_for(generation)>(
-					HP(pokemon.stats.hp.max.value()),
-					get(pokemon.stats.atk),
-					get(pokemon.stats.def),
-					get(pokemon.stats.spa),
-					get(pokemon.stats.spd),
-					get(pokemon.stats.spe)
-				);
+				if constexpr (generation == Generation::one) {
+					if (pokemon.stats.spa != pokemon.stats.spd) {
+						throw std::runtime_error("Special Attack and Special Defense do not match.");
+					}
+					return Stats<stat_style_for(generation)>{
+						.hp = HP(pokemon.stats.hp.max.value()),
+						.atk = get(pokemon.stats.atk),
+						.def = get(pokemon.stats.def),
+						.spe = get(pokemon.stats.spe),
+						.spc = get(pokemon.stats.spa),
+					};
+				} else {
+					return Stats<stat_style_for(generation)>{
+						.hp = HP(pokemon.stats.hp.max.value()),
+						.atk = get(pokemon.stats.atk),
+						.def = get(pokemon.stats.def),
+						.spa = get(pokemon.stats.spa),
+						.spd = get(pokemon.stats.spd),
+						.spe = get(pokemon.stats.spe),
+					};
+				}
 			};
 			auto hidden_power = [&] -> tv::optional<HiddenPower<generation>> {
 				if (!pokemon.hidden_power_type) {

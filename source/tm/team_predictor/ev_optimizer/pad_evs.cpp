@@ -67,12 +67,12 @@ constexpr auto greatest_non_full(EVs & evs) -> EV & {
 
 constexpr auto used_non_full_evs(EVs const evs) {
 	return add_non_full(
-		evs.hp(),
-		evs.atk(),
-		evs.def(),
-		evs.spa(),
-		evs.spd(),
-		evs.spe()
+		evs.hp,
+		evs.atk,
+		evs.def,
+		evs.spa,
+		evs.spd,
+		evs.spe
 	);
 }
 
@@ -113,27 +113,27 @@ constexpr auto assign_evs_proportionally_to_current(EVs evs, bool const include_
 		}
 		ev = useful_value(proportionate_value(ev, remaining_evs, used_non_full));
 	};
-	update(evs.hp());
+	update(evs.hp);
 	if (include_attack) {
-		update(evs.atk());
+		update(evs.atk);
 	}
-	update(evs.def());
+	update(evs.def);
 	if (include_special_attack) {
-		update(evs.spa());
+		update(evs.spa);
 	}
-	update(evs.spd());
-	update(evs.spe());
+	update(evs.spd);
+	update(evs.spe);
 	return evs;
 }
 
 constexpr auto fill_in_empty_evs_and_fix_rounding(EVs evs, bool const include_attack, bool const include_special_attack) -> EVs {
 	auto evs_to_add_to =
-		bounded::integer(is_not_full(evs.hp())) +
-		(include_attack ? bounded::integer(is_not_full(evs.atk())) : 0_bi) +
-		bounded::integer(is_not_full(evs.def())) +
-		(include_special_attack ? bounded::integer(is_not_full(evs.spa())) : 0_bi) +
-		bounded::integer(is_not_full(evs.spd())) +
-		bounded::integer(is_not_full(evs.spe()));
+		bounded::integer(is_not_full(evs.hp)) +
+		(include_attack ? bounded::integer(is_not_full(evs.atk)) : 0_bi) +
+		bounded::integer(is_not_full(evs.def)) +
+		(include_special_attack ? bounded::integer(is_not_full(evs.spa)) : 0_bi) +
+		bounded::integer(is_not_full(evs.spd)) +
+		bounded::integer(is_not_full(evs.spe));
 	auto update = [&](EV & ev) {
 		if (ev == EV::useful_max) {
 			return;
@@ -143,15 +143,15 @@ constexpr auto fill_in_empty_evs_and_fix_rounding(EVs evs, bool const include_at
 		--evs_to_add_to;
 	};
 	if (include_special_attack) {
-		update(evs.spa());
+		update(evs.spa);
 	}
 	if (include_attack) {
-		update(evs.atk());
+		update(evs.atk);
 	}
-	update(evs.spd());
-	update(evs.def());
-	update(evs.hp());
-	update(evs.spe());
+	update(evs.spd);
+	update(evs.def);
+	update(evs.hp);
+	update(evs.spe);
 	BOUNDED_ASSERT(ev_sum(evs) + minimal_increment > max);
 	return evs;
 }

@@ -6,11 +6,13 @@
 module;
 
 #include <std_module/prelude.hpp>
-#include <string>
+#include <string_view>
 
 module tm.clients.ps.to_packed_format;
 
 import tm.stat.calculate_ivs_and_evs;
+import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.stat_names;
 
@@ -36,6 +38,50 @@ import tv;
 
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;
+
+constexpr auto comma_separator = containers::array({','});
+
+constexpr auto get_ev(EVs const evs, SplitSpecialRegularStat const stat) -> EV {
+	return evs[stat];
+}
+constexpr auto get_ev(OldGenEVs const evs, SplitSpecialRegularStat const stat) -> EV {
+	return evs[to_combined(stat)];
+}
+
+// Spc goes in SpA. SpD is ignored.
+constexpr auto evs_to_string(auto const evs) -> containers::string {
+	auto result = containers::to_string(evs.hp.value());
+	for (auto const stat_name : containers::enum_range<SplitSpecialRegularStat>()) {
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			comma_separator,
+			containers::to_string(get_ev(evs, stat_name).value())
+		);
+	}
+	return result;
+}
+
+constexpr auto get_iv(IVs const ivs, SplitSpecialRegularStat const stat) -> IV {
+	return ivs[stat];
+}
+constexpr auto get_iv(DVs const dvs, SplitSpecialRegularStat const stat) -> IV {
+	return IV(dvs[to_combined(stat)]);
+}
+
+// Spc goes in SpA. SpD is ignored.
+constexpr auto dvs_or_ivs_to_string(auto const dvs_or_ivs) -> containers::string {
+	auto result = containers::to_string(IV(get_hp(dvs_or_ivs)).value());
+	for (auto const stat_name : containers::enum_range<SplitSpecialRegularStat>()) {
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			comma_separator,
+			containers::to_string(get_iv(dvs_or_ivs, stat_name).value())
+		);
+	}
+	return result;
+}
+
+
 
 constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & team) -> containers::string {
 	constexpr auto separator = containers::array{'|'};
@@ -65,39 +111,18 @@ constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & te
 			containers::append(result, to_string(it->name()));
 		}
 
+		auto const stats = calculate_ivs_and_evs(pokemon);
+
 		result = containers::concatenate<containers::string>(
 			std::move(result),
 			separator,
 			to_string(pokemon.nature()),
-			separator
-		);
-
-		auto const stats = calculate_ivs_and_evs(pokemon);
-		// Spc goes in SpA. SpD is ignored.
-		for (auto const stat_name : containers::enum_range<SplitSpecialPermanentStat>()) {
-			if (stat_name != SplitSpecialPermanentStat::hp) {
-				containers::push_back(result, ',');
-			}
-			containers::append(result, containers::to_string(stats.evs[stat_name].value()));
-		}
-
-		result = containers::concatenate<containers::string>(
-			std::move(result),
+			separator,
+			evs_to_string(stats.evs),
 			separator,
 			to_string(pokemon.gender()),
-			separator
-		);
-
-		// Spc goes in SpA. SpD is ignored.
-		for (auto const stat_name : containers::enum_range<SplitSpecialPermanentStat>()) {
-			if (stat_name != SplitSpecialPermanentStat::hp) {
-				containers::push_back(result, ',');
-			}
-			containers::append(result, containers::to_string(IV(stats.dvs_or_ivs[stat_name]).value()));
-		}
-
-		result = containers::concatenate<containers::string>(
-			std::move(result),
+			separator,
+			dvs_or_ivs_to_string(stats.dvs_or_ivs),
 			separator,
 			// Assume non-shiny
 			separator,

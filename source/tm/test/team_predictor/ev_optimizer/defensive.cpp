@@ -50,9 +50,9 @@ TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
 	constexpr auto defense = initial_stat(base_def, level, NatureEffect::positive, IV(31_bi), defense_ev);
 	constexpr auto special_defense = initial_stat(base_spd, level, NatureEffect::neutral, IV(31_bi), special_defense_ev);
 
-	constexpr auto input_hp = DefensiveEVHP{base_hp, possible_optimized_ivs(possible_ivs.hp()), hp};
-	constexpr auto input_def = DefensiveEVDef{base_def, possible_optimized_ivs(possible_ivs.def()), defense};
-	constexpr auto input_spd = DefensiveEVSpD{base_spd, possible_optimized_ivs(possible_ivs.spd()), special_defense};
+	constexpr auto input_hp = DefensiveEVHP{base_hp, possible_optimized_ivs(possible_ivs.hp), hp};
+	constexpr auto input_def = DefensiveEVDef{base_def, possible_optimized_ivs(possible_ivs.def), defense};
+	constexpr auto input_spd = DefensiveEVSpD{base_spd, possible_optimized_ivs(possible_ivs.spd), special_defense};
 
 	// Too many steps to constant evaluate
 	auto const defensive_evs = DefensiveEVs(level, input_hp, input_def, input_spd);
