@@ -146,6 +146,7 @@ target_sources(tm_common PUBLIC
 		stat/ingame_id_to_nature.cpp
 		stat/iv.cpp
 		stat/iv_and_ev.cpp
+		stat/make_stats.cpp
 		stat/max_hp.cpp
 		stat/nature_effect.cpp
 		stat/nature.cpp
@@ -425,7 +426,7 @@ target_sources(tm_test PRIVATE
 	FILES
 		pokemon/test/substitute.cpp
 
-		stat/test/stats.cpp
+		stat/test/make_stats.cpp
 		
 		test/pokemon_online/conversion.cpp
 	

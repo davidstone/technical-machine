@@ -21,6 +21,7 @@ import tm.pokemon.species;
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
 import tm.stat.hp;
+import tm.stat.make_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
@@ -60,11 +61,11 @@ struct SeenPokemon {
 		m_gender(gender),
 		m_level(level),
 		m_hp{CurrentVisibleHP(hp_resolution.value()), hp_resolution},
-		m_stats(
+		m_stats(make_stats<stat_style_for(generation)>(
 			BaseStats(generation, m_species),
 			m_level,
 			CombinedStatsFor<generation>()
-		)
+		))
 	{
 	}
 	constexpr SeenPokemon(Species const species, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
@@ -257,7 +258,11 @@ struct SeenPokemon {
 		if constexpr (exists<decltype(m_nature)>) {
 			m_nature = stat_inputs.nature;
 		}
-		m_stats = Stats<stat_style_for(generation)>(BaseStats(generation, species()), level(), stat_inputs);
+		m_stats = make_stats<stat_style_for(generation)>(
+			BaseStats(generation, species()),
+			level(),
+			stat_inputs
+		);
 	}
 
 	constexpr auto hidden_power() const -> tv::optional<HiddenPower<generation>> {

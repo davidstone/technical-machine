@@ -14,6 +14,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.make_stats;
 import tm.stat.stat_style;
 import tm.stat.stats;
 
@@ -36,7 +37,7 @@ auto optimize_evs(
 	while (true) {
 		auto const previous = combined;
 		combined.evs = pad_evs(combined.evs, include_attack, include_special_attack);
-		auto const stats = Stats<stat_style_for(generation)>(base_stats, level, combined);
+		auto const stats = make_stats<stat_style_for(generation)>(base_stats, level, combined);
 		combined = compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack);
 		if (previous == combined) {
 			return combined;

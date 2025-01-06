@@ -19,6 +19,7 @@ import tm.stat.evs;
 import tm.stat.hp;
 import tm.stat.initial_stat;
 import tm.stat.iv;
+import tm.stat.make_stats;
 import tm.stat.nature;
 import tm.stat.possible_dvs_or_ivs;
 import tm.stat.stat_names;
@@ -65,7 +66,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 		)
 	};
 	constexpr auto base_stats = BaseStats(generation, species);
-	constexpr auto stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
+	constexpr auto stats = make_stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
 
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
@@ -103,7 +104,7 @@ TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = CombinedStatsFor<generation>();
 	auto const base_stats = BaseStats(generation, species);
-	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
+	auto const stats = make_stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
 	CHECK(optimized == ivs_and_evs);

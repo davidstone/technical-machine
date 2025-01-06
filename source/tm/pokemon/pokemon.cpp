@@ -25,6 +25,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.make_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
@@ -54,7 +55,11 @@ export template<Generation generation>
 struct Pokemon {
 	constexpr Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStatsFor<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
 		m_regular_moves(regular_moves_),
-		m_stats(BaseStats(generation, species), level, stat_inputs),
+		m_stats(make_stats<stat_style_for(generation)>(
+			BaseStats(generation, species),
+			level,
+			stat_inputs
+		)),
 
 		m_species(species),
 		m_item(item),

@@ -7,13 +7,8 @@ export module tm.stat.stats;
 
 import tm.pokemon.level;
 
-import tm.stat.base_stats;
-import tm.stat.combined_stats;
-import tm.stat.ev;
 import tm.stat.hp;
 import tm.stat.initial_stat;
-import tm.stat.iv;
-import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
 
@@ -37,24 +32,6 @@ public:
 		m_spa(spa_),
 		m_spd(spd_),
 		m_spe(spe_)
-	{
-	}
-	constexpr Stats(BaseStats const base, Level const level, CombinedStats<special_style(stat_style)> const inputs):
-		Stats(
-			base.hp(),
-			level,
-			IV(inputs.dvs_or_ivs.hp()),
-			inputs.evs.hp(),
-			[=](SplitSpecialRegularStat const stat_name) {
-				return initial_stat(
-					base[stat_name],
-					level,
-					to_nature_effect(inputs.nature, stat_name),
-					IV(inputs.dvs_or_ivs[stat_name]),
-					inputs.evs[stat_name]
-				);
-			}
-		)
 	{
 	}
 
@@ -90,16 +67,6 @@ public:
 	friend auto operator==(Stats, Stats) -> bool = default;
 
 private:
-	constexpr Stats(BaseStats::HP const base_hp, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
-		m_hp(base_hp, level, hp_iv, hp_ev),
-		m_atk(make(SplitSpecialRegularStat::atk)),
-		m_def(make(SplitSpecialRegularStat::def)),
-		m_spa(make(SplitSpecialRegularStat::spa)),
-		m_spd(make(SplitSpecialRegularStat::spd)),
-		m_spe(make(SplitSpecialRegularStat::spe))
-	{
-	}
-
 	HP m_hp;
 	Stat m_atk;
 	Stat m_def;
