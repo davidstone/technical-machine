@@ -23,6 +23,7 @@ import tm.stat.combined_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
+import tm.stat.stats;
 
 import tm.status.status;
 import tm.status.status_name;
@@ -77,8 +78,8 @@ struct KnownPokemon {
 		return m_nickname;
 	}
 
-	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
-		return m_pokemon.stat(stat_name);
+	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
+		return m_pokemon.stats();
 	}
 	constexpr auto hp() const {
 		return m_pokemon.hp();

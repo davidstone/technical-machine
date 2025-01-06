@@ -74,14 +74,7 @@ struct Pokemon {
 
 	explicit constexpr Pokemon(SeenPokemon<generation> const & other):
 		m_regular_moves(other.regular_moves()),
-		m_stats(
-			other.hp(),
-			other.stat(SplitSpecialRegularStat::atk),
-			other.stat(SplitSpecialRegularStat::def),
-			other.stat(SplitSpecialRegularStat::spa),
-			other.stat(SplitSpecialRegularStat::spd),
-			other.stat(SplitSpecialRegularStat::spe)
-		),
+		m_stats(other.stats()),
 		m_species(other.species()),
 		m_item(other.actual_item()),
 		m_ability(other.initial_ability()),
@@ -114,8 +107,8 @@ struct Pokemon {
 	constexpr auto hp() const {
 		return m_stats.hp();
 	}
-	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
-		return m_stats[stat_name];
+	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
+		return m_stats;
 	}
 
 	constexpr auto advance_status_from_move(Ability const ability, bool const clear_status) & {

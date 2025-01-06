@@ -150,7 +150,7 @@ export constexpr auto calculate_speed(
 export constexpr auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
 	auto const pokemon = team.pokemon();
 	return calculate_speed(
-		pokemon.stat(stat_name),
+		pokemon.stats().spe(),
 		pokemon.species(),
 		pokemon.item(environment),
 		pokemon.ability(),

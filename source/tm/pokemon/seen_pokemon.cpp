@@ -76,8 +76,10 @@ struct SeenPokemon {
 		return m_nickname;
 	}
 
-	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
-		return m_stats[stat_name];
+	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
+		auto result = m_stats;
+		result.hp() = hp();
+		return result;
 	}
 	constexpr auto visible_hp() const -> VisibleHP {
 		return m_hp;

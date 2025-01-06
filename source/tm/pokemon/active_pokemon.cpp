@@ -49,6 +49,8 @@ import tm.stat.current_hp;
 import tm.stat.nature;
 import tm.stat.stage;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
+import tm.stat.stats;
 
 import tm.status.blocks_status;
 import tm.status.clears_status;
@@ -282,8 +284,8 @@ public:
 	constexpr auto visible_hp() const -> VisibleHP requires any_seen_pokemon<PokemonType> {
 		return this->m_pokemon.visible_hp();
 	}
-	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
-		return m_pokemon.stat(stat_name);
+	constexpr auto stats() const -> Stats<stat_style_for(generation)> {
+		return m_pokemon.stats();
 	}
 
 	constexpr auto last_used_move() const -> LastUsedMove<generation> {

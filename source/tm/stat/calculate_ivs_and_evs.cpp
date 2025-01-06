@@ -252,18 +252,10 @@ constexpr auto calculate_ivs_and_evs(
 export template<any_pokemon PokemonType>
 constexpr auto calculate_ivs_and_evs(PokemonType const & pokemon) {
 	auto const nature = pokemon.nature();
-	auto const stats = Stats<stat_style_for(generation_from<PokemonType>)>{
-		pokemon.hp(),
-		pokemon.stat(SplitSpecialRegularStat::atk),
-		pokemon.stat(SplitSpecialRegularStat::def),
-		pokemon.stat(SplitSpecialRegularStat::spa),
-		pokemon.stat(SplitSpecialRegularStat::spd),
-		pokemon.stat(SplitSpecialRegularStat::spe)
-	};
 	return calculate_ivs_and_evs(
 		pokemon.species(),
 		pokemon.level(),
-		stats,
+		pokemon.stats(),
 		pokemon.hidden_power(),
 		containers::enum_range(nature, nature)
 	);

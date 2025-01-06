@@ -280,8 +280,8 @@ constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
 
 constexpr auto determine_initial_stat(SplitSpecialRegularStat const name, any_active_pokemon auto const pokemon) {
 	return !applies_to_physical(name) or !pokemon.power_trick_is_active() ?
-		pokemon.stat(name) :
-		pokemon.stat(other_physical_stat(name));
+		pokemon.stats()[name] :
+		pokemon.stats()[other_physical_stat(name)];
 }
 
 template<SplitSpecialRegularStat stat>
@@ -353,7 +353,7 @@ export constexpr auto calculate_special_defense(any_active_pokemon auto const de
 	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const weather = environment.effective_weather(defender.ability(), attacker_ability);
 	auto const defense =
-		defender.stat(stat) *
+		defender.stats()[stat] *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		special_defense_ability_modifier(defender, weather) *
 		item_modifier<stat>(defender, environment) *
