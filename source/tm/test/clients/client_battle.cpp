@@ -40,7 +40,7 @@ using namespace bounded::literal;
 
 template<Generation generation, std::size_t known_size>
 auto make_battle(
-	containers::c_array<InitialPokemon<special_style_for(generation)>, known_size> && known,
+	containers::c_array<InitialPokemon<special_input_style_for(generation)>, known_size> && known,
 	SeenPokemonInit const seen
 ) {
 	auto battle = make_client_battle(

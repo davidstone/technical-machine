@@ -17,15 +17,15 @@ import std_module;
 
 namespace technicalmachine {
 
-export template<SpecialStyle stat_style>
+export template<SpecialInputStyle stat_style>
 struct CombinedStats {
 	Nature nature = Nature::Hardy;
 	DVsOrIVs<stat_style> dvs_or_ivs = max_dvs_or_ivs<stat_style>;
-	std::conditional_t<stat_style == SpecialStyle::combined, OldGenEVs, EVs> evs =  default_evs<stat_style>;
+	std::conditional_t<stat_style == SpecialInputStyle::combined, OldGenEVs, EVs> evs =  default_evs<stat_style>;
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
 export template<Generation generation>
-using CombinedStatsFor = CombinedStats<special_style_for(generation)>;
+using CombinedStatsFor = CombinedStats<special_input_style_for(generation)>;
 
 } // namespace technicalmachine

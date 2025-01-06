@@ -41,7 +41,7 @@ using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
 
-constexpr auto expected_team = InitialTeam<SpecialStyle::split>({
+constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	{
 		.species = Species::Jirachi,
 		.nickname = "Homeland Security"sv,

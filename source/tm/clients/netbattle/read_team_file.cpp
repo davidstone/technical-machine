@@ -97,26 +97,26 @@ private:
 	FileVersion m_file_version;
 };
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_nature(Parser & parser) -> Nature {
 	// Nature is preserved but ignored in older generations
 	auto const id = parser.pop_integer<IngameNatureID>(5_bi);
 	switch (style) {
-		case SpecialStyle::combined:
+		case SpecialInputStyle::combined:
 			return Nature::Hardy;
-		case SpecialStyle::split:
+		case SpecialInputStyle::split:
 			return ingame_id_to_nature(id);
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_ability(Parser & parser, Species const species) -> Ability {
 	// Ability is preserved but ignored in older generations
 	auto const id = parser.pop_integer(1_bi);
 	switch (style) {
-		case SpecialStyle::combined:
+		case SpecialInputStyle::combined:
 			return Ability::Honey_Gather;
-		case SpecialStyle::split:
+		case SpecialInputStyle::split:
 			return id_to_ability(species, id);
 	}
 }
@@ -149,20 +149,20 @@ constexpr auto parse_ivs_or_evs(Parser & parser, auto const bits) {
 	return GenericStats(hp, attack, defense, special_attack, special_defense, speed);
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_ivs(Parser & parser) {
 	constexpr auto bits = 5_bi;
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		return to_dvs_using_spa_as_spc(parse_ivs_or_evs<DV>(parser, bits));
 	} else {
 		return parse_ivs_or_evs<IV>(parser, bits);
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_evs(Parser & parser) {
 	auto const stored = parse_ivs_or_evs<EV>(parser, 8_bi);
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		// NetBattle technically preserves but ignores the EV values populated
 		// in old generations. Given that this matters only when moving Pokemon
 		// forward to later generations, I do not think that information needs
@@ -173,7 +173,7 @@ constexpr auto parse_evs(Parser & parser) {
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_pokemon(Parser & parser) -> tv::optional<InitialPokemon<style>> {
 	constexpr auto nickname_bytes = 15_bi;
 	auto const padded_nickname = parser.pop_string(nickname_bytes);
@@ -222,7 +222,7 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<InitialPokemon<sty
 	);
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 constexpr auto parse_team(Parser & parser) -> InitialTeam<style> {
 	return InitialTeam<style>(containers::remove_none(
 		containers::generate_n(
@@ -249,11 +249,11 @@ export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> 
 	auto const generation = game_version_to_generation(parser.pop_integer<GameVersion>(8_bi));
 	[[maybe_unused]] auto const avatar = parser.pop_integer(8_bi);
 	[[maybe_unused]] auto const sprite_type = parser.pop_integer(8_bi);
-	switch (special_style_for(generation)) {
-		case SpecialStyle::combined:
-			return parse_team<SpecialStyle::combined>(parser);
-		case SpecialStyle::split:
-			return parse_team<SpecialStyle::split>(parser);
+	switch (special_input_style_for(generation)) {
+		case SpecialInputStyle::combined:
+			return parse_team<SpecialInputStyle::combined>(parser);
+		case SpecialInputStyle::split:
+			return parse_team<SpecialInputStyle::split>(parser);
 	}
 }
 

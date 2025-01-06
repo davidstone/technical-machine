@@ -170,9 +170,9 @@ export constexpr auto to_dvs(GenericStats<DV> const stats) -> DVs {
 	return to_dvs_using_spa_as_spc(stats);
 }
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 constexpr auto max_dvs_or_ivs = [] {
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		constexpr auto value = DV(15_bi);
 		return DVs(
 			value,
@@ -181,7 +181,6 @@ constexpr auto max_dvs_or_ivs = [] {
 			value
 		);
 	} else {
-		static_assert(style == SpecialStyle::split);
 		constexpr auto value = IV(31_bi);
 		return IVs(
 			value,
@@ -194,8 +193,8 @@ constexpr auto max_dvs_or_ivs = [] {
 	}
 }();
 
-export template<SpecialStyle style>
-using DVsOrIVs = std::conditional_t<style == SpecialStyle::combined, DVs, IVs>;
+export template<SpecialInputStyle style>
+using DVsOrIVs = std::conditional_t<style == SpecialInputStyle::combined, DVs, IVs>;
 
 static_assert(DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)).hp() == DV(15_bi));
 static_assert(DVs(DV(15_bi), DV(14_bi), DV(15_bi), DV(15_bi)).hp() == DV(11_bi));

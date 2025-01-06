@@ -15,12 +15,12 @@ import tv;
 
 namespace technicalmachine {
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 using InitialTeam = containers::static_vector<InitialPokemon<style>, max_pokemon_per_team>;
 
 export using AnyInitialTeam = tv::variant<
-	InitialTeam<SpecialStyle::combined>,
-	InitialTeam<SpecialStyle::split>
+	InitialTeam<SpecialInputStyle::combined>,
+	InitialTeam<SpecialInputStyle::split>
 >;
 
 } // namespace technicalmachine

@@ -59,7 +59,7 @@ constexpr auto calculate_ivs_and_evs(
 	auto const base = BaseStats(generation, species);
 	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
 	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
-		return stat_to_ev<special_style_for(generation)>(
+		return stat_to_ev(
 			stats[stat_name],
 			base[stat_name],
 			level,
@@ -140,7 +140,7 @@ constexpr auto calculate_ivs_and_evs(
 		}
 	} else {
 		auto partial_ev_sum_is_valid = [](auto... evs) {
-			return (... + evs.value()) <= max_total_evs(special_style_for(generation));
+			return (... + evs.value()) <= max_total_evs(special_input_style_for(generation));
 		};
 		auto const hp_range = dv_or_iv_ev_range(
 			dvs_or_ivs.hp(),

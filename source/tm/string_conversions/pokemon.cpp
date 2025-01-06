@@ -132,13 +132,13 @@ constexpr auto stat_to_string(
 		);
 };
 
-template<SpecialStyle special_style>
+template<SpecialInputStyle special_style>
 constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> containers::string {
 	auto get_iv = [&](auto const stat) {
 		auto const value = stats.dvs_or_ivs[stat];
 		return BOUNDED_CONDITIONAL(!is_maxed(value), value, tv::none);
 	};
-	if constexpr (special_style == SpecialStyle::combined) {
+	if constexpr (special_style == SpecialInputStyle::combined) {
 		auto get_ev = [&](SpecialPermanentStat const stat) {
 			auto const value = stats.evs[stat];
 			return BOUNDED_CONDITIONAL(value < EV::useful_max, value, tv::none);
@@ -156,7 +156,7 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 			)
 		);
 	} else {
-		static_assert(special_style == SpecialStyle::split);
+		static_assert(special_style == SpecialInputStyle::split);
 		auto get_ev = [&](SplitSpecialPermanentStat const stat) {
 			auto const value = stats.evs[stat];
 			return BOUNDED_CONDITIONAL(value != 0_bi, value, tv::none);

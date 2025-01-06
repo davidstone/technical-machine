@@ -13,7 +13,7 @@ import std_module;
 
 namespace technicalmachine::sb {
 
-using SBTeam = InitialTeam<SpecialStyle::split>;
+using SBTeam = InitialTeam<SpecialInputStyle::split>;
 export auto read_team_file(std::span<std::byte const>) -> SBTeam;
 
 } // namespace technicalmachine::sb

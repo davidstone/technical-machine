@@ -38,7 +38,7 @@ template<typename Base>
 struct Inputs {
 	Base base;
 	PossibleOptimizedIVs ivs;
-	InitialStat<SpecialStyle::split> stat;
+	InitialStat<SpecialInputStyle::split> stat;
 	bool useful;
 };
 
@@ -80,10 +80,10 @@ export struct OffensiveEVs {
 	constexpr OffensiveEVs(Level const level, OffensiveEVAtk const atk, OffensiveEVSpA const spa) {
 		auto const atk_target = atk.useful ?
 			atk.stat :
-			numeric_traits::min_value<InitialStat<SpecialStyle::split>>;
+			numeric_traits::min_value<InitialStat<SpecialInputStyle::split>>;
 		auto const spa_target = spa.useful ?
 			spa.stat :
-			numeric_traits::min_value<InitialStat<SpecialStyle::split>>;
+			numeric_traits::min_value<InitialStat<SpecialInputStyle::split>>;
 		for (auto const natures : useful_nature_effects(atk.useful, spa.useful)) {
 			for (auto const atk_value : possible(level, atk, natures.physical, atk_target)) {
 				for (auto const spa_value : possible(level, spa, natures.special, spa_target)) {

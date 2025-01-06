@@ -13,22 +13,7 @@ namespace technicalmachine {
 
 // Split special for base stat, DV / IV, and EV
 export enum class StatStyle { gen1, gen2, current };
-
-// Split special for DV / IV and EV
-export enum class SpecialStyle { combined, split };
-
-export constexpr auto special_style(StatStyle const style) -> SpecialStyle {
-	switch (style) {
-		case StatStyle::gen1:
-		case StatStyle::gen2:
-			return SpecialStyle::combined;
-		case StatStyle::current:
-			return SpecialStyle::split;
-	}
-}
-
-
-export constexpr auto stat_style_for(Generation const generation) {
+export constexpr auto stat_style_for(Generation const generation) -> StatStyle {
 	switch (generation) {
 		case Generation::one:
 			return StatStyle::gen1;
@@ -44,18 +29,30 @@ export constexpr auto stat_style_for(Generation const generation) {
 	}
 }
 
-export constexpr auto special_style_for(Generation const generation) {
+// Split special for DVs / IVs and EVs
+export enum class SpecialInputStyle { combined, split };
+export constexpr auto special_input_style_for(Generation const generation) -> SpecialInputStyle {
 	switch (generation) {
 		case Generation::one:
 		case Generation::two:
-			return SpecialStyle::combined;
+			return SpecialInputStyle::combined;
 		case Generation::three:
 		case Generation::four:
 		case Generation::five:
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
-			return SpecialStyle::split;
+			return SpecialInputStyle::split;
+	}
+}
+
+export constexpr auto to_input_style(StatStyle const style) -> SpecialInputStyle {
+	switch (style) {
+		case StatStyle::gen1:
+		case StatStyle::gen2:
+			return SpecialInputStyle::combined;
+		case StatStyle::current:
+			return SpecialInputStyle::split;
 	}
 }
 
@@ -68,7 +65,7 @@ template<>
 constexpr auto numeric_traits::max_value<technicalmachine::StatStyle> = technicalmachine::StatStyle::current;
 
 template<>
-constexpr auto numeric_traits::min_value<technicalmachine::SpecialStyle> = technicalmachine::SpecialStyle::combined;
+constexpr auto numeric_traits::min_value<technicalmachine::SpecialInputStyle> = technicalmachine::SpecialInputStyle::combined;
 
 template<>
-constexpr auto numeric_traits::max_value<technicalmachine::SpecialStyle> = technicalmachine::SpecialStyle::split;
+constexpr auto numeric_traits::max_value<technicalmachine::SpecialInputStyle> = technicalmachine::SpecialInputStyle::split;

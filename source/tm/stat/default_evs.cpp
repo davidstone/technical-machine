@@ -14,9 +14,9 @@ import bounded;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 constexpr auto default_evs = [] {
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		constexpr auto ev = EV(252_bi);
 		return OldGenEVs(ev, ev, ev, ev, ev);
 	} else {

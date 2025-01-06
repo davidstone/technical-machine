@@ -54,7 +54,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	constexpr auto include_special_attack = false;
 	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Adamant,
-		max_dvs_or_ivs<special_style_for(generation)>,
+		max_dvs_or_ivs<special_input_style_for(generation)>,
 		EVs(
 			EV(252_bi),
 			EV(96_bi),
@@ -81,7 +81,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Modest,
-		max_dvs_or_ivs<special_style_for(generation)>,
+		max_dvs_or_ivs<special_input_style_for(generation)>,
 		EVs(
 			EV(192_bi),
 			EV(0_bi),

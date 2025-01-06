@@ -30,7 +30,7 @@ export struct SpeedEVs {
 	struct Input {
 		BaseStats::Spe base;
 		PossibleOptimizedIVs ivs;
-		InitialStat<SpecialStyle::split> target;
+		InitialStat<SpecialInputStyle::split> target;
 	};
 	constexpr SpeedEVs(Level const level, Input const input) {
 		for (auto const nature_effect : containers::enum_range<NatureEffect>()) {

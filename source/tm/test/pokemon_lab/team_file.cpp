@@ -183,7 +183,7 @@ constexpr auto team_xml = R"(
 </shoddybattle>
 )"sv;
 
-constexpr auto expected = InitialTeam<SpecialStyle::split>({
+constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	{
 		.species = Species::Hippowdon,
 		.gender = Gender::male,

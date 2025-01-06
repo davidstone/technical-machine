@@ -29,7 +29,7 @@ using namespace std::string_view_literals;
 
 namespace technicalmachine {
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 struct InitialPokemon {
 	Species species;
 	Nickname nickname = to_string(species);
@@ -45,7 +45,7 @@ struct InitialPokemon {
 
 } // namespace technicalmachine
 
-template<technicalmachine::SpecialStyle style>
+template<technicalmachine::SpecialInputStyle style>
 struct bounded::tombstone<technicalmachine::InitialPokemon<style>> {
 	using base = tombstone_traits<technicalmachine::InitialMoves>;
 

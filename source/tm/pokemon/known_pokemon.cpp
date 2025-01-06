@@ -63,7 +63,7 @@ struct KnownPokemon {
 		check_no_generation_one_hidden_power();
 	}
 
-	explicit constexpr KnownPokemon(InitialPokemon<special_style_for(generation)> const other):
+	explicit constexpr KnownPokemon(InitialPokemon<special_input_style_for(generation)> const other):
 		m_pokemon(other),
 		m_nickname(other.nickname)
 	{

@@ -96,7 +96,7 @@ constexpr auto parse_pokemon = [](Generation const generation, nlohmann::json co
 		);
 	};
 	auto get_stat = [=](SplitSpecialRegularStat const stat_name) {
-		return initial_stat<SpecialStyle::split>(
+		return initial_stat(
 			base_stats[stat_name],
 			level,
 			to_nature_effect(nature, stat_name),

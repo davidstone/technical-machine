@@ -37,7 +37,7 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto expected_team = InitialTeam<SpecialStyle::split>({
+constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	{
 		.species = Species::Bulbasaur,
 		.gender = Gender::male,

@@ -47,8 +47,8 @@ TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	constexpr auto hp = HP(base_hp, level, IV(31_bi), hp_ev).max();
-	constexpr auto defense = initial_stat<special_style_for(generation)>(base_def, level, NatureEffect::positive, IV(31_bi), defense_ev);
-	constexpr auto special_defense = initial_stat<special_style_for(generation)>(base_spd, level, NatureEffect::neutral, IV(31_bi), special_defense_ev);
+	constexpr auto defense = initial_stat(base_def, level, NatureEffect::positive, IV(31_bi), defense_ev);
+	constexpr auto special_defense = initial_stat(base_spd, level, NatureEffect::neutral, IV(31_bi), special_defense_ev);
 
 	constexpr auto input_hp = DefensiveEVHP{base_hp, possible_optimized_ivs(possible_ivs.hp()), hp};
 	constexpr auto input_def = DefensiveEVDef{base_def, possible_optimized_ivs(possible_ivs.def()), defense};

@@ -73,7 +73,7 @@ auto parse_evs(nlohmann::json const & pokemon) -> tv::optional<EVs> {
 		get("SpD"),
 		get("Spe")
 	);
-	if (ev_sum(result) > max_total_evs(SpecialStyle::split)) {
+	if (ev_sum(result) > max_total_evs(SpecialInputStyle::split)) {
 		throw std::runtime_error("Too many EVs");
 	}
 	return result;

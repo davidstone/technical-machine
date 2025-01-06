@@ -46,7 +46,7 @@ public:
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
 			[=](SplitSpecialRegularStat const stat_name) {
-				return initial_stat<special_style(stat_style)>(
+				return initial_stat(
 					base[stat_name],
 					level,
 					to_nature_effect(inputs.nature, stat_name),

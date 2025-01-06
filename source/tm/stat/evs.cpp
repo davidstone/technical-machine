@@ -99,9 +99,9 @@ export constexpr auto to_old_gen_evs(EVs const evs) -> OldGenEVs {
 	return OldGenEVs(evs.hp(), evs.atk(), evs.def(), evs.spe(), evs.spa());
 }
 
-export constexpr auto max_total_evs(SpecialStyle const stat_style) {
+export constexpr auto max_total_evs(SpecialInputStyle const stat_style) {
 	return BOUNDED_CONDITIONAL(
-		stat_style == SpecialStyle::combined,
+		stat_style == SpecialInputStyle::combined,
 		EV::max * 5_bi,
 		510_bi
 	);

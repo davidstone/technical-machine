@@ -145,7 +145,7 @@ constexpr auto moves_to_string(InitialMoves const moves) -> containers::string {
 	));
 };
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 constexpr auto to_string(InitialPokemon<style> const & pokemon) -> containers::string {
 	auto const species_str = to_string(pokemon.species);
 	return containers::concatenate<containers::string>(
@@ -165,7 +165,7 @@ constexpr auto to_string(InitialPokemon<style> const & pokemon) -> containers::s
 			containers::string(""sv),
 		"\n"sv,
 		// Technically not the right check, but in practice it's always accurate
-		style == SpecialStyle::split ?
+		style == SpecialInputStyle::split ?
 			containers::concatenate<containers::string>(
 				"Ability: "sv,
 				to_string(pokemon.ability),
@@ -188,7 +188,7 @@ constexpr auto to_string(InitialPokemon<style> const & pokemon) -> containers::s
 			containers::string(""sv),
 		evs_to_string(pokemon.stats.evs),
 		// Technically not the right check, but in practice it's always accurate
-		style == SpecialStyle::split ?
+		style == SpecialInputStyle::split ?
 			containers::concatenate<containers::string>(
 				to_string(pokemon.stats.nature),
 				" Nature\n"sv
@@ -199,7 +199,7 @@ constexpr auto to_string(InitialPokemon<style> const & pokemon) -> containers::s
 	);
 }
 
-export template<SpecialStyle style>
+export template<SpecialInputStyle style>
 constexpr auto to_string(InitialTeam<style> const & team) -> containers::string {
 	auto result = containers::string();
 	auto separator = ""sv;

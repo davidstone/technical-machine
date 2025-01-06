@@ -15,7 +15,7 @@ import bounded;
 namespace technicalmachine::ps {
 
 // PS always sends split-special stats
-export using ParsedStat = InitialStat<SpecialStyle::split>;
+export using ParsedStat = InitialStat<SpecialInputStyle::split>;
 
 export struct ParsedStats {
 	VisibleHP hp;

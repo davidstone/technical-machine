@@ -60,7 +60,7 @@ struct PokemonCollection {
 	{
 	}
 
-	constexpr explicit PokemonCollection(InitialTeam<special_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
+	constexpr explicit PokemonCollection(InitialTeam<special_input_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
 		m_container(containers::transform(other, bounded::construct<PokemonType>))
 	{
 	}

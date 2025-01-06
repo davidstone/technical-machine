@@ -43,7 +43,7 @@ template<typename Base>
 struct DefensiveEVStat {
 	Base base;
 	PossibleOptimizedIVs ivs;
-	InitialStat<SpecialStyle::split> stat;
+	InitialStat<SpecialInputStyle::split> stat;
 };
 
 export using DefensiveEVDef = DefensiveEVStat<BaseStats::Def>;
@@ -75,7 +75,7 @@ export struct DefensiveEVs {
 		auto defensive_product = [=](DataPoint const value) {
 			auto const hp = HP(original_hp.base, level, value.hp.iv, value.hp.ev).max();
 			auto single_product = [=](auto const base_stat, Individual const generated) {
-				return hp * initial_stat<SpecialStyle::split>(base_stat, level, generated.nature_effect, generated.iv, generated.ev);
+				return hp * initial_stat(base_stat, level, generated.nature_effect, generated.iv, generated.ev);
 			};
 			return
 				single_product(def.base, value.def) *
@@ -125,7 +125,7 @@ export struct DefensiveEVs {
 								specific_def,
 								specific_spd
 							);
-							if (ev_sum(candidate) > max_total_evs(SpecialStyle::split)) {
+							if (ev_sum(candidate) > max_total_evs(SpecialInputStyle::split)) {
 								continue;
 							}
 							auto & result = def_possibilities[to_index(specific_spd.iv)];

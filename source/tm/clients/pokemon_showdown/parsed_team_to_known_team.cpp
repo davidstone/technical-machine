@@ -45,7 +45,7 @@ constexpr auto parsed_team_to_known_team(ParsedTeam const & team) -> KnownTeam<g
 					}
 				}
 				auto get = [](auto const stat) {
-					using Stat = InitialStat<special_style_for(generation)>;
+					using Stat = InitialStat<special_input_style_for(generation)>;
 					return bounded::check_in_range<Stat>(stat);
 				};
 				return Stats<stat_style_for(generation)>(

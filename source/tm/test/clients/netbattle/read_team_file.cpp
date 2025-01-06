@@ -33,8 +33,8 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
-	InitialPokemon<SpecialStyle::split>{
+constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Forretress,
 		.nickname = "Alcatraz"sv,
 		.gender = Gender::male,
@@ -51,7 +51,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 			MoveName::Spikes,
 		}}
 	},
-	InitialPokemon<SpecialStyle::split>{
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Houndoom,
 		.nickname = "Crunch Time"sv,
 		.gender = Gender::male,
@@ -68,7 +68,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 			MoveName::Reversal,
 		}}
 	},
-	InitialPokemon<SpecialStyle::split>{
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Gengar,
 		.nickname = "Clyde"sv,
 		.gender = Gender::male,
@@ -86,7 +86,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 			MoveName::Nightmare,
 		}}
 	},
-	InitialPokemon<SpecialStyle::split>{
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Heracross,
 		.nickname = "Blinky"sv,
 		.gender = Gender::male,
@@ -103,7 +103,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 			MoveName::Reversal,
 		}}
 	},
-	InitialPokemon<SpecialStyle::split>{
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Mew,
 		.nickname = "Houdini"sv,
 		.item = Item::Leftovers,
@@ -119,7 +119,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 			MoveName::Soft_Boiled,
 		}}
 	},
-	InitialPokemon<SpecialStyle::split>{
+	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Zapdos,
 		.nickname = "Sparky"sv,
 		.item = Item::Leftovers,
@@ -138,7 +138,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialStyle::split>({
 	},
 });
 
-constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialStyle::combined>({
+constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle::combined>({
 	{
 		.species = Species::Raikou,
 		.nickname = "Aaron Carter"sv,

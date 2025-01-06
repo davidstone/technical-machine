@@ -88,8 +88,8 @@ constexpr auto combine(
 	DefensiveEVs const & d,
 	SpeedEVs const & s,
 	tv::optional<HiddenPower<generation>> const hidden_power
-) -> CombinedStats<SpecialStyle::split> {
-	auto best = tv::optional<CombinedStats<SpecialStyle::split>>();
+) -> CombinedStats<SpecialInputStyle::split> {
+	auto best = tv::optional<CombinedStats<SpecialInputStyle::split>>();
 	for (auto const spe : s) {
 		auto compatible_offensive = [=](auto const offensive) {
 			switch (spe.nature_effect) {
@@ -155,7 +155,7 @@ constexpr auto combine(
 					spe.ev
 				);
 				if (!best or ev_sum(candidate_evs) < ev_sum(best->evs)) {
-					insert(best, CombinedStats<SpecialStyle::split>(
+					insert(best, CombinedStats<SpecialInputStyle::split>(
 						to_nature(
 							offensive.atk.nature_effect,
 							defensive.def.nature_effect,
@@ -171,7 +171,7 @@ constexpr auto combine(
 		}
 	}
 	BOUNDED_ASSERT(best);
-	BOUNDED_ASSERT(ev_sum(best->evs) <= max_total_evs(SpecialStyle::split));
+	BOUNDED_ASSERT(ev_sum(best->evs) <= max_total_evs(SpecialInputStyle::split));
 	return *best;
 }
 
@@ -195,8 +195,8 @@ constexpr auto get_attack(PossibleDVs const all, bool const include_attack) -> D
 	}
 }
 
-constexpr auto combined_special_minimal_spread(PossibleDVs const dvs, bool const include_attack) -> CombinedStats<SpecialStyle::combined> {
-	return CombinedStats<SpecialStyle::combined>{
+constexpr auto combined_special_minimal_spread(PossibleDVs const dvs, bool const include_attack) -> CombinedStats<SpecialInputStyle::combined> {
+	return CombinedStats<SpecialInputStyle::combined>{
 		Nature::Hardy,
 		DVs(
 			get_attack(dvs, include_attack),
@@ -223,7 +223,7 @@ constexpr auto split_special_minimal_spread(
 	tv::optional<HiddenPower<generation>> const hidden_power,
 	bool const include_attack,
 	bool const include_special_attack
-) -> CombinedStats<SpecialStyle::split> {
+) -> CombinedStats<SpecialInputStyle::split> {
 	return combine(
 		OffensiveEVs(
 			level,

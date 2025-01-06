@@ -91,9 +91,9 @@ auto parse_moves(property_tree::ptree_reader pt) -> InitialMoves {
 	));
 }
 
-template<SpecialStyle stat_style>
+template<SpecialInputStyle stat_style>
 auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
-	constexpr auto is_combined = stat_style == SpecialStyle::combined;
+	constexpr auto is_combined = stat_style == SpecialInputStyle::combined;
 	using StatType = std::conditional_t<is_combined, DVAndEV, IVAndEV>;
 	auto hp = tv::optional<StatType>();
 	auto atk = tv::optional<StatType>();
@@ -137,7 +137,7 @@ auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
 			throw std::runtime_error("Mismatched Special DV / EV");
 		}
 		auto const dvs = DVs(atk->dv, def->dv, spe->dv, spa->dv);
-		if (dvs.hp() != hp->dv) {
+		if (get_hp(dvs) != hp->dv) {
 			throw std::runtime_error("Invalid HP DV");
 		}
 		return CombinedStats<stat_style>{
@@ -154,7 +154,7 @@ auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_pokemon(property_tree::ptree_reader pt) -> InitialPokemon<style> {
 	auto const species_str = pt.get<std::string>("<xmlattr>.species");
 	auto const given_nickname = pt.get<std::string>("nickname");
@@ -171,7 +171,7 @@ auto parse_pokemon(property_tree::ptree_reader pt) -> InitialPokemon<style> {
 	);
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_team(property_tree::ptree_reader ptree) -> InitialTeam<style> {
 	return InitialTeam<style>(
 		containers::transform(
@@ -189,15 +189,15 @@ auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto pt = owner.read_xml(bytes);
 
 	auto const all_pokemon = pt.get_child("shoddybattle");
-	using GenerationInteger = bounded::integer<1, 7>;
+	using GenerationInteger = decltype(bounded::integer(Generation()));
 	// The original format did not include a generation. Allow users to add
 	// this field.
 	auto const generation = static_cast<Generation>(all_pokemon.get("<xmlattr>.generation", GenerationInteger(4_bi)));
-	switch (special_style_for(generation)) {
-		case SpecialStyle::combined:
-			return parse_team<SpecialStyle::combined>(all_pokemon);
-		case SpecialStyle::split:
-			return parse_team<SpecialStyle::split>(all_pokemon);
+	switch (special_input_style_for(generation)) {
+		case SpecialInputStyle::combined:
+			return parse_team<SpecialInputStyle::combined>(all_pokemon);
+		case SpecialInputStyle::split:
+			return parse_team<SpecialInputStyle::split>(all_pokemon);
 	}
 }
 

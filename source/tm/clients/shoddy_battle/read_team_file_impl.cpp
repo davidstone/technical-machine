@@ -138,7 +138,7 @@ using AnyContainer = containers::dynamic_array<
 	bounded::integer<0, bounded::normalize<bounded::max(max_pokemon_per_team, max_moves_per_pokemon)>>
 >;
 
-using SBPokemon = InitialPokemon<SpecialStyle::split>;
+using SBPokemon = InitialPokemon<SpecialInputStyle::split>;
 
 struct ParsedData {
 	using State = tv::variant<

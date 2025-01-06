@@ -31,7 +31,7 @@ namespace {
 using namespace bounded::literal;
 
 template<Generation generation, std::size_t size>
-constexpr auto make_team(Environment const environment, containers::c_array<InitialPokemon<special_style_for(generation)>, size> && pokemon) {
+constexpr auto make_team(Environment const environment, containers::c_array<InitialPokemon<special_input_style_for(generation)>, size> && pokemon) {
 	auto team = Team<generation>({std::move(pokemon)});
 	team.pokemon().switch_in(environment, true);
 	return team;

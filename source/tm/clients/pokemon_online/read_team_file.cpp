@@ -122,10 +122,10 @@ auto parse_stats(std::string_view const name, CheckedIterator it) {
 	};
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_dvs_or_ivs(CheckedIterator it) {
 	constexpr auto name = "DV"sv;
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		auto const parsed = parse_stats<DV>(name, it);
 		struct Parsed {
 			DVs stats;
@@ -137,17 +137,23 @@ auto parse_dvs_or_ivs(CheckedIterator it) {
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_evs(CheckedIterator it) {
 	auto const parsed = parse_stats<EV>("EV"sv, it);
-	if constexpr (style == SpecialStyle::combined) {
+	if constexpr (style == SpecialInputStyle::combined) {
 		struct Parsed {
 			OldGenEVs stats;
 			CheckedIterator it;
 		};
 		auto const stored = parsed.stats;
 		return Parsed(
-			OldGenEVs(stored.hp(), stored.atk(), stored.def(), stored.spe(), stored.spa()),
+			OldGenEVs{
+				.hp = stored.hp,
+				.atk = stored.atk,
+				.def = stored.def,
+				.spe = stored.spe,
+				.spc = stored.spa
+			},
 			parsed.it
 		);
 	} else {
@@ -155,7 +161,7 @@ auto parse_evs(CheckedIterator it) {
 	}
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_pokemon(property_tree::ptree_reader pt) -> tv::optional<InitialPokemon<style>> {
 	auto const species_id = parse_species(pt);
 	if (!species_id) {
@@ -193,7 +199,7 @@ auto parse_pokemon(property_tree::ptree_reader pt) -> tv::optional<InitialPokemo
 	);
 }
 
-template<SpecialStyle style>
+template<SpecialInputStyle style>
 auto parse_team(property_tree::ptree_reader pt) -> InitialTeam<style> {
 	return InitialTeam<style>(containers::remove_none(
 		containers::transform(
@@ -213,11 +219,11 @@ export auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitial
 	auto const all_pokemon = pt.get_child("Team");
 	using GenerationInteger = bounded::integer<1, 7>;
 	auto const generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
-	switch (special_style_for(generation)) {
-		case SpecialStyle::combined:
-			return parse_team<SpecialStyle::combined>(all_pokemon);
-		case SpecialStyle::split:
-			return parse_team<SpecialStyle::split>(all_pokemon);
+	switch (special_input_style_for(generation)) {
+		case SpecialInputStyle::combined:
+			return parse_team<SpecialInputStyle::combined>(all_pokemon);
+		case SpecialInputStyle::split:
+			return parse_team<SpecialInputStyle::split>(all_pokemon);
 	}
 }
 

@@ -72,7 +72,7 @@ struct TeamImpl {
 	{
 	}
 
-	constexpr explicit TeamImpl(InitialTeam<special_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
+	constexpr explicit TeamImpl(InitialTeam<special_input_style_for(generation_from<PokemonType>)> const & other) requires(!any_seen_pokemon<PokemonType>):
 		m_all_pokemon(other)
 	{
 	}

@@ -47,7 +47,7 @@ constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 }
 
 struct AsStringPrinted {
-	template<SpecialStyle style>
+	template<SpecialInputStyle style>
 	static auto operator()(InitialTeam<style> const & team, std::filesystem::path const &) -> void {
 		std::cout << to_string(team) << '\n';
 	}
@@ -58,7 +58,7 @@ struct AsStringFile {
 		m_base_path(std::move(base_path))
 	{
 	}
-	template<SpecialStyle style>
+	template<SpecialInputStyle style>
 	auto operator()(InitialTeam<style> const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
 		path.replace_extension("txt");

@@ -88,7 +88,7 @@ struct Pokemon {
 	{
 	}
 
-	explicit constexpr Pokemon(InitialPokemon<special_style_for(generation)> const & other):
+	explicit constexpr Pokemon(InitialPokemon<special_input_style_for(generation)> const & other):
 		Pokemon(
 			other.species,
 			other.level,

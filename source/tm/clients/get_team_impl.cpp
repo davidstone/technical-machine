@@ -39,18 +39,14 @@ auto get_team(Generation const generation, SettingsFile::Team const & source, Al
 		},
 		[&](std::filesystem::path const & path) -> tv::optional<GenerationGeneric<KnownTeam>> {
 			auto const team = load_random_team_from_directory(random_engine, path);
-			if (team.index() != bounded::integer(special_style_for(generation))) {
-				throw std::runtime_error("Generation mismatch in team file vs. battle.");
-			}
-			return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
-				return tv::visit(team, tv::overload(
-					[](InitialTeam<special_style_for(g)> const & t) -> GenerationGeneric<KnownTeam> {
-						return KnownTeam<g>(t);
-					},
-					[](auto const &) -> GenerationGeneric<KnownTeam> {
+			return tv::visit(team, [&]<SpecialInputStyle style>(InitialTeam<style> const & t) {
+				return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) -> GenerationGeneric<KnownTeam> {
+					if constexpr (special_input_style_for(g) != style) {
 						throw std::runtime_error("Invalid team for generation");
+					} else {
+						return KnownTeam<g>(t);
 					}
-				));
+				});
 			});
 		}
 	));

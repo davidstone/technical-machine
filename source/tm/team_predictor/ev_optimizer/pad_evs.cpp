@@ -48,7 +48,7 @@ constexpr auto useful_value(auto const value) {
 	return EV(bounded::assume_in_range<EV::value_type>(value - value % minimal_increment));
 }
 
-constexpr auto max = max_total_evs(SpecialStyle::split);
+constexpr auto max = max_total_evs(SpecialInputStyle::split);
 
 constexpr auto greatest_non_full(EVs & evs) -> EV & {
 	return *containers::max_element(
