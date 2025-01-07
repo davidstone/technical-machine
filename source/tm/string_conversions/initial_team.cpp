@@ -83,26 +83,25 @@ constexpr auto stats_to_string(
 	if (all_default) {
 		return ""sv;
 	}
-	auto separator = ""sv;
 	return containers::string(containers::concatenate_view(
 		name,
-		containers::join(containers::transform_non_idempotent(
-			indexes,
-			[&](Index const index) -> containers::string {
-				auto const ev = stats[index].value();
-				if (ev == default_value) {
-					return ""sv;
+		containers::join_with(
+			containers::remove_none(containers::transform(
+				indexes,
+				[&](Index const index) -> tv::optional<containers::string> {
+					auto const ev = stats[index].value();
+					if (ev == default_value) {
+						return tv::none;
+					}
+					return containers::concatenate<containers::string>(
+						containers::to_string(ev),
+						" "sv,
+						to_string(index)
+					);
 				}
-				auto result = containers::concatenate<containers::string>(
-					separator,
-					containers::to_string(ev),
-					" "sv,
-					to_string(index)
-				);
-				separator = " / "sv;
-				return result;
-			}
-		)),
+			)),
+			" / "sv,
+		),
 		"\n"sv
 	));
 }
