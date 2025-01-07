@@ -5,17 +5,29 @@
 
 export module tm.open_file;
 
+import containers;
 import std_module;
 
 namespace technicalmachine {
 
+using namespace std::string_view_literals;
+
 template<typename Stream = std::fstream>
 constexpr auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode) -> Stream {
 	auto file = Stream(path, mode);
-	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+	try {
+		file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+	} catch (std::exception const & ex) {
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Could not open "sv,
+			path.string(),
+			": "sv,
+			std::string_view(ex.what())
+		));
+	}
 	return file;
 }
-
+	
 auto open_file_for_writing(std::filesystem::path const & path, std::ios_base::openmode const mode) -> std::ofstream {
 	std::filesystem::create_directories(path.parent_path());
 	return open_file<std::ofstream>(path, mode);
