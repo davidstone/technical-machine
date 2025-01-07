@@ -5,6 +5,7 @@
 
 export module tm.clients.ps.parsed_stats;
 
+import tm.stat.generic_stats;
 import tm.stat.initial_stat;
 import tm.stat.stat_style;
 
@@ -16,35 +17,6 @@ namespace technicalmachine::ps {
 
 // PS always sends split-special stats
 export using ParsedStat = InitialStat<SpecialInputStyle::split>;
-
-export struct ParsedStats {
-	VisibleHP hp;
-	ParsedStat atk;
-	ParsedStat def;
-	ParsedStat spa;
-	ParsedStat spd;
-	ParsedStat spe;
-	friend auto operator==(ParsedStats, ParsedStats) -> bool = default;
-};
+export using ParsedStats = GenericStats<VisibleHP, ParsedStat>;
 
 } // namespace techniclalmachine::ps
-
-template<>
-struct bounded::tombstone<technicalmachine::ps::ParsedStats> {
-private:
-	using base = tombstone_traits<technicalmachine::VisibleHP>;
-public:
-	static constexpr auto make(auto const index) noexcept -> technicalmachine::ps::ParsedStats {
-		return technicalmachine::ps::ParsedStats{
-			.hp = base::make(index),
-			.atk = {},
-			.def = {},
-			.spa = {},
-			.spd = {},
-			.spe = {}
-		};
-	}
-	static constexpr auto index(technicalmachine::ps::ParsedStats const & value) noexcept {
-		return base::index(value.hp);
-	}
-};
