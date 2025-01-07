@@ -11,8 +11,6 @@ import tm.stat.stat_style;
 
 import tm.visible_hp;
 
-import bounded;
-
 namespace technicalmachine::ps {
 
 // PS always sends split-special stats
