@@ -24,7 +24,7 @@ export constexpr auto parse_hp(std::string_view const str) {
 	if (current > max) {
 		throw std::runtime_error("Received a current HP greater than max HP");
 	}
-	return VisibleHP{current, max};
+	return VisibleHP(current, max);
 }
 
 } // namespace technicalmachine::ps
