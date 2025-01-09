@@ -22,31 +22,31 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export enum class Nature : std::uint8_t {
-	Adamant,
-	Bashful,
-	Bold,
-	Brave,
-	Calm,
-	Careful,
-	Docile,
-	Gentle,
 	Hardy,
-	Hasty,
-	Impish,
-	Jolly,
-	Lax,
 	Lonely,
-	Mild,
-	Modest,
-	Naive,
+	Brave,
+	Adamant,
 	Naughty,
-	Quiet,
-	Quirky,
-	Rash,
+	Bold,
+	Docile,
 	Relaxed,
-	Sassy,
-	Serious,
+	Impish,
+	Lax,
 	Timid,
+	Hasty,
+	Serious,
+	Jolly,
+	Naive,
+	Modest,
+	Mild,
+	Quiet,
+	Bashful,
+	Rash,
+	Calm,
+	Gentle,
+	Sassy,
+	Careful,
+	Quirky,
 };
 
 export constexpr auto boosts_stat(Nature const nature, SplitSpecialRegularStat const stat) -> bool {
@@ -154,4 +154,4 @@ template<>
 constexpr auto numeric_traits::min_value<technicalmachine::Nature> = technicalmachine::Nature();
 
 template<>
-constexpr auto numeric_traits::max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;
+constexpr auto numeric_traits::max_value<technicalmachine::Nature> = technicalmachine::Nature::Quirky;
