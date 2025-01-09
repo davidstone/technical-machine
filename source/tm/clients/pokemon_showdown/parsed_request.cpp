@@ -20,7 +20,7 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct ParsedMove {
-	MoveName move;
+	MoveName name;
 	PP::current_type pp;
 	bool enabled;
 

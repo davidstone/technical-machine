@@ -16,7 +16,6 @@ import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_started;
-import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.parsed_message;
 import tm.clients.ps.parsed_request;
 import tm.clients.ps.slot_memory;
@@ -83,10 +82,7 @@ export struct BattleManager {
 			},
 			[&](ParsedRequest const & request) -> BattleStarted {
 				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
-					return make_battle_message_handler(
-						request,
-						message
-					);
+					return BattleMessageHandler(request, message);
 				});
 				return BattleStarted(ActionRequired(handler.state(), handler.slot_memory()));
 			},

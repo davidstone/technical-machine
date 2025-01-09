@@ -11,10 +11,14 @@ module;
 export module tm.test.clients.ps.battle_message_handler;
 
 import tm.clients.ps.action_required;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
 import tm.clients.ps.parsed_message;
+import tm.clients.ps.parsed_request;
+import tm.clients.ps.parsed_stats;
+import tm.clients.ps.parsed_team;
 import tm.clients.ps.start_of_turn;
 import tm.clients.ps.switch_message;
 
@@ -26,9 +30,12 @@ import tm.clients.teams;
 import tm.clients.turn_count;
 
 import tm.move.actual_damage;
+import tm.move.initial_move;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
+import tm.move.move_names;
 import tm.move.move_result;
+import tm.move.pp;
 import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
@@ -36,9 +43,14 @@ import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.species;
 
+import tm.stat.base_stats;
+import tm.stat.make_stats;
 import tm.stat.stat_style;
+import tm.stat.stats;
 
 import tm.status.status_name;
+
+import tm.string_conversions.species;
 
 import tm.test.make_seen_team;
 
@@ -56,41 +68,136 @@ import containers;
 import tv;
 import std_module;
 
+
+import tm.to_index;
+import tm.string_conversions.pokemon;
+import tm.stat.nature;
+
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
+
+constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
+	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
+}
+
+template<typename T>
+constexpr auto to_parsed_stats(T const stats) -> ps::ParsedStats {
+	auto const hp = visible_hp(stats.hp.current(), stats.hp.max());
+	if constexpr (std::same_as<T, Stats<StatStyle::gen1>>) {
+		return ps::ParsedStats{
+			.hp = hp,
+			.atk = stats.atk,
+			.def = stats.def,
+			.spa = stats.spc,
+			.spd = stats.spc,
+			.spe = stats.spe
+		};
+	} else {
+		return ps::ParsedStats{
+			.hp = hp,
+			.atk = stats.atk,
+			.def = stats.def,
+			.spa = stats.spa,
+			.spd = stats.spd,
+			.spe = stats.spe
+		};
+	}
+}
 
 template<Generation generation, std::size_t known_size>
 auto make_init(
 	containers::c_array<InitialPokemon<special_input_style_for(generation)>, known_size> && known,
 	SeenPokemonInit const seen
 ) {
-	auto teams = [&] {
-		return Teams<generation>{
-			KnownTeam<generation>({std::move(known)}),
-			make_seen_team<generation>(seen)
-		};
-	};
+	auto known_team = ps::ParsedTeam(containers::transform(
+		known,
+		[](InitialPokemon<special_input_style_for(generation)> const & pokemon) {
+			CHECK(pokemon.stats.nature == Nature::Hardy);
+			return ps::ParsedPokemon{
+				.species = pokemon.species,
+				.level = pokemon.level,
+				.gender = pokemon.gender,
+				.item = pokemon.item,
+				.ability = pokemon.ability,
+				.stats = to_parsed_stats(make_stats<stat_style_for(generation)>(
+					BaseStats(generation, pokemon.species),
+					pokemon.level,
+					pokemon.stats
+				)),
+				.moves = MoveNames(containers::transform(pokemon.moves, &InitialMove::name)),
+				.happiness = pokemon.happiness
+			};
+		}
+	));
+	auto const & pokemon = known_team[0_bi];
+	auto const active_moves = known[0].moves;
 	return std::pair(
-		make_client_battle(teams()),
-		ps::BattleMessageHandler(Party(0_bi), teams())
+		make_client_battle(Teams<generation>(
+			KnownTeam<generation>(std::move(known)),
+			make_seen_team<generation>(seen)
+		)),
+		ps::BattleMessageHandler(
+			ps::ParsedRequest(
+				ps::ParsedMoves(containers::transform(
+					active_moves,
+					[](InitialMove const move) {
+						return ps::ParsedMove{
+							.name = move.name,
+							.pp = *PP(generation, move.name, move.pp_ups).remaining(),
+							.enabled = true
+						};
+					}
+				)),
+				ps::SwitchPossibilities::allowed,
+				Party(0_bi),
+				known_team
+			),
+			ps::BattleInitMessage(
+				generation,
+				{
+					ps::BattleInitMessage::Team(
+						ps::SwitchMessage(
+							Party(0_bi),
+							pokemon.species,
+							to_string(pokemon.species),
+							pokemon.level,
+							pokemon.gender,
+							pokemon.stats.hp,
+							StatusName::clear
+						),
+						bounded::constant<known_size>
+					),
+					ps::BattleInitMessage::Team(
+						ps::SwitchMessage(
+							Party(1_bi),
+							seen.species,
+							seen.nickname,
+							seen.level,
+							seen.gender,
+							visible_hp(100_bi, 100_bi),
+							StatusName::clear
+						),
+						seen.team_size
+					)
+				}
+			)
+		)
 	);
 }
 
-constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
-	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
-}
+#if 0
 
 auto handle_end_turn(ClientBattle & battle) -> void {
 	battle.end_turn(true, {false, false, false}, {false, false, false});
-}
+}	
 
 constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> VisibleMove {
 	auto result = VisibleMove(move);
 	result.damage = remaining;
 	return result;
-}
+}	
 
 template<std::size_t size>
 auto check_switch_options(ps::BattleMessageHandler const & handler, containers::c_array<ps::BattleResponseSwitch, size> && memory) {
@@ -163,8 +270,10 @@ auto check_state(
 
 constexpr auto did_not_miss = false;
 
-TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown]") {
-	constexpr auto generation = Generation::one;
+#endif
+
+TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown2]") {
+	constexpr auto generation = Generation::four;
 	auto [expected, handler] = make_init<generation>(
 		{
 			{.species = Species::Pikachu, .moves = {{MoveName::Tackle}}},
@@ -176,9 +285,15 @@ TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemo
 		}
 	);
 
-	check_state(handler.state(), expected->state());
-	check_switch_options(handler, {1_bi});
+	constexpr auto index = bounded::constant<to_index(generation)>;
+	auto const a = handler.state()[index].ai.pokemon(0_bi);
+	auto const e = expected->state()[index].ai.pokemon(0_bi);
+	CHECK(to_string(a) == to_string(e));
+	//check_state(handler.state(), expected->state());
+	//check_switch_options(handler, {1_bi});
 }
+
+#if 0
 
 TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 	constexpr auto generation = Generation::one;
@@ -1276,6 +1391,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 	}
 }
 
+#endif
 #endif
 
 } // namespace

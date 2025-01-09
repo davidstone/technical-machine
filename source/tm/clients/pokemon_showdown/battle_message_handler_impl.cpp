@@ -15,6 +15,7 @@ import tm.clients.ps.end_of_turn_state_builder;
 import tm.clients.ps.move_state;
 import tm.clients.ps.move_state_builder;
 import tm.clients.ps.parsed_message;
+import tm.clients.ps.parsed_team_to_known_team;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 
@@ -34,8 +35,10 @@ import tm.status.toxic_resets_on_switch;
 
 import tm.ability;
 import tm.any_team;
+import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
+import tm.team;
 import tm.team_is_empty;
 import tm.visible_hp;
 
@@ -47,10 +50,31 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace bounded::literal;
 
-BattleMessageHandler::BattleMessageHandler(Party party, GenerationGeneric<Teams> teams):
-	m_slot_memory(tv::visit(teams, [](auto const & t) { return t.ai.size(); })),
-	m_client_battle(make_client_battle(std::move(teams))),
-	m_party(party)
+template<Generation generation>
+constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> {
+	auto team = SeenTeam<generation>(parsed.size);
+	auto & pokemon = parsed.starter;
+	team.add_pokemon({
+		pokemon.species,
+		pokemon.nickname,
+		pokemon.level,
+		pokemon.gender,
+		pokemon.hp.max
+	});
+	return team;
+}
+
+BattleMessageHandler::BattleMessageHandler(ParsedRequest const & request, BattleInitMessage const message):
+	m_slot_memory(message.team[request.party.value()].size),
+	m_client_battle(make_client_battle(
+		constant_generation(message.generation, [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<Teams> {
+			return Teams<generation>(
+				parsed_team_to_known_team<generation>(request.team),
+				make_foe<generation>(message.team[other(request.party).value()])
+			);
+		})
+	)),
+	m_party(request.party)
 {
 }
 
