@@ -187,17 +187,15 @@ auto make_init(
 	);
 }
 
-#if 0
-
 auto handle_end_turn(ClientBattle & battle) -> void {
 	battle.end_turn(true, {false, false, false}, {false, false, false});
-}	
+}
 
 constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> VisibleMove {
 	auto result = VisibleMove(move);
 	result.damage = remaining;
 	return result;
-}	
+}
 
 template<std::size_t size>
 auto check_switch_options(ps::BattleMessageHandler const & handler, containers::c_array<ps::BattleResponseSwitch, size> && memory) {
@@ -270,10 +268,8 @@ auto check_state(
 
 constexpr auto did_not_miss = false;
 
-#endif
-
-TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown2]") {
-	constexpr auto generation = Generation::four;
+TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
 			{.species = Species::Pikachu, .moves = {{MoveName::Tackle}}},
@@ -285,15 +281,9 @@ TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemo
 		}
 	);
 
-	constexpr auto index = bounded::constant<to_index(generation)>;
-	auto const a = handler.state()[index].ai.pokemon(0_bi);
-	auto const e = expected->state()[index].ai.pokemon(0_bi);
-	CHECK(to_string(a) == to_string(e));
-	//check_state(handler.state(), expected->state());
-	//check_switch_options(handler, {1_bi});
+	check_state(handler.state(), expected->state());
+	check_switch_options(handler, {1_bi});
 }
-
-#if 0
 
 TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 	constexpr auto generation = Generation::one;
@@ -1391,7 +1381,6 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 	}
 }
 
-#endif
 #endif
 
 } // namespace
