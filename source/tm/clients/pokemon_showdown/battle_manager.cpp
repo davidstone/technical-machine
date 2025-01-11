@@ -82,7 +82,10 @@ export struct BattleManager {
 			},
 			[&](ParsedRequest const & request) -> BattleStarted {
 				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
-					return BattleMessageHandler(request, message);
+					return BattleMessageHandler(
+						auto(request),
+						message
+					);
 				});
 				return BattleStarted(ActionRequired(handler.state(), handler.slot_memory()));
 			},
