@@ -69,7 +69,8 @@ export struct BattleManager {
 			[](ParsedRequest const &) {
 				throw std::runtime_error("Got two teams while handling messages");
 			},
-			[&](BattleMessageHandler &) {
+			[&](BattleMessageHandler & handler) {
+				handler.save_request(message);
 			}
 		));
 		return BattleContinues();
@@ -87,7 +88,11 @@ export struct BattleManager {
 						message
 					);
 				});
-				return BattleStarted(ActionRequired(handler.state(), handler.slot_memory()));
+				return BattleStarted(ActionRequired(
+					handler.state(),
+					handler.slot_memory(),
+					handler.exchange_request()
+				));
 			},
 			[](BattleMessageHandler const &) -> BattleStarted {
 				throw std::runtime_error("Tried to initialize an existing battle");

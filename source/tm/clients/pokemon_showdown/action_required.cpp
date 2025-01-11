@@ -5,6 +5,7 @@
 
 export module tm.clients.ps.action_required;
 
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.slot_memory;
 
 import tm.generation_generic;
@@ -15,6 +16,7 @@ namespace technicalmachine::ps {
 export struct ActionRequired {
 	GenerationGeneric<VisibleState> state;
 	SlotMemory slot_memory;
+	ParsedRequest request;
 };
 
 } // namespace technicalmachine::ps

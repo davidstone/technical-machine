@@ -51,6 +51,15 @@ struct HitSelf {
 export struct BattleMessageHandler {
 	BattleMessageHandler(ParsedRequest const &, BattleInitMessage);
 
+	// We get this message too early so we save it for later.
+	// https://github.com/smogon/pokemon-showdown/issues/8546
+	auto save_request(ParsedRequest const & request) -> void {
+		if (m_request) {
+			throw std::runtime_error("Got multiple requests in a row");
+		}
+		tv::insert(m_request, request);
+	}
+
 	using Result = tv::variant<
 		ActionRequired,
 		StartOfTurn,
@@ -61,9 +70,16 @@ export struct BattleMessageHandler {
 	auto state() const -> GenerationGeneric<VisibleState> {
 		return m_client_battle->state();
 	}
-
 	auto slot_memory() const -> SlotMemory {
 		return m_slot_memory;
+	}
+	auto exchange_request() -> ParsedRequest {
+		if (!m_request) {
+			throw std::runtime_error("No cached request");
+		}
+		auto result = *std::move(m_request);
+		m_request = tv::none;
+		return result;
 	}
 private:
 	auto use_move(MoveState) -> void;
@@ -82,6 +98,7 @@ private:
 	auto try_correct_hp_and_status(bool const is_ai, tv::optional<VisibleHP>, tv::optional<StatusName>) -> void;
 
 	SlotMemory m_slot_memory;
+	tv::optional<ParsedRequest> m_request;
 	std::unique_ptr<ClientBattle> m_client_battle;
 	Party m_party;
 };
