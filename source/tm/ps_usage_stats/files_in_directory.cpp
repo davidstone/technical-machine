@@ -19,7 +19,7 @@ struct not_directory {
 
 export auto files_in_directory(std::filesystem::path const & path) {
 	return containers::filter(
-		containers::range_view(
+		containers::subrange(
 			std::filesystem::recursive_directory_iterator(path),
 			std::default_sentinel
 		),

@@ -44,7 +44,7 @@ using namespace std::string_view_literals;
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
 	auto file = open_text_file_for_reading(file_name);
-	return containers::string(containers::range_view(
+	return containers::string(containers::subrange(
 		std::istreambuf_iterator<char>(file),
 		std::default_sentinel
 	));
@@ -86,7 +86,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 
 		auto paths_in_directory = [](std::filesystem::path const & path) {
 			return containers::transform(
-				containers::range_view(
+				containers::subrange(
 					std::filesystem::directory_iterator(path),
 					std::default_sentinel
 				),

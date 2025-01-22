@@ -16,7 +16,7 @@ namespace technicalmachine {
 export auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
 	auto file = open_binary_file_for_reading(path);
 	return containers::vector(containers::transform(
-		containers::range_view(
+		containers::subrange(
 			std::istreambuf_iterator<char>(file),
 			std::default_sentinel
 		),

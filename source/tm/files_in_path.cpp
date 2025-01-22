@@ -15,7 +15,7 @@ export auto files_in_path(std::filesystem::path const & path) -> containers::vec
 	if (not_directory(path)) {
 		return containers::vector<std::filesystem::path>({path});
 	}
-	auto view = containers::range_view(
+	auto view = containers::subrange(
 		std::filesystem::recursive_directory_iterator(path),
 		std::default_sentinel
 	);
