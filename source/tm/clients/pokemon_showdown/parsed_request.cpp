@@ -14,6 +14,7 @@ import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 import tm.move.pp;
 
+import bounded;
 import containers;
 import std_module;
 
@@ -26,6 +27,24 @@ export struct ParsedMove {
 
 	friend auto operator==(ParsedMove, ParsedMove) -> bool = default;
 };
+
+} // namespace technicalmachine::ps
+
+template<>
+struct bounded::tombstone<technicalmachine::ps::ParsedMove> {
+	static constexpr auto make(auto const index) noexcept -> technicalmachine::ps::ParsedMove {
+		return technicalmachine::ps::ParsedMove(
+			technicalmachine::MoveName(),
+			tombstone<technicalmachine::PP::current_type>::make(index),
+			false
+		);
+	}
+	static constexpr auto index(technicalmachine::ps::ParsedMove const & value) noexcept {
+		return tombstone<technicalmachine::PP::current_type>::index(value.pp);
+	}
+};
+
+namespace technicalmachine::ps {
 
 export using ParsedMoves = containers::static_vector<ParsedMove, max_moves_per_pokemon>;
 
