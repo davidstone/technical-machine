@@ -568,7 +568,7 @@ auto possible_side_effects(
 	Environment const original_environment
 ) -> SideEffects<AssociatedTeam<UserPokemon>> {
 	using UserTeam = AssociatedTeam<UserPokemon>;
-	constexpr auto generation = generation_from<UserPokemon>;
+	static constexpr auto generation = generation_from<UserPokemon>;
 	switch (move) {
 		case MoveName::Absorb:
 		case MoveName::Drain_Punch:
