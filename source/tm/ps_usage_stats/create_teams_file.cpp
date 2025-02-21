@@ -3,8 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <filesystem>
-
 import tm.ps_usage_stats.battle_result_writer;
 import tm.ps_usage_stats.files_in_directory;
 import tm.ps_usage_stats.parallel_for_each;

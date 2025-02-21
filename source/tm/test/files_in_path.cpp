@@ -3,7 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <filesystem>
 #include <catch2/catch_test_macros.hpp>
 
 import tm.files_in_path;

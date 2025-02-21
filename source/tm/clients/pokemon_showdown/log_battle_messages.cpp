@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <fstream>
-
 export module tm.clients.ps.log_battle_messages;
 
 import tm.clients.ps.room_message_block;

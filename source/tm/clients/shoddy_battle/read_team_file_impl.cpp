@@ -5,9 +5,6 @@
 
 module;
 
-#include <string_view>
-#include <span>
-
 #include <operators/forward.hpp>
 
 module tm.clients.sb.read_team_file;

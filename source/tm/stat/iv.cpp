@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <string>
-
 export module tm.stat.iv;
 
 import tm.stat.generic_stats;

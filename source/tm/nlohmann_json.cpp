@@ -5,8 +5,6 @@
 
 module;
 
-#include <variant>
-
 #include <nlohmann/json.hpp>
 
 export module tm.nlohmann_json;

@@ -3,8 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <string_view>
-
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;

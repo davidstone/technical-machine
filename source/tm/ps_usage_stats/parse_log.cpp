@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <string_view>
-
 export module tm.ps_usage_stats.parse_log;
 
 import tm.clients.ps.parse_gender;

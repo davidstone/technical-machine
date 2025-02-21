@@ -5,7 +5,6 @@
 
 module;
 
-#include <string_view>
 #include <bounded/assert.hpp>
 
 export module tm.clients.ps.slot_memory;

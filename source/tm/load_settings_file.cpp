@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <string_view>
-
 export module tm.load_settings_file;
 
 import tm.load_json_from_file;

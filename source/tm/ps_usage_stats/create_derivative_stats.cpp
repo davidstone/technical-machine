@@ -3,9 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <fstream>
-#include <memory>
-
 import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;
 import tm.ps_usage_stats.rating;

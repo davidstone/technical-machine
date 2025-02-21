@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <string_view>
-
 module tm.clients.ps.to_packed_format;
 
 import tm.stat.calculate_ivs_and_evs;

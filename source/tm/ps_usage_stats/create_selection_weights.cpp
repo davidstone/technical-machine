@@ -3,8 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <string_view>
-
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;

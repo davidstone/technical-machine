@@ -5,8 +5,6 @@
 
 module;
 
-#include <string>
-
 #include <bounded/assert.hpp>
 
 export module tm.stat.calculate_ivs_and_evs;
