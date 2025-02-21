@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <string_view>
 
 module tm.clients.ps.to_packed_format;

@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <string_view>
 
 export module tm.team_predictor.server.style;

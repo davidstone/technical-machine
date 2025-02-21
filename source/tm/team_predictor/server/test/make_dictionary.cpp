@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 export module tm.team_predictor.server.test.make_dictionary;

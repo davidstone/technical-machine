@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <string>
 
 export module tm.clients.po.invalid_team_file;

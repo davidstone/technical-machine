@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <ostream>
 
 export module tm.pokemon.happiness;

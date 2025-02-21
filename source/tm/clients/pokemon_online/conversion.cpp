@@ -5,8 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
-
 #include <string>
 
 #include <bounded/assert.hpp>

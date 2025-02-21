@@ -5,7 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
 #include <fstream>
 
 export module tm.clients.ps.log_battle_messages;

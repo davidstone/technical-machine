@@ -5,8 +5,6 @@
 
 module;
 
-#include <std_module/prelude.hpp>
-
 export module tm.test.clients.ps.message_block;
 
 import tm.clients.ps.in_message;
