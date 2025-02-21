@@ -15,13 +15,19 @@ namespace technicalmachine {
 
 export auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
 	auto file = open_binary_file_for_reading(path);
-	return containers::vector(containers::transform(
+    auto result = containers::vector<std::byte>(containers::reserve_space_for(
+		bounded::check_in_range<containers::array_size_type<std::byte>>(
+			std::filesystem::file_size(path)
+		)
+	));
+	containers::assign_to_empty(result, containers::transform(
 		containers::subrange(
 			std::istreambuf_iterator<char>(file),
 			std::default_sentinel
 		),
 		bounded::construct<std::byte>
 	));
+	return result;
 }
 
 } // namespace technicalmachine
