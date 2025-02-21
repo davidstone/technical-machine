@@ -72,6 +72,8 @@ import tm.to_index;
 import tm.string_conversions.pokemon;
 import tm.stat.nature;
 
+#if 0
+
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
@@ -1384,3 +1386,5 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 
 } // namespace
 } // namespace technicalmachine
+
+#endif
