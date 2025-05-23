@@ -64,9 +64,9 @@ using WeatherModifier = rational<
 	bounded::constant_t<2>
 >;
 constexpr auto calculate_weather_modifier(Type const type, Weather const weather) -> WeatherModifier {
-	constexpr auto boost = WeatherModifier(3_bi, 2_bi);
-	constexpr auto neutral = WeatherModifier(2_bi, 2_bi);
-	constexpr auto weaken = WeatherModifier(1_bi, 2_bi);
+	static constexpr auto boost = WeatherModifier(3_bi, 2_bi);
+	static constexpr auto neutral = WeatherModifier(2_bi, 2_bi);
+	static constexpr auto weaken = WeatherModifier(1_bi, 2_bi);
 	switch (weather) {
 		case Weather::clear:
 		case Weather::hail:
