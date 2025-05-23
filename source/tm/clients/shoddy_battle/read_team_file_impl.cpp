@@ -69,10 +69,10 @@ struct ByteParser {
 	{
 	}
 
-	constexpr auto pop_byte() {
+	constexpr auto pop_byte() -> std::byte {
 		return m_view.pop(1)[0];
 	}
-	constexpr auto pop_integer(auto const bytes) {
+	constexpr auto pop_integer(auto const bytes) -> ByteInteger<bytes> {
 		auto result = ByteInteger<bytes>(0_bi);
 		for (auto const byte : m_view.pop(static_cast<std::size_t>(bytes))) {
 			result *= (1_bi << bits_in_byte);

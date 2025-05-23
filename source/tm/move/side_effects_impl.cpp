@@ -59,7 +59,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<any_team UserTeam>
-constexpr auto guaranteed_effect(SideEffectFunction<UserTeam> function) {
+constexpr auto guaranteed_effect(SideEffectFunction<UserTeam> function) -> SideEffects<UserTeam> {
 	return SideEffects<UserTeam>({
 		SideEffect<UserTeam>{
 			Probability(1.0),
@@ -86,7 +86,7 @@ constexpr auto reflected_status(Generation const generation, StatusName const st
 }
 
 template<any_mutable_active_pokemon UserPokemon>
-constexpr auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Environment const environment) {
+constexpr auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Environment const environment) -> void {
 	target.set_status(status, environment);
 	auto const reflected = reflected_status(generation_from<UserPokemon>, status);
 	if (reflected and reflects_status(target.ability())) {
@@ -98,7 +98,7 @@ template<any_team UserTeam>
 constexpr auto no_effect = guaranteed_effect<UserTeam>(no_effect_function);
 
 template<any_team UserTeam>
-constexpr auto basic_probability(Probability const probability, SideEffectFunction<UserTeam> function) {
+constexpr auto basic_probability(Probability const probability, SideEffectFunction<UserTeam> function) -> SideEffects<UserTeam> {
 	return probability == Probability(1.0) ?
 		guaranteed_effect<UserTeam>(function) :
 		SideEffects<UserTeam>({
@@ -425,7 +425,7 @@ struct recover_half_t {
 };
 constexpr auto recover_half = recover_half_t();
 
-constexpr auto stat_can_boost(Stage const stage) {
+constexpr auto stat_can_boost(Stage const stage) -> bool {
 	return stage.value() != numeric_traits::max_value<Stage::value_type>;
 }
 
@@ -433,7 +433,7 @@ template<auto...>
 struct sequence {};
 
 template<any_active_pokemon TargetPokemon>
-constexpr auto acupressure_effect(TargetPokemon const target) {
+constexpr auto acupressure_effect(TargetPokemon const target) -> SideEffects<AssociatedTeam<TargetPokemon>> {
 	using UserTeam = AssociatedTeam<TargetPokemon>;
 	auto const stages = target.stages();
 	auto const boostable = containers::count_if(stages, stat_can_boost);
@@ -463,17 +463,17 @@ constexpr auto acupressure_effect(TargetPokemon const target) {
 	return result;
 }
 
-constexpr auto active_pokemon_can_be_phazed(any_team auto const & team) {
+constexpr auto active_pokemon_can_be_phazed(any_team auto const & team) -> bool {
 	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and team.size() > 1_bi;
 }
 
 template<auto index>
-constexpr auto phaze = [](any_team auto & user, any_team auto & target, Environment & environment, auto) {
+constexpr auto phaze = [](any_team auto & user, any_team auto & target, Environment & environment, auto) -> void {
 	target.switch_pokemon(user.pokemon(), environment, index);
 };
 
 template<any_team TargetTeam>
-constexpr auto phaze_effect(TargetTeam const & target) {
+constexpr auto phaze_effect(TargetTeam const & target) -> SideEffects<OtherTeam<TargetTeam>> {
 	using UserTeam = OtherTeam<TargetTeam>;
 	if (!active_pokemon_can_be_phazed(target)) {
 		return no_effect<UserTeam>;
@@ -499,7 +499,7 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 }
 
 template<auto reduction>
-constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Environment & environment, auto) {
+constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Environment & environment, auto) -> void {
 	auto const pokemon = user.pokemon();
 	if (auto const last_move = pokemon.last_used_move().name()) {
 		pokemon.reduce_pp(*last_move, environment, reduction);
@@ -518,7 +518,7 @@ template<int minimum, int maximum>
 using make_integer_sequence = typename increase_by<minimum, std::make_integer_sequence<int, maximum - minimum + 1>>::type;
 
 template<any_team UserTeam>
-constexpr auto random_spite = [] {
+constexpr auto random_spite = [] -> SideEffects<UserTeam> {
 	constexpr auto min_reduction = 2;
 	constexpr auto max_reduction = 5;
 	constexpr auto probability = Probability(1.0 / double(max_reduction - min_reduction + 1));
@@ -534,7 +534,7 @@ constexpr auto random_spite = [] {
 }();
 
 template<any_active_pokemon PokemonType>
-constexpr auto item_can_be_lost(PokemonType const pokemon) {
+constexpr auto item_can_be_lost(PokemonType const pokemon) -> bool {
 	return
 		pokemon.ability() != Ability::Sticky_Hold or
 		(generation_from<PokemonType> >= Generation::five and pokemon.hp().current() == 0_bi);
@@ -556,7 +556,7 @@ struct equalize_hp_t {
 };
 constexpr auto equalize_hp = equalize_hp_t();
 
-constexpr auto can_confuse_with_chatter(Species const pokemon) {
+constexpr auto can_confuse_with_chatter(Species const pokemon) -> bool {
 	return pokemon == Species::Chatot;
 }
 

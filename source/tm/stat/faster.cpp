@@ -62,7 +62,7 @@ private:
 export template<Generation generation>
 struct Order : operators::arrow<Order<generation>> {
 	Order(Team<generation> const & team1, Selection const selection1, Team<generation> const & team2, Selection const selection2, Environment const environment):
-		Order([&] {
+		Order([&] -> Order {
 			auto const priority1 = Priority(generation, selection1);
 			auto const priority2 = Priority(generation, selection2);
 

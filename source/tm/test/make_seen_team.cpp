@@ -32,7 +32,7 @@ export struct SeenPokemonInit {
 };
 
 export template<Generation generation>
-constexpr auto make_seen_team(SeenPokemonInit const seen) {
+constexpr auto make_seen_team(SeenPokemonInit const seen) -> SeenTeam<generation> {
 	auto team = SeenTeam<generation>(seen.team_size);
 	team.add_pokemon(SeenPokemon<generation>(
 		seen.species,

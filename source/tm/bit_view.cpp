@@ -37,7 +37,7 @@ export struct BitView {
 	constexpr auto pop_integer(auto const bits) {
 		return pop_bits<bounded::integer<0, bounded::normalize<(1_bi << bits) - 1_bi>>>(bits);
 	}
-	constexpr auto pop_string(auto const size_in_bytes) {
+	constexpr auto pop_string(auto const size_in_bytes) -> containers::string {
 		BOUNDED_ASSERT(m_consumed_bits_in_initial_byte == 0_bi);
 		BOUNDED_ASSERT(size_in_bytes <= m_view.size());
 		auto const bytes = pop(static_cast<std::size_t>(size_in_bytes));
@@ -61,7 +61,7 @@ private:
 	}
 
 	template<typename result_t>
-	constexpr auto pop_bits(auto const bits) {
+	constexpr auto pop_bits(auto const bits) -> result_t {
 		BOUNDED_ASSERT(bits <= remaining_bits());
 		auto result = result_t(0_bi);
 		auto remaining_bits = bounded::integer<0, bounded::normalize<bits>>(bits);

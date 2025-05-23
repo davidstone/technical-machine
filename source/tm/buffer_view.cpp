@@ -26,7 +26,7 @@ struct BufferView {
 	{
 	}
 	
-	constexpr auto pop(std::size_t const elements) {
+	constexpr auto pop(std::size_t const elements) -> View {
 		if (elements > m_buffer.size()) {
 			throw std::runtime_error("Attempted to pop too many elements.");
 		}
@@ -34,7 +34,7 @@ struct BufferView {
 		m_buffer = View(m_buffer.data() + elements, m_buffer.size() - elements);
 		return result;
 	}
-	constexpr auto remainder() const {
+	constexpr auto remainder() const -> View {
 		return m_buffer;
 	}
 
@@ -43,7 +43,7 @@ private:
 };
 
 export template<typename View>
-constexpr auto pop_to_delimiter(BufferView<View> & buffer_view, auto const delimiter) {
+constexpr auto pop_to_delimiter(BufferView<View> & buffer_view, auto const delimiter) -> View {
 	auto const view = buffer_view.remainder();
 	auto const offsets = split_offsets(view, delimiter);
 	auto result = buffer_view.pop(offsets.first);
@@ -63,13 +63,13 @@ struct DelimitedBufferView {
 	{
 	}
 
-	constexpr auto pop(auto const delimiter) {
+	constexpr auto pop(auto const delimiter) -> View {
 		return pop_to_delimiter(m_buffer, delimiter);
 	}
-	constexpr auto pop() {
+	constexpr auto pop() -> View {
 		return pop(m_delimiter);
 	}
-	constexpr auto remainder() const {
+	constexpr auto remainder() const -> View {
 		return m_buffer.remainder();
 	}
 
@@ -81,7 +81,7 @@ private:
 
 namespace {
 
-constexpr auto pop_zero_from_empty() {
+constexpr auto pop_zero_from_empty() -> bool {
 	auto view = BufferView(std::string_view(""));
 
 	BOUNDED_ASSERT(view.remainder() == "");
@@ -95,7 +95,7 @@ constexpr auto pop_zero_from_empty() {
 static_assert(pop_zero_from_empty());
 
 
-constexpr auto pop_zero_from_non_empty() {
+constexpr auto pop_zero_from_non_empty() -> bool {
 	auto view = BufferView(std::string_view("technical"));
 
 	BOUNDED_ASSERT(view.remainder() == "technical");
@@ -108,7 +108,7 @@ constexpr auto pop_zero_from_non_empty() {
 
 static_assert(pop_zero_from_non_empty());
 
-constexpr auto pop_some() {
+constexpr auto pop_some() -> bool {
 	auto view = BufferView(std::string_view("machine"));
 
 	BOUNDED_ASSERT(view.remainder() == "machine");
@@ -121,7 +121,7 @@ constexpr auto pop_some() {
 
 static_assert(pop_some());
 
-constexpr auto pop_char_delimiter_from_empty() {
+constexpr auto pop_char_delimiter_from_empty() -> bool {
 	auto view = DelimitedBufferView(std::string_view(""), 'c');
 
 	BOUNDED_ASSERT(view.remainder() == "");
@@ -134,7 +134,7 @@ constexpr auto pop_char_delimiter_from_empty() {
 
 static_assert(pop_char_delimiter_from_empty());
 
-constexpr auto pop_to_found_char_delimiter() {
+constexpr auto pop_to_found_char_delimiter() -> bool {
 	auto view = BufferView(std::string_view("pokemon"));
 
 	BOUNDED_ASSERT(view.remainder() == "pokemon");
@@ -148,7 +148,7 @@ constexpr auto pop_to_found_char_delimiter() {
 
 static_assert(pop_to_found_char_delimiter());
 
-constexpr auto pop_to_not_found_char_delimiter() {
+constexpr auto pop_to_not_found_char_delimiter() -> bool {
 	auto view = BufferView(std::string_view("pokemon"));
 
 	BOUNDED_ASSERT(view.remainder() == "pokemon");
@@ -162,7 +162,7 @@ constexpr auto pop_to_not_found_char_delimiter() {
 
 static_assert(pop_to_not_found_char_delimiter());
 
-constexpr auto pop_to_found_string_delimiter() {
+constexpr auto pop_to_found_string_delimiter() -> bool {
 	auto view = BufferView(std::string_view("pokemon"));
 
 	BOUNDED_ASSERT(view.remainder() == "pokemon");
@@ -176,7 +176,7 @@ constexpr auto pop_to_found_string_delimiter() {
 
 static_assert(pop_to_found_string_delimiter());
 
-constexpr auto pop_to_not_found_string_delimiter() {
+constexpr auto pop_to_not_found_string_delimiter() -> bool {
 	auto view = BufferView(std::string_view("pokemon"));
 
 	BOUNDED_ASSERT(view.remainder() == "pokemon");

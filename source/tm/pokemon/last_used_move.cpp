@@ -370,7 +370,7 @@ struct LastUsedMove {
 		return rational(10_bi + boost, 10_bi);
 	}
 
-	constexpr auto momentum_move_power() const {
+	constexpr auto momentum_move_power() const -> bounded::integer<30, 480> {
 		auto const result = 30_bi << bounded::min(m_consecutive_successes, 4_bi);
 		static_assert(numeric_traits::min_value<decltype(result)> == 30_bi);
 		static_assert(numeric_traits::max_value<decltype(result)> == 480_bi);
@@ -401,7 +401,7 @@ struct LastUsedMove {
 		return moved_this_turn() and !m_move;
 	}
 
-	constexpr auto triple_kick_power() const {
+	constexpr auto triple_kick_power() const -> bounded::integer<10, 30> {
 		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
 		static_assert(numeric_traits::min_value<decltype(result)> == 10_bi);
 		static_assert(numeric_traits::max_value<decltype(result)> == 30_bi);

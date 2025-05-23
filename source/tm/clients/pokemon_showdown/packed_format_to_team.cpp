@@ -145,7 +145,7 @@ constexpr auto parse_dvs_or_ivs(std::string_view const str) {
 }
 
 template<Generation generation>
-constexpr auto parse_pokemon(std::string_view const str) {
+constexpr auto parse_pokemon(std::string_view const str) -> KnownPokemon<generation> {
 	auto buffer = DelimitedBufferView(str, '|');
 	auto const nickname = Nickname(buffer.pop());
 	auto const species = parse_species(buffer.pop(), nickname);
