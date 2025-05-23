@@ -42,13 +42,12 @@ auto make_battle(
 	containers::c_array<InitialPokemon<special_input_style_for(generation)>, known_size> && known,
 	SeenPokemonInit const seen
 ) {
-	auto battle = make_client_battle(
+	return make_client_battle(
 		Teams<generation>{
 			KnownTeam<generation>({std::move(known)}),
 			make_seen_team<generation>(seen)
 		}
 	);
-	return battle;
 }
 
 constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {

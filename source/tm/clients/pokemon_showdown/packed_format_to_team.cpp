@@ -162,7 +162,7 @@ constexpr auto parse_pokemon(std::string_view const str) -> KnownPokemon<generat
 	[[maybe_unused]] auto const pokeball = buffer.pop(',');
 	// TODO: Support Hyper Training
 	[[maybe_unused]] auto const hidden_power_type = buffer.remainder();
-	auto pokemon = KnownPokemon<generation>(
+	return KnownPokemon<generation>(
 		species,
 		nickname,
 		level,
@@ -173,7 +173,6 @@ constexpr auto parse_pokemon(std::string_view const str) -> KnownPokemon<generat
 		moves,
 		happiness
 	);
-	return pokemon;
 }
 
 export template<Generation generation>
