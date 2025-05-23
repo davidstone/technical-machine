@@ -68,7 +68,7 @@ export constexpr auto parsed_side_to_request(ParsedSide side) -> ParsedRequest {
 		ParsedMoves(),
 		SwitchPossibilities::maybe_trapped,
 		std::move(side).party,
-		std::move(side).team,
+		std::move(side).team
 	);
 }
 

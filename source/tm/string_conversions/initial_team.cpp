@@ -100,7 +100,7 @@ constexpr auto stats_to_string(
 					);
 				}
 			)),
-			" / "sv,
+			" / "sv
 		),
 		"\n"sv
 	));
