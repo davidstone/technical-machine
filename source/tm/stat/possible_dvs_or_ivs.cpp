@@ -137,14 +137,15 @@ constexpr auto possible_spc_dvs_power(HiddenPowerDVPower const power) {
 
 export using PossibleDVs = GenericDVStats<Possible<DV>>;
 
+constexpr auto no_hidden_power = PossibleDVs{
+	all_possible<DV>,
+	all_possible<DV>,
+	all_possible<DV>,
+	all_possible<DV>
+};
+
 template<Generation generation> requires(generation <= Generation::two)
 constexpr auto possible_dvs(tv::optional<HiddenPower<generation>> const hidden_power) -> PossibleDVs {
-	constexpr auto no_hidden_power = PossibleDVs{
-		all_possible<DV>,
-		all_possible<DV>,
-		all_possible<DV>,
-		all_possible<DV>
-	};
 	if constexpr (generation == Generation::one) {
 		return no_hidden_power;
 	} else {
