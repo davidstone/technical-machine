@@ -43,14 +43,14 @@ export constexpr auto parse_details(std::string_view const details) -> ParsedDet
 	auto const gender = parse_gender(gender_or_shiny_str);
 
 	auto const shiny_str = gender != Gender::genderless ? parser.pop() : gender_or_shiny_str;
-	auto throw_exception = [&] {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "sv, details));
+	auto exception = [&] {
+		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "sv, details));
 	};
 	if (shiny_str != "shiny" and shiny_str != "") {
-		throw_exception();
+		throw exception();
 	}
 	if (!parser.remainder().empty()) {
-		throw_exception();
+		throw exception();
 	}
 	return ParsedDetails{species, level, gender};
 }
