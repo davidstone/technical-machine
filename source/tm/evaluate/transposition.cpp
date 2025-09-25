@@ -34,19 +34,12 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 	}
 }
 
-template<std::size_t... indexes>
-constexpr auto hash(auto const & compressed_battle, std::index_sequence<indexes...>) -> TableIndex {
-	auto result = TableIndex(0_bi);
-	(..., update_hash(result, compressed_battle[bounded::constant<indexes>]));
-	return result;
-}
-
 template<typename Compressed>
 constexpr auto index(Compressed const & compressed_battle) -> TableIndex {
-	return hash(
-		compressed_battle,
-		bounded::make_index_sequence(tv::tuple_size<Compressed>)
-	);
+	auto const [...indexes] = bounded::index_sequence_struct(tv::tuple_size<Compressed>);
+	auto result = TableIndex(0_bi);
+	(..., update_hash(result, compressed_battle[indexes]));
+	return result;
 }
 
 template<Generation generation>

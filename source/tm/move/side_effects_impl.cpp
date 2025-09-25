@@ -491,10 +491,8 @@ constexpr auto phaze_effect(TargetTeam const & target) -> SideEffects<OtherTeam<
 			containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, phaze<index>});
 		}
 	};
-	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
-		(..., add_one(bounded::constant<indexes>));
-	};
-	add_all(bounded::make_index_sequence(numeric_traits::max_value<TeamSize>));
+	auto const [...indexes] = bounded::index_sequence_struct(numeric_traits::max_value<TeamSize>);
+	(..., add_one(bounded::constant<indexes>));
 	return result;
 }
 
@@ -506,30 +504,18 @@ constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Environment
 	}
 };
 
-template<int, typename>
-struct increase_by;
-
-template<int minimum, int... values>
-struct increase_by<minimum, std::integer_sequence<int, values...>> {
-	using type = std::integer_sequence<int, (values + minimum)...>;
-};
-
-template<int minimum, int maximum>
-using make_integer_sequence = typename increase_by<minimum, std::make_integer_sequence<int, maximum - minimum + 1>>::type;
-
 template<any_team UserTeam>
 constexpr auto random_spite = [] -> SideEffects<UserTeam> {
-	constexpr auto min_reduction = 2;
-	constexpr auto max_reduction = 5;
-	constexpr auto probability = Probability(1.0 / double(max_reduction - min_reduction + 1));
+	constexpr auto min_reduction = 2_bi;
+	constexpr auto max_reduction = 5_bi;
+	constexpr auto reduction_count = max_reduction - min_reduction + 1_bi;
+	constexpr auto probability = Probability(1.0 / double(reduction_count.value()));
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, reduce_pp<index>});
 	};
-	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
-		(..., add_one(bounded::constant<indexes>));
-	};
-	add_all(make_integer_sequence<min_reduction, max_reduction>());
+	auto const [...indexes] = bounded::index_sequence_struct(reduction_count);
+	(..., add_one(indexes + min_reduction));
 	return result;
 }();
 
