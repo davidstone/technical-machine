@@ -13,7 +13,6 @@ import tm.clients.ps.parse_request;
 
 import bounded;
 import containers;
-import tv;
 import std_module;
 
 namespace technicalmachine::ps {
@@ -21,9 +20,7 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"sv;
-
-export constexpr auto make_battle_message(auto const messages) -> tv::optional<BattleMessage> {
+export constexpr auto make_battle_message(auto const messages) -> BattleMessage {
 	std::same_as<InMessage> auto const first_message = containers::front(messages);
 	auto matches = [&](auto const... strs) {
 		return (... or (first_message.type() == strs));
@@ -39,15 +36,8 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 	} else if (matches("-message"sv)) {
 		return make_event_block(messages);
 	} else if (matches("player"sv)) {
-		if (containers::next(containers::begin(messages)) == containers::end(messages)) {
-			return tv::none;
-		} else {
-			return make_battle_init_message(messages);
-		}
+		return make_battle_init_message(messages);
 	} else if (matches("request"sv)) {
-		if (containers::linear_size(messages) != 1_bi) {
-			throw std::runtime_error("Request message contains too much data");
-		}
 		return parse_request(first_message.remainder());
 	} else if (matches("teamsize"sv)) {
 		// This never starts a block in the real stream. However, we have to
@@ -56,18 +46,12 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 		// parsing those files.
 		return make_battle_init_message(messages);
 	} else if (matches(""sv)) {
-		if (first_message.remainder() == ladder_timeout) {
-			return tv::none;
-		} else {
-			return make_event_block(messages);
-		}
+		return make_event_block(messages);
 	} else if (matches("error"sv)) {
 		if (containers::linear_size(messages) != 1_bi) {
 			throw std::runtime_error("Error message contains too much data");
 		}
 		return ErrorMessage(first_message.remainder());
-	} else if (matches("raw"sv, "t:"sv, "inactive"sv, "inactiveoff"sv)) {
-		return tv::none;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Unknown battle message: |"sv,

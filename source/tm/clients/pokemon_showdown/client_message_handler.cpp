@@ -7,6 +7,7 @@ export module tm.clients.ps.client_message_handler;
 
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_message;
+import tm.clients.ps.battle_message_kind;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.battles;
@@ -128,9 +129,15 @@ export struct ClientMessageHandler {
 		if (is_chat_message_block(messages)) {
 		} else if (is_battle_message(block.room())) {
 			log_battle_messages(m_battles_directory, block);
-			auto const battle_message = make_battle_message(messages);
-			if (battle_message) {
-				handle_battle_message(block.room(), *battle_message);
+			auto const first = containers::begin(messages);
+			auto const first_message = *first;
+			auto const has_more_data = containers::next(first) != containers::end(messages);
+			switch (get_battle_message_kind(first_message, has_more_data)) {
+				case BattleMessageKind::junk:
+					break;
+				case BattleMessageKind::regular:
+					handle_battle_message(block.room(), make_battle_message(messages));
+					break;
 			}
 		} else {
 			for (auto const message : messages) {

@@ -51,12 +51,13 @@ constexpr auto is_potentially_useful = [](InMessage const message) {
 		!is_chat_message(message) and
 		message.type() != "error" and
 		message.type() != "gametype" and
-		message.type() != "player";
+		message.type() != "player" and
+		message.type() != "t:";
 };
 
 export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dynamic_array<BattleMessage> {
 	return containers::dynamic_array<BattleMessage>(
-		containers::remove_none(containers::transform(
+		containers::transform(
 			containers::chunk_by(
 				containers::filter(
 					containers::transform(log, [](nlohmann::json const & message) {
@@ -69,7 +70,7 @@ export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dy
 			[](auto const messages) {
 				return make_battle_message(messages);
 			}
-		))
+		)
 	);
 }
 

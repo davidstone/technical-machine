@@ -321,6 +321,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/battle_manager.cpp
 		clients/pokemon_showdown/battle_message.cpp
 		clients/pokemon_showdown/battle_message_handler.cpp
+		clients/pokemon_showdown/battle_message_kind.cpp
 		clients/pokemon_showdown/battle_response_switch.cpp
 		clients/pokemon_showdown/battle_started.cpp
 		clients/pokemon_showdown/battles.cpp
