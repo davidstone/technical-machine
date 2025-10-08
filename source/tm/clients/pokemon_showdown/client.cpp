@@ -11,6 +11,7 @@ import tm.clients.ps.sockets;
 
 import tm.strategy.strategy;
 
+import tm.get_directory;
 import tm.settings_file;
 
 import std_module;
@@ -22,6 +23,7 @@ export struct Client {
 		m_sockets(settings.host, settings.port, settings.resource),
 		m_impl(
 			std::move(settings),
+			get_battles_directory(),
 			std::move(strategy),
 			[&](std::string_view const output) { m_sockets.write_message(output); },
 			[&](auto const & ... args) { return m_sockets.authenticate(args...); }

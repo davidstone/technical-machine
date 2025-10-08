@@ -41,7 +41,6 @@ import tm.boost_networking;
 import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
-import tm.get_directory;
 import tm.nlohmann_json;
 import tm.open_file;
 import tm.settings_file;
@@ -103,11 +102,17 @@ auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void
 }
 
 export struct ClientMessageHandler {
-	ClientMessageHandler(SettingsFile settings, Strategy strategy, SendMessageFunction send_message, AuthenticationFunction authenticate):
+	ClientMessageHandler(
+		SettingsFile settings,
+		std::filesystem::path battles_directory,
+		Strategy strategy,
+		SendMessageFunction send_message,
+		AuthenticationFunction authenticate
+	):
 		m_random_engine(std::random_device()()),
 		m_strategy(std::move(strategy)),
 		m_settings(std::move(settings)),
-		m_battles_directory(get_battles_directory()),
+		m_battles_directory(std::move(battles_directory)),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
 	{
