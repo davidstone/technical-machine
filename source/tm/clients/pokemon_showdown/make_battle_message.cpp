@@ -48,11 +48,7 @@ export constexpr auto make_battle_message(auto const messages) -> tv::optional<B
 		if (containers::linear_size(messages) != 1_bi) {
 			throw std::runtime_error("Request message contains too much data");
 		}
-		auto const json_str = first_message.remainder();
-		if (json_str.empty()) {
-			return tv::none;
-		}
-		return parse_request(json_str);
+		return parse_request(first_message.remainder());
 	} else if (matches("teamsize"sv)) {
 		// This never starts a block in the real stream. However, we have to
 		// filter out all the "player" messages when parsing PS logs due to bugs
