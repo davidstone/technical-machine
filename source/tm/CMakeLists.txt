@@ -507,7 +507,7 @@ target_sources(ps_regression_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		test/clients/pokemon_showdown/battles.cpp
+		test/clients/pokemon_showdown/client_message_handler.cpp
 )
 target_link_libraries(ps_regression_test
 	tm_pokemon_showdown
