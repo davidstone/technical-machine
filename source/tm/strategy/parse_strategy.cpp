@@ -23,6 +23,9 @@ namespace technicalmachine {
 using namespace std::string_view_literals;
 
 export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
+	if (argc < 1) {
+		throw std::runtime_error("Command line must include strategy");
+	}
 	auto const name = std::string_view(argv[0]);
 	if (name == "random"sv) {
 		if (argc != 2) {
