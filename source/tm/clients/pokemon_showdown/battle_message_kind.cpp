@@ -18,7 +18,8 @@ constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated
 
 export enum class BattleMessageKind {
 	junk,
-	regular
+	regular,
+	error
 };
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
@@ -48,7 +49,7 @@ export constexpr auto get_battle_message_kind(InMessage const first_message, boo
 		if (has_more_data) {
 			throw std::runtime_error("Error message contains too much data");
 		}
-		return regular;
+		return error;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Unknown battle message kind: |"sv,

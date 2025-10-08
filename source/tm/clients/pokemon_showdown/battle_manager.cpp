@@ -17,7 +17,6 @@ import tm.clients.ps.start_of_turn;
 
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
-import tm.clients.battle_response_error;
 import tm.clients.party;
 import tm.clients.turn_count;
 
@@ -51,8 +50,7 @@ export struct BattleManager {
 		StartOfTurn,
 		BattleFinished,
 		BattleContinues,
-		BattleStarted,
-		BattleResponseError
+		BattleStarted
 	>;
 
 	constexpr auto handle_message(ParsedRequest const & message) -> Result {
@@ -109,16 +107,6 @@ export struct BattleManager {
 				});
 			}
 		));
-	}
-
-	auto handle_message(ErrorMessage const error) const -> Result {
-		// TODO: Log? Throw an exception sometimes?
-		std::cerr << "|error|" << error.message() << '\n';
-		if (error.message() == "[Invalid choice] There's nothing to choose") {
-			return BattleContinues();
-		} else {
-			return BattleResponseError();
-		}
 	}
 private:
 	BattleState m_battle = BattleExists();

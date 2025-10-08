@@ -47,11 +47,6 @@ export constexpr auto make_battle_message(auto const messages) -> BattleMessage 
 		return make_battle_init_message(messages);
 	} else if (matches(""sv)) {
 		return make_event_block(messages);
-	} else if (matches("error"sv)) {
-		if (containers::linear_size(messages) != 1_bi) {
-			throw std::runtime_error("Error message contains too much data");
-		}
-		return ErrorMessage(first_message.remainder());
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Unknown battle message: |"sv,

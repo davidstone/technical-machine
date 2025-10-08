@@ -27,7 +27,6 @@ import tm.clients.ps.to_packed_format;
 import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
-import tm.clients.battle_response_error;
 import tm.clients.determine_selection;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
@@ -138,6 +137,12 @@ export struct ClientMessageHandler {
 				case BattleMessageKind::regular:
 					handle_battle_message(block.room(), make_battle_message(messages));
 					break;
+				case BattleMessageKind::error:
+					handle_error_message(
+						block.room(),
+						first_message.remainder()
+					);
+					break;
 			}
 		} else {
 			for (auto const message : messages) {
@@ -196,12 +201,6 @@ private:
 			},
 			[](BattleContinues) {
 			},
-			[&](BattleResponseError) {
-				m_send_message(containers::concatenate<containers::string>(
-					room,
-					"|/choose default"sv
-				));
-			},
 			[&](BattleStarted const & value) {
 				determine_and_send_selection(value);
 				if (m_settings.style.index() == bounded::type<SettingsFile::Ladder>) {
@@ -215,6 +214,16 @@ private:
 			[](BattleAlreadyFinished) {
 			}
 		));
+	}
+
+	auto handle_error_message(Room const room, std::string_view const error) const -> void {
+		std::cerr << "|error|" << error << '\n';
+		if (error != "[Invalid choice] There's nothing to choose"sv) {
+			m_send_message(containers::concatenate<containers::string>(
+				room,
+				"|/choose default"sv
+			));
+		}
 	}
 
 	auto handle_message(Room const room, InMessage message) -> void {

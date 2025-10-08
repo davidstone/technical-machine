@@ -14,7 +14,6 @@ import tm.clients.ps.start_of_turn;
 
 import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
-import tm.clients.battle_response_error;
 import tm.clients.battle_finished;
 
 import bounded;
@@ -34,7 +33,6 @@ export struct Battles {
 		BattleFinished,
 		BattleContinues,
 		BattleStarted,
-		BattleResponseError,
 		BattleAlreadyFinished
 	>;
 	constexpr auto handle_message(

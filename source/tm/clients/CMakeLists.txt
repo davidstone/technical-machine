@@ -11,7 +11,6 @@ target_sources(tm_clients PUBLIC
 		battle_already_finished.cpp
 		battle_continues.cpp
 		battle_finished.cpp
-		battle_response_error.cpp
 		check_weathers_match.cpp
 		client_battle.cpp
 		determine_selection.cpp

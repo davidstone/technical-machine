@@ -9,7 +9,6 @@ import tm.clients.ps.battle_init_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.parsed_request;
 
-import std_module;
 import tv;
 
 namespace technicalmachine::ps {
@@ -18,25 +17,11 @@ export struct CreateBattle {
 	friend auto operator==(CreateBattle, CreateBattle) -> bool = default;
 };
 
-export struct ErrorMessage {
-	constexpr explicit ErrorMessage(std::string_view const message_):
-		m_message(message_)
-	{
-	}
-	constexpr auto message() const -> std::string_view {
-		return m_message;
-	}
-	friend auto operator==(ErrorMessage, ErrorMessage) -> bool = default;
-private:
-	std::string_view m_message;
-};
-
 export using BattleMessage = tv::variant<
 	CreateBattle,
 	ParsedRequest,
 	BattleInitMessage,
-	EventBlock,
-	ErrorMessage
+	EventBlock
 >;
 
 } // namespace technicalmachine::ps
