@@ -237,7 +237,7 @@ auto update_weights_for_one_side_of_battle(
 	std::span<PlayerInput const> const player_inputs
 ) -> void {
 	auto battle = ps::BattleManager();
-	battle.handle_message(parsed_side_to_request(rated_side.side));
+	battle.handle_request(parsed_side_to_request(rated_side.side));
 	auto selections = containers::zip_smallest(
 		battle_states_requiring_selection(battle_messages, battle),
 		containers::filter(player_inputs, is_input_for(rated_side.side.party))

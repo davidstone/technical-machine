@@ -17,6 +17,8 @@ import tm.clients.ps.in_message;
 import tm.clients.ps.make_battle_message;
 import tm.clients.ps.message_block;
 import tm.clients.ps.parse_generation_from_format;
+import tm.clients.ps.parse_request;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.room;
 import tm.clients.ps.room_message_block;
 import tm.clients.ps.send_message_function;
@@ -137,6 +139,12 @@ export struct ClientMessageHandler {
 				case BattleMessageKind::regular:
 					handle_battle_message(block.room(), make_battle_message(messages));
 					break;
+				case BattleMessageKind::request:
+					handle_battle_request(
+						block.room(),
+						parse_request(first_message.remainder())
+					);
+					break;
 				case BattleMessageKind::error:
 					handle_error_message(
 						block.room(),
@@ -214,6 +222,10 @@ private:
 			[](BattleAlreadyFinished) {
 			}
 		));
+	}
+
+	auto handle_battle_request(Room const room, ParsedRequest const & message) -> void {
+		m_battles.handle_request(room, message);
 	}
 
 	auto handle_error_message(Room const room, std::string_view const error) const -> void {

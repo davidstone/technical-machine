@@ -210,7 +210,7 @@ auto score_one_side_of_battle(
 ) -> WeightedScore {
 	auto const inputs_for_side = containers::filter(player_inputs, is_input_for(rated_side.side.party));
 	auto battle = BattleManager();
-	battle.handle_message(parsed_side_to_request(rated_side.side));
+	battle.handle_request(parsed_side_to_request(rated_side.side));
 	try {
 		auto const scores = containers::vector(containers::transform(
 			containers::zip_smallest(

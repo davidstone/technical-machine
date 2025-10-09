@@ -19,6 +19,7 @@ constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated
 export enum class BattleMessageKind {
 	junk,
 	regular,
+	request,
 	error
 };
 
@@ -44,7 +45,7 @@ export constexpr auto get_battle_message_kind(InMessage const first_message, boo
 		if (has_more_data) {
 			throw std::runtime_error("Request message contains too much data");
 		}
-		return regular;
+		return request;
 	} else if (matches("error"sv)) {
 		if (has_more_data) {
 			throw std::runtime_error("Error message contains too much data");

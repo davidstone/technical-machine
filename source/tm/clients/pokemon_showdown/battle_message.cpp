@@ -19,7 +19,6 @@ export struct CreateBattle {
 
 export using BattleMessage = tv::variant<
 	CreateBattle,
-	ParsedRequest,
 	BattleInitMessage,
 	EventBlock
 >;

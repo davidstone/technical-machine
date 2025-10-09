@@ -9,6 +9,7 @@ import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_started;
+import tm.clients.ps.parsed_request;
 import tm.clients.ps.room;
 import tm.clients.ps.start_of_turn;
 
@@ -26,6 +27,17 @@ using namespace std::string_view_literals;
 
 export struct Battles {
 	Battles() = default;
+
+	constexpr auto handle_request(
+		Room const room,
+		ParsedRequest const & message
+	) -> void {
+		auto const battle = containers::lookup(m_container, room);
+		if (!battle) {
+			throw std::runtime_error("Got a request for a battle that does not exist");
+		}
+		battle->handle_request(message);
+	}
 
 	using Result = tv::variant<
 		ActionRequired,

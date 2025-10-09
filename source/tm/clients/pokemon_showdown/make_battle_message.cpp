@@ -37,8 +37,6 @@ export constexpr auto make_battle_message(auto const messages) -> BattleMessage 
 		return make_event_block(messages);
 	} else if (matches("player"sv)) {
 		return make_battle_init_message(messages);
-	} else if (matches("request"sv)) {
-		return parse_request(first_message.remainder());
 	} else if (matches("teamsize"sv)) {
 		// This never starts a block in the real stream. However, we have to
 		// filter out all the "player" messages when parsing PS logs due to bugs

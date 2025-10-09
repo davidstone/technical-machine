@@ -53,7 +53,7 @@ export struct BattleManager {
 		BattleStarted
 	>;
 
-	constexpr auto handle_message(ParsedRequest const & message) -> Result {
+	constexpr auto handle_request(ParsedRequest const & message) -> void {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists) {
 				m_battle = message;
@@ -65,7 +65,6 @@ export struct BattleManager {
 				handler.save_request(message);
 			}
 		));
-		return BattleContinues();
 	}
 
 	auto handle_message(BattleInitMessage const message) -> Result {
