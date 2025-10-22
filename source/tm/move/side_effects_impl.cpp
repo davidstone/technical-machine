@@ -1191,11 +1191,11 @@ auto possible_side_effects(
 			return confusing_stat_boost<UserTeam, BoostableStat::atk, 2>;
 
 		case MoveName::Bounce:
-			return original_user.last_used_move().is_charging_up() ?
+			return original_user.last_used_move().is_charging() ?
 				no_effect<UserTeam> :
 				status_effect<StatusName::paralysis>(Probability(0.3), original_user, original_other, original_environment);
 		case MoveName::Shadow_Force:
-			return original_user.last_used_move().is_charging_up() ?
+			return original_user.last_used_move().is_charging() ?
 				no_effect<UserTeam> :
 				guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 					other.pokemon().break_protect();
@@ -1214,7 +1214,7 @@ auto possible_side_effects(
 				no_effect<UserTeam>;
 		}
 		case MoveName::Sky_Attack:
-			return original_user.last_used_move().is_charging_up() ?
+			return original_user.last_used_move().is_charging() ?
 				no_effect<UserTeam> :
 				SideEffects<UserTeam>({
 					SideEffect<UserTeam>{Probability(0.7), no_effect_function},

@@ -21,6 +21,7 @@ struct ExecutedMove {
 	SideEffectFunction<UserTeam> side_effect;
 	bool critical_hit;
 	ContactAbilityEffect contact_ability_effect;
+	bool action_ends;
 };
 
 } // namespace technicalmachine

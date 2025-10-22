@@ -43,14 +43,6 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-export struct DoNothing {};
-export struct ConsumeItem {};
-export using SuccessfulMove = tv::variant<
-	DoNothing,
-	ConsumeItem,
-	CurrentHP
->;
-
 template<typename T>
 concept ends_at_action = requires(T const & value) {
 	value.action_end_probability();
@@ -100,14 +92,16 @@ struct LastUsedMove {
 
 	// If the user selects Thunder, but is hit by Encore before it can move and
 	// is forced to execute Metronome, which calls Assist, which calls Tackle,
-	// Sleep Talk is `first_executed` and Tackle is `last_executed`
+	// Metronome is `first_executed` and Tackle is `last_executed`
+	//
+	// Returns whether this execution consumed an item
 	constexpr auto successful_move(
 		MoveName const first_executed,
 		MoveName const last_executed,
 		bool const end_effect,
 		Item const item,
 		Weather const weather
-	) & -> SuccessfulMove {
+	) & -> bool {
 		auto check_valid_lock_in = [&] {
 			// TODO: Choice Band can be weird
 			if (!successful_last_move(first_executed)) {
@@ -120,39 +114,39 @@ struct LastUsedMove {
 			}
 		};
 		auto const result = tv::visit(m_effects, tv::overload(
-			[&](Empty) -> SuccessfulMove {
+			[&](Empty) -> bool {
 				switch (last_executed) {
 					case MoveName::Bide:
 						m_effects = Bide<generation>();
-						return DoNothing();
+						return false;
 					case MoveName::Bounce:
 					case MoveName::Dig:
 					case MoveName::Dive:
 					case MoveName::Fly:
 					case MoveName::Shadow_Force:
 						if (item == Item::Power_Herb) {
-							return ConsumeItem();
+							return true;
 						}
 						m_effects = Vanishing();
-						return DoNothing();
+						return false;
 					case MoveName::Meteor_Beam:
 					case MoveName::Razor_Wind:
 					case MoveName::Skull_Bash:
 					case MoveName::Sky_Attack:
 						if (item == Item::Power_Herb) {
-							return ConsumeItem();
+							return true;
 						}
 						m_effects = ChargingUp();
-						return DoNothing();
+						return false;
 					case MoveName::Solar_Beam:
 						if (weather == Weather::sun) {
-							return DoNothing();
+							return false;
 						}
 						if (item == Item::Power_Herb) {
-							return ConsumeItem();
+							return true;
 						}
 						m_effects = ChargingUp();
-						return DoNothing();
+						return false;
 					case MoveName::Bind:
 					case MoveName::Clamp:
 					case MoveName::Fire_Spin:
@@ -160,11 +154,11 @@ struct LastUsedMove {
 						if constexpr (generation == Generation::one) {
 							m_effects = Immobilize();
 						}
-						return DoNothing();
+						return false;
 					case MoveName::Detect:
 					case MoveName::Protect:
 						m_effects = Protecting();
-						return DoNothing();
+						return false;
 					case MoveName::Blast_Burn:
 					case MoveName::Eternabeam:
 					case MoveName::Frenzy_Plant:
@@ -175,58 +169,57 @@ struct LastUsedMove {
 					case MoveName::Roar_of_Time:
 					case MoveName::Rock_Wrecker:
 						m_effects = Recharging();
-						return DoNothing();
+						return false;
 					case MoveName::Outrage:
 					case MoveName::Petal_Dance:
 					case MoveName::Thrash:
 						m_effects = Rampage<generation>();
-						return DoNothing();
+						return false;
 					case MoveName::Uproar:
 						m_effects = UproarCounter();
-						return DoNothing();
+						return false;
 					default:
-						return DoNothing();
+						return false;
 				}
 			},
-			[&](Bide<generation> & bide) -> SuccessfulMove {
+			[&](Bide<generation> & bide) -> bool {
 				check_valid_lock_in();
 				if (!end_effect) {
 					bide.advance_one_turn();
-					return DoNothing();
+					return false;
 				}
-				auto const damage = bide.release();
 				m_effects = Empty();
-				return CurrentHP(damage);
+				return false;
 			},
-			[&](ChargingUp) -> SuccessfulMove {
+			[&](ChargingUp) -> bool {
 				check_valid_lock_in();
 				m_effects = Empty();
-				return DoNothing();
+				return false;
 			},
-			[&](Immobilize) -> SuccessfulMove {
+			[&](Immobilize) -> bool {
 				check_valid_lock_in();
-				return DoNothing();
+				return false;
 			},
-			[&](Protecting) -> SuccessfulMove {
+			[&](Protecting) -> bool {
 				throw std::runtime_error("Cannot use a move while protecting");
 			},
-			[&](Rampage<generation>) -> SuccessfulMove {
+			[&](Rampage<generation>) -> bool {
 				check_valid_lock_in();
-				return DoNothing();
+				return false;
 			},
-			[&](Recharging) -> SuccessfulMove {
+			[&](Recharging) -> bool {
 				check_valid_lock_in();
-				return DoNothing();
+				return false;
 			},
-			[&](UproarCounter) -> SuccessfulMove {
+			[&](UproarCounter) -> bool {
 				BOUNDED_ASSERT(m_move == MoveName::Uproar);
 				check_valid_lock_in();
-				return DoNothing();
+				return false;
 			},
-			[&](Vanishing) -> SuccessfulMove {
+			[&](Vanishing) -> bool {
 				check_valid_lock_in();
 				m_effects = Empty();
-				return DoNothing();
+				return false;
 			}
 		));
 
@@ -270,11 +263,21 @@ struct LastUsedMove {
 		));
 	}
 
-	constexpr auto is_charging_up() const -> bool {
+	constexpr auto bide_damage() const -> CurrentHP {
 		return tv::visit(m_effects, tv::overload(
-			[](ChargingUp) { return true; },
-			[](auto) { return false; }
+			[](Bide<generation> const bide) -> CurrentHP {
+				return bide.released_damage();
+			},
+			[](auto) -> CurrentHP {
+				throw std::runtime_error("Tried to get Bide damage when Bide isn't active");
+			}
 		));
+	}
+
+	constexpr auto is_charging() const -> bool {
+		return
+			m_effects.index() == bounded::type<Bide<generation>> or
+			m_effects.index() == bounded::type<ChargingUp>;
 	}
 
 	constexpr auto is_delayed_switching() const -> bool {

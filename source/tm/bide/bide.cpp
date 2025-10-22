@@ -28,8 +28,8 @@ struct Bide {
 		m_duration.advance_one_turn();
 	}
 
-	constexpr auto release() & {
-		return m_damage.release();
+	constexpr auto released_damage() const -> CurrentHP {
+		return m_damage.released();
 	}
 
 	constexpr auto action_end_probability() const -> Probability {

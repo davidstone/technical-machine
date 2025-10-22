@@ -71,6 +71,7 @@ constexpr auto max_damage(
 					constexpr auto critical_hit = false;
 					constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
 					constexpr auto move_weakened_from_item = false;
+					constexpr auto action_ends = false;
 					// This means it will never pick Sucker Punch and Counter and
 					// usually pick Focus Punch.
 					constexpr auto other_action = OtherAction(IrrelevantAction());
@@ -83,7 +84,8 @@ constexpr auto max_damage(
 								pp,
 								no_effect_function,
 								critical_hit,
-								contact_ability_effect
+								contact_ability_effect,
+								action_ends
 							),
 							move_weakened_from_item,
 							other,

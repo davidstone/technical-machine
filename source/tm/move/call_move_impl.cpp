@@ -332,7 +332,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 
-	auto const released_damage = user_pokemon.successfully_use_move(
+	user_pokemon.successfully_use_move(
 		move.selected,
 		move.executed,
 		move.action_ends,
@@ -350,12 +350,10 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		found_move.pp(),
 		move.side_effect,
 		move.critical_hit,
-		move.contact_ability_effect
+		move.contact_ability_effect,
+		move.action_ends
 	};
 	use_move(user, executed_move, target, other, other_action, environment, actual_damage);
-	if (released_damage) {
-		other_pokemon.direct_damage(move.executed, user_pokemon, environment, *released_damage * 2_bi);
-	}
 }
 
 template<any_team UserTeam>

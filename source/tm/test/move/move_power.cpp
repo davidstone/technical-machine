@@ -40,13 +40,15 @@ constexpr auto generation = Generation::four;
 
 constexpr auto make_executed_move(MoveName const move_name, Type const type) {
 	constexpr auto critical_hit = true;
+	constexpr auto action_ends = false;
 	auto const move = Move(generation, move_name);
 	return ExecutedMove<Team<generation>>{
 		{move.name(), type},
 		move.pp(),
 		no_effect_function,
 		critical_hit,
-		ContactAbilityEffect::nothing
+		ContactAbilityEffect::nothing,
+		action_ends
 	};
 }
 

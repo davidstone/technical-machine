@@ -60,7 +60,7 @@ export struct ActualDamage {
 			auto const no_damage =
 				!is_damaging(executed.move.name) or
 				(other_pokemon.substitute() and substitute != Substitute::bypassed) or
-				user_pokemon.last_used_move().is_charging_up();
+				user_pokemon.last_used_move().is_charging();
 			return no_damage ? 0_bi : calculate_damage(user, executed, move_weakened_from_item, other, other_action, environment);
 		};
 

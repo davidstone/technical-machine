@@ -256,8 +256,9 @@ constexpr auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 	};
 	switch (executed.move.name) {
 		case MoveName::Bide:
-			// TODO: Determine the damage here
-			return 0_bi;
+			return executed.action_ends ?
+				attacker.last_used_move().bide_damage() :
+				0_bi;
 		case MoveName::Bind:
 		case MoveName::Clamp:
 		case MoveName::Fire_Spin:

@@ -923,6 +923,7 @@ public:
 	}
 
 	constexpr auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Environment const environment, damage_type const damage) const -> CurrentHP {
+		BOUNDED_ASSERT(this->hp().current() != 0_bi);
 		auto const interaction = substitute_interaction(generation, move);
 		BOUNDED_ASSERT(!this->m_flags.substitute or interaction != Substitute::causes_failure);
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
@@ -948,8 +949,8 @@ public:
 		bool const end_effect,
 		Ability const other_ability,
 		Environment const environment
-	) const -> tv::optional<CurrentHP> {
-		auto const result = this->m_flags.last_used_move.successful_move(
+	) const -> void {
+		auto const consume_item = this->m_flags.last_used_move.successful_move(
 			first_executed,
 			last_executed,
 			end_effect,
@@ -957,20 +958,11 @@ public:
 			environment.effective_weather(this->ability(), other_ability)
 		);
 		if (this->hp().current() == 0_bi) {
-			return tv::none;
+			return;
 		}
-		return tv::visit(result, tv::overload(
-			[](DoNothing) -> tv::optional<CurrentHP> {
-				return tv::none;
-			},
-			[&](ConsumeItem) -> tv::optional<CurrentHP> {
-				remove_item();
-				return tv::none;
-			},
-			[&](CurrentHP const damage) -> tv::optional<CurrentHP> {
-				return damage;
-			}
-		));
+		if (consume_item) {
+			remove_item();
+		}
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const executed) const {
 		this->m_flags.last_used_move.unsuccessful_move(executed);

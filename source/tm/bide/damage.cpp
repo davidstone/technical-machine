@@ -21,10 +21,8 @@ export struct BideDamage {
 		saturating_add(m_damage, damage);
 	}
 
-	constexpr auto release() {
-		auto const output_damage = m_damage * 2_bi;
-		m_damage = 0_bi;
-		return output_damage;
+	constexpr auto released() const -> CurrentHP {
+		return m_damage * 2_bi;
 	}
 
 	friend auto operator==(BideDamage, BideDamage) -> bool = default;
