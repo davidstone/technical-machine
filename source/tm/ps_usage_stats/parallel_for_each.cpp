@@ -54,6 +54,12 @@ auto parallel_for_each(
 	Range && inputs,
 	Function function
 ) -> void {
+	auto it = containers::begin(inputs);
+	auto const last = containers::end(inputs);
+	if (it == last) {
+		return;
+	}
+
 	using value_type = containers::range_value_t<Range>;
 	auto workers = containers::dynamic_array(
 		containers::generate_n(
@@ -62,18 +68,13 @@ auto parallel_for_each(
 		)
 	);
 
-	auto it = containers::begin(inputs);
-	auto const last = containers::end(inputs);
 	while (true) {
 		for (auto & worker : workers) {
+			worker.add_work(*it);
+			++it;
 			if (it == last) {
 				return;
 			}
-			worker.add_work(*it);
-			++it;
-		}
-		if (it == last) {
-			return;
 		}
 	}
 }
