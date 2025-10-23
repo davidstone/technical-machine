@@ -190,20 +190,34 @@ auto score_one_side_of_battle(
 ) -> WeightedScore {
 	auto battle = BattleManager();
 	battle.handle_request(parsed_side_to_request(rated_side.side));
+	auto scores = containers::vector<double>(containers::reserve_space_for(bounded::min(
+		containers::size(rated_side.inputs),
+		bounded::integer(containers::size(battle_messages)),
+		1'000'000'000_bi
+	)));
 	try {
-		auto const scores = containers::vector(containers::transform(
+		// This could be `assign_to_empty_into_capacity` but then we lose all
+		// partial progress on an error. `push_back_into_capacity` in a loop
+		// ensures that each useful result is accessible in the `catch` block.
+		auto input_scores = containers::transform(
 			containers::zip_smallest(
 				predicted_selections(strategy, battle_messages, battle, all_usage_stats),
 				rated_side.inputs
 			),
 			individual_brier_score
-		));
+		);
+		auto const last = containers::end(std::move(input_scores));
+		for (auto it = containers::begin(std::move(input_scores)); it != last; ++it) {
+			containers::push_back_into_capacity(scores, *it);
+		}
 		return weighted_score(scores);
 	} catch (std::exception const & ex) {
 		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"sv : "p2"sv;
 		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
-		auto const count = double(containers::size(rated_side.inputs));
-		return WeightedScore(count * 2.0, count);
+		auto const total = containers::size(rated_side.inputs);
+		auto const processed = containers::size(scores);
+		auto const remaining = double(total - processed);
+		return weighted_score(scores) + WeightedScore(remaining * 2.0, remaining);
 	}
 }
 
