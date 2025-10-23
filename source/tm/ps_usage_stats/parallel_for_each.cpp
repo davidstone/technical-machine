@@ -11,28 +11,38 @@ export module tm.ps_usage_stats.parallel_for_each;
 
 import tm.ps_usage_stats.thread_count;
 
+import bounded;
 import concurrent;
 import containers;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 
-template<typename T, typename Function>
+struct Empty {
+	constexpr Empty(ThreadIndex) {
+	}
+};
+
+template<bool indexed>
+using Index = std::conditional_t<indexed, ThreadIndex, Empty>;
+
+template<typename T, bool indexed, typename Function>
 struct Worker {
-	Worker(Function function):
+	Worker(Index<indexed> const index, Function function):
+		m_index(index),
 		m_function(std::move(function)),
 		m_queue(1000),
 		m_thread([&](std::stop_token token) {
 			auto buffer = typename Queue::container_type();
 			while (!token.stop_requested()) {
 				buffer = m_queue.pop_all(token, std::move(buffer));
-				for (auto const & result : buffer) {
-					m_function(result);
+				for (auto && result : buffer) {
+					call(OPERATORS_FORWARD(result));
 				}
 				buffer.clear();
 			}
-			for (auto const & result : m_queue.try_pop_all()) {
-				m_function(result);
+			for (auto && result : m_queue.try_pop_all()) {
+				call(OPERATORS_FORWARD(result));
 			}
 		})
 	{
@@ -42,6 +52,14 @@ struct Worker {
 	}
 
 private:
+	auto call(auto && value) -> void {
+		if constexpr (indexed) {
+			std::invoke(m_function, OPERATORS_FORWARD(value), m_index);
+		} else {
+			std::invoke(m_function, OPERATORS_FORWARD(value));
+		}
+	}
+	[[no_unique_address]] Index<indexed> m_index;
 	[[no_unique_address]] Function m_function;
 	using Queue = concurrent::blocking_queue<T>;
 	Queue m_queue;
@@ -62,9 +80,12 @@ auto parallel_for_each(
 
 	using value_type = containers::range_value_t<Range>;
 	auto workers = containers::dynamic_array(
-		containers::generate_n(
+		containers::indexed_generate_n(
 			thread_count,
-			[&] { return Worker<value_type, Function>(function); }
+			[&](ThreadIndex const index) {
+				constexpr auto use_index = std::invocable<Function const &, value_type &&, ThreadIndex>;
+				return Worker<value_type, use_index, Function>(index, function);
+			}
 		)
 	);
 
