@@ -79,12 +79,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	);
 }
 
-constexpr auto is_input_for(Party const party) {
-	return [=](PlayerInput const input) -> bool {
-		return input.party == party;
-	};
-}
-
 struct RelevantTeam {
 	template<Generation generation>
 	constexpr explicit RelevantTeam(Team<generation> const & team):
@@ -224,14 +218,13 @@ auto update_weights_for_one_side_of_battle(
 	std::filesystem::path const & input_file,
 	SelectionWeightsMaker & weights,
 	RatedSide const & rated_side,
-	std::span<ps::BattleMessage const> const battle_messages,
-	std::span<PlayerInput const> const player_inputs
+	std::span<ps::BattleMessage const> const battle_messages
 ) -> void {
 	auto battle = ps::BattleManager();
 	battle.handle_request(parsed_side_to_request(rated_side.side));
 	auto selections = containers::zip_smallest(
 		battle_states_requiring_selection(battle_messages, battle),
-		containers::filter(player_inputs, is_input_for(rated_side.side.party))
+		rated_side.inputs
 	);
 	auto first = containers::begin(std::move(selections));
 	auto const last = containers::end(std::move(selections));
@@ -242,7 +235,7 @@ auto update_weights_for_one_side_of_battle(
 			auto get_weight = [&] {
 				return other_weights[to_index(state.user.pokemon[to_index(state.user.active)])].locked();
 			};
-			tv::visit(input.selection, tv::overload(
+			tv::visit(input, tv::overload(
 				[&](MoveName const move) {
 					auto const weight = get_weight();
 					for (auto const possible : state.user.moves) {
@@ -316,18 +309,17 @@ auto create_selection_weights(SelectionWeightsMaker & weights, ThreadCount const
 				return;
 			}
 			auto const battle_messages = battle_log_to_messages(json.at("log"));
-			auto const input_log = parse_input_log(json.at("inputLog"));
+			auto input_log = parse_input_log(json.at("inputLog"));
 			auto sides = containers::array({
-				RatedSide(Party(0_bi), battle_result->side1),
-				RatedSide(Party(1_bi), battle_result->side2)
+				RatedSide(Party(0_bi), battle_result->side1, std::move(input_log).side1),
+				RatedSide(Party(1_bi), battle_result->side2, std::move(input_log).side2)
 			});
 			for (auto const rated_side : sides) {
 				update_weights_for_one_side_of_battle(
 					input_file,
 					weights,
 					rated_side,
-					battle_messages,
-					input_log
+					battle_messages
 				);
 			}
 		}

@@ -35,17 +35,19 @@ TEST_CASE("Parse input log", "[parse_input_log]") {
 		">p1 move thunder",
 		">p2 switch 2",
 	}));
-	constexpr auto p1 = Party(0_bi);
-	constexpr auto p2 = Party(1_bi);
-	auto const expected = containers::dynamic_array({
-		PlayerInput(p1, MoveName::Body_Slam),
-		PlayerInput(p2, ps::BattleResponseSwitch(3_bi)),
-		PlayerInput(p1, MoveName::Body_Slam),
-		PlayerInput(p2, MoveName::Blizzard),
-		PlayerInput(p1, ps::BattleResponseSwitch(2_bi)),
-		PlayerInput(p1, MoveName::Thunder),
-		PlayerInput(p2, ps::BattleResponseSwitch(2_bi)),
-	});
+	auto const expected = InputLog(
+		{{
+			MoveName::Body_Slam,
+			MoveName::Body_Slam,
+			ps::BattleResponseSwitch(2_bi),
+			MoveName::Thunder
+		}},
+		{{
+			ps::BattleResponseSwitch(3_bi),
+			MoveName::Blizzard,
+			ps::BattleResponseSwitch(2_bi)
+		}}
+	);
 	CHECK(parsed == expected);
 }
 

@@ -84,12 +84,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	};
 }
 
-constexpr auto is_input_for(Party const party) {
-	return [=](PlayerInput const input) -> bool {
-		return input.party == party;
-	};
-}
-
 struct PredictedSelection {
 	SelectionProbabilities predicted;
 	SlotMemory slot_memory;
@@ -143,7 +137,7 @@ auto get_predicted_selection(
 
 constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 	auto const & [evaluated, reported] = tuple;
-	auto const actual = tv::visit(reported.selection, tv::overload(
+	auto const actual = tv::visit(reported, tv::overload(
 		[](MoveName const move) -> Selection {
 			return move;
 		},
@@ -196,17 +190,15 @@ auto score_one_side_of_battle(
 	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
-	std::span<BattleMessage const> const battle_messages,
-	std::span<PlayerInput const> const player_inputs
+	std::span<BattleMessage const> const battle_messages
 ) -> WeightedScore {
-	auto const inputs_for_side = containers::filter(player_inputs, is_input_for(rated_side.side.party));
 	auto battle = BattleManager();
 	battle.handle_request(parsed_side_to_request(rated_side.side));
 	try {
 		auto const scores = containers::vector(containers::transform(
 			containers::zip_smallest(
 				predicted_selections(strategy, battle_messages, battle, all_usage_stats),
-				inputs_for_side
+				rated_side.inputs
 			),
 			individual_brier_score
 		));
@@ -214,7 +206,7 @@ auto score_one_side_of_battle(
 	} catch (std::exception const & ex) {
 		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"sv : "p2"sv;
 		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
-		auto const count = double(containers::linear_size(inputs_for_side));
+		auto const count = double(containers::size(rated_side.inputs));
 		return WeightedScore(count * 2.0, count);
 	}
 }
@@ -231,11 +223,11 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 			if (!battle_result) {
 				return;
 			}
-			auto const input_log = parse_input_log(json.at("inputLog"));
 			auto const battle_messages = battle_log_to_messages(json.at("log"));
+			auto input_log = parse_input_log(json.at("inputLog"));
 			auto sides = containers::array({
-				RatedSide(Party(0_bi), battle_result->side1),
-				RatedSide(Party(1_bi), battle_result->side2)
+				RatedSide(Party(0_bi), battle_result->side1, std::move(input_log).side1),
+				RatedSide(Party(1_bi), battle_result->side2, std::move(input_log).side2)
 			});
 			auto const individual = containers::sum(containers::transform(
 				sides,
@@ -245,8 +237,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 						strategy,
 						all_usage_stats,
 						rated_side,
-						battle_messages,
-						input_log
+						battle_messages
 					);
 				}
 			));
