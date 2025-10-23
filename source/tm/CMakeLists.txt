@@ -376,6 +376,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		ps_usage_stats/battle_result_reader.cpp
 		ps_usage_stats/battle_result_writer.cpp
 		ps_usage_stats/files_in_directory.cpp
+		ps_usage_stats/for_each_log.cpp
 		ps_usage_stats/glicko1.cpp
 		ps_usage_stats/mode.cpp
 		ps_usage_stats/parallel_for_each.cpp

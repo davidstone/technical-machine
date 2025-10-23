@@ -23,10 +23,7 @@ import tm.move.switch_;
 
 import tm.ps_usage_stats.battle_log_to_messages;
 import tm.ps_usage_stats.battle_result;
-import tm.ps_usage_stats.files_in_directory;
-import tm.ps_usage_stats.parallel_for_each;
-import tm.ps_usage_stats.parse_input_log;
-import tm.ps_usage_stats.parse_log;
+import tm.ps_usage_stats.for_each_log;
 import tm.ps_usage_stats.rated_side;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
@@ -41,7 +38,6 @@ import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.get_legal_selections;
-import tm.load_json_from_file;
 import tm.open_file;
 import tm.probability;
 import tm.team;
@@ -212,41 +208,24 @@ auto score_one_side_of_battle(
 }
 
 auto score_predict_selection(ThreadCount const thread_count, std::filesystem::path const & input_directory, Strategy const & strategy) -> double {
-	auto score = std::atomic<WeightedScore>();
 	auto const all_usage_stats = AllUsageStats();
-	parallel_for_each(
+	auto const result = for_each_log(
 		thread_count,
-		files_in_directory(input_directory),
-		[&](std::filesystem::path const & input_file) {
-			auto const json = load_json_from_file(input_file);
-			auto const battle_result = parse_log(json);
-			if (!battle_result) {
-				return;
-			}
-			auto const battle_messages = battle_log_to_messages(json.at("log"));
-			auto input_log = parse_input_log(json.at("inputLog"));
-			auto sides = containers::array({
-				RatedSide(Party(0_bi), battle_result->side1, std::move(input_log).side1),
-				RatedSide(Party(1_bi), battle_result->side2, std::move(input_log).side2)
-			});
-			auto const individual = containers::sum(containers::transform(
-				sides,
-				[&](RatedSide const & rated_side) {
-					return score_one_side_of_battle(
-						input_file,
-						strategy,
-						all_usage_stats,
-						rated_side,
-						battle_messages
-					);
-				}
-			));
-			auto previous = score.load(std::memory_order::relaxed);
-			while (!score.compare_exchange_weak(previous, previous + individual, std::memory_order::relaxed)) {
-			}
+		input_directory,
+		[&](
+			std::filesystem::path const & input_file,
+			RatedSide const & side,
+			std::span<BattleMessage const> const battle_messages
+		) {
+			return score_one_side_of_battle(
+				input_file,
+				strategy,
+				all_usage_stats,
+				side,
+				battle_messages
+			);
 		}
 	);
-	auto const result = score.load();
 	return result.weight != 0.0 ? result.score / result.weight : 0.0;
 }
 
