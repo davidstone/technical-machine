@@ -8,6 +8,7 @@
 import tm.move.actual_damage;
 import tm.move.call_move;
 import tm.move.future_selection;
+import tm.move.known_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
 import tm.move.no_effect_function;
@@ -27,6 +28,8 @@ import tm.stat.nature;
 import tm.stat.stat_names;
 
 import tm.status.status_name;
+
+import tm.type.type;
 
 import tm.ability;
 import tm.contact_ability_effect;
@@ -723,6 +726,113 @@ TEST_CASE("Generation 1 Mirror Move Hyper Beam KO", "[call_move]") {
 
 	CHECK(!user.pokemon().last_used_move().locked_in());
 	CHECK(!user.pokemon().recharge());
+}
+
+TEST_CASE("Bide", "[call_move]") {
+	constexpr auto generation = Generation::one;
+	auto environment = Environment();
+
+	auto user = Team<generation>({{
+		{
+			.species = Species::Chansey,
+			.moves = {{
+				MoveName::Bide,
+			}}
+		},
+	}});
+	user.pokemon().switch_in(environment, true);
+
+	auto other = Team<generation>({{
+		{
+			.species = Species::Geodude,
+			.moves = {{
+				MoveName::Seismic_Toss,
+			}}
+		},
+	}});
+	other.pokemon().switch_in(environment, true);
+
+	auto call_bide = [&](bool const action_ends) {
+		constexpr auto move = MoveName::Bide;
+		auto const side_effects = possible_side_effects(move, user.pokemon().as_const(), other, environment);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			user,
+			UsedMove<Team<generation>>(
+				move,
+				move,
+				false,
+				false,
+				action_ends,
+				ContactAbilityEffect::nothing,
+				containers::front(side_effects).function
+			),
+			other,
+			FutureSelection(false),
+			environment,
+			false,
+			damage,
+			false
+		);
+	};
+	auto call_seismic_toss = [&] {
+		constexpr auto move = MoveName::Seismic_Toss;
+		auto const side_effects = possible_side_effects(move, other.pokemon().as_const(), user, environment);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			other,
+			UsedMove<Team<generation>>(
+				move,
+				containers::front(side_effects).function
+			),
+			user,
+			KnownMove(MoveName::Bide, Type::Normal),
+			environment,
+			false,
+			damage,
+			false
+		);
+	};
+
+	CHECK(!user.pokemon().last_used_move().name());
+	CHECK(!user.pokemon().last_used_move().moved_this_turn());
+	CHECK(!user.pokemon().last_used_move().locked_in());
+
+	call_bide(false);
+	call_seismic_toss();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Bide);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Bide);
+
+	user.reset_end_of_turn();
+	other.reset_end_of_turn();
+
+	call_bide(false);
+	call_seismic_toss();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Bide);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Bide);
+
+	user.reset_end_of_turn();
+	other.reset_end_of_turn();
+
+	call_bide(false);
+	call_seismic_toss();
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Bide);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Bide);
+
+	user.reset_end_of_turn();
+	other.reset_end_of_turn();
+
+	call_bide(true);
+
+	CHECK(user.pokemon().last_used_move().name() == MoveName::Bide);
+	CHECK(user.pokemon().last_used_move().moved_this_turn());
+	CHECK(!user.pokemon().last_used_move().locked_in());
 }
 
 } // namespace

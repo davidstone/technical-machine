@@ -143,61 +143,6 @@ constexpr auto side_effect_happens_on_substitute(MoveName const move) -> bool {
 	return side_effect_happens_on_miss(move);
 }
 
-template<any_team UserTeam>
-auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeam<UserTeam> & other, OtherAction const other_action, Environment & environment, ActualDamage const actual_damage) -> void {
-	constexpr auto generation = generation_from<UserTeam>;
-	auto const user_pokemon = user.pokemon();
-	auto const other_pokemon = other.pokemon();
-	do_effects_before_moving(executed.move.name, user_pokemon, other);
-
-	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), environment)) {
-		if (containers::maybe_find(other_pokemon.types(), Type::Ghost)) {
-			user.pokemon().recharge();
-		}
-		return;
-	}
-
-	auto const damaging = is_damaging(executed.move.name);
-	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
-	auto const weakened = damaging and activate_when_hit_item(executed.move, other_pokemon, environment, effectiveness);
-	auto const damage = actual_damage.value(user, executed, weakened, other, other_action, environment);
-	BOUNDED_ASSERT(damaging or damage == 0_bi);
-
-	auto const effects = static_cast<bool>(other_pokemon.substitute()) ?
-		substitute_interaction(generation, executed.move.name) :
-		Substitute::bypassed;
-	if (effects == Substitute::causes_failure) {
-		return;
-	}
-
-	// Should this check if we did any damage or if the move is damaging?
-	auto const damage_done = damage != 0_bi ?
-		other_pokemon.direct_damage(executed.move.name, user_pokemon, environment, damage) :
-		0_bi;
-
-	if (effects == Substitute::absorbs) {
-		if (side_effect_happens_on_substitute(executed.move.name)) {
-			executed.side_effect(user, other, environment, damage_done);
-		}
-		return;
-	}
-	executed.side_effect(user, other, environment, damage_done);
-
-	// Should this check if we did any damage or if the move is damaging?
-	if (damage_done != 0_bi) {
-		auto const item = user_pokemon.item(environment);
-		// TODO: Doom Desire / Future Sight are not handled correctly
-		if (item == Item::Life_Orb) {
-			heal(user_pokemon, environment, rational(-1_bi, 10_bi));
-		} else if (item == Item::Shell_Bell) {
-			change_hp(user_pokemon, environment, bounded::max(damage_done / 8_bi, 1_bi));
-		}
-
-		// TODO: When do target abilities activate?
-		activate_target_ability(user_pokemon, other_pokemon, environment, executed.contact_ability_effect);
-	}
-}
-
 constexpr auto find_move(auto const moves, MoveName const move_name) -> Move {
 	auto const maybe_move = containers::maybe_find(moves, move_name);
 	BOUNDED_ASSERT(maybe_move);
@@ -332,6 +277,20 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 
+	auto const executed = ExecutedMove<UserTeam>{
+		known_move,
+		found_move.pp(),
+		move.side_effect,
+		move.critical_hit,
+		move.contact_ability_effect,
+		move.action_ends
+	};
+	auto const damaging = is_damaging(executed.move.name);
+	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
+	auto const weakened = damaging and activate_when_hit_item(executed.move, other_pokemon, environment, effectiveness);
+	auto const damage = actual_damage.value(user, executed, weakened, other, other_action, environment);
+	BOUNDED_ASSERT(damaging or damage == 0_bi);
+
 	user_pokemon.successfully_use_move(
 		move.selected,
 		move.executed,
@@ -345,15 +304,48 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		return;
 	}
 
-	auto const executed_move = ExecutedMove<UserTeam>{
-		known_move,
-		found_move.pp(),
-		move.side_effect,
-		move.critical_hit,
-		move.contact_ability_effect,
-		move.action_ends
-	};
-	use_move(user, executed_move, target, other, other_action, environment, actual_damage);
+	do_effects_before_moving(executed.move.name, user_pokemon, other);
+
+	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), environment)) {
+		if (containers::maybe_find(other_pokemon.types(), Type::Ghost)) {
+			user.pokemon().recharge();
+		}
+		return;
+	}
+
+	auto const effects = static_cast<bool>(other_pokemon.substitute()) ?
+		substitute_interaction(generation, executed.move.name) :
+		Substitute::bypassed;
+	if (effects == Substitute::causes_failure) {
+		return;
+	}
+
+	// Should this check if we did any damage or if the move is damaging?
+	auto const damage_done = damage != 0_bi and !user_pokemon.last_used_move().is_charging() ?
+		other_pokemon.direct_damage(executed.move.name, user_pokemon, environment, damage) :
+		0_bi;
+
+	if (effects == Substitute::absorbs) {
+		if (side_effect_happens_on_substitute(executed.move.name)) {
+			executed.side_effect(user, other, environment, damage_done);
+		}
+		return;
+	}
+	executed.side_effect(user, other, environment, damage_done);
+
+	// Should this check if we did any damage or if the move is damaging?
+	if (damage_done != 0_bi) {
+		auto const item = user_pokemon.item(environment);
+		// TODO: Doom Desire / Future Sight are not handled correctly
+		if (item == Item::Life_Orb) {
+			heal(user_pokemon, environment, rational(-1_bi, 10_bi));
+		} else if (item == Item::Shell_Bell) {
+			change_hp(user_pokemon, environment, bounded::max(damage_done / 8_bi, 1_bi));
+		}
+
+		// TODO: When do target abilities activate?
+		activate_target_ability(user_pokemon, other_pokemon, environment, executed.contact_ability_effect);
+	}
 }
 
 template<any_team UserTeam>
