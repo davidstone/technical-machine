@@ -29,6 +29,7 @@ import tm.ps_usage_stats.files_in_directory;
 import tm.ps_usage_stats.parallel_for_each;
 import tm.ps_usage_stats.parse_input_log;
 import tm.ps_usage_stats.parse_log;
+import tm.ps_usage_stats.rated_side;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
 
@@ -157,16 +158,6 @@ auto battle_states_requiring_selection(
 		}
 	));
 }
-
-struct RatedSide {
-	constexpr RatedSide(Party const party, BattleResult::Side const & side_):
-		side(party, side_.team),
-		rating(side_.rating)
-	{
-	}
-	ps::ParsedSide side;
-	tv::optional<Rating> rating;
-};
 
 using Usage = bounded::integer<0, bounded::normalize<100'000'000'000'000>>;
 struct Accumulator {

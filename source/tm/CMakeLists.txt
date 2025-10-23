@@ -382,6 +382,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		ps_usage_stats/parse_input_log.cpp
 		ps_usage_stats/parse_log.cpp
 		ps_usage_stats/rating.cpp
+		ps_usage_stats/rated_side.cpp
 		ps_usage_stats/serialize.cpp
 		ps_usage_stats/thread_count.cpp
 		ps_usage_stats/usage_stats.cpp
