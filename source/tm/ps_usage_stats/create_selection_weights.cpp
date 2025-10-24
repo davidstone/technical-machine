@@ -5,12 +5,10 @@
 
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_init_message;
-import tm.clients.ps.battle_manager;
+import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
-import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
-import tm.clients.ps.parsed_team;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
@@ -117,24 +115,15 @@ constexpr auto get_species_from_state = []<Generation generation>(VisibleState<g
 	return BothSides(state.foe.pokemon().species(), RelevantTeam(user));
 };
 
-constexpr auto fake_request() -> ps::ParsedRequest {
-	return ps::ParsedRequest(
-		ps::ParsedMoves(),
-		ps::SwitchPossibilities::maybe_trapped,
-		Party(0_bi),
-		ps::ParsedTeam()
-	);
-}
-
 auto battle_states_requiring_selection(
 	std::span<ps::EventBlock const> const battle_messages,
-	ps::BattleManager & battle
+	ps::BattleMessageHandler & battle
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
 		std::move(battle_messages),
 		[&](ps::EventBlock const & message) -> tv::optional<RelevantBattleState> {
-			auto const result = battle.handle_request(fake_request());
-			auto const both_species = tv::visit(result.state, get_species_from_state);
+			auto const both_species = tv::visit(battle.state(), get_species_from_state);
+			auto const slot_memory = battle.slot_memory();
 			battle.handle_message(message);
 			if (!both_species) {
 				return tv::none;
@@ -142,7 +131,7 @@ auto battle_states_requiring_selection(
 			return RelevantBattleState(
 				both_species->other,
 				both_species->user,
-				result.slot_memory
+				slot_memory
 			);
 		}
 	));
@@ -215,8 +204,7 @@ auto update_weights_for_one_side_of_battle(
 	RatedSide const & rated_side,
 	BattleLogMessages const & battle_messages
 ) -> void {
-	auto battle = ps::BattleManager(battle_messages.init);
-	battle.handle_request(parsed_side_to_request(rated_side.side));
+	auto battle = ps::BattleMessageHandler(rated_side.side.party, rated_side.side.team, battle_messages.init);
 	auto selections = containers::zip_smallest(
 		battle_states_requiring_selection(battle_messages.messages, battle),
 		rated_side.inputs
