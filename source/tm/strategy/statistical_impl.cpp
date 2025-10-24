@@ -43,6 +43,8 @@ using namespace bounded::literal;
 
 using MoveData = containers::flat_map<MoveName, Weight<double>>;
 
+constexpr auto minimum_weight = Weight(1.0 / 1'000'000.0);
+
 struct PerMatchup {
 	constexpr auto operator[](MoveName const move) const -> Weight<double> {
 		auto const ptr = containers::lookup(m_data, move);
@@ -66,14 +68,14 @@ struct PerMatchup {
 	}
 private:
 	MoveData m_data;
-	Weight<double> m_switch_out{0.0};
-	Weight<double> m_switch_in{0.0};
+	Weight<double> m_switch_out = minimum_weight;
+	Weight<double> m_switch_in = minimum_weight;
 };
 
 using PerOther = UsageFor<Species, PerMatchup>;
 
 constexpr auto with_minimum_weight(Weight<double> const weight) -> Weight<double> {
-	return weight == Weight(0.0) ? Weight(1.0 / 1'000'000.0) : weight;
+	return weight == Weight(0.0) ? minimum_weight : weight;
 }
 
 struct SelectionWeights {
