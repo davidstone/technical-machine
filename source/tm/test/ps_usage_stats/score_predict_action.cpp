@@ -7,14 +7,12 @@
 
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_init_message;
-import tm.clients.ps.battle_manager;
+import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.parsed_message;
-import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
-import tm.clients.ps.parsed_team;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
@@ -86,20 +84,11 @@ struct PredictedSelection {
 	SlotMemory slot_memory;
 };
 
-constexpr auto fake_request() -> ParsedRequest {
-	return ParsedRequest(
-		ParsedMoves(),
-		SwitchPossibilities::maybe_trapped,
-		Party(0_bi),
-		ParsedTeam()
-	);
-}
-
 constexpr auto empty_selection_probability = SelectionProbabilities({{pass, Probability(1.0)}});
 
 auto get_predicted_selection(
 	Strategy const & strategy,
-	BattleManager & battle,
+	BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {
 	return [&](std::span<ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
@@ -118,10 +107,9 @@ auto get_predicted_selection(
 				state.environment
 			).user;
 		};
-		auto const result = battle.handle_request(fake_request());
 		auto selection = PredictedSelection(
-			tv::visit(result.state, function),
-			result.slot_memory
+			tv::visit(battle.state(), function),
+			battle.slot_memory()
 		);
 		battle.handle_message(message);
 		if (selection.predicted == empty_selection_probability) {
@@ -172,7 +160,7 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 auto predicted_selections(
 	Strategy const & strategy,
 	std::span<ps::EventBlock const> const battle_messages,
-	BattleManager & battle,
+	BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
@@ -188,8 +176,7 @@ auto score_one_side_of_battle(
 	RatedSide const & rated_side,
 	BattleLogMessages const & battle_messages
 ) -> WeightedScore {
-	auto battle = BattleManager(battle_messages.init);
-	battle.handle_request(parsed_side_to_request(rated_side.side));
+	auto battle = BattleMessageHandler(rated_side.side.party, rated_side.side.team, battle_messages.init);
 	auto scores = containers::vector<double>(containers::reserve_space_for(bounded::min(
 		containers::size(rated_side.inputs),
 		containers::size(battle_messages.messages)
