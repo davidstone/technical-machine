@@ -5,8 +5,6 @@
 
 export module tm.ps_usage_stats.for_each_log;
 
-import tm.clients.ps.battle_message;
-
 import tm.clients.party;
 
 import tm.ps_usage_stats.battle_log_to_messages;
@@ -34,7 +32,7 @@ export auto for_each_log(
 	using Accumulate = decltype(process_log(
 		bounded::declval<std::filesystem::path const &>(),
 		bounded::declval<RatedSide const &>(),
-		bounded::declval<std::span<ps::BattleMessage const> const>()
+		bounded::declval<BattleLogMessages const &>()
 	));
 	auto accumulator = containers::dynamic_array(containers::repeat_default_n<Accumulate>(thread_count));
 	parallel_for_each(

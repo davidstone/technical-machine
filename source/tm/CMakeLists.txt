@@ -319,7 +319,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/action_required.cpp
 		clients/pokemon_showdown/battle_init_message.cpp
 		clients/pokemon_showdown/battle_manager.cpp
-		clients/pokemon_showdown/battle_message.cpp
 		clients/pokemon_showdown/battle_message_handler.cpp
 		clients/pokemon_showdown/battle_message_kind.cpp
 		clients/pokemon_showdown/battle_response_switch.cpp
@@ -334,7 +333,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/is_chat_message.cpp
 		clients/pokemon_showdown/is_chat_message_block.cpp
 		clients/pokemon_showdown/log_battle_messages.cpp
-		clients/pokemon_showdown/make_battle_message.cpp
 		clients/pokemon_showdown/make_battle_init_message.cpp
 		clients/pokemon_showdown/make_party.cpp
 		clients/pokemon_showdown/message_block.cpp

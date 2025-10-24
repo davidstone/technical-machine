@@ -5,16 +5,16 @@
 
 export module tm.clients.ps.battle_message_handler;
 
-import tm.clients.ps.action_required;
 import tm.clients.ps.battle_init_message;
 import tm.clients.ps.end_of_turn_state;
 import tm.clients.ps.move_state;
 import tm.clients.ps.parsed_message;
-import tm.clients.ps.parsed_request;
+import tm.clients.ps.parsed_team;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 import tm.clients.ps.start_of_turn;
 
+import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.client_battle;
 import tm.clients.party;
@@ -49,20 +49,11 @@ struct HitSelf {
 };
 
 export struct BattleMessageHandler {
-	BattleMessageHandler(ParsedRequest const &, BattleInitMessage);
-
-	// We get this message too early so we save it for later.
-	// https://github.com/smogon/pokemon-showdown/issues/8546
-	auto save_request(ParsedRequest const & request) -> void {
-		if (m_request) {
-			throw std::runtime_error("Got multiple requests in a row");
-		}
-		tv::insert(m_request, request);
-	}
+	BattleMessageHandler(Party, ParsedTeam const &, BattleInitMessage const &);
 
 	using Result = tv::variant<
-		ActionRequired,
 		StartOfTurn,
+		BattleContinues,
 		BattleFinished
 	>;
 	auto handle_message(std::span<ParsedMessage const> const block) -> Result;
@@ -72,14 +63,6 @@ export struct BattleMessageHandler {
 	}
 	auto slot_memory() const -> SlotMemory {
 		return m_slot_memory;
-	}
-	auto exchange_request() -> ParsedRequest {
-		if (!m_request) {
-			throw std::runtime_error("No cached request");
-		}
-		auto result = *std::move(m_request);
-		m_request = tv::none;
-		return result;
 	}
 private:
 	auto use_move(MoveState) -> void;
@@ -98,7 +81,6 @@ private:
 	auto try_correct_hp_and_status(bool const is_ai, tv::optional<VisibleHP>, tv::optional<StatusName>) -> void;
 
 	SlotMemory m_slot_memory;
-	tv::optional<ParsedRequest> m_request;
 	std::unique_ptr<ClientBattle> m_client_battle;
 	Party m_party;
 };

@@ -6,12 +6,15 @@
 #include <bounded/assert.hpp>
 
 import tm.clients.ps.action_required;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_manager;
-import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
+import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
+import tm.clients.ps.parsed_message;
 import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
+import tm.clients.ps.parsed_team;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
@@ -50,8 +53,6 @@ import containers;
 import std_module;
 import tv;
 
-import tm.string_conversions.move_name;
-
 namespace technicalmachine {
 using namespace std::string_view_literals;
 using namespace bounded::literal;
@@ -85,15 +86,26 @@ struct PredictedSelection {
 	SlotMemory slot_memory;
 };
 
+constexpr auto fake_request() -> ParsedRequest {
+	return ParsedRequest(
+		ParsedMoves(),
+		SwitchPossibilities::maybe_trapped,
+		Party(0_bi),
+		ParsedTeam()
+	);
+}
+
+constexpr auto empty_selection_probability = SelectionProbabilities({{pass, Probability(1.0)}});
+
 auto get_predicted_selection(
 	Strategy const & strategy,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats
 ) {
-	return [&](BattleMessage const & message) -> tv::optional<PredictedSelection> {
+	return [&](std::span<ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
 			if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
-				throw std::runtime_error("Tried to predict a selection with an empty team");
+				return empty_selection_probability;
 			}
 			auto const user_team = Team<generation>(state.ai);
 			auto const predicted_team = most_likely_team(all_usage_stats[generation], state.foe);
@@ -106,28 +118,16 @@ auto get_predicted_selection(
 				state.environment
 			).user;
 		};
-		auto const battle_result = tv::visit(message, tv::overload(
-			[](ps::CreateBattle) -> BattleManager::Result {
-				throw std::runtime_error("Should never receive CreateBattle");
-			},
-			[&](auto const & msg) -> BattleManager::Result {
-				return battle.handle_message(msg);
-			}
-		));
-		return tv::visit(battle_result, [&]<typename T>(T const & result) -> tv::optional<PredictedSelection> {
-			if constexpr (bounded::convertible_to<T, ActionRequired>) {
-				auto selection = PredictedSelection(
-					tv::visit(result.state, function),
-					result.slot_memory
-				);
-				if (selection.predicted == SelectionProbabilities({{pass, Probability(1.0)}})) {
-					return tv::none;
-				}
-				return selection;
-			} else {
-				return tv::none;
-			}
-		});
+		auto const result = battle.handle_request(fake_request());
+		auto selection = PredictedSelection(
+			tv::visit(result.state, function),
+			result.slot_memory
+		);
+		battle.handle_message(message);
+		if (selection.predicted == empty_selection_probability) {
+			return tv::none;
+		}
+		return selection;
 	};
 }
 
@@ -171,7 +171,7 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 
 auto predicted_selections(
 	Strategy const & strategy,
-	std::span<BattleMessage const> const battle_messages,
+	std::span<ps::EventBlock const> const battle_messages,
 	BattleManager & battle,
 	AllUsageStats const & all_usage_stats
 ) {
@@ -186,14 +186,13 @@ auto score_one_side_of_battle(
 	Strategy const & strategy,
 	AllUsageStats const & all_usage_stats,
 	RatedSide const & rated_side,
-	std::span<BattleMessage const> const battle_messages
+	BattleLogMessages const & battle_messages
 ) -> WeightedScore {
-	auto battle = BattleManager();
+	auto battle = BattleManager(battle_messages.init);
 	battle.handle_request(parsed_side_to_request(rated_side.side));
 	auto scores = containers::vector<double>(containers::reserve_space_for(bounded::min(
 		containers::size(rated_side.inputs),
-		bounded::integer(containers::size(battle_messages)),
-		1'000'000'000_bi
+		containers::size(battle_messages.messages)
 	)));
 	try {
 		// This could be `assign_to_empty_into_capacity` but then we lose all
@@ -201,7 +200,7 @@ auto score_one_side_of_battle(
 		// ensures that each useful result is accessible in the `catch` block.
 		auto input_scores = containers::transform(
 			containers::zip_smallest(
-				predicted_selections(strategy, battle_messages, battle, all_usage_stats),
+				predicted_selections(strategy, battle_messages.messages, battle, all_usage_stats),
 				rated_side.inputs
 			),
 			individual_brier_score
@@ -229,7 +228,7 @@ auto score_predict_selection(ThreadCount const thread_count, std::filesystem::pa
 		[&](
 			std::filesystem::path const & input_file,
 			RatedSide const & side,
-			std::span<BattleMessage const> const battle_messages
+			BattleLogMessages const & battle_messages
 		) {
 			return score_one_side_of_battle(
 				input_file,

@@ -569,13 +569,13 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 
 // TODO: Max size?
 export using EventBlock = containers::static_vector<ParsedMessage, 1000_bi>;
-export constexpr auto make_event_block(auto const messages) -> EventBlock {
+export constexpr auto make_event_block = [](auto const messages) -> EventBlock {
 	return EventBlock(
 		containers::remove_none(containers::transform(
 			messages,
 			parse_message
 		))
 	);
-}
+};
 
 } // namespace technicalmachine::ps

@@ -4,11 +4,13 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 import tm.clients.ps.action_required;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_manager;
-import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
+import tm.clients.ps.event_block;
 import tm.clients.ps.parsed_request;
 import tm.clients.ps.parsed_side;
+import tm.clients.ps.parsed_team;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
@@ -115,36 +117,33 @@ constexpr auto get_species_from_state = []<Generation generation>(VisibleState<g
 	return BothSides(state.foe.pokemon().species(), RelevantTeam(user));
 };
 
+constexpr auto fake_request() -> ps::ParsedRequest {
+	return ps::ParsedRequest(
+		ps::ParsedMoves(),
+		ps::SwitchPossibilities::maybe_trapped,
+		Party(0_bi),
+		ps::ParsedTeam()
+	);
+}
+
 auto battle_states_requiring_selection(
-	std::span<ps::BattleMessage const> const battle_messages,
+	std::span<ps::EventBlock const> const battle_messages,
 	ps::BattleManager & battle
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
 		std::move(battle_messages),
-		[&](ps::BattleMessage const & message) -> tv::optional<RelevantBattleState> {
-			auto const battle_result = tv::visit(message, tv::overload(
-				[](ps::CreateBattle) -> ps::BattleManager::Result {
-					throw std::runtime_error("Should never receive CreateBattle");
-				},
-				[&](auto const & msg) -> ps::BattleManager::Result {
-					return battle.handle_message(msg);
-				}
-			));
-			return tv::visit(battle_result, [&]<typename T>(T const & result) -> tv::optional<RelevantBattleState> {
-				if constexpr (bounded::convertible_to<T, ps::ActionRequired>) {
-					auto const both_species = tv::visit(result.state, get_species_from_state);
-					if (!both_species) {
-						return tv::none;
-					}
-					return RelevantBattleState(
-						both_species->other,
-						both_species->user,
-						result.slot_memory
-					);
-				} else {
-					return tv::none;
-				}
-			});
+		[&](ps::EventBlock const & message) -> tv::optional<RelevantBattleState> {
+			auto const result = battle.handle_request(fake_request());
+			auto const both_species = tv::visit(result.state, get_species_from_state);
+			battle.handle_message(message);
+			if (!both_species) {
+				return tv::none;
+			}
+			return RelevantBattleState(
+				both_species->other,
+				both_species->user,
+				result.slot_memory
+			);
 		}
 	));
 }
@@ -214,17 +213,17 @@ auto update_weights_for_one_side_of_battle(
 	std::filesystem::path const & input_file,
 	SelectionWeightsMaker & weights,
 	RatedSide const & rated_side,
-	std::span<ps::BattleMessage const> const battle_messages
+	BattleLogMessages const & battle_messages
 ) -> void {
-	auto battle = ps::BattleManager();
+	auto battle = ps::BattleManager(battle_messages.init);
 	battle.handle_request(parsed_side_to_request(rated_side.side));
 	auto selections = containers::zip_smallest(
-		battle_states_requiring_selection(battle_messages, battle),
+		battle_states_requiring_selection(battle_messages.messages, battle),
 		rated_side.inputs
 	);
-	auto first = containers::begin(std::move(selections));
-	auto const last = containers::end(std::move(selections));
 	try {
+		auto first = containers::begin(std::move(selections));
+		auto const last = containers::end(std::move(selections));
 		for (; first != last; ++first) {
 			auto const & [state, input] = *first;
 			auto & other_weights = weights[to_index(state.other)];
@@ -301,7 +300,7 @@ auto create_selection_weights(SelectionWeightsMaker & weights, ThreadCount const
 		[&](
 			std::filesystem::path const & input_file,
 			RatedSide const & side,
-			std::span<ps::BattleMessage const> const battle_messages
+			BattleLogMessages const & battle_messages
 		) {
 			update_weights_for_one_side_of_battle(
 				input_file,

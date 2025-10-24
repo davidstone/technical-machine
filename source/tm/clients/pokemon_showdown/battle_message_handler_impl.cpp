@@ -64,18 +64,17 @@ constexpr auto make_foe(BattleInitMessage::Team parsed) -> SeenTeam<generation> 
 	return team;
 }
 
-BattleMessageHandler::BattleMessageHandler(ParsedRequest const & request, BattleInitMessage const message):
-	m_slot_memory(message.team[request.party.value()].size),
-	m_request(request),
+BattleMessageHandler::BattleMessageHandler(Party const party, ParsedTeam const & team, BattleInitMessage const & message):
+	m_slot_memory(message.team[party.value()].size),
 	m_client_battle(make_client_battle(
 		constant_generation(message.generation, [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<Teams> {
 			return Teams<generation>(
-				parsed_team_to_known_team<generation>(request.team),
-				make_foe<generation>(message.team[other(request.party).value()])
+				parsed_team_to_known_team<generation>(team),
+				make_foe<generation>(message.team[other(party).value()])
 			);
 		})
 	)),
-	m_party(request.party)
+	m_party(party)
 {
 }
 
@@ -518,7 +517,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 			if (is_finished) {
 				return BattleFinished();
 			}
-			return ActionRequired(state, m_slot_memory, exchange_request());
+			return BattleContinues();
 		},
 		[&](TurnCount const turn_count) -> Result {
 			handle_previous_data();
@@ -527,10 +526,7 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				check_is_valid_start_of_turn(s.ai);
 				check_is_valid_start_of_turn(s.foe);
 			});
-			return StartOfTurn(
-				ActionRequired(state, m_slot_memory, exchange_request()),
-				turn_count
-			);
+			return StartOfTurn(turn_count);
 		},
 		[](BattleFinished) -> Result {
 			return BattleFinished();

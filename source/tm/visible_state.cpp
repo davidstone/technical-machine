@@ -16,6 +16,8 @@ struct VisibleState {
 	KnownTeam<generation> ai;
 	SeenTeam<generation> foe;
 	Environment environment;
+	
+	friend auto operator==(VisibleState const &, VisibleState const &) -> bool = default;
 };
 
 } // namespace technicalmachine

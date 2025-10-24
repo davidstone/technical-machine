@@ -1,19 +1,15 @@
->battle-gen1ou-1998816971
+>battle-gen1ou-2457170160
 |init|battle
-|title|Technical Machine vs. obi
-|j|☆Technical Machine
-
->battle-gen1ou-1998816971
-|t:|1700996857
+|title|david stone vs. obi
+|j|☆david stone
+|j|☆obi
+>battle-gen1ou-2457170160
+|t:|1759863646
 |gametype|singles
->battle-gen1ou-1998816971
-|player|p1|Technical Machine|101|
->battle-gen1ou-1998816971
-|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Pikachu","details":"Pikachu","condition":"273/273","active":true,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":2}
->battle-gen1ou-1998816971
+>battle-gen1ou-2457170160
+|player|p1|david stone|266|
+>battle-gen1ou-2457170160
 |player|p2|obi|colress|
-|teamsize|p1|6
-|teamsize|p2|6
 |gen|1
 |tier|[Gen 1] OU
 |rule|Desync Clause Mod: Desyncs changed to move failure.
@@ -25,26 +21,30 @@
 |rule|Endless Battle Clause: Forcing endless battles is banned
 |rule|HP Percentage Mod: HP is shown in percentages
 |
-|t:|1700996857
+|t:|1759863646
+|teamsize|p1|2
+|teamsize|p2|1
 |start
-|switch|p1a: Pikachu|Pikachu|273/273
-|switch|p2a: Golem|Golem|100/100
+|switch|p1a: Pikachu|Pikachu|100/100
+|switch|p2a: Golem|Golem|363/363
 |turn|1
->battle-gen1ou-1998816971
-|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Pikachu","details":"Pikachu","condition":"273/273","active":true,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":4}
->battle-gen1ou-1998816971
+>battle-gen1ou-2457170160
+|request|{"active":[{"moves":[{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"obi","id":"p2","pokemon":[{"ident":"p2: Golem","details":"Golem","condition":"363/363","active":true,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["earthquake"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":3}
+>battle-gen1ou-2457170160
 |
-|t:|1700996893
+|t:|1759863657
 |move|p1a: Pikachu|Thunderbolt|p2a: Golem
 |-immune|p2a: Golem
 |move|p2a: Golem|Earthquake|p1a: Pikachu
 |-supereffective|p1a: Pikachu
 |-damage|p1a: Pikachu|0 fnt
 |faint|p1a: Pikachu
->battle-gen1ou-1998816971
-|request|{"active":[{"moves":[{"move":"Hyper Beam","id":"hyperbeam","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":true,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Pikachu","details":"Pikachu","condition":"0 fnt","active":false,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":10}
->battle-gen1ou-1998816971
+>battle-gen1ou-2457170160
+|request|{"wait":true,"side":{"name":"obi","id":"p2","pokemon":[{"ident":"p2: Golem","details":"Golem","condition":"363/363","active":true,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["earthquake"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":5}
+>battle-gen1ou-2457170160
 |
-|t:|1700996893
-|switch|p1a: Tauros|Tauros|353/353
+|t:|1759863660
+|switch|p1a: Tauros|Tauros|100/100
 |turn|2
+>battle-gen1ou-2457170160
+|request|{"active":[{"moves":[{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"obi","id":"p2","pokemon":[{"ident":"p2: Golem","details":"Golem","condition":"363/363","active":true,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["earthquake"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":7}

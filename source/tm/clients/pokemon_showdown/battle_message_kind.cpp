@@ -18,6 +18,7 @@ constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated
 
 export enum class BattleMessageKind {
 	junk,
+	init,
 	regular,
 	request,
 	error
@@ -29,16 +30,18 @@ export constexpr auto get_battle_message_kind(InMessage const first_message, boo
 		return (... or (first_message.type() == strs));
 	};
 	using enum BattleMessageKind;
-	if (matches("raw"sv, "t:"sv, "inactive"sv, "inactiveoff"sv)) {
+	if (matches("init"sv, "raw"sv, "t:"sv, "inactive"sv, "inactiveoff"sv)) {
 		return junk;
-	} else if (matches("init"sv, "-message"sv, "teamsize"sv)) {
+	} else if (matches("teamsize"sv)) {
 		// "teamsize" never starts a block in the real stream. However, we have
 		// to filter out all the "player" messages when parsing PS logs due to
 		// bugs on the PS side. That makes "teamsize" the beginning of the block
 		// when parsing those files.
-		return regular;
+		return init;
 	} else if (matches("player"sv)) {
-		return has_more_data ? regular	: junk;
+		return has_more_data ? init	: junk;
+	} else if (matches("-message"sv)) {
+		return regular;
 	} else if (matches(""sv)) {
 		return first_message.remainder() == ladder_timeout ? junk : regular;
 	} else if (matches("request"sv)) {

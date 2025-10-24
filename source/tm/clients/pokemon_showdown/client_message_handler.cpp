@@ -6,18 +6,20 @@
 export module tm.clients.ps.client_message_handler;
 
 import tm.clients.ps.action_required;
-import tm.clients.ps.battle_message;
+import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_kind;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.battles;
+import tm.clients.ps.event_block;
 import tm.clients.ps.log_battle_messages;
 import tm.clients.ps.is_chat_message_block;
 import tm.clients.ps.in_message;
-import tm.clients.ps.make_battle_message;
+import tm.clients.ps.make_battle_init_message;
 import tm.clients.ps.message_block;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.parse_request;
+import tm.clients.ps.parsed_message;
 import tm.clients.ps.parsed_request;
 import tm.clients.ps.room;
 import tm.clients.ps.room_message_block;
@@ -116,7 +118,8 @@ export struct ClientMessageHandler {
 		m_settings(std::move(settings)),
 		m_battles_directory(std::move(battles_directory)),
 		m_send_message(std::move(send_message)),
-		m_authenticate(std::move(authenticate))
+		m_authenticate(std::move(authenticate)),
+		m_should_start_timer(m_settings.style.index() == bounded::type<SettingsFile::Ladder>)
 	{
 	}
 	ClientMessageHandler(ClientMessageHandler &&) = default;
@@ -136,8 +139,14 @@ export struct ClientMessageHandler {
 			switch (get_battle_message_kind(first_message, has_more_data)) {
 				case BattleMessageKind::junk:
 					break;
+				case BattleMessageKind::init:
+					m_battles.create_battle(
+						block.room(),
+						make_battle_init_message(messages)
+					);
+					break;
 				case BattleMessageKind::regular:
-					handle_battle_message(block.room(), make_battle_message(messages));
+					handle_battle_message(block.room(), make_event_block(messages));
 					break;
 				case BattleMessageKind::request:
 					handle_battle_request(
@@ -183,37 +192,17 @@ private:
 		));
 	}
 
-	auto handle_battle_message(Room const room, BattleMessage const & battle_message) -> void {
-		auto const result = m_battles.handle_message(
-			room,
-			battle_message
-		);
-		auto analysis_logger = open_text_file(m_battles_directory / room / "analysis.txt");
-		auto determine_and_send_selection = [&](ActionRequired const & value) {
-			auto const selection = determine_selection(
-				value.state,
-				analysis_logger,
-				m_all_usage_stats,
-				m_strategy,
-				m_random_engine
-			);
-			send_selection(selection, m_send_message, room, value.slot_memory);
-		};
+	auto handle_battle_message(
+		Room const room,
+		std::span<ParsedMessage const> const message
+	) -> void {
+		auto const result = m_battles.handle_message(room, message);
 		tv::visit(result, tv::overload(
-			[&](ActionRequired const & value) {
-				determine_and_send_selection(value);
-			},
-			[&](StartOfTurn const & value) {
-				print_begin_turn(analysis_logger, value.turn_count);
-				determine_and_send_selection(value);
+			[&](StartOfTurn const value) {
+				auto file = analysis_log_file(room);
+				print_begin_turn(file, value.turn_count);
 			},
 			[](BattleContinues) {
-			},
-			[&](BattleStarted const & value) {
-				determine_and_send_selection(value);
-				if (m_settings.style.index() == bounded::type<SettingsFile::Ladder>) {
-					m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
-				}
 			},
 			[&](BattleFinished) {
 				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room));
@@ -225,7 +214,23 @@ private:
 	}
 
 	auto handle_battle_request(Room const room, ParsedRequest const & message) -> void {
-		m_battles.handle_request(room, message);
+		auto const value = m_battles.handle_request(room, message);
+		auto file = analysis_log_file(room);
+		auto const selection = determine_selection(
+			value.state,
+			file,
+			m_all_usage_stats,
+			m_strategy,
+			m_random_engine
+		);
+		send_selection(selection, m_send_message, room, value.slot_memory);
+		// Theoretically we could turn off the timer before thinking and
+		// then turn it back on after sending a response, but that seems
+		// like it would be annoying for the human opponent.
+		if (m_should_start_timer) {
+			m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
+			m_should_start_timer = false;
+		}
 	}
 
 	auto handle_error_message(Room const room, std::string_view const error) const -> void {
@@ -315,6 +320,10 @@ private:
 		m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.at("assertion").get<std::string_view>()));
 	}
 
+	auto analysis_log_file(Room const room) -> std::fstream {
+		return open_text_file(m_battles_directory / room / "analysis.txt");
+	}
+
 	std::mt19937 m_random_engine;
 
 	AllUsageStats m_all_usage_stats;
@@ -327,6 +336,8 @@ private:
 
 	SendMessageFunction m_send_message;
 	AuthenticationFunction m_authenticate;
+
+	bool m_should_start_timer;
 };
 
 } // namespace technicalmachine::ps

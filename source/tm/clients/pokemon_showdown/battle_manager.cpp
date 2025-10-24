@@ -7,7 +7,6 @@ export module tm.clients.ps.battle_manager;
 
 import tm.clients.ps.action_required;
 import tm.clients.ps.battle_init_message;
-import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.parsed_message;
@@ -20,6 +19,7 @@ import tm.clients.battle_finished;
 import tm.clients.party;
 import tm.clients.turn_count;
 
+import bounded;
 import containers;
 import tv;
 import std_module;
@@ -27,88 +27,58 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
-struct BattleExists {
-};
-
-using BattleState = tv::variant<
-	BattleExists,
-	ParsedRequest,
-	BattleMessageHandler
->;
-
-// We create a state machine.
-// BattleExists + ParsedRequest => ParsedRequest
-// ParsedRequest + BattleInitMessage => BattleMessageHandler
-// BattleMessageHandler + ParsedRequest => BattleMessageHandler
-// BattleMessageHandler + EventBlock => BattleMessageHandler
-
 export struct BattleManager {
-	BattleManager() = default;
-
-	using Result = tv::variant<
-		ActionRequired,
-		StartOfTurn,
-		BattleFinished,
-		BattleContinues,
-		BattleStarted
-	>;
-
-	constexpr auto handle_request(ParsedRequest const & message) -> void {
-		tv::visit(m_battle, tv::overload(
-			[&](BattleExists) {
-				m_battle = message;
-			},
-			[](ParsedRequest const &) {
-				throw std::runtime_error("Got two teams while handling messages");
-			},
-			[&](BattleMessageHandler & handler) {
-				handler.save_request(message);
-			}
-		));
+	explicit constexpr BattleManager(BattleInitMessage const & message):
+		m_battle(message)
+	{
 	}
 
-	auto handle_message(BattleInitMessage const message) -> Result {
-		return tv::visit(m_battle, tv::overload(
-			[](BattleExists) -> BattleStarted {
-				throw std::runtime_error("Received a BattleInitMessage before getting a team");
-			},
-			[&](ParsedRequest const & request) -> BattleStarted {
-				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
+	constexpr auto handle_request(ParsedRequest const & message) -> ActionRequired {
+		auto & handler = tv::visit(m_battle, tv::overload(
+			[&](BattleInitMessage const init) -> BattleMessageHandler & {
+				return m_battle.emplace([&] -> BattleMessageHandler {
 					return BattleMessageHandler(
-						auto(request),
-						message
+						message.party,
+						message.team,
+						init
 					);
 				});
-				return BattleStarted(ActionRequired(
-					handler.state(),
-					handler.slot_memory(),
-					handler.exchange_request()
-				));
 			},
-			[](BattleMessageHandler const &) -> BattleStarted {
-				throw std::runtime_error("Tried to initialize an existing battle");
+			[](BattleMessageHandler & h) -> BattleMessageHandler & {
+				return h;
 			}
 		));
+		return ActionRequired(
+			handler.state(),
+			handler.slot_memory()
+		);
 	}
 
-	auto handle_message(std::span<ParsedMessage const> const message) -> Result {
+	using Result = tv::variant<
+		BattleContinues,
+		StartOfTurn,
+		BattleFinished
+	>;
+	constexpr auto handle_message(std::span<ParsedMessage const> const message) -> Result {
 		return tv::visit(m_battle, tv::overload(
-			[](BattleExists) -> Result {
-				throw std::runtime_error("Received an event before getting a team");
-			},
-			[](ParsedRequest const &) -> Result {
-				throw std::runtime_error("Received an event before a BattleInitMessage");
+			[](BattleInitMessage const &) -> Result {
+				throw std::runtime_error("Received an event before the first action");
 			},
 			[&](BattleMessageHandler & handler) -> Result {
 				auto result = handler.handle_message(message);
-				return tv::visit(std::move(result), [](auto value) -> Result {
-					return value;
-				});
+				return tv::visit(
+					std::move(result),
+					bounded::construct<Result>
+				);
 			}
 		));
 	}
 private:
-	BattleState m_battle = BattleExists();
+	using State = tv::variant<
+		BattleInitMessage,
+		BattleMessageHandler
+	>;
+	State m_battle;
 };
 
 } // namespace technicalmachine::ps

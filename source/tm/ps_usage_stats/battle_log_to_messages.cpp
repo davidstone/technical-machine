@@ -11,10 +11,11 @@ module;
 
 export module tm.ps_usage_stats.battle_log_to_messages;
 
-import tm.clients.ps.battle_message;
+import tm.clients.ps.battle_init_message;
+import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.is_chat_message;
-import tm.clients.ps.make_battle_message;
+import tm.clients.ps.make_battle_init_message;
 
 import tm.nlohmann_json;
 
@@ -55,21 +56,33 @@ constexpr auto is_potentially_useful = [](InMessage const message) {
 		message.type() != "t:";
 };
 
-export auto battle_log_to_messages(nlohmann::json const & log) -> containers::dynamic_array<BattleMessage> {
-	return containers::dynamic_array<BattleMessage>(
-		containers::transform(
-			containers::chunk_by(
-				containers::filter(
-					containers::transform(log, [](nlohmann::json const & message) {
-						return InMessage(message.get<std::string_view>());
-					}),
-					is_potentially_useful
-				),
-				is_part_of_previous_chunk
-			),
-			[](auto const messages) {
-				return make_battle_message(messages);
-			}
+export struct BattleLogMessages {
+	BattleInitMessage init;
+	containers::dynamic_array<EventBlock> messages;
+	friend auto operator==(BattleLogMessages const &, BattleLogMessages const &) -> bool = default;
+};
+
+export auto battle_log_to_messages(nlohmann::json const & log) -> BattleLogMessages {
+	auto range = containers::chunk_by(
+		containers::filter(
+			containers::transform(log, [](nlohmann::json const & message) {
+				return InMessage(message.get<std::string_view>());
+			}),
+			is_potentially_useful
+		),
+		is_part_of_previous_chunk
+	);
+	if (containers::is_empty(range)) {
+		throw std::runtime_error("Battle log has no messages");
+	}
+	auto it = containers::begin(range);
+	return BattleLogMessages(
+		BattleInitMessage(make_battle_init_message(*it)),
+		containers::dynamic_array<EventBlock>(
+			containers::transform(
+				containers::subrange(containers::next(it), containers::end(range)),
+				make_event_block
+			)
 		)
 	);
 }

@@ -5,10 +5,8 @@
 
 export module tm.clients.ps.battle_started;
 
-import tm.clients.ps.action_required;
-
 namespace technicalmachine::ps {
 
-export struct BattleStarted : ActionRequired {};
+export struct BattleStarted {};
 
 } // namespace technicalmachine::ps

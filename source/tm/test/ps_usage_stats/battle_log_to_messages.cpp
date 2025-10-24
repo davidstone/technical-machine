@@ -5,7 +5,6 @@ module;
 export module tm.test.ps_usage_stats.battle_log_to_messages;
 
 import tm.clients.ps.battle_init_message;
-import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
 import tm.clients.ps.parsed_message;
@@ -105,7 +104,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 			"|turn|4",
 		})
 	);
-	auto const expected = containers::dynamic_array<ps::BattleMessage>({
+	auto const expected = BattleLogMessages(
 		ps::BattleInitMessage(
 			Generation::one,
 			{
@@ -135,94 +134,96 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				)
 			}
 		),
-		ps::EventBlock({
-			ps::SeparatorMessage(),
-			ps::SwitchMessage(
-				p2,
-				Species::Cloyster,
-				"Cloyster"sv,
-				Level(100_bi),
-				Gender::genderless,
-				visible_hp(303_bi, 303_bi),
-				StatusName::clear
-			),
-			ps::MoveMessage(
-				p1,
-				MoveName::Body_Slam,
-				did_not_miss
-			),
-			ps::DamageMessage(
-				p2,
-				StatusName::clear,
-				visible_hp(237_bi, 303_bi)
-			),
-			ps::SeparatorMessage(),
-			ps::TurnMessage(2_bi),
-		}),
-		ps::EventBlock({
-			ps::SeparatorMessage(),
-			ps::MoveMessage(
-				p1,
-				MoveName::Body_Slam,
-				did_not_miss
-			),
-			ps::DamageMessage(
-				p2,
-				StatusName::clear,
-				visible_hp(167_bi, 303_bi)
-			),
-			ps::MoveMessage(
-				p2,
-				MoveName::Blizzard,
-				did_not_miss
-			),
-			ps::DamageMessage(
-				p1,
-				StatusName::clear,
-				visible_hp(186_bi, 353_bi)
-			),
-			ps::SeparatorMessage(),
-			ps::TurnMessage(3_bi),
-		}),
-		ps::EventBlock({
-			ps::SeparatorMessage(),
-			ps::MoveMessage(
-				p1,
-				MoveName::Body_Slam,
-				did_not_miss
-			),
-			ps::DamageMessage(
-				p2,
-				StatusName::clear,
-				visible_hp(98_bi, 303_bi)
-			),
-			ps::MoveStatus(p2, StatusName::paralysis),
-			ps::MoveMessage(
-				p2,
-				MoveName::Blizzard,
-				did_not_miss
-			),
-			ps::CriticalHitMessage(p2),
-			ps::DamageMessage(
-				p1,
-				StatusName::clear,
-				visible_hp(0_bi, 100_bi)
-			),
-		}),
-		ps::EventBlock({
-			ps::SeparatorMessage(),
-			ps::SwitchMessage(
-				p1,
-				Species::Gengar,
-				"Gengar"sv,
-				Level(100_bi),
-				Gender::genderless,
-				visible_hp(323_bi, 323_bi),
-				StatusName::clear
-			),
-			ps::TurnMessage(4_bi),
-		}),
-	});
+		containers::dynamic_array<ps::EventBlock>({
+			ps::EventBlock({
+				ps::SeparatorMessage(),
+				ps::SwitchMessage(
+					p2,
+					Species::Cloyster,
+					"Cloyster"sv,
+					Level(100_bi),
+					Gender::genderless,
+					visible_hp(303_bi, 303_bi),
+					StatusName::clear
+				),
+				ps::MoveMessage(
+					p1,
+					MoveName::Body_Slam,
+					did_not_miss
+				),
+				ps::DamageMessage(
+					p2,
+					StatusName::clear,
+					visible_hp(237_bi, 303_bi)
+				),
+				ps::SeparatorMessage(),
+				ps::TurnMessage(2_bi),
+			}),
+			ps::EventBlock({
+				ps::SeparatorMessage(),
+				ps::MoveMessage(
+					p1,
+					MoveName::Body_Slam,
+					did_not_miss
+				),
+				ps::DamageMessage(
+					p2,
+					StatusName::clear,
+					visible_hp(167_bi, 303_bi)
+				),
+				ps::MoveMessage(
+					p2,
+					MoveName::Blizzard,
+					did_not_miss
+				),
+				ps::DamageMessage(
+					p1,
+					StatusName::clear,
+					visible_hp(186_bi, 353_bi)
+				),
+				ps::SeparatorMessage(),
+				ps::TurnMessage(3_bi),
+			}),
+			ps::EventBlock({
+				ps::SeparatorMessage(),
+				ps::MoveMessage(
+					p1,
+					MoveName::Body_Slam,
+					did_not_miss
+				),
+				ps::DamageMessage(
+					p2,
+					StatusName::clear,
+					visible_hp(98_bi, 303_bi)
+				),
+				ps::MoveStatus(p2, StatusName::paralysis),
+				ps::MoveMessage(
+					p2,
+					MoveName::Blizzard,
+					did_not_miss
+				),
+				ps::CriticalHitMessage(p2),
+				ps::DamageMessage(
+					p1,
+					StatusName::clear,
+					visible_hp(0_bi, 100_bi)
+				),
+			}),
+			ps::EventBlock({
+				ps::SeparatorMessage(),
+				ps::SwitchMessage(
+					p1,
+					Species::Gengar,
+					"Gengar"sv,
+					Level(100_bi),
+					Gender::genderless,
+					visible_hp(323_bi, 323_bi),
+					StatusName::clear
+				),
+				ps::TurnMessage(4_bi),
+			}),
+		})
+	);
 	CHECK(parsed == expected);
 }
 
