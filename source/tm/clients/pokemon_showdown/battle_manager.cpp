@@ -54,22 +54,14 @@ export struct BattleManager {
 		);
 	}
 
-	using Result = tv::variant<
-		BattleContinues,
-		StartOfTurn,
-		BattleFinished
-	>;
+	using Result = BattleMessageHandler::Result;
 	constexpr auto handle_message(std::span<ParsedMessage const> const message) -> Result {
 		return tv::visit(m_battle, tv::overload(
 			[](BattleInitMessage const &) -> Result {
 				throw std::runtime_error("Received an event before the first action");
 			},
 			[&](BattleMessageHandler & handler) -> Result {
-				auto result = handler.handle_message(message);
-				return tv::visit(
-					std::move(result),
-					bounded::construct<Result>
-				);
+				return handler.handle_message(message);
 			}
 		));
 	}
