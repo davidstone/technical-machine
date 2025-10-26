@@ -215,12 +215,10 @@ auto update_weights_for_one_side_of_battle(
 		for (; first != last; ++first) {
 			auto const & [state, input] = *first;
 			auto & other_weights = weights[to_index(state.other)];
-			auto get_weight = [&] {
-				return other_weights[to_index(state.user.pokemon[to_index(state.user.active)])].locked();
-			};
+			auto & get_weight = other_weights[to_index(state.user.pokemon[to_index(state.user.active)])];
 			tv::visit(input, tv::overload(
 				[&](MoveName const move) {
-					auto const weight = get_weight();
+					auto const weight = get_weight.locked();
 					for (auto const possible : state.user.moves) {
 						if (move == possible) {
 							weight.value().used(possible);
@@ -243,7 +241,7 @@ auto update_weights_for_one_side_of_battle(
 							weight.value().did_not_switch_in();
 						}
 					}
-					auto const weight = get_weight();
+					auto const weight = get_weight.locked();
 					for (auto const possible : state.user.moves) {
 						weight.value().did_not_use(possible);
 					}
