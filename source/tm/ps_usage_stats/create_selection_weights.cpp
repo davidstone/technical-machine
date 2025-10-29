@@ -30,8 +30,11 @@ import tm.ps_usage_stats.rated_side;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.thread_count;
 
+import tm.stat.hp;
+
 import tm.generation;
 import tm.get_legal_selections;
+import tm.hp_bucket;
 import tm.open_file;
 import tm.team;
 import tm.to_index;
@@ -42,6 +45,7 @@ import tm.write_bytes;
 import bounded;
 import concurrent;
 import containers;
+import numeric_traits;
 import std_module;
 import tv;
 
@@ -75,30 +79,37 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	);
 }
 
+struct RelevantPokemon {
+	Species species;
+	HP hp;
+};
+
 struct RelevantTeam {
 	template<Generation generation>
 	constexpr explicit RelevantTeam(Team<generation> const & team):
 		pokemon(containers::transform(
 			team.all_pokemon(),
-			&Pokemon<generation>::species
+			[](Pokemon<generation> const & p) {
+				return RelevantPokemon(p.species(), p.hp());
+			}
 		)),
 		active(team.all_pokemon().index()),
 		moves(containers::transform(team.pokemon().regular_moves(), &Move::name))
 	{
 	}
-	containers::static_vector<Species, max_pokemon_per_team> pokemon;
+	containers::static_vector<RelevantPokemon, max_pokemon_per_team> pokemon;
 	TeamIndex active;
 	MoveNames moves;
 };
 
 struct RelevantBattleState {
-	Species other;
+	RelevantPokemon other;
 	RelevantTeam user;
 	ps::SlotMemory slot_memory;
 };
 
 struct BothSides {
-	Species other;
+	RelevantPokemon other;
 	RelevantTeam user;
 };
 
@@ -112,7 +123,13 @@ constexpr auto get_species_from_state = []<Generation generation>(VisibleState<g
 	if (selections == LegalSelections({pass})) {
 		return tv::none;
 	}
-	return BothSides(state.foe.pokemon().species(), RelevantTeam(user));
+	return BothSides(
+		RelevantPokemon(
+			state.foe.pokemon().species(),
+			state.foe.pokemon().hp()
+		),
+		RelevantTeam(user)
+	);
 };
 
 auto battle_states_requiring_selection(
@@ -195,7 +212,9 @@ private:
 	Usage m_switch_in_chances = 0_bi;
 };
 
-using PerOther = UsageFor<Species, concurrent::locked_access<PerMatchup>>;
+using PerUser = UsageFor<HPBucket, concurrent::locked_access<PerMatchup>>;
+using PerOtherHP = UsageFor<Species, PerUser>;
+using PerOther = UsageFor<HPBucket, PerOtherHP>;
 using SelectionWeightsMaker = UsageFor<Species, PerOther>;
 
 auto update_weights_for_one_side_of_battle(
@@ -214,8 +233,11 @@ auto update_weights_for_one_side_of_battle(
 		auto const last = containers::end(std::move(selections));
 		for (; first != last; ++first) {
 			auto const & [state, input] = *first;
-			auto & other_weights = weights[to_index(state.other)];
-			auto & get_weight = other_weights[to_index(state.user.pokemon[to_index(state.user.active)])];
+			auto & other_hp_weights = weights[to_index(state.other.species)];
+			auto & user_weights = other_hp_weights[to_hp_bucket(state.other.hp)];
+			auto const user_pokemon = state.user.pokemon[to_index(state.user.active)];
+			auto & user_hp_weights = user_weights[to_index(user_pokemon.species)];
+			auto & get_weight = user_hp_weights[to_hp_bucket(user_pokemon.hp)];
 			tv::visit(input, tv::overload(
 				[&](MoveName const move) {
 					auto const weight = get_weight.locked();
@@ -233,8 +255,9 @@ auto update_weights_for_one_side_of_battle(
 						if (index == state.user.active) {
 							continue;
 						}
-						auto const potential_replacement = state.user.pokemon[index];
-						auto const weight = other_weights[to_index(potential_replacement)].locked();
+						auto const replacement = state.user.pokemon[index];
+						auto & replacement_hp_weights = user_weights[to_index(replacement.species)];
+						auto const weight = replacement_hp_weights[to_hp_bucket(replacement.hp)].locked();
 						if (state.slot_memory.reverse_lookup(switch_) == index) {
 							weight.value().switched_in(bounded::assume_in_range<TeamSize>(team_size - 1_bi));
 						} else {
@@ -255,25 +278,35 @@ auto update_weights_for_one_side_of_battle(
 	}
 }
 
+// Requires exclusive access to `weights`
 auto write_to_file(std::ostream & stream, SelectionWeightsMaker const & weights) {
+	constexpr auto bucket_range = containers::integer_range(bounded::number_of<HPBucket>);
 	for (auto const other : containers::enum_range<Species>()) {
 		auto const & per_other = weights[to_index(other)];
-		for (auto const user : containers::enum_range<Species>()) {
-			auto const & per_matchup = per_other[to_index(user)].unlocked();
-			auto const switch_out_weight = per_matchup.switch_out_weight();
-			auto const switch_in_multiplier = per_matchup.switch_in_multiplier();
-			auto const move_weights = per_matchup.move_weights();
-			if (switch_out_weight == 0.0 and switch_in_multiplier == 0.0 and containers::is_empty(move_weights)) {
-				continue;
-			}
-			write_bytes(stream, other, 2_bi);
-			write_bytes(stream, user, 2_bi);
-			write_bytes(stream, switch_out_weight, 8_bi);
-			write_bytes(stream, switch_in_multiplier, 8_bi);
-			write_bytes(stream, containers::size(move_weights), 2_bi);
-			for (auto const & value : move_weights) {
-				write_bytes(stream, value.move, 2_bi);
-				write_bytes(stream, value.weight, 8_bi);
+		for (auto const other_hp : bucket_range) {
+			auto const & per_other_hp = per_other[other_hp];
+			for (auto const user : containers::enum_range<Species>()) {
+				auto const & per_user = per_other_hp[to_index(user)];
+				for (auto const user_hp : bucket_range) {
+					auto const & per_matchup = per_user[user_hp].unlocked();
+					auto const switch_out_weight = per_matchup.switch_out_weight();
+					auto const switch_in_multiplier = per_matchup.switch_in_multiplier();
+					auto const move_weights = per_matchup.move_weights();
+					if (switch_out_weight == 0.0 and switch_in_multiplier == 0.0 and containers::is_empty(move_weights)) {
+						continue;
+					}
+					write_bytes(stream, other, 2_bi);
+					write_bytes(stream, other_hp, 1_bi);
+					write_bytes(stream, user, 2_bi);
+					write_bytes(stream, user_hp, 1_bi);
+					write_bytes(stream, switch_out_weight, 8_bi);
+					write_bytes(stream, switch_in_multiplier, 8_bi);
+					write_bytes(stream, containers::size(move_weights), 2_bi);
+					for (auto const & value : move_weights) {
+						write_bytes(stream, value.move, 2_bi);
+						write_bytes(stream, value.weight, 8_bi);
+					}
+				}
 			}
 		}
 	}

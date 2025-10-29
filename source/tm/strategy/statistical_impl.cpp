@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <bounded/assert.hpp>
-
 module tm.strategy.statistical;
 
 import tm.move.legal_selections;
@@ -17,6 +13,8 @@ import tm.move.switch_;
 
 import tm.pokemon.species;
 
+import tm.stat.hp;
+
 import tm.strategy.weighted_selection;
 
 import tm.string_conversions.generation;
@@ -25,6 +23,7 @@ import tm.binary_file_reader;
 import tm.environment;
 import tm.generation;
 import tm.get_directory;
+import tm.hp_bucket;
 import tm.open_file;
 import tm.team;
 import tm.to_index;
@@ -72,11 +71,19 @@ private:
 	Weight<double> m_switch_in = minimum_weight;
 };
 
-using PerOther = UsageFor<Species, PerMatchup>;
+using PerUser = UsageFor<HPBucket, PerMatchup>;
+using PerOtherHP = UsageFor<Species, PerUser>;
+using PerOther = UsageFor<HPBucket, PerOtherHP>;
+using AllWeights = UsageFor<Species, PerOther>;
 
 constexpr auto with_minimum_weight(Weight<double> const weight) -> Weight<double> {
 	return weight == Weight(0.0) ? minimum_weight : weight;
 }
+
+struct RelevantPokemon {
+	Species species;
+	HP hp;
+};
 
 struct SelectionWeights {
 	explicit SelectionWeights(Generation const generation) {
@@ -85,7 +92,9 @@ struct SelectionWeights {
 		);
 		while (stream.peek() != std::char_traits<char>::eof()) {
 			auto const other = read<Species>(stream);
+			auto const other_hp = read<HPBucket>(stream);
 			auto const user = read<Species>(stream);
+			auto const user_hp = read<HPBucket>(stream);
 			auto const switch_out_weight = read_weight(stream);
 			auto const switch_in_multiplier = read_weight(stream);
 			auto moves = MoveData(map_reader<MoveName>(stream, [&] {
@@ -93,7 +102,9 @@ struct SelectionWeights {
 			}));
 			set(
 				other,
+				other_hp,
 				user,
+				user_hp,
 				with_minimum_weight(switch_out_weight),
 				with_minimum_weight(switch_in_multiplier),
 				std::move(moves)
@@ -101,31 +112,41 @@ struct SelectionWeights {
 		}
 	}
 
-	constexpr auto move_weight(Species const other, Species const user, MoveName const move) const -> Weight<double> {
-		auto const & per_other = m_data[to_index(other)];
-		auto const & per_matchup = per_other[to_index(user)];
+	constexpr auto move_weight(
+		RelevantPokemon const other,
+		RelevantPokemon const user,
+		MoveName const move
+	) const -> Weight<double> {
+		auto const & per_other = m_data[to_index(other.species)][to_hp_bucket(other.hp)];
+		auto const & per_matchup = per_other[to_index(user.species)][to_hp_bucket(user.hp)];
 		return per_matchup[move];
 	}
-	constexpr auto switch_weight(Species const other, Species const user, Species const switch_) const -> Weight<double> {
-		auto const & per_other = m_data[to_index(other)];
-		auto const & per_matchup = per_other[to_index(user)];
-		return per_matchup.switch_out() * per_other[to_index(switch_)].switch_in();
+	constexpr auto switch_weight(
+		RelevantPokemon const other,
+		RelevantPokemon const user,
+		RelevantPokemon const switch_
+	) const -> Weight<double> {
+		auto const & per_other = m_data[to_index(other.species)][to_hp_bucket(other.hp)];
+		auto const & per_matchup = per_other[to_index(user.species)][to_hp_bucket(user.hp)];
+		return per_matchup.switch_out() * per_other[to_index(switch_.species)][to_hp_bucket(switch_.hp)].switch_in();
 	}
 
 private:
 	constexpr auto set(
 		Species const other,
+		HPBucket const other_hp,
 		Species const user,
+		HPBucket const user_hp,
 		Weight<double> const switch_out_weight,
 		Weight<double> const switch_in_multiplier,
 		MoveData move_data
 	) -> void {
-		auto & per_other = m_data[to_index(other)];
-		auto & per_matchup = per_other[to_index(user)];
+		auto & per_other = m_data[to_index(other)][other_hp];
+		auto & per_matchup = per_other[to_index(user)][user_hp];
 		per_matchup.set(switch_out_weight, switch_in_multiplier, std::move(move_data));
 	}
 
-	UsageFor<Species, PerOther> m_data{};
+	AllWeights m_data{};
 };
 
 struct Statistical {
@@ -152,8 +173,11 @@ struct Statistical {
 		[[maybe_unused]] Environment const environment
 	) const -> WeightedSelections {
 		auto const & weights = m_all[to_index(generation)];
-		auto const user_species = user.pokemon().species();
-		auto const other_species = other.pokemon().species();
+		auto const relevant = [](auto const & pokemon) {
+			return RelevantPokemon(pokemon.species(), pokemon.hp());
+		};
+		auto const relevant_other = relevant(other.pokemon());
+		auto const relevant_user = relevant(user.pokemon());
 		auto const weighted_selections = containers::make_static_vector(containers::transform(
 			user_selections,
 			[&](Selection const selection) {
@@ -161,14 +185,14 @@ struct Statistical {
 					[&](MoveName const move) -> WeightedSelection {
 						return WeightedSelection(
 							selection,
-							weights.move_weight(other_species, user_species, move)
+							weights.move_weight(relevant_other, relevant_user, move)
 						);
 					},
 					[&](Switch const switch_) -> WeightedSelection {
-						auto const switch_in_species = user.pokemon(switch_.value()).species();
+						auto const switch_in = relevant(user.pokemon(switch_.value()));
 						return WeightedSelection(
 							selection,
-							weights.switch_weight(other_species, user_species, switch_in_species)
+							weights.switch_weight(relevant_other, relevant_user, switch_in)
 						);
 					},
 					[](Pass) -> WeightedSelection {

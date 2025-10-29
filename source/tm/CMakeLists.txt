@@ -251,6 +251,7 @@ target_sources(tm_common PUBLIC
 		handle_curse.cpp
 		heal.cpp
 		held_item.cpp
+		hp_bucket.cpp
 		initial_team.cpp
 		item.cpp
 		get_legal_selections.cpp
