@@ -15,7 +15,13 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-// Turns remaining on Bind, Clamp, Fire Spin, and Wrap in Generation 1
+// Turns spent on Bind, Clamp, Fire Spin, and Wrap in Generation 1
+//
+// We don't know whether immobilize released when we are reading a live log
+// until after we try to do something else. So we unfortunately have to have two
+// code paths: one of them for analysis (where we deal in probability) and the
+// other for live battles / log replays (where we deal in knowns and unknowns).
+// `advance_one_turn` is used for only the analysis path.
 export struct Immobilize {
 	constexpr auto advance_one_turn() & -> void {
 		// TODO: Check this in the client and make this an assert

@@ -362,6 +362,9 @@ auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const b
 				));
 			},
 			[&](MoveMessage const message) {
+				if (message.action_ends) {
+					m_client_battle->end_immobilize();
+				}
 				auto & move_builder = tv::visit(action_builder, tv::overload(
 					[&](MoveStateBuilder & builder) -> MoveStateBuilder & {
 						if (message.party == builder.party()) {

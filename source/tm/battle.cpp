@@ -335,6 +335,11 @@ struct Battle {
 		});
 	}
 
+	auto end_immobilize() & -> void {
+		m_ai.pokemon().end_immobilize();
+		m_foe.pokemon().end_immobilize();
+	}
+
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void {
 		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
 			end_of_turn(first, first_flags, last, last_flags, m_environment);

@@ -421,6 +421,13 @@ struct LastUsedMove {
 	constexpr auto is_immobilizing() const -> bool {
 		return m_effects.index() == bounded::type<Immobilize>;
 	}
+
+	constexpr auto end_immobilize() & -> void {
+		if (is_immobilizing()) {
+			m_effects = Empty();
+		}
+	}
+
 	constexpr auto is_uproaring() const -> bool {
 		return m_effects.index() == bounded::type<UproarCounter>;
 	}

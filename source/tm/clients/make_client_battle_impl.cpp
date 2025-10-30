@@ -152,6 +152,10 @@ struct ClientBattleImpl final : ClientBattle {
 		m_battle.end_disable(ai_is_user);
 	}
 
+	auto end_immobilize() & -> void final {
+		m_battle.end_immobilize();
+	}
+
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.end_turn(ai_went_first, first_flags, last_flags);
 	}

@@ -745,6 +745,9 @@ public:
 	constexpr auto use_recharge_move() const {
 		this->m_flags.last_used_move.use_recharge_move();
 	}
+	constexpr auto end_immobilize() const {
+		this->m_flags.last_used_move.end_immobilize();
+	}
 
 	constexpr auto set_status(StatusName const status_name, Environment const environment) const -> void {
 		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::clear);

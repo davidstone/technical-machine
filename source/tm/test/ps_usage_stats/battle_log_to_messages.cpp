@@ -149,7 +149,8 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::MoveMessage(
 					p1,
 					MoveName::Body_Slam,
-					did_not_miss
+					did_not_miss,
+					true
 				),
 				ps::DamageMessage(
 					p2,
@@ -164,7 +165,8 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::MoveMessage(
 					p1,
 					MoveName::Body_Slam,
-					did_not_miss
+					did_not_miss,
+					true
 				),
 				ps::DamageMessage(
 					p2,
@@ -174,7 +176,8 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::MoveMessage(
 					p2,
 					MoveName::Blizzard,
-					did_not_miss
+					did_not_miss,
+					true
 				),
 				ps::DamageMessage(
 					p1,
@@ -189,7 +192,8 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::MoveMessage(
 					p1,
 					MoveName::Body_Slam,
-					did_not_miss
+					did_not_miss,
+					true
 				),
 				ps::DamageMessage(
 					p2,
@@ -200,7 +204,8 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::MoveMessage(
 					p2,
 					MoveName::Blizzard,
-					did_not_miss
+					did_not_miss,
+					true
 				),
 				ps::CriticalHitMessage(p2),
 				ps::DamageMessage(

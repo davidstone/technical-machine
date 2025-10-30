@@ -61,6 +61,18 @@ constexpr auto parse_condition(std::string_view const str) -> tv::optional<Scree
 	}
 }
 
+constexpr auto is_immobilize(MoveName const move) -> bool {
+	switch (move) {
+		case MoveName::Bind:
+		case MoveName::Clamp:
+		case MoveName::Fire_Spin:
+		case MoveName::Wrap:
+			return true;
+		default:
+			return false;
+	}
+}
+
 constexpr auto party_from_side_id(std::string_view const str) -> Party {
 	return make_party(str.substr(0, 2));
 }
@@ -371,17 +383,22 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		return tv::none;
 	} else if (type == "move") {
 		auto const party = party_from_player_id(message.pop());
-		auto const move = from_string<MoveName>(message.pop());
+		auto const move_str = message.pop();
+		auto const move = from_string<MoveName>(move_str);
 		[[maybe_unused]] auto const target = message.pop();
 		constexpr auto miss_str = "[miss]"sv;
 		auto const first_part = message.pop();
 		auto const first_part_is_missed = first_part == miss_str;
 		auto const second_part = message.pop();
 		auto const second_part_is_missed = second_part == miss_str;
+		auto const immobilize_continued =
+			is_immobilize(move) and
+			first_part == containers::concatenate<containers::string>("[from] "sv, move_str);
 		return MoveMessage(
 			party,
 			move,
-			first_part_is_missed or second_part_is_missed
+			first_part_is_missed or second_part_is_missed,
+			!immobilize_continued
 		);
 	} else if (type == "-mustrecharge") {
 		// After moves like Hyper Beam
