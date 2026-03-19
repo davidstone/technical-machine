@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       clang_version:
-        description: 'Integer or "main"'
+        type: string
 
 jobs:
   build:
