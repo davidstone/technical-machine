@@ -23,3 +23,5 @@ jobs:
   nightly:
     if: github.event_name == 'schedule'
     uses: ./.github/workflows/build-and-test-impl.yml
+    with:
+      clang_version: 'main'
