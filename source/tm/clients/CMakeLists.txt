@@ -39,6 +39,7 @@ target_link_libraries(tm_clients
 		tm_pokemon_lab
 		tm_pokemon_online
 		tm_shoddy_battle
+		tm_team_predictor
 		strict_defaults_interface
 	PRIVATE
 		strict_defaults

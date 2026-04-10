@@ -196,23 +196,6 @@ target_sources(tm_common PUBLIC
 		string_conversions/type.cpp
 		string_conversions/weather.cpp
 	
-		team_predictor/ev_optimizer/compute_minimal_spread.cpp
-		team_predictor/ev_optimizer/defensive.cpp
-		team_predictor/ev_optimizer/individual.cpp
-		team_predictor/ev_optimizer/nature_effects.cpp
-		team_predictor/ev_optimizer/offensive.cpp
-		team_predictor/ev_optimizer/optimize_evs.cpp
-		team_predictor/ev_optimizer/pad_evs.cpp
-		team_predictor/ev_optimizer/possible_optimized_ivs.cpp
-		team_predictor/ev_optimizer/speed.cpp
-	
-		team_predictor/all_usage_stats.cpp
-		team_predictor/estimate.cpp
-		team_predictor/stats_user.cpp
-		team_predictor/team_predictor.cpp
-		team_predictor/usage_stats.cpp
-		team_predictor/usage_stats_probabilities.cpp
-
 		type/effectiveness.cpp
 		type/move_type.cpp
 		type/pokemon_types.cpp
@@ -291,7 +274,6 @@ target_sources(tm_common PRIVATE
 	strategy/net_hp_impl.cpp
 	strategy/statistical_impl.cpp
 	string_conversions/team_impl.cpp
-	team_predictor/team_predictor_impl.cpp
 )
 target_link_libraries(tm_common
 	boost
@@ -312,7 +294,7 @@ add_subdirectory(ai)
 add_subdirectory(file_converter)
 add_subdirectory(ps_usage_stats)
 add_subdirectory(string_conversions/test)
-add_subdirectory(team_predictor/server)
+add_subdirectory(team_predictor)
 add_subdirectory(web_server)
 
 add_library(tm_test_lib STATIC)
@@ -326,6 +308,7 @@ target_sources(tm_test_lib PUBLIC
 target_link_libraries(tm_test_lib
 	PUBLIC
 		tm_common
+		tm_team_predictor
 		strict_defaults_interface
 	PRIVATE
 		strict_defaults
@@ -357,10 +340,6 @@ target_sources(tm_test PRIVATE
 
 		test/status/status.cpp
 		
-		test/team_predictor/ev_optimizer/defensive.cpp
-		test/team_predictor/ev_optimizer/pad_evs.cpp
-		test/team_predictor/ev_optimizer/speed.cpp
-
 		test/can_execute_move.cpp
 		test/critical_hit_probability.cpp
 		test/get_legal_selections.cpp
@@ -375,9 +354,6 @@ target_sources(tm_test PRIVATE
 	test/pokemon_lab/team_file.cpp
 	
 	test/strategy/expectimax.cpp
-
-	test/team_predictor/estimate.cpp
-	test/team_predictor/usage_stats.cpp
 
 	test/battle.cpp
 	test/optimize_evs.cpp

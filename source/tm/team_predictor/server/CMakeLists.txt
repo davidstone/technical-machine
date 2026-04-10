@@ -16,7 +16,7 @@ target_sources(team_predictor_server_lib PUBLIC
 )
 target_link_libraries(team_predictor_server_lib
 	tm_web_server
-	tm_common
+	tm_team_predictor
 	strict_defaults
 	pthread
 )
