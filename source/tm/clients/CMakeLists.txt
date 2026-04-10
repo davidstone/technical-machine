@@ -3,6 +3,11 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+add_subdirectory(netbattle)
+add_subdirectory(pokemon_lab)
+add_subdirectory(pokemon_online)
+add_subdirectory(shoddy_battle)
+
 add_library(tm_clients STATIC)
 target_sources(tm_clients PUBLIC
 	FILE_SET CXX_MODULES

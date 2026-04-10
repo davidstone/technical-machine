@@ -3,6 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+export module tm.clients.netbattle.test.read_team_file;
+
 import tm.clients.nb.read_team_file;
 
 import tm.move.move_name;

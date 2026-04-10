@@ -306,10 +306,6 @@ target_include_directories(tm_common PUBLIC
 	$<INSTALL_INTERFACE:source>
 )
 
-add_subdirectory(clients/netbattle)
-add_subdirectory(clients/pokemon_lab)
-add_subdirectory(clients/pokemon_online)
-add_subdirectory(clients/shoddy_battle)
 add_subdirectory(clients)
 
 add_library(tm_pokemon_showdown STATIC)
@@ -449,8 +445,6 @@ target_sources(tm_test PRIVATE
 		test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
-	test/clients/netbattle/read_team_file.cpp
-
 	test/clients/pokemon_showdown/slot_memory.cpp
 
 	test/evaluate/evaluate.cpp

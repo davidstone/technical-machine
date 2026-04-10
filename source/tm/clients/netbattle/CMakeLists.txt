@@ -24,3 +24,5 @@ target_link_libraries(tm_netbattle
 	PRIVATE
 		strict_defaults
 )
+
+add_subdirectory(test)
