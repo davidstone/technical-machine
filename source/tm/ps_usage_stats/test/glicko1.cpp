@@ -7,7 +7,7 @@ module;
 
 #include <catch2/catch_test_macros.hpp>
 
-export module tm.test.ps_usage_stats.glicko1;
+export module tm.ps_usage_stats.test.glicko1;
 
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.glicko1;

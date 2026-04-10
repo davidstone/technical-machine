@@ -2,7 +2,7 @@ module;
 
 #include <catch2/catch_test_macros.hpp>
 
-export module tm.test.ps_usage_stats.parse_input_log;
+export module tm.ps_usage_stats.test.parse_input_log;
 
 import tm.clients.ps.battle_response_switch;
 

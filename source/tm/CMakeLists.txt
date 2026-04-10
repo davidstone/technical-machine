@@ -369,23 +369,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		clients/pokemon_showdown/switch_message.cpp
 		clients/pokemon_showdown/sockets.cpp
 		clients/pokemon_showdown/to_packed_format.cpp
-
-		ps_usage_stats/battle_log_to_messages.cpp
-		ps_usage_stats/battle_result.cpp
-		ps_usage_stats/battle_result_reader.cpp
-		ps_usage_stats/battle_result_writer.cpp
-		ps_usage_stats/files_in_directory.cpp
-		ps_usage_stats/for_each_log.cpp
-		ps_usage_stats/glicko1.cpp
-		ps_usage_stats/mode.cpp
-		ps_usage_stats/parallel_for_each.cpp
-		ps_usage_stats/parse_input_log.cpp
-		ps_usage_stats/parse_log.cpp
-		ps_usage_stats/rating.cpp
-		ps_usage_stats/rated_side.cpp
-		ps_usage_stats/serialize.cpp
-		ps_usage_stats/thread_count.cpp
-		ps_usage_stats/usage_stats.cpp
 )
 target_sources(tm_pokemon_showdown PRIVATE
 	clients/pokemon_showdown/battle_message_handler_impl.cpp
@@ -449,10 +432,6 @@ target_sources(tm_test PRIVATE
 
 		test/pokemon/active_pokemon.cpp
 
-		test/ps_usage_stats/battle_log_to_messages.cpp
-		test/ps_usage_stats/glicko1.cpp
-		test/ps_usage_stats/parse_input_log.cpp
-
 		test/stat/calculate.cpp
 		test/stat/calculate_ivs_and_evs.cpp
 		test/stat/calculate_speed.cpp
@@ -482,9 +461,6 @@ target_sources(tm_test PRIVATE
 	
 	test/pokemon_online/team_file.cpp
 	
-	test/ps_usage_stats/read_write_battle_result.cpp
-	test/ps_usage_stats/serialize.cpp
-
 	test/strategy/expectimax.cpp
 
 	test/team_predictor/estimate.cpp
@@ -517,14 +493,6 @@ target_link_libraries(ps_regression_test
 	TBB::tbb
 )
 add_test(ps_regression_test ps_regression_test)
-
-add_executable(score_predict_action
-	test/ps_usage_stats/score_predict_action.cpp
-)
-target_link_libraries(score_predict_action
-	tm_pokemon_showdown
-	TBB::tbb
-)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	if(MSVC)
@@ -567,7 +535,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		)
 	endif()
 	target_link_libraries(ai pthread)
-	target_link_libraries(score_predict_action atomic)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
