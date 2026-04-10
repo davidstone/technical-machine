@@ -43,3 +43,5 @@ target_link_libraries(tm_clients
 	PRIVATE
 		strict_defaults
 )
+
+add_subdirectory(pokemon_showdown)

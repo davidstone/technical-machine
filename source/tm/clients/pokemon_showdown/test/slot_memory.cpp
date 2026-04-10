@@ -3,7 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
 #include <catch2/catch_test_macros.hpp>
+
+export module tm.test.clients.ps.slot_memory;
 
 import tm.clients.ps.slot_memory;
 

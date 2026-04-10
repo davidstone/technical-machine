@@ -308,74 +308,6 @@ target_include_directories(tm_common PUBLIC
 
 add_subdirectory(clients)
 
-add_library(tm_pokemon_showdown STATIC)
-target_sources(tm_pokemon_showdown PUBLIC
-	FILE_SET CXX_MODULES
-	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
-	FILES
-		clients/pokemon_showdown/action_required.cpp
-		clients/pokemon_showdown/battle_init_message.cpp
-		clients/pokemon_showdown/battle_manager.cpp
-		clients/pokemon_showdown/battle_message_handler.cpp
-		clients/pokemon_showdown/battle_message_kind.cpp
-		clients/pokemon_showdown/battle_response_switch.cpp
-		clients/pokemon_showdown/battle_started.cpp
-		clients/pokemon_showdown/battles.cpp
-		clients/pokemon_showdown/client.cpp
-		clients/pokemon_showdown/client_message_handler.cpp
-		clients/pokemon_showdown/end_of_turn_state.cpp
-		clients/pokemon_showdown/end_of_turn_state_builder.cpp
-		clients/pokemon_showdown/event_block.cpp
-		clients/pokemon_showdown/in_message.cpp
-		clients/pokemon_showdown/is_chat_message.cpp
-		clients/pokemon_showdown/is_chat_message_block.cpp
-		clients/pokemon_showdown/log_battle_messages.cpp
-		clients/pokemon_showdown/make_battle_init_message.cpp
-		clients/pokemon_showdown/make_party.cpp
-		clients/pokemon_showdown/message_block.cpp
-		clients/pokemon_showdown/move_state.cpp
-		clients/pokemon_showdown/move_state_builder.cpp
-		clients/pokemon_showdown/optional_hp_and_status.cpp
-		clients/pokemon_showdown/packed_format_to_team.cpp
-		clients/pokemon_showdown/parse_details.cpp
-		clients/pokemon_showdown/parse_effect_source.cpp
-		clients/pokemon_showdown/parse_gender.cpp
-		clients/pokemon_showdown/parse_generation_from_format.cpp
-		clients/pokemon_showdown/parse_hp.cpp
-		clients/pokemon_showdown/parse_hp_and_status.cpp
-		clients/pokemon_showdown/parse_moves.cpp
-		clients/pokemon_showdown/parse_pokemon_identity.cpp
-		clients/pokemon_showdown/parse_set_hp_message.cpp
-		clients/pokemon_showdown/parse_status.cpp
-		clients/pokemon_showdown/parse_switch.cpp
-		clients/pokemon_showdown/parse_request.cpp
-		clients/pokemon_showdown/parsed_message.cpp
-		clients/pokemon_showdown/parsed_request.cpp
-		clients/pokemon_showdown/parsed_side.cpp
-		clients/pokemon_showdown/parsed_stats.cpp
-		clients/pokemon_showdown/parsed_team.cpp
-		clients/pokemon_showdown/parsed_team_to_known_team.cpp
-		clients/pokemon_showdown/party_from_player_id.cpp
-		clients/pokemon_showdown/room.cpp
-		clients/pokemon_showdown/room_message_block.cpp
-		clients/pokemon_showdown/send_message_function.cpp
-		clients/pokemon_showdown/send_selection.cpp
-		clients/pokemon_showdown/slot_memory.cpp
-		clients/pokemon_showdown/start_of_turn.cpp
-		clients/pokemon_showdown/switch_message.cpp
-		clients/pokemon_showdown/sockets.cpp
-		clients/pokemon_showdown/to_packed_format.cpp
-)
-target_sources(tm_pokemon_showdown PRIVATE
-	clients/pokemon_showdown/battle_message_handler_impl.cpp
-	clients/pokemon_showdown/to_packed_format_impl.cpp
-)
-target_link_libraries(tm_pokemon_showdown
-	concurrent
-	tm_clients
-	strict_defaults
-)
-
 add_subdirectory(ai)
 add_subdirectory(file_converter)
 add_subdirectory(ps_usage_stats)
@@ -389,6 +321,7 @@ target_sources(tm_test_lib PUBLIC
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
 		test/usage_bytes.cpp
+		test/make_seen_team.cpp
 )
 target_link_libraries(tm_test_lib
 	PUBLIC
@@ -409,12 +342,6 @@ target_sources(tm_test PRIVATE
 		
 		test/pokemon_online/conversion.cpp
 	
-		test/clients/pokemon_showdown/battle_message_handler.cpp
-		test/clients/pokemon_showdown/message_block.cpp
-		test/clients/pokemon_showdown/packed_team.cpp
-		test/clients/pokemon_showdown/parse_switch.cpp
-		test/clients/pokemon_showdown/parse_request.cpp
-		
 		test/clients/shoddy_battle/read_team_file.cpp
 
 		test/clients/client_battle.cpp
@@ -441,11 +368,9 @@ target_sources(tm_test PRIVATE
 		test/can_execute_move.cpp
 		test/critical_hit_probability.cpp
 		test/get_legal_selections.cpp
-		test/make_seen_team.cpp
 		test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
-	test/clients/pokemon_showdown/slot_memory.cpp
 
 	test/evaluate/evaluate.cpp
 	
@@ -467,26 +392,12 @@ target_sources(tm_test PRIVATE
 	test/sleep.cpp
 )
 target_link_libraries(tm_test
-	tm_pokemon_showdown
+	tm_clients
 	tm_test_lib
 	Catch2::Catch2WithMain
 	TBB::tbb
 )
 add_test(tm_test tm_test)
-
-add_executable(ps_regression_test)
-target_sources(ps_regression_test PRIVATE
-	FILE_SET CXX_MODULES
-	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
-	FILES
-		test/clients/pokemon_showdown/client_message_handler.cpp
-)
-target_link_libraries(ps_regression_test
-	tm_pokemon_showdown
-	Catch2::Catch2WithMain
-	TBB::tbb
-)
-add_test(ps_regression_test ps_regression_test)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	if(MSVC)
