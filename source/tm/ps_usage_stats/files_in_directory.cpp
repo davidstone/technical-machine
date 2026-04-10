@@ -10,11 +10,8 @@ import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 
-// Work around https://github.com/llvm/llvm-project/issues/59513
-struct not_directory {
-	static auto operator()(std::filesystem::path const & p) {
-		return !std::filesystem::is_directory(p);
-	}
+constexpr auto not_directory = [](std::filesystem::path const & p) {
+	return !std::filesystem::is_directory(p);
 };
 
 export auto files_in_directory(std::filesystem::path const & path) {
@@ -23,7 +20,7 @@ export auto files_in_directory(std::filesystem::path const & path) {
 			std::filesystem::recursive_directory_iterator(path),
 			std::default_sentinel
 		),
-		not_directory()
+		not_directory
 	);
 }
 
