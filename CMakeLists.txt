@@ -23,7 +23,6 @@ if(DEFINED Boost_INCLUDE_DIR)
 	target_include_directories(boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}")
 endif()
 target_compile_definitions(boost INTERFACE
-	BOOST_ASIO_NO_DEPRECATED
 	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
 	BOOST_CHRONO_HEADER_ONLY
 )
