@@ -3,21 +3,17 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-add_library(tm_pokemon_online STATIC)
-target_sources(tm_pokemon_online PUBLIC
+add_executable(tm_pokemon_online_test)
+target_sources(tm_pokemon_online_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
 		conversion.cpp
-		invalid_team_file.cpp
-		read_team_file.cpp
+		team_file.cpp
 )
-target_link_libraries(tm_pokemon_online
-	PUBLIC
-		tm_common
-		strict_defaults_interface
-	PRIVATE
-		strict_defaults
+target_link_libraries(tm_pokemon_online_test
+	strict_defaults
+	tm_pokemon_online
+	Catch2::Catch2WithMain
 )
-
-add_subdirectory(test)
+add_test(tm_pokemon_online_test tm_pokemon_online_test)

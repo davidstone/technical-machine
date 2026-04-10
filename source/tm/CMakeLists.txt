@@ -340,8 +340,6 @@ target_sources(tm_test PRIVATE
 
 		stat/test/make_stats.cpp
 		
-		test/pokemon_online/conversion.cpp
-	
 		test/clients/shoddy_battle/read_team_file.cpp
 
 		test/clients/client_battle.cpp
@@ -377,8 +375,6 @@ target_sources(tm_test PRIVATE
 	test/move/call_move.cpp
 	
 	test/pokemon_lab/team_file.cpp
-	
-	test/pokemon_online/team_file.cpp
 	
 	test/strategy/expectimax.cpp
 
