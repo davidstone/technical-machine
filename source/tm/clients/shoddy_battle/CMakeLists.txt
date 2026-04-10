@@ -20,3 +20,5 @@ target_link_libraries(tm_shoddy_battle
 	PRIVATE
 		strict_defaults
 )
+
+add_subdirectory(test)

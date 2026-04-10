@@ -340,8 +340,6 @@ target_sources(tm_test PRIVATE
 
 		stat/test/make_stats.cpp
 		
-		test/clients/shoddy_battle/read_team_file.cpp
-
 		test/clients/client_battle.cpp
 
 		test/collections/variable_collection.cpp
