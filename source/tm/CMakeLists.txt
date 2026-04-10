@@ -167,16 +167,6 @@ target_sources(tm_common PUBLIC
 		status/team_has_status.cpp
 		status/toxic_resets_on_switch.cpp
 	
-		strategy/expectimax.cpp
-		strategy/max_damage.cpp
-		strategy/net_hp.cpp
-		strategy/parse_strategy.cpp
-		strategy/random_selection.cpp
-		strategy/selection_probability.cpp
-		strategy/statistical.cpp
-		strategy/strategy.cpp
-		strategy/weighted_selection.cpp
-
 		string_conversions/ability.cpp
 		string_conversions/from_string.cpp
 		string_conversions/gender.cpp
@@ -270,9 +260,6 @@ target_sources(tm_common PUBLIC
 target_sources(tm_common PRIVATE
 	move/call_move_impl.cpp
 	move/side_effects_impl.cpp
-	strategy/expectimax_impl.cpp
-	strategy/net_hp_impl.cpp
-	strategy/statistical_impl.cpp
 	string_conversions/team_impl.cpp
 )
 target_link_libraries(tm_common
@@ -293,6 +280,7 @@ add_subdirectory(clients)
 add_subdirectory(ai)
 add_subdirectory(file_converter)
 add_subdirectory(ps_usage_stats)
+add_subdirectory(strategy)
 add_subdirectory(string_conversions/test)
 add_subdirectory(team_predictor)
 add_subdirectory(web_server)
@@ -353,8 +341,6 @@ target_sources(tm_test PRIVATE
 	
 	test/pokemon_lab/team_file.cpp
 	
-	test/strategy/expectimax.cpp
-
 	test/battle.cpp
 	test/optimize_evs.cpp
 	test/files_in_path.cpp

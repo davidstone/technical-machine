@@ -3,8 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
+
+export module tm.strategy.test.expectimax;
 
 import tm.evaluate.depth;
 import tm.evaluate.scored_selection;

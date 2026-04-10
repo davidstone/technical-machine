@@ -3,15 +3,6 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-add_executable(score_predict_action
-	score_predict_action.cpp
-)
-target_link_libraries(score_predict_action
-	ps_usage_stats
-	TBB::tbb
-	strict_defaults
-)
-
 add_executable(ps_usage_stats_test)
 target_sources(ps_usage_stats_test PRIVATE
 	FILE_SET CXX_MODULES
@@ -31,11 +22,3 @@ target_link_libraries(ps_usage_stats_test
 	TBB::tbb
 )
 add_test(ps_usage_stats_test ps_usage_stats_test)
-
-foreach(app
-	score_predict_action
-)
-	set_target_properties(${app} PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
-	)
-endforeach()

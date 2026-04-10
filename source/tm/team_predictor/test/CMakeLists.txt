@@ -13,7 +13,6 @@ target_sources(tm_team_predictor_test PRIVATE
 )
 target_link_libraries(tm_team_predictor_test
 	strict_defaults
-	tm_team_predictor
 	tm_test_lib
 	Catch2::Catch2WithMain
 )

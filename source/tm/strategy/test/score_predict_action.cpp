@@ -5,14 +5,10 @@
 
 #include <bounded/assert.hpp>
 
-import tm.clients.ps.action_required;
-import tm.clients.ps.battle_init_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
-import tm.clients.ps.in_message;
 import tm.clients.ps.parsed_message;
-import tm.clients.ps.parsed_side;
 import tm.clients.ps.slot_memory;
 
 import tm.clients.party;
@@ -54,7 +50,6 @@ import tv;
 namespace technicalmachine {
 using namespace std::string_view_literals;
 using namespace bounded::literal;
-using namespace ps;
 using namespace ps_usage_stats;
 
 struct ParsedArgs {
@@ -81,17 +76,17 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 
 struct PredictedSelection {
 	SelectionProbabilities predicted;
-	SlotMemory slot_memory;
+	ps::SlotMemory slot_memory;
 };
 
 constexpr auto empty_selection_probability = SelectionProbabilities({{pass, Probability(1.0)}});
 
 auto get_predicted_selection(
 	Strategy const & strategy,
-	BattleMessageHandler & battle,
+	ps::BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {
-	return [&](std::span<ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
+	return [&](std::span<ps::ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
 			if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
 				return empty_selection_probability;
@@ -125,7 +120,7 @@ constexpr auto individual_brier_score = [](auto const & tuple) -> double {
 		[](MoveName const move) -> Selection {
 			return move;
 		},
-		[&](BattleResponseSwitch const response) -> Selection {
+		[&](ps::BattleResponseSwitch const response) -> Selection {
 			return Switch(evaluated.slot_memory.reverse_lookup(response));
 		}
 	));
@@ -160,7 +155,7 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 auto predicted_selections(
 	Strategy const & strategy,
 	std::span<ps::EventBlock const> const battle_messages,
-	BattleMessageHandler & battle,
+	ps::BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(
@@ -176,7 +171,7 @@ auto score_one_side_of_battle(
 	RatedSide const & rated_side,
 	BattleLogMessages const & battle_messages
 ) -> WeightedScore {
-	auto battle = BattleMessageHandler(rated_side.side.party, rated_side.side.team, battle_messages.init);
+	auto battle = ps::BattleMessageHandler(rated_side.side.party, rated_side.side.team, battle_messages.init);
 	auto scores = containers::vector<double>(containers::reserve_space_for(bounded::min(
 		containers::size(rated_side.inputs),
 		containers::size(battle_messages.messages)
