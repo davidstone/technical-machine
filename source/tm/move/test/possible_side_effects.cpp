@@ -75,7 +75,10 @@ auto validate(Team<generation> const & team, EffectIndex const effect_index, Tea
 
 constexpr auto generation = Generation::four;
 
-auto test_phaze(Team<generation> user, Team<generation> team) -> void {
+auto test_phaze(Team<generation> team) -> void {
+	auto user = Team<generation>({{
+		{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
+	}});
 	auto environment = Environment();
 	for (auto const current_index : containers::integer_range(team.size())) {
 		team.all_pokemon().set_index(current_index);
@@ -95,9 +98,6 @@ auto test_phaze(Team<generation> user, Team<generation> team) -> void {
 TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 	test_phaze(
 		Team<generation>({{
-			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
-		}}),
-		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
 		}})
@@ -105,9 +105,6 @@ TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 }
 TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 	test_phaze(
-		Team<generation>({{
-			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
-		}}),
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
@@ -117,9 +114,6 @@ TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 }
 TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 	test_phaze(
-		Team<generation>({{
-			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
-		}}),
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
@@ -131,9 +125,6 @@ TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 	test_phaze(
 		Team<generation>({{
-			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
-		}}),
-		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
@@ -144,9 +135,6 @@ TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 }
 TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
 	test_phaze(
-		Team<generation>({{
-			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
-		}}),
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
