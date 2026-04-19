@@ -6,7 +6,6 @@
 module;
 
 #include <catch2/catch_test_macros.hpp>
-#include <bounded/assert.hpp>
 
 export module tm.test.move.possible_side_effects;
 
@@ -59,7 +58,7 @@ TEST_CASE("Recover", "[possible_side_effects]") {
 
 using EffectIndex = bounded::integer<0, 4>;
 template<Generation generation>
-constexpr auto validate(Team<generation> const & team, EffectIndex const effect_index, TeamIndex const current_index) -> void {
+auto validate(Team<generation> const & team, EffectIndex const effect_index, TeamIndex const current_index) -> void {
 	static constexpr auto expected_index = containers::array<bounded::integer<0, 5>, 6_bi, 5_bi>{{
 		{1_bi, 2_bi, 3_bi, 4_bi, 5_bi},
 		{0_bi, 2_bi, 3_bi, 4_bi, 5_bi},
@@ -71,31 +70,30 @@ constexpr auto validate(Team<generation> const & team, EffectIndex const effect_
 
 	auto const expected = expected_index[current_index][effect_index];
 	auto const calculated = team.all_pokemon().index();
-	BOUNDED_ASSERT(expected == calculated);
+	CHECK(expected == calculated);
 }
 
 constexpr auto generation = Generation::four;
 
-constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool {
+auto test_phaze(Team<generation> user, Team<generation> team) -> void {
 	auto environment = Environment();
 	for (auto const current_index : containers::integer_range(team.size())) {
 		team.all_pokemon().set_index(current_index);
 		auto const side_effects = possible_side_effects(MoveName::Whirlwind, user.pokemon().as_const(), team, environment);
 		auto const expected_size = bounded::increase_min<0>(team.size() - 1_bi);
-		BOUNDED_ASSERT(containers::size(side_effects) == expected_size);
+		CHECK(containers::size(side_effects) == expected_size);
 		for (auto const effect_index : containers::integer_range(expected_size)) {
 			auto const & side_effect = side_effects[effect_index];
-			BOUNDED_ASSERT(side_effect.probability == Probability(1.0 / double(team.size() - 1_bi)));
+			CHECK(side_effect.probability == Probability(1.0 / double(team.size() - 1_bi)));
 			team.all_pokemon().set_index(current_index);
 			side_effect.function(user, team, environment, 0_bi);
 			validate(team, EffectIndex(effect_index), current_index);
 		}
 	}
-	return true;
 }
 
 TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
-	CHECK(test_phaze(
+	test_phaze(
 		Team<generation>({{
 			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}}),
@@ -103,10 +101,10 @@ TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
 		}})
-	));
+	);
 }
 TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
-	CHECK(test_phaze(
+	test_phaze(
 		Team<generation>({{
 			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}}),
@@ -115,10 +113,10 @@ TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 			{.species = Species::Ivysaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
 		}})
-	));
+	);
 }
 TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
-	CHECK(test_phaze(
+	test_phaze(
 		Team<generation>({{
 			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}}),
@@ -128,10 +126,10 @@ TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 			{.species = Species::Venusaur, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Charmander, .moves = {{ MoveName::Tackle }}},
 		}})
-	));
+	);
 }
 TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
-	CHECK(test_phaze(
+	test_phaze(
 		Team<generation>({{
 			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}}),
@@ -142,10 +140,10 @@ TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 			{.species = Species::Charmander, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Charmeleon, .moves = {{ MoveName::Tackle }}},
 		}})
-	));
+	);
 }
 TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
-	CHECK(test_phaze(
+	test_phaze(
 		Team<generation>({{
 			{.species = Species::Lugia, .moves = {{ MoveName::Whirlwind }}},
 		}}),
@@ -157,7 +155,7 @@ TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
 			{.species = Species::Charmeleon, .moves = {{ MoveName::Tackle }}},
 			{.species = Species::Charizard, .moves = {{ MoveName::Tackle }}},
 		}})
-	));
+	);
 }
 
 } // namespace
