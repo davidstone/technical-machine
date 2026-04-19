@@ -186,7 +186,6 @@ target_sources(tm_common PUBLIC
 		binary_file_reader.cpp
 		bit_view.cpp
 		blocks_selection_and_execution.cpp
-		boost_networking.cpp
 		buffer_view.cpp
 		bytes_in_file.cpp
 		can_execute_move.cpp
@@ -219,7 +218,6 @@ target_sources(tm_common PUBLIC
 		operators.cpp
 		other_team.cpp
 		probability.cpp
-		property_tree.cpp
 		rational.cpp
 		saturating_add.cpp
 		screen.cpp
@@ -247,10 +245,8 @@ target_sources(tm_common PRIVATE
 	string_conversions/team_impl.cpp
 )
 target_link_libraries(tm_common
-	boost
 	concurrent
 	containers
-	OpenSSL::SSL
 	nlohmann_json
 	strict_defaults
 )
@@ -262,6 +258,7 @@ target_include_directories(tm_common PUBLIC
 add_subdirectory(clients)
 
 add_subdirectory(ai)
+add_subdirectory(boost)
 add_subdirectory(evaluate)
 add_subdirectory(file_converter)
 add_subdirectory(ps_usage_stats)

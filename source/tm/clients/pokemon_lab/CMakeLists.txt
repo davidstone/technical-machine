@@ -15,6 +15,7 @@ target_sources(tm_pokemon_lab PRIVATE
 )
 target_link_libraries(tm_pokemon_lab
 	PUBLIC
+		tm_boost_property_tree
 		tm_common
 		strict_defaults_interface
 	PRIVATE

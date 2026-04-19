@@ -18,17 +18,6 @@ set(CMAKE_CXX_EXTENSIONS Off)
 
 enable_testing()
 
-add_library(boost INTERFACE IMPORTED)
-if(DEFINED Boost_INCLUDE_DIR)
-	target_include_directories(boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}")
-endif()
-target_compile_definitions(boost INTERFACE
-	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
-	BOOST_CHRONO_HEADER_ONLY
-)
-
-find_package(OpenSSL REQUIRED)
-
 find_package(TBB REQUIRED)
 
 add_library(nlohmann_json INTERFACE IMPORTED)

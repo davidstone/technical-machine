@@ -67,6 +67,7 @@ target_sources(tm_pokemon_showdown PRIVATE
 )
 target_link_libraries(tm_pokemon_showdown
 	concurrent
+	tm_boost_networking
 	tm_clients
 	strict_defaults
 )
