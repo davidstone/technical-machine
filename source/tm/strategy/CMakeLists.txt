@@ -25,6 +25,7 @@ target_sources(tm_strategy PRIVATE
 )
 target_link_libraries(tm_strategy
 	tm_common
+	tm_evaluate
 	strict_defaults
 )
 

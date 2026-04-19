@@ -12,22 +12,6 @@ target_sources(tm_common PUBLIC
 		bide/damage.cpp
 		bide/duration.cpp
 
-		evaluate/all_evaluate.cpp
-		evaluate/compressed_battle.cpp
-		evaluate/depth.cpp
-		evaluate/evaluate.cpp
-		evaluate/evaluate_settings.cpp
-		evaluate/extreme_element_value.cpp
-		evaluate/load_evaluate.cpp
-		evaluate/possible_executed_moves.cpp
-		evaluate/score.cpp
-		evaluate/scored_selection.cpp
-		evaluate/selector.cpp
-		evaluate/state.cpp
-		evaluate/transposition.cpp
-		evaluate/victory.cpp
-		evaluate/win.cpp
-	
 		move/accuracy.cpp
 		move/activate_when_hit_item.cpp
 		move/actual_damage.cpp
@@ -278,6 +262,7 @@ target_include_directories(tm_common PUBLIC
 add_subdirectory(clients)
 
 add_subdirectory(ai)
+add_subdirectory(evaluate)
 add_subdirectory(file_converter)
 add_subdirectory(ps_usage_stats)
 add_subdirectory(strategy)
@@ -334,9 +319,6 @@ target_sources(tm_test PRIVATE
 		test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
-
-	test/evaluate/evaluate.cpp
-	
 	test/move/call_move.cpp
 	
 	test/pokemon_lab/team_file.cpp
