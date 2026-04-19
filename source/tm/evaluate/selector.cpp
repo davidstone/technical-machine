@@ -6,7 +6,7 @@
 export module tm.evaluate.selector;
 
 import tm.generation;
-import tm.evaluate.state;
+import tm.state;
 
 namespace technicalmachine {
 

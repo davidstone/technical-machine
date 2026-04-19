@@ -227,6 +227,7 @@ target_sources(tm_common PUBLIC
 		settings_file.cpp
 		split_offsets.cpp
 		split_view.cpp
+		state.cpp
 		switch_decision_required.cpp
 		team.cpp
 		team_is_empty.cpp
@@ -235,7 +236,6 @@ target_sources(tm_common PUBLIC
 		usage_for.cpp
 		visible_damage_to_actual_damage.cpp
 		visible_hp.cpp
-		visible_state.cpp
 		weather.cpp
 		weight.cpp
 		wish.cpp

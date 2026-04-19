@@ -24,8 +24,8 @@ import tm.gender;
 import tm.generation;
 import tm.generation_generic;
 import tm.item;
+import tm.state;
 import tm.visible_hp;
-import tm.visible_state;
 import tm.weather;
 
 import std_module;

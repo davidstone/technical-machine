@@ -5,8 +5,6 @@
 
 export module tm.clients.determine_selection;
 
-import tm.evaluate.state;
-
 import tm.move.move_name;
 import tm.move.pass;
 import tm.move.selection;
@@ -27,9 +25,9 @@ import tm.team_predictor.usage_stats;
 import tm.generation;
 import tm.generation_generic;
 import tm.get_legal_selections;
+import tm.state;
 import tm.team;
 import tm.team_is_empty;
-import tm.visible_state;
 
 import bounded;
 import containers;

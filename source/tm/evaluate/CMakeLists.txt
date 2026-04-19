@@ -19,7 +19,6 @@ target_sources(tm_evaluate PUBLIC
 		score.cpp
 		scored_selection.cpp
 		selector.cpp
-		state.cpp
 		transposition.cpp
 		victory.cpp
 		win.cpp

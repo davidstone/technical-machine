@@ -48,7 +48,6 @@ import tm.generation_generic;
 import tm.nlohmann_json;
 import tm.open_file;
 import tm.settings_file;
-import tm.visible_state;
 
 import bounded;
 import containers;

@@ -37,9 +37,9 @@ import tm.generation;
 import tm.get_legal_selections;
 import tm.open_file;
 import tm.probability;
+import tm.state;
 import tm.team;
 import tm.team_is_empty;
-import tm.visible_state;
 
 import bounded;
 import concurrent;

@@ -48,11 +48,11 @@ import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.other_team;
+import tm.state;
 import tm.team;
 import tm.to_used_move;
 import tm.visible_damage_to_actual_damage;
 import tm.visible_hp;
-import tm.visible_state;
 
 import bounded;
 import containers;

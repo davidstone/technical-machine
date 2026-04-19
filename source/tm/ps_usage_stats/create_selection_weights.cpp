@@ -36,10 +36,10 @@ import tm.generation;
 import tm.get_legal_selections;
 import tm.hp_bucket;
 import tm.open_file;
+import tm.state;
 import tm.team;
 import tm.to_index;
 import tm.usage_for;
-import tm.visible_state;
 import tm.write_bytes;
 
 import bounded;

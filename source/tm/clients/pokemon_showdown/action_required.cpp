@@ -8,7 +8,7 @@ export module tm.clients.ps.action_required;
 import tm.clients.ps.slot_memory;
 
 import tm.generation_generic;
-import tm.visible_state;
+import tm.state;
 
 namespace technicalmachine::ps {
 

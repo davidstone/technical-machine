@@ -27,8 +27,8 @@ import tm.pokemon.max_pokemon_per_team;
 import tm.status.status_name;
 
 import tm.generation_generic;
+import tm.state;
 import tm.visible_hp;
-import tm.visible_state;
 
 import tv;
 import std_module;

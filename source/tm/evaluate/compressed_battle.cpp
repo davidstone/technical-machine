@@ -5,10 +5,9 @@
 
 export module tm.evaluate.compressed_battle;
 
-import tm.evaluate.state;
-
 import tm.compress;
 import tm.generation;
+import tm.state;
 
 import bounded;
 import tv;
