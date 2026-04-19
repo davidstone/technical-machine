@@ -292,18 +292,17 @@ target_sources(tm_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		move/test/actual_damage.cpp
+		move/test/calculate_damage.cpp
+		move/test/call_move.cpp
+		move/test/move_power.cpp
+		move/test/possible_side_effects.cpp
+
 		pokemon/test/substitute.cpp
 
 		stat/test/make_stats.cpp
 		
 		test/clients/client_battle.cpp
-
-		test/collections/variable_collection.cpp
-
-		test/move/actual_damage.cpp
-		test/move/calculate_damage.cpp
-		test/move/move_power.cpp
-		test/move/possible_side_effects.cpp
 
 		test/pokemon/active_pokemon.cpp
 
@@ -319,8 +318,6 @@ target_sources(tm_test PRIVATE
 		test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
-	test/move/call_move.cpp
-	
 	test/pokemon_lab/team_file.cpp
 	
 	test/battle.cpp

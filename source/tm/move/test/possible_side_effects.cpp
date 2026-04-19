@@ -1,4 +1,4 @@
-// Copyright David Stone 2020.
+// Copyright David Stone 2022.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -6,25 +6,18 @@
 module;
 
 #include <catch2/catch_test_macros.hpp>
-
 #include <bounded/assert.hpp>
 
-export module tm.test.collections.variable_collection;
-
-import tm.pokemon.pokemon_collection;
+export module tm.test.move.possible_side_effects;
 
 import tm.move.move_name;
 import tm.move.side_effects;
 
-import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.species;
 
-import tm.ability;
 import tm.environment;
-import tm.gender;
 import tm.generation;
-import tm.item;
 import tm.probability;
 import tm.team;
 
@@ -32,9 +25,37 @@ import bounded;
 import containers;
 
 namespace technicalmachine {
+namespace {
 using namespace bounded::literal;
 
-constexpr auto generation = Generation::four;
+TEST_CASE("Recover", "[possible_side_effects]") {
+	constexpr auto generation = Generation::four;
+	auto const environment = Environment();
+	auto const user = Team<generation>({{
+		{
+			.species = Species::Starmie,
+			.moves = {{
+				MoveName::Recover,
+			}}
+		},
+	}});
+	auto const other = Team<generation>({{
+		{
+			.species = Species::Bulbasaur,
+			.moves = {{
+				MoveName::Tackle,
+			}}
+		},
+	}});
+
+	auto const recover_side_effects = possible_side_effects(
+		MoveName::Recover,
+		user.pokemon(),
+		other,
+		environment
+	);
+	CHECK(containers::size(recover_side_effects) == 1_bi);
+}
 
 using EffectIndex = bounded::integer<0, 4>;
 template<Generation generation>
@@ -52,6 +73,8 @@ constexpr auto validate(Team<generation> const & team, EffectIndex const effect_
 	auto const calculated = team.all_pokemon().index();
 	BOUNDED_ASSERT(expected == calculated);
 }
+
+constexpr auto generation = Generation::four;
 
 constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool {
 	auto environment = Environment();
@@ -137,4 +160,5 @@ TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
 	));
 }
 
+} // namespace
 } // namespace technicalmachine
