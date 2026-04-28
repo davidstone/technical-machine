@@ -46,6 +46,7 @@ import tm.pokemon.taunt;
 import tm.pokemon.yawn;
 
 import tm.stat.current_hp;
+import tm.stat.hp;
 import tm.stat.nature;
 import tm.stat.stage;
 import tm.stat.stat_names;
@@ -496,6 +497,105 @@ constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, En
 using berry_threshold_t = rational<bounded::constant_t<1>, bounded::integer<2, 4>>;
 constexpr auto berry_threshold(Ability const ability) -> berry_threshold_t {
 	return ability == Ability::Gluttony ? berry_threshold_t(1_bi, 2_bi) : berry_threshold_t(1_bi, 4_bi);
+}
+
+struct PinchItemEffects {
+	tv::optional<CurrentHP> new_hp = tv::none;
+	tv::optional<BoostableStat> boost = tv::none;
+	bool remove_item = false;
+	bool confuse = false;
+};
+// TODO: Confusion damage does not activate healing berries in Generation 5+
+constexpr auto pinch_item_effects(
+	Generation const generation,
+	HP const hp,
+	Item const item,
+	Ability const ability,
+	Nature const nature
+) -> PinchItemEffects {
+	auto const hp_ratio = rational(hp.current(), hp.max());
+	auto healing_berry = [=](berry_threshold_t const threshold, CurrentHP const amount) -> PinchItemEffects {
+		return hp_ratio > threshold ?
+			PinchItemEffects{} :
+			PinchItemEffects{
+				.new_hp = bounded::clamp<CurrentHP>(hp.current() + amount),
+				.remove_item = true,
+			};
+	};
+
+	auto confusion_berry = [=](SplitSpecialRegularStat const stat) -> PinchItemEffects {
+		auto result = generation <= Generation::six ?
+			healing_berry(rational(1_bi, 2_bi), hp.max() / 8_bi) :
+			healing_berry(berry_threshold(ability), hp.max() / 2_bi);
+
+		if (result.remove_item and lowers_stat(nature, stat)) {
+			result.confuse = true;
+		}
+		return result;
+	};
+
+	auto stat_boost_berry = [&](BoostableStat const stat) -> PinchItemEffects {
+		return hp_ratio > berry_threshold(ability) ?
+			PinchItemEffects{} :
+			PinchItemEffects{
+				.boost = stat,
+				.remove_item = true,
+			};
+	};
+
+	switch (item) {
+		case Item::Aguav_Berry:
+			return confusion_berry(SplitSpecialRegularStat::spd);
+		case Item::Apicot_Berry:
+			return stat_boost_berry(BoostableStat::spd);
+		case Item::Berry:
+		case Item::Oran_Berry:
+			return healing_berry(rational(1_bi, 2_bi), 10_bi);
+		case Item::Berry_Juice:
+			return healing_berry(rational(1_bi, 2_bi), 20_bi);
+		case Item::Custap_Berry:
+			return PinchItemEffects{
+				.remove_item = true,
+			};
+		case Item::Figy_Berry:
+			return confusion_berry(SplitSpecialRegularStat::atk);
+		case Item::Ganlon_Berry:
+			return stat_boost_berry(BoostableStat::def);
+		case Item::Gold_Berry:
+			return healing_berry(rational(1_bi, 2_bi), 30_bi);
+		case Item::Iapapa_Berry:
+			return confusion_berry(SplitSpecialRegularStat::def);
+		case Item::Lansat_Berry:
+			return PinchItemEffects{
+				.remove_item = true,
+			};
+		case Item::Liechi_Berry:
+			return stat_boost_berry(BoostableStat::atk);
+		case Item::Mago_Berry:
+			return confusion_berry(SplitSpecialRegularStat::spe);
+		case Item::Micle_Berry:
+			return PinchItemEffects{
+				.remove_item = true,
+			};
+		case Item::Petaya_Berry:
+			return stat_boost_berry(BoostableStat::spa);
+		case Item::Salac_Berry:
+			return stat_boost_berry(BoostableStat::spe);
+		case Item::Sitrus_Berry:
+			return healing_berry(
+				rational(1_bi, 2_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, hp.max() / 4_bi)
+			);
+		case Item::Starf_Berry:
+			// TODO: Raise Atk, Def, SpA, SpD, or Spe +2
+			return PinchItemEffects{
+				.remove_item = true,
+			};
+		case Item::Wiki_Berry:
+			return confusion_berry(SplitSpecialRegularStat::spa);
+		default:
+			return PinchItemEffects{};
+	}
 }
 
 
@@ -982,97 +1082,24 @@ public:
 
 private:
 	constexpr auto activate_pinch_item(Environment const environment) const -> void {
-		// TODO: Confusion damage does not activate healing berries in Generation 5+
-		auto const current_hp = hp_ratio(this->m_pokemon);
-
-		auto healing_berry = [&](berry_threshold_t const threshold, auto const amount) {
-			if (current_hp > threshold) {
-				return false;
-			}
+		auto const effects = pinch_item_effects(
+			generation,
+			this->hp(),
+			this->item(environment),
+			this->ability(),
+			this->m_pokemon.nature()
+		);
+		if (effects.new_hp) {
+			this->m_pokemon.set_hp(*effects.new_hp);
+		}
+		if (effects.boost) {
+			stages()[*effects.boost] += 1_bi;
+		}
+		if (effects.remove_item) {
 			remove_item();
-			this->m_pokemon.set_hp(bounded::clamp<CurrentHP>(this->hp().current() + amount));
-			return true;
-		};
-
-		auto confusion_berry = [&](SplitSpecialRegularStat const stat) {
-			auto const amount = this->hp().max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
-			auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : berry_threshold(this->ability());
-			auto const activated = healing_berry(threshold, amount);
-			if (activated and lowers_stat(this->m_pokemon.nature(), stat)) {
-				confuse(environment);
-			}
-		};
-
-		auto stat_boost_berry = [&](BoostableStat const stat) {
-			if (current_hp > berry_threshold(this->ability())) {
-				return;
-			}
-			remove_item();
-			stages()[stat] += 1_bi;
-		};
-
-		switch (this->item(environment)) {
-			case Item::Aguav_Berry:
-				confusion_berry(SplitSpecialRegularStat::spd);
-				break;
-			case Item::Apicot_Berry:
-				stat_boost_berry(BoostableStat::spd);
-				break;
-			case Item::Berry:
-			case Item::Oran_Berry:
-				healing_berry(rational(1_bi, 2_bi), 10_bi);
-				break;
-			case Item::Berry_Juice:
-				healing_berry(rational(1_bi, 2_bi), 20_bi);
-				break;
-			case Item::Custap_Berry:
-				remove_item();
-				break;
-			case Item::Figy_Berry:
-				confusion_berry(SplitSpecialRegularStat::atk);
-				break;
-			case Item::Ganlon_Berry:
-				stat_boost_berry(BoostableStat::def);
-				break;
-			case Item::Gold_Berry:
-				healing_berry(rational(1_bi, 2_bi), 30_bi);
-				break;
-			case Item::Iapapa_Berry:
-				confusion_berry(SplitSpecialRegularStat::def);
-				break;
-			case Item::Lansat_Berry:
-				remove_item();
-				break;
-			case Item::Liechi_Berry:
-				stat_boost_berry(BoostableStat::atk);
-				break;
-			case Item::Mago_Berry:
-				confusion_berry(SplitSpecialRegularStat::spe);
-				break;
-			case Item::Micle_Berry:
-				remove_item();
-				break;
-			case Item::Petaya_Berry:
-				stat_boost_berry(BoostableStat::spa);
-				break;
-			case Item::Salac_Berry:
-				stat_boost_berry(BoostableStat::spe);
-				break;
-			case Item::Sitrus_Berry:
-				healing_berry(
-					rational(1_bi, 2_bi),
-					BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, this->hp().max() / 4_bi)
-				);
-				break;
-			case Item::Starf_Berry:
-				// TODO: Raise Atk, Def, SpA, SpD, or Spe +2
-				remove_item();
-				break;
-			case Item::Wiki_Berry:
-				confusion_berry(SplitSpecialRegularStat::spa);
-				break;
-			default:
-				break;
+		}
+		if (effects.confuse) {
+			confuse(environment);
 		}
 	}
 
