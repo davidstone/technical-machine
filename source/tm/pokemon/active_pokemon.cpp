@@ -493,6 +493,12 @@ constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, En
 	pokemon.remove_item();
 }
 
+using berry_threshold_t = rational<bounded::constant_t<1>, bounded::integer<2, 4>>;
+constexpr auto berry_threshold(Ability const ability) -> berry_threshold_t {
+	return ability == Ability::Gluttony ? berry_threshold_t(1_bi, 2_bi) : berry_threshold_t(1_bi, 4_bi);
+}
+
+
 // A mutable reference to the currently active Pokemon
 export template<typename PokemonType>
 struct AnyMutableActivePokemon : ActivePokemonImpl<PokemonType> {
@@ -979,11 +985,7 @@ private:
 		// TODO: Confusion damage does not activate healing berries in Generation 5+
 		auto const current_hp = hp_ratio(this->m_pokemon);
 
-		auto quarter_threshold = [&] {
-			return BOUNDED_CONDITIONAL(this->ability() == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
-		};
-
-		auto healing_berry = [&](auto const threshold, auto const amount) {
+		auto healing_berry = [&](berry_threshold_t const threshold, auto const amount) {
 			if (current_hp > threshold) {
 				return false;
 			}
@@ -994,7 +996,7 @@ private:
 
 		auto confusion_berry = [&](SplitSpecialRegularStat const stat) {
 			auto const amount = this->hp().max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
-			auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
+			auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : berry_threshold(this->ability());
 			auto const activated = healing_berry(threshold, amount);
 			if (activated and lowers_stat(this->m_pokemon.nature(), stat)) {
 				confuse(environment);
@@ -1002,7 +1004,7 @@ private:
 		};
 
 		auto stat_boost_berry = [&](BoostableStat const stat) {
-			if (current_hp > quarter_threshold()) {
+			if (current_hp > berry_threshold(this->ability())) {
 				return;
 			}
 			remove_item();
