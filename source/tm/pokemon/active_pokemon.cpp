@@ -988,7 +988,7 @@ private:
 				return false;
 			}
 			remove_item();
-			this->m_pokemon.set_hp(this->hp().current() + amount);
+			this->m_pokemon.set_hp(bounded::clamp<CurrentHP>(this->hp().current() + amount));
 			return true;
 		};
 
