@@ -20,6 +20,7 @@ import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;
+import tm.stat.current_hp;
 import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
@@ -116,7 +117,7 @@ struct KnownPokemon {
 		m_pokemon.reduce_pp(move_name, embargo, magic_room, amount);
 	}
 
-	constexpr auto set_hp(bounded::bounded_integer auto const hp) & -> void {
+	constexpr auto set_hp(CurrentHP const hp) & -> void {
 		m_pokemon.set_hp(hp);
 	}
 

@@ -25,6 +25,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.current_hp;
 import tm.stat.make_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
@@ -141,7 +142,7 @@ struct Pokemon {
 		activate_pp_restore_berry(move, embargo, magic_room);
 	}
 
-	constexpr void set_hp(bounded::bounded_integer auto const hp) & {
+	constexpr void set_hp(CurrentHP const hp) & {
 		m_stats.hp = hp;
 	}
 

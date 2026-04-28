@@ -46,8 +46,8 @@ export struct HP {
 	{
 	}
 
-	constexpr auto operator=(auto const & value) & -> HP & {
-		m_current = bounded::clamp(value, 0_bi, m_max);
+	constexpr auto operator=(CurrentHP const value) & -> HP & {
+		m_current = bounded::min(value, m_max);
 		return *this;
 	}
 	constexpr auto current() const -> CurrentHP {

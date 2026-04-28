@@ -20,6 +20,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.current_hp;
 import tm.stat.hp;
 import tm.stat.make_stats;
 import tm.stat.nature;
@@ -103,9 +104,9 @@ struct SeenPokemon {
 		}
 		m_hp.current = visible_hp;
 	}
-	constexpr auto set_hp(bounded::bounded_integer auto const given_real_hp) & -> void {
+	constexpr auto set_hp(CurrentHP const given_real_hp) & -> void {
 		auto const max_real_hp = m_stats.hp.max();
-		auto const real_hp = bounded::clamp(given_real_hp, 0_bi, max_real_hp);
+		auto const real_hp = bounded::min(given_real_hp, max_real_hp);
 		set_hp(CurrentVisibleHP(bounded::assume_in_range(m_hp.max.value() * real_hp / max_real_hp, 0_bi, m_hp.max.value())));
 	}
 
