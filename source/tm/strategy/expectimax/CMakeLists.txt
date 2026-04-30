@@ -8,6 +8,7 @@ target_sources(tm_strategy_expectimax PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		execute_switch.cpp
 		expectimax.cpp
 		score_selections.cpp
 		to_selection_probabilities.cpp
