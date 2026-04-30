@@ -7,8 +7,6 @@ module;
 
 #include <bounded/assert.hpp>
 
-#include <operators/forward.hpp>
-
 module tm.strategy.expectimax;
 
 import tm.evaluate.all_evaluate;
