@@ -50,9 +50,10 @@ import tm.stat.faster;
 import tm.status.clears_status;
 import tm.status.status_name;
 
-import tm.strategy.score_selections;
+import tm.strategy.expectimax.score_selections;
+import tm.strategy.expectimax.to_selection_probabilities;
+
 import tm.strategy.selection_probability;
-import tm.strategy.to_selection_probabilities;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;

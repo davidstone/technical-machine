@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.strategy.score_selections;
+export module tm.strategy.expectimax.score_selections;
 
 import tm.evaluate.score;
 import tm.evaluate.scored_selection;
