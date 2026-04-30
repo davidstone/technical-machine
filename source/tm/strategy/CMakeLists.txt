@@ -13,6 +13,7 @@ target_sources(tm_strategy PUBLIC
 		net_hp.cpp
 		parse_strategy.cpp
 		random_selection.cpp
+		score_selections.cpp
 		selection_probability.cpp
 		statistical.cpp
 		strategy.cpp

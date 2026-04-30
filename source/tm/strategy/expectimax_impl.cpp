@@ -52,6 +52,7 @@ import tm.stat.faster;
 import tm.status.clears_status;
 import tm.status.status_name;
 
+import tm.strategy.score_selections;
 import tm.strategy.selection_probability;
 import tm.strategy.to_selection_probabilities;
 
@@ -83,15 +84,6 @@ import tv;
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-
-auto parallel_sum(auto && range) {
-	return std::reduce(
-		std::execution::par_unseq,
-		containers::legacy_iterator(containers::begin(range)),
-		containers::legacy_iterator(containers::end(range)),
-		Score(0.0)
-	);
-}
 
 constexpr auto is_fainted(any_team auto const & team) -> bool {
 	return team.pokemon().hp().current() == 0_bi;
@@ -925,24 +917,6 @@ private:
 				return continuation(state);
 			}
 		));
-	}
-
-	auto score_selections(
-		LegalSelections const ai_selections,
-		SelectionProbabilities const foe_selections,
-		auto const function
-	) const -> ScoredSelections {
-		return ScoredSelections(containers::transform(ai_selections, [&](Selection const ai_selection) {
-			return ScoredSelection(
-				ai_selection,
-				parallel_sum(containers::transform(
-					foe_selections,
-					[&](SelectionProbability const predicted) {
-						return predicted.probability * function(ai_selection, predicted.selection);
-					}
-				))
-			);
-		}));
 	}
 
 	auto get_foe_selections(
