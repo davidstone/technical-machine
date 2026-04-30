@@ -53,6 +53,7 @@ import tm.status.clears_status;
 import tm.status.status_name;
 
 import tm.strategy.selection_probability;
+import tm.strategy.to_selection_probabilities;
 
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;
@@ -972,18 +973,6 @@ private:
 	std::reference_wrapper<Strategy const> m_foe_strategy;
 	std::unique_ptr<TranspositionTable<generation>> m_transposition_table;
 };
-
-auto to_selection_probabilities(ScoredSelections selections) -> SelectionProbabilities {
-	auto const best = containers::max_element(
-		selections,
-		[](ScoredSelection const lhs, ScoredSelection const rhs) {
-			return lhs.score > rhs.score;
-		}
-	);
-	return SelectionProbabilities({
-		SelectionProbability(best->selection, Probability(1.0))
-	});
-}
 
 } // namespace
 

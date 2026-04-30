@@ -16,6 +16,7 @@ target_sources(tm_strategy PUBLIC
 		selection_probability.cpp
 		statistical.cpp
 		strategy.cpp
+		to_selection_probabilities.cpp
 		weighted_selection.cpp
 )
 target_sources(tm_strategy PRIVATE
