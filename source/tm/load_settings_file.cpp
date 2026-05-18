@@ -9,6 +9,7 @@ import tm.load_json_from_file;
 import tm.nlohmann_json;
 export import tm.settings_file;
 
+import bounded;
 import containers;
 import std_module;
 
@@ -17,7 +18,7 @@ namespace technicalmachine {
 using namespace std::string_view_literals;
 
 auto get_string(nlohmann::json const & json, std::string_view const key) {
-	return json.at(key).get<std::string_view>();
+	return containers::string(json.at(key).get<std::string_view>());
 };
 
 auto parse_team(nlohmann::json const & json) {
@@ -47,7 +48,7 @@ auto parse_style(nlohmann::json const & json) {
 		});
 	} else if (mode == "accept") {
 		return SettingsFile::Style(SettingsFile::Accept{
-			containers::dynamic_array<containers::string>(json.at("users").get<std::vector<std::string_view>>())
+			containers::dynamic_array<containers::string>(containers::transform(json.at("users").get<std::vector<std::string_view>>(), bounded::construct<containers::string>))
 		});
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "sv, mode));

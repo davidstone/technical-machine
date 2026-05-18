@@ -81,7 +81,7 @@ constexpr auto stats_to_string(
 		default_value
 	);
 	if (all_default) {
-		return ""sv;
+		return containers::string();
 	}
 	return containers::string(containers::concatenate_view(
 		name,
