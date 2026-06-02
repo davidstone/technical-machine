@@ -52,7 +52,7 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export template<Generation generation>
 struct SeenPokemon {
@@ -96,9 +96,9 @@ struct SeenPokemon {
 		// TODO: Do something smart with actual
 		if (visible_hp > m_hp.max) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to set a visible HP of "sv,
+				"Tried to set a visible HP of "_s,
 				containers::to_string(visible_hp.value()),
-				", is greater than visible max HP of "sv,
+				", is greater than visible max HP of "_s,
 				containers::to_string(m_hp.max.value())
 			));
 		}

@@ -61,7 +61,7 @@ import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto move_should_have_recoil(
 	Generation const generation,
@@ -375,9 +375,9 @@ struct Battle {
 			auto const normalized_original_status = (original_status == StatusName::rest) ? StatusName::sleep : original_status;
 			if (normalized_original_status != visible_status) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Status out of sync with server messages: expected "sv,
+					"Status out of sync with server messages: expected "_s,
 					to_string(original_status),
-					" but received "sv,
+					" but received "_s,
 					to_string(visible_status)
 				));
 			}

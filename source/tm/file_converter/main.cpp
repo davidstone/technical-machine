@@ -20,9 +20,8 @@ import std_module;
 
 namespace {
 using namespace bounded::literal;
-
+using namespace containers::string_literals;
 using namespace technicalmachine;
-using namespace std::string_view_literals;
 
 constexpr auto invalid_args_message =
 	"Usage is file_converter output_type output_location files...\n"
@@ -102,7 +101,7 @@ auto unique_path_component(std::filesystem::path const & base_path, std::filesys
 	auto const & base_str = base_path.string();
 	auto const & full_str = full_path.string();
 	if (!full_str.starts_with(base_str)) {
-		throw std::runtime_error(containers::concatenate<std::string>("Could not extract trailing part of file name with a base of "sv, base_str, " and a filename of "sv, full_str));
+		throw std::runtime_error(containers::concatenate<std::string>("Could not extract trailing part of file name with a base of "_s, base_str, " and a filename of "_s, full_str));
 	}
 	return std::filesystem::path(full_str.substr(base_str.size()));
 }

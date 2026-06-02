@@ -13,16 +13,16 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export constexpr auto check_weathers_match(Weather const received, Weather const expected) -> void {
 	if (received != expected) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Inconsistent weather. Received "sv,
+			"Inconsistent weather. Received "_s,
 			to_string(received),
-			" but expected "sv,
+			" but expected "_s,
 			to_string(expected),
-			"\n"sv
+			"\n"_s
 		));
 	}
 }

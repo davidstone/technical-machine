@@ -9,16 +9,16 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export auto extension_to_content_type(std::filesystem::path const & ext) -> std::string_view {
 	if (ext == ".html") {
-		return "text/html"sv;
+		return "text/html"_s;
 	} else if (ext == ".js") {
-		return "application/javascript"sv;
+		return "application/javascript"_s;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unknown content type "sv,
+			"Unknown content type "_s,
 			ext.string()
 		));
 	}

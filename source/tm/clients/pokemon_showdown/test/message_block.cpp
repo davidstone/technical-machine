@@ -15,8 +15,7 @@ import std_module;
 
 namespace technicalmachine {
 namespace {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 template<std::size_t size>
 constexpr auto equal(ps::MessageBlock const block, containers::c_array<std::string_view, size> && expected) {
@@ -26,9 +25,9 @@ constexpr auto equal(ps::MessageBlock const block, containers::c_array<std::stri
 			block,
 			[](ps::InMessage const message) {
 				return containers::concatenate<containers::string>(
-					"|"sv,
+					"|"_s,
 					message.type(),
-					"|"sv,
+					"|"_s,
 					message.remainder()
 				);
 			}

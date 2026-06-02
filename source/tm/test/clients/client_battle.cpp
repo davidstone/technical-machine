@@ -1,5 +1,6 @@
 module;
 
+import std_module;
 #include <catch2/catch_test_macros.hpp>
 
 export module tm.test.clients.client_battle;
@@ -14,6 +15,7 @@ import tm.move.switch_;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.stat_style;
@@ -29,13 +31,12 @@ import tm.visible_hp;
 
 import bounded;
 import containers;
-import std_module;
 import tv;
 
 namespace technicalmachine {
 namespace {
-using namespace std::string_view_literals;
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 template<Generation generation, std::size_t known_size>
 auto make_battle(
@@ -172,7 +173,7 @@ TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]
 	battle->use_switch(true, Switch(1_bi));
 	battle->foe_has(
 		Species::Pikachu,
-		"Pikachu"sv,
+		Nickname("Pikachu"_s),
 		Level(100_bi),
 		Gender::genderless,
 		MaxVisibleHP(100_bi)
@@ -223,7 +224,7 @@ TEST_CASE("Handle replacing two fainted Pokemon new generation", "[ClientBattle]
 	battle->use_switch(true, Switch(1_bi));
 	battle->foe_has(
 		Species::Pikachu,
-		"Pikachu"sv,
+		Nickname("Pikachu"_s),
 		Level(100_bi),
 		Gender::genderless,
 		MaxVisibleHP(100_bi)

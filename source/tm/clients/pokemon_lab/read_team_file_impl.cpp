@@ -45,7 +45,6 @@ import std_module;
 
 namespace technicalmachine::pl {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 constexpr auto parse_species(std::string_view const str) -> Species {
 	static constexpr auto converter = containers::basic_flat_map(

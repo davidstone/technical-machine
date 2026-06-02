@@ -11,10 +11,9 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps {
+using namespace containers::string_literals;
 
-using namespace std::string_view_literals;
-
-constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"sv;
+constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"_s;
 
 export enum class BattleMessageKind {
 	junk,
@@ -30,35 +29,35 @@ export constexpr auto get_battle_message_kind(InMessage const first_message, boo
 		return (... or (first_message.type() == strs));
 	};
 	using enum BattleMessageKind;
-	if (matches("init"sv, "raw"sv, "t:"sv, "inactive"sv, "inactiveoff"sv)) {
+	if (matches("init"_s, "raw"_s, "t:"_s, "inactive"_s, "inactiveoff"_s)) {
 		return junk;
-	} else if (matches("teamsize"sv)) {
+	} else if (matches("teamsize"_s)) {
 		// "teamsize" never starts a block in the real stream. However, we have
 		// to filter out all the "player" messages when parsing PS logs due to
 		// bugs on the PS side. That makes "teamsize" the beginning of the block
 		// when parsing those files.
 		return init;
-	} else if (matches("player"sv)) {
+	} else if (matches("player"_s)) {
 		return has_more_data ? init	: junk;
-	} else if (matches("-message"sv)) {
+	} else if (matches("-message"_s)) {
 		return regular;
-	} else if (matches(""sv)) {
+	} else if (matches(""_s)) {
 		return first_message.remainder() == ladder_timeout ? junk : regular;
-	} else if (matches("request"sv)) {
+	} else if (matches("request"_s)) {
 		if (has_more_data) {
 			throw std::runtime_error("Request message contains too much data");
 		}
 		return request;
-	} else if (matches("error"sv)) {
+	} else if (matches("error"_s)) {
 		if (has_more_data) {
 			throw std::runtime_error("Error message contains too much data");
 		}
 		return error;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unknown battle message kind: |"sv,
+			"Unknown battle message kind: |"_s,
 			first_message.type(),
-			"|"sv,
+			"|"_s,
 			first_message.remainder()
 		));
 	}

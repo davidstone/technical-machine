@@ -57,8 +57,8 @@ import std_module;
 // https://github.com/smogon/pokemon-showdown/blob/master/PROTOCOL.md
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 constexpr auto remove_spaces(std::string_view str) {
 	return containers::filter(
@@ -170,8 +170,8 @@ export struct ClientMessageHandler {
 private:
 	auto send_team(Generation const generation) -> void {
 		auto const team = get_team(generation, m_settings.team, m_all_usage_stats, m_random_engine);
-		auto const team_str = team ? to_packed_format(*team) : "null";
-		m_send_message(containers::concatenate<containers::string>("|/utm "sv, team_str));
+		auto const team_str = team ? to_packed_format(*team) : "null"_s;
+		m_send_message(containers::concatenate<containers::string>("|/utm "_s, team_str));
 	}
 
 	auto send_request_battle_start(std::string_view const format, auto const & ... strings) -> void {
@@ -182,10 +182,10 @@ private:
 	auto send_challenge() -> void {
 		tv::visit(m_settings.style, tv::overload(
 			[&](SettingsFile::Ladder const & ladder) {
-				send_request_battle_start(ladder.format, "|/search "sv, ladder.format);
+				send_request_battle_start(ladder.format, "|/search "_s, ladder.format);
 			},
 			[&](SettingsFile::Challenge const & challenge) {
-				send_request_battle_start(challenge.format, "|/challenge "sv, challenge.user, ","sv, challenge.format);
+				send_request_battle_start(challenge.format, "|/challenge "_s, challenge.user, ","_s, challenge.format);
 			},
 			[](SettingsFile::Accept const &) {}
 		));
@@ -227,17 +227,17 @@ private:
 		// then turn it back on after sending a response, but that seems
 		// like it would be annoying for the human opponent.
 		if (m_should_start_timer) {
-			m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
+			m_send_message(containers::concatenate<containers::string>(room, "|/timer on"_s));
 			m_should_start_timer = false;
 		}
 	}
 
 	auto handle_error_message(Room const room, std::string_view const error) const -> void {
 		std::cerr << "|error|" << error << '\n';
-		if (error != "[Invalid choice] There's nothing to choose"sv) {
+		if (error != "[Invalid choice] There's nothing to choose"_s) {
 			m_send_message(containers::concatenate<containers::string>(
 				room,
-				"|/choose default"sv
+				"|/choose default"_s
 			));
 		}
 	}
@@ -273,9 +273,9 @@ private:
 					return;
 				}
 				if (should_accept_challenge(m_settings.style, no_spaces_string_view(from))) {
-					send_request_battle_start(format, "|/accept "sv, from);
+					send_request_battle_start(format, "|/accept "_s, from);
 				} else {
-					m_send_message(containers::concatenate<containers::string>("|/reject "sv, from));
+					m_send_message(containers::concatenate<containers::string>("|/reject "_s, from));
 				}
 			} else {
 				std::cout << "PM from " << from << " to " << to << ": " << initial_message;
@@ -309,14 +309,14 @@ private:
 		auto const request = create_http_post(
 			host,
 			"/api/login",
-			containers::concatenate<containers::string>("name="sv, m_settings.username, "&pass="sv, m_settings.password, "&challstr="sv, challstr)
+			containers::concatenate<containers::string>("name="_s, m_settings.username, "&pass="_s, m_settings.password, "&challstr="_s, challstr)
 		);
 		auto const response = m_authenticate(host, "443", request);
 
 		// Response begins with ']' followed by JSON object.
 		auto const body = std::string_view(response.body()).substr(1);
 		auto const json = nlohmann::json::parse(body);
-		m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.at("assertion").get<std::string_view>()));
+		m_send_message(containers::concatenate<containers::string>("|/trn "_s, m_settings.username, ",0,"_s, json.at("assertion").get<std::string_view>()));
 	}
 
 	auto analysis_log_file(Room const room) -> std::fstream {

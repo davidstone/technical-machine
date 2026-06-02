@@ -43,8 +43,7 @@ import std_module;
 
 namespace technicalmachine::nb {
 using namespace bounded::literal;
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct Parser {
 	constexpr explicit Parser(std::span<std::byte const> const bytes):
@@ -90,7 +89,7 @@ private:
 		} else if (file_version_string == " PNB5.0") {
 			return FileVersion::five_zero;
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Version \""sv, file_version_string, "\" not supported"sv));
+			throw std::runtime_error(containers::concatenate<std::string>("Version \""_s, file_version_string, "\" not supported"_s));
 		}
 	}
 	BitView m_view;

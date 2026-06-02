@@ -15,6 +15,7 @@ import tm.clients.party;
 import tm.move.move_name;
 
 import tm.pokemon.level;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.ps_usage_stats.battle_log_to_messages;
@@ -31,8 +32,8 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
 using namespace bounded::literal;
+using namespace containers::string_literals;
 using namespace ps_usage_stats;
 
 constexpr auto visible_hp(auto const current, auto const max) -> VisibleHP {
@@ -112,7 +113,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 					ps::SwitchMessage(
 						p1,
 						Species::Tauros,
-						"Tauros"sv,
+						Nickname("Tauros"_s),
 						Level(100_bi),
 						Gender::genderless,
 						visible_hp(353_bi, 353_bi),
@@ -124,7 +125,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 					ps::SwitchMessage(
 						p2,
 						Species::Starmie,
-						"Starmie"sv,
+						Nickname("Starmie"_s),
 						Level(100_bi),
 						Gender::genderless,
 						visible_hp(323_bi, 323_bi),
@@ -140,7 +141,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::SwitchMessage(
 					p2,
 					Species::Cloyster,
-					"Cloyster"sv,
+					Nickname("Cloyster"_s),
 					Level(100_bi),
 					Gender::genderless,
 					visible_hp(303_bi, 303_bi),
@@ -219,7 +220,7 @@ TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
 				ps::SwitchMessage(
 					p1,
 					Species::Gengar,
-					"Gengar"sv,
+					Nickname("Gengar"_s),
 					Level(100_bi),
 					Gender::genderless,
 					visible_hp(323_bi, 323_bi),

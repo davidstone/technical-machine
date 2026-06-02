@@ -38,9 +38,8 @@ import tv;
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
 namespace technicalmachine::ps {
-
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto parse_condition(std::string_view const str) -> tv::optional<ScreenEndMessage::ScreenName> {
 	using enum ScreenEndMessage::ScreenName;
@@ -104,7 +103,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 	} else if (type == "-activate") {
 		// We can intentionally get a blank player ID when Splash "activates"
 		auto const player_id = message.pop();
-		auto const [category, source] = split_view(message.pop(), ": "sv);
+		auto const [category, source] = split_view(message.pop(), ": "_s);
 		auto const details = message.pop();
 		return tv::visit(parse_effect_source(category, source), tv::overload(
 			[](MainEffect) -> tv::optional<ParsedMessage> {
@@ -189,7 +188,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			return RechargingMessage(party);
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Received unknown \"cant\" reason: "sv,
+				"Received unknown \"cant\" reason: "_s,
 				reason
 			));
 		}
@@ -266,7 +265,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 	} else if (type == "-end") {
 		auto const party = party_from_player_id(message.pop());
 		// https://github.com/llvm/llvm-project/issues/72828
-		auto const temp = split_view(message.pop(), ": "sv);
+		auto const temp = split_view(message.pop(), ": "_s);
 		auto const effect_type = temp.first;
 		auto const other = temp.second;
 		return tv::visit(parse_effect_source(effect_type, ""), tv::overload(
@@ -386,14 +385,14 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		auto const move_str = message.pop();
 		auto const move = from_string<MoveName>(move_str);
 		[[maybe_unused]] auto const target = message.pop();
-		constexpr auto miss_str = "[miss]"sv;
+		constexpr auto miss_str = "[miss]"_s;
 		auto const first_part = message.pop();
 		auto const first_part_is_missed = first_part == miss_str;
 		auto const second_part = message.pop();
 		auto const second_part_is_missed = second_part == miss_str;
 		auto const immobilize_continued =
 			is_immobilize(move) and
-			first_part == containers::concatenate<containers::string>("[from] "sv, move_str);
+			first_part == containers::concatenate<containers::string>("[from] "_s, move_str);
 		return MoveMessage(
 			party,
 			move,
@@ -467,7 +466,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				[[maybe_unused]] auto const changed_type = message.pop();
 				return parse_from_source(message.pop());
 			} else {
-				auto const [source_type, string_source] = split_view(first_part_of_source, ": "sv);
+				auto const [source_type, string_source] = split_view(first_part_of_source, ": "_s);
 				return parse_effect_source(source_type, string_source);
 			}
 		}();
@@ -566,7 +565,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 					return WeatherMessage(weather);
 				}
 				auto const maybe_upkeep = message.pop();
-				if (maybe_upkeep == "[upkeep]"sv) {
+				if (maybe_upkeep == "[upkeep]"_s) {
 					return WeatherMessage(weather);
 				}
 				return tv::none;
@@ -576,9 +575,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		return BattleFinishedMessage();
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Received battle progress message of unknown type: "sv,
+			"Received battle progress message of unknown type: "_s,
 			type,
-			": "sv,
+			": "_s,
 			message.remainder()
 		));
 	}

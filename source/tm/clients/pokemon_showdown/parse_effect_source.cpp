@@ -17,7 +17,7 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct MainEffect {};
 export struct FromMove {};
@@ -77,7 +77,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 			type == "Sandstorm"
 		) ? EffectSource(FromMiscellaneous()) :
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unhandled effect source type: "sv,
+			"Unhandled effect source type: "_s,
 			type
 		));
 }
@@ -85,7 +85,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 export constexpr auto parse_from_source(std::string_view const message) -> EffectSource {
 	// [from]
 	auto const [bracketed_text_or_nothing, remainder] = split_view(message, ' ');
-	auto const [type, source] = split_view(remainder, ": "sv);
+	auto const [type, source] = split_view(remainder, ": "_s);
 	return parse_effect_source(type, source);
 }
 

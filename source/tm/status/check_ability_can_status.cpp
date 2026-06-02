@@ -18,7 +18,7 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto ability_statuses(Ability const ability) -> containers::static_vector<StatusName, 4_bi> {
 	switch (ability) {
@@ -34,9 +34,9 @@ constexpr auto ability_statuses(Ability const ability) -> containers::static_vec
 export constexpr auto check_ability_can_status(Ability const ability, StatusName const status) -> void {
 	if (!containers::any_equal(ability_statuses(ability), status)) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Tried to apply "sv,
+			"Tried to apply "_s,
 			to_string(status),
-			" as a result of a contact move against "sv,
+			" as a result of a contact move against "_s,
 			to_string(ability)
 		));
 	}

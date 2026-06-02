@@ -9,6 +9,7 @@ import tm.clients.pl.read_team_file;
 
 import tm.move.move_name;
 
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.ev;
@@ -23,13 +24,13 @@ import tm.initial_team;
 import tm.item;
 
 import bounded;
+import containers;
 import std_module;
 
 namespace technicalmachine {
 namespace {
-
 using namespace bounded;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto team_xml = R"(
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -180,7 +181,7 @@ constexpr auto team_xml = R"(
 </pokemon>
 
 </shoddybattle>
-)"sv;
+)"_s;
 
 constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	{
@@ -265,7 +266,7 @@ constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Rotom_Wash,
-		.nickname = "Rotom-w"sv,
+		.nickname = Nickname("Rotom-w"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Levitate,
 		.stats = {
@@ -283,7 +284,7 @@ constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 });
 
 TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
-	auto const parsed = pl::read_team_file(std::as_bytes(std::span(team_xml)));
+	auto const parsed = pl::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
 	CHECK(parsed == expected);
 }
 

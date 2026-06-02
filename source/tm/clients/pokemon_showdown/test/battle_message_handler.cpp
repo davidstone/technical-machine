@@ -5,6 +5,7 @@
 
 module;
 
+import std_module;
 #include <catch2/catch_test_macros.hpp>
 
 export module tm.test.clients.ps.battle_message_handler;
@@ -40,10 +41,12 @@ import tm.move.switch_;
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.make_stats;
+import tm.stat.nature;
 import tm.stat.stat_style;
 import tm.stat.stats;
 
@@ -65,17 +68,11 @@ import tm.visible_hp;
 import bounded;
 import containers;
 import tv;
-import std_module;
-
-
-import tm.to_index;
-import tm.string_conversions.pokemon;
-import tm.stat.nature;
 
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
 	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
@@ -364,7 +361,7 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Bulbasaur,
-				"Bulbasaur"sv,
+				Nickname("Bulbasaur"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(231_bi, 231_bi),
@@ -524,7 +521,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Tauros,
-				"Tauros"sv,
+				Nickname("Tauros"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(353_bi, 353_bi),
@@ -593,7 +590,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Tauros,
-				"Tauros"sv,
+				Nickname("Tauros"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(291_bi, 291_bi),
@@ -697,7 +694,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Shedinja,
-				"Shedinja"sv,
+				Nickname("Shedinja"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(1_bi, 1_bi),
@@ -718,7 +715,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Bulbasaur,
-				"Bulbasaur"sv,
+				Nickname("Bulbasaur"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(231_bi, 231_bi),
@@ -809,7 +806,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion single faint", "[Pokemon 
 			ps::SwitchMessage(
 				Party(1_bi),
 				Species::Pikachu,
-				"Pikachu"sv,
+				Nickname("Pikachu"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(100_bi, 100_bi),
@@ -819,7 +816,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion single faint", "[Pokemon 
 		}));
 		CHECK(result == ps::StartOfTurn(TurnCount(2_bi)));
 
-		expected->foe_has(Species::Pikachu, "Pikachu"sv, Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
+		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_s), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
 
 		CHECK(handler.state() == expected->state());
@@ -875,7 +872,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Jynx,
-				"Jynx"sv,
+				Nickname("Jynx"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(333_bi, 333_bi),
@@ -884,7 +881,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			ps::SwitchMessage(
 				Party(1_bi),
 				Species::Pikachu,
-				"Pikachu"sv,
+				Nickname("Pikachu"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(100_bi, 100_bi),
@@ -895,7 +892,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		CHECK(result == ps::StartOfTurn(TurnCount(2_bi)));
 
 		expected->use_switch(true, Switch(1_bi));
-		expected->foe_has(Species::Pikachu, "Pikachu"sv, Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
+		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_s), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
 
 		CHECK(handler.state() == expected->state());
@@ -1313,7 +1310,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Shedinja,
-				"Shedinja"sv,
+				Nickname("Shedinja"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(1_bi, 1_bi),
@@ -1334,7 +1331,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Smeargle,
-				"Smeargle"sv,
+				Nickname("Smeargle"_s),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(251_bi, 251_bi),

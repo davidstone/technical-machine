@@ -9,11 +9,11 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct InvalidFromStringConversion : std::runtime_error {
 	InvalidFromStringConversion(std::string_view const target, std::string_view const requested):
-		std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "sv, requested, " to type "sv, target))
+		std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "_s, requested, " to type "_s, target))
 	{
 	}
 };

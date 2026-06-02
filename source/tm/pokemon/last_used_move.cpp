@@ -39,9 +39,8 @@ import tv;
 import std_module;
 
 namespace technicalmachine {
-
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 template<typename T>
 concept ends_at_action = requires(T const & value) {
@@ -106,10 +105,10 @@ struct LastUsedMove {
 			// TODO: Choice Band can be weird
 			if (!successful_last_move(first_executed)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Tried to use "sv,
+					"Tried to use "_s,
 					to_string(first_executed),
-					" while locked into "sv,
-					m_move ? to_string(*m_move) : "nothing"sv
+					" while locked into "_s,
+					m_move ? to_string(*m_move) : "nothing"_s
 				));
 			}
 		};

@@ -11,25 +11,25 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
-constexpr auto chat_message_types = containers::array({
-	":"sv,
-	"c"sv,
-	"chat"sv,
-	"c:"sv,
-	"deinit"sv,
-	"expire"sv,
-	"j"sv,
-	"J"sv,
-	"join"sv,
-	"l"sv,
-	"L"sv,
-	"leave"sv,
-	"n"sv,
-	"N"sv,
-	"name"sv
-});
+constexpr auto chat_message_types = containers::array{
+	":"_s,
+	"c"_s,
+	"chat"_s,
+	"c:"_s,
+	"deinit"_s,
+	"expire"_s,
+	"j"_s,
+	"J"_s,
+	"join"_s,
+	"l"_s,
+	"L"_s,
+	"leave"_s,
+	"n"_s,
+	"N"_s,
+	"name"_s
+};
 
 export constexpr auto is_chat_message(InMessage const message) -> bool {
 	return containers::any_equal(chat_message_types, message.type());

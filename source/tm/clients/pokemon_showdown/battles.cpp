@@ -24,7 +24,6 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
 
 export struct Battles {
 	Battles() = default;

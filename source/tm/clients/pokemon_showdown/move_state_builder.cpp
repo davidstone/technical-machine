@@ -39,7 +39,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto move_damages_self(MoveName const move_name) -> bool {
 	switch (move_name) {
@@ -115,7 +115,7 @@ export struct MoveStateBuilder {
 			[](Recharging) { throw std::runtime_error("Tried to use a move while recharging"); },
 			[&](StillAsleep) {
 				if (!usable_while_sleeping(move)) {
-					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
+					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "_s, to_string(move), " while asleep"_s));
 				}
 				m_move->emplace([&] { return VisibleMove(move, miss); });
 			},

@@ -35,8 +35,6 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-using namespace std::string_view_literals;
-
 constexpr auto generation = Generation::four;
 
 // All moves are legal moves

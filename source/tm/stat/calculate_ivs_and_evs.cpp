@@ -42,7 +42,7 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 template<bool combine>
 constexpr auto fix_if(SplitSpecialRegularStat const stat_name) {
@@ -60,20 +60,20 @@ constexpr auto to_string(auto const stats) -> containers::string {
 	auto const spe_str = containers::to_string(stats.spe);
 	if constexpr (requires { stats.spc; }) {
 		return containers::concatenate<containers::string>(
-			"HP: "sv, hp_str,
-			", Attack: "sv, atk_str,
-			", Defense: "sv, def_str,
-			", Speed: "sv, spe_str,
-			", Special: "sv, containers::to_string(stats.spc)
+			"HP: "_s, hp_str,
+			", Attack: "_s, atk_str,
+			", Defense: "_s, def_str,
+			", Speed: "_s, spe_str,
+			", Special: "_s, containers::to_string(stats.spc)
 		);
 	} else {
 		return containers::concatenate<containers::string>(
-			"HP: "sv, hp_str,
-			", Attack: "sv, atk_str,
-			", Defense: "sv, def_str,
-			", Special Attack: "sv, containers::to_string(stats.spa),
-			", Special Defense: "sv, containers::to_string(stats.spd),
-			", Speed: "sv, spe_str
+			"HP: "_s, hp_str,
+			", Attack: "_s, atk_str,
+			", Defense: "_s, def_str,
+			", Special Attack: "_s, containers::to_string(stats.spa),
+			", Special Defense: "_s, containers::to_string(stats.spd),
+			", Speed: "_s, spe_str
 		);
 	}
 }
@@ -232,26 +232,26 @@ constexpr auto calculate_ivs_and_evs(
 		}
 	}
 	auto const nature_string = [=] {
-		auto result = containers::string("{"sv);
+		auto result = containers::string("{"_s);
 		for (auto const nature : containers::take(nature_range, bounded::increase_min<0>(containers::size(nature_range) - 1_bi))) {
-			result = containers::concatenate<containers::string>(std::move(result), to_string(nature), ", "sv);
+			result = containers::concatenate<containers::string>(std::move(result), to_string(nature), ", "_s);
 		}
-		return containers::concatenate<containers::string>(std::move(result), to_string(containers::back(nature_range)), "}"sv);
+		return containers::concatenate<containers::string>(std::move(result), to_string(containers::back(nature_range)), "}"_s);
 	}();
 	auto const hidden_power_string = hidden_power ?
 		containers::concatenate<containers::string>(
-			"Type: "sv, to_string(hidden_power->type()),
-			", Power: "sv, containers::to_string(hidden_power->power())
+			"Type: "_s, to_string(hidden_power->type()),
+			", Power: "_s, containers::to_string(hidden_power->power())
 		) :
-		containers::string("none");
+		containers::string("none"_s);
 	throw std::runtime_error(containers::concatenate<std::string>(
-		"No Nature, IV, and EV combination gives the received stats in generation "sv,
+		"No Nature, IV, and EV combination gives the received stats in generation "_s,
 		to_string(generation),
-		": Species: "sv, to_string(species),
-		", Level: "sv, containers::to_string(level()),
-		", Possible Natures: "sv, nature_string,
-		", "sv, to_string(stats),
-		", Hidden Power: "sv, hidden_power_string
+		": Species: "_s, to_string(species),
+		", Level: "_s, containers::to_string(level()),
+		", Possible Natures: "_s, nature_string,
+		", "_s, to_string(stats),
+		", Hidden Power: "_s, hidden_power_string
 	));
 }
 

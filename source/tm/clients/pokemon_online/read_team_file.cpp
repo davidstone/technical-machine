@@ -36,7 +36,7 @@ import tv;
 
 namespace technicalmachine::po {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct CheckedIterator {
 	explicit CheckedIterator(property_tree::ptree_reader pt):
@@ -119,7 +119,7 @@ auto parse_stats(std::string_view const name, CheckedIterator it) {
 
 template<SpecialInputStyle style>
 auto parse_dvs_or_ivs(CheckedIterator it) {
-	constexpr auto name = "DV"sv;
+	constexpr auto name = "DV"_s;
 	if constexpr (style == SpecialInputStyle::combined) {
 		auto const parsed = parse_stats<DV>(name, it);
 		struct Parsed {
@@ -134,7 +134,7 @@ auto parse_dvs_or_ivs(CheckedIterator it) {
 
 template<SpecialInputStyle style>
 auto parse_evs(CheckedIterator it) {
-	auto const parsed = parse_stats<EV>("EV"sv, it);
+	auto const parsed = parse_stats<EV>("EV"_s, it);
 	if constexpr (style == SpecialInputStyle::combined) {
 		struct Parsed {
 			OldGenEVs stats;

@@ -26,7 +26,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct PerTeam {
 	tv::optional<TeamSize> size;
@@ -42,19 +42,19 @@ export constexpr auto make_battle_init_message(auto const messages) -> BattleIni
 		auto matches = [&](auto... strs) {
 			return (... or (strs == type));
 		};
-		if (matches("gen"sv)) {
+		if (matches("gen"_s)) {
 			if (generation) {
 				throw std::runtime_error("Received gen multiple times");
 			}
 			generation = from_string<Generation>(message.pop());
-		} else if (matches("switch"sv)) {
+		} else if (matches("switch"_s)) {
 			auto parsed = parse_switch(message);
 			auto & target = teams[parsed.party.value()].starter;
 			if (target) {
 				throw std::runtime_error("Same party switched in twice");
 			}
 			target = parsed;
-		} else if (matches("teamsize"sv)) {
+		} else if (matches("teamsize"_s)) {
 			auto const party = make_party(message.pop());
 			auto const team_size = bounded::to_integer<TeamSize>(message.pop());
 			auto & target = teams[party.value()].size;
@@ -62,18 +62,18 @@ export constexpr auto make_battle_init_message(auto const messages) -> BattleIni
 				throw std::runtime_error("Same party gave a team size twice");
 			}
 			target = team_size;
-		} else if (matches("turn"sv)) {
+		} else if (matches("turn"_s)) {
 			auto const turn = bounded::to_integer<TurnCount>(message.pop());
 			if (turn != 1_bi) {
 				throw std::runtime_error("Got a turn after turn 1 during battle set-up");
 			}
-		} else if (matches(""sv, "player"sv, "rated"sv, "rule"sv, "start"sv, "t:"sv, "teampreview"sv, "tier"sv)) {
+		} else if (matches(""_s, "player"_s, "rated"_s, "rule"_s, "start"_s, "t:"_s, "teampreview"_s, "tier"_s)) {
 			// Do nothing, junk
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Received battle setup message of unknown type: "sv,
+				"Received battle setup message of unknown type: "_s,
 				type,
-				": "sv,
+				": "_s,
 				message.remainder()
 			));
 		}

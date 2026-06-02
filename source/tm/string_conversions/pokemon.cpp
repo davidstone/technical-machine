@@ -45,8 +45,7 @@ import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 // TODO: Print nickname
 // TODO: Print level
@@ -70,15 +69,15 @@ constexpr auto percent_to_string(double const value) -> containers::string {
 		0_bi,
 		9_bi
 	);
-	return containers::concatenate<containers::string>(containers::to_string(integer_part), "."sv, containers::to_string(decimal_part));
+	return containers::concatenate<containers::string>(containers::to_string(integer_part), "."_s, containers::to_string(decimal_part));
 }
 
 constexpr auto ability_to_string(Generation const generation, Ability const ability) -> containers::string {
 	return generation >= Generation::three ?
 		containers::concatenate<containers::string>(
-			"\tAbility: "sv,
+			"\tAbility: "_s,
 			to_string(ability),
-			"\n"sv
+			"\n"_s
 		) :
 		containers::string();
 }
@@ -87,11 +86,11 @@ constexpr auto status_to_string(Status const status) -> containers::string {
 	auto const output_status = !is_clear(status);
 	return output_status ?
 		containers::concatenate<containers::string>(
-			"\tStatus: "sv,
+			"\tStatus: "_s,
 			to_string(status.name()),
-			"\n"sv
+			"\n"_s
 		) :
-		containers::string("");
+		""_s;
 };
 
 template<typename StatNames>
@@ -105,7 +104,7 @@ constexpr auto stat_to_string(
 		constexpr auto to_string() const -> containers::string {
 			return containers::concatenate<containers::string>(
 				containers::to_string(value.value()),
-				" "sv,
+				" "_s,
 				technicalmachine::to_string(name)
 			);
 		}
@@ -121,14 +120,14 @@ constexpr auto stat_to_string(
 	return containers::is_empty(used_stats) ?
 		containers::string() :
 		containers::concatenate<containers::string>(
-			"\t"sv,
+			"\t"_s,
 			type,
-			": "sv,
+			": "_s,
 			containers::string(containers::join_with(
 				containers::transform(used_stats, &NamedStat::to_string),
-				" / "sv
+				" / "_s
 			)),
-			"\n"sv
+			"\n"_s
 		);
 };
 
@@ -145,12 +144,12 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 		};
 		return containers::concatenate<containers::string>(
 			stat_to_string(
-				"DVs"sv,
+				"DVs"_s,
 				containers::enum_range<SpecialRegularStat>(),
 				get_iv
 			),
 			stat_to_string(
-				"EVs"sv,
+				"EVs"_s,
 				containers::enum_range<SpecialPermanentStat>(),
 				get_ev
 			)
@@ -162,16 +161,16 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 			return BOUNDED_CONDITIONAL(value != 0_bi, value, tv::none);
 		};
 		return containers::concatenate<containers::string>(
-			"\tNature: "sv,
+			"\tNature: "_s,
 			to_string(stats.nature),
-			"\n"sv,
+			"\n"_s,
 			stat_to_string(
-				"IVs"sv,
+				"IVs"_s,
 				containers::enum_range<SplitSpecialRegularStat>(),
 				get_iv
 			),
 			stat_to_string(
-				"EVs"sv,
+				"EVs"_s,
 				containers::enum_range<SplitSpecialPermanentStat>(),
 				get_ev
 			)
@@ -183,11 +182,11 @@ constexpr auto moves_to_string(RegularMoves const moves) -> containers::string {
 	return containers::string(containers::join_with(
 		containers::transform(moves, [](Move const move) {
 			return containers::concatenate<containers::string>(
-				"\t- "sv,
+				"\t- "_s,
 				to_string(move.name())
 			);
 		}),
-		"\n"sv
+		"\n"_s
 	));
 };
 
@@ -201,7 +200,7 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 	auto item_to_string = [&] -> containers::string {
 		return generation >= Generation::two ?
 			containers::concatenate<containers::string>(
-				" @ "sv,
+				" @ "_s,
 				to_string(pokemon.item(false, false))
 			) :
 			containers::string();
@@ -210,11 +209,11 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 
 	return containers::concatenate<containers::string>(
 		to_string(pokemon.species()),
-		" ("sv,
+		" ("_s,
 		hp_str,
-		"% HP)"sv,
+		"% HP)"_s,
 		item_to_string(),
-		"\n"sv,
+		"\n"_s,
 		ability_to_string(generation, pokemon.initial_ability()),
 		status_to_string(pokemon.status()),
 		stats_to_string(calculate_ivs_and_evs(pokemon)),

@@ -18,7 +18,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 // TODO: Should TeamSize be at least 1? Should this accept a different type?
 constexpr auto validate_size(TeamSize const size) {
@@ -40,15 +40,15 @@ export struct SlotMemory {
 		auto const it = containers::find(m_container, index);
 		if (it == containers::end(m_container)) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Unable to find switch index "sv,
+				"Unable to find switch index "_s,
 				containers::to_string(index),
-				", possible values are "sv,
+				", possible values are "_s,
 				[&] {
 					return containers::string(containers::join_with(
 						containers::transform(m_container, [](Index const value) {
 							return containers::to_string(value);
 						}),
-						", "sv
+						", "_s
 					));
 				}()
 			));

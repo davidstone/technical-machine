@@ -17,7 +17,6 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 export constexpr auto to_real_hp(MaxHP const max_hp, VisibleHP const visible_hp) -> AllowedHP {
 	if (visible_hp.current == CurrentVisibleHP(0_bi)) {

@@ -8,28 +8,29 @@ export module tm.team_predictor.server.style;
 export import tm.string_conversions.from_string;
 import tm.string_conversions.invalid_string_conversion;
 
+import containers;
 import numeric_traits;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export enum class Style { random, most_likely };
 
 export constexpr auto to_string(Style const style) -> std::string_view {
 	switch (style) {
 		case Style::random:
-			return "random"sv;
+			return "random"_s;
 		case Style::most_likely:
-			return "most likely"sv;
+			return "most likely"_s;
 	}
 }
 
 export template<>
 constexpr auto from_string(std::string_view const str) -> Style {
-	if (str == "random"sv) {
+	if (str == "random"_s) {
 		return Style::random;
-	} else if (str == "most likely"sv) {
+	} else if (str == "most likely"_s) {
 		return Style::most_likely;
 	} else {
 		throw InvalidFromStringConversion("Style", str);

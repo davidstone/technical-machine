@@ -48,7 +48,6 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 constexpr auto is_fainted(any_team auto const & team) -> bool {
 	return team.pokemon().hp().current() == 0_bi;

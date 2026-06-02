@@ -11,6 +11,7 @@ import tm.move.move_name;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.ev;
@@ -33,12 +34,12 @@ import std_module;
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Forretress,
-		.nickname = "Alcatraz"sv,
+		.nickname = Nickname("Alcatraz"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::Sturdy,
@@ -55,7 +56,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Houndoom,
-		.nickname = "Crunch Time"sv,
+		.nickname = Nickname("Crunch Time"_s),
 		.gender = Gender::male,
 		.item = Item::Salac_Berry,
 		.ability = Ability::Flash_Fire,
@@ -72,7 +73,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Gengar,
-		.nickname = "Clyde"sv,
+		.nickname = Nickname("Clyde"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::Levitate,
@@ -90,7 +91,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Heracross,
-		.nickname = "Blinky"sv,
+		.nickname = Nickname("Blinky"_s),
 		.gender = Gender::male,
 		.item = Item::Salac_Berry,
 		.ability = Ability::Swarm,
@@ -107,7 +108,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Mew,
-		.nickname = "Houdini"sv,
+		.nickname = Nickname("Houdini"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Synchronize,
 		.stats = {
@@ -123,7 +124,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	InitialPokemon<SpecialInputStyle::split>{
 		.species = Species::Zapdos,
-		.nickname = "Sparky"sv,
+		.nickname = Nickname("Sparky"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Pressure,
 		.stats = {
@@ -143,7 +144,7 @@ constexpr auto expected_netbattle_team = InitialTeam<SpecialInputStyle::split>({
 constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle::combined>({
 	{
 		.species = Species::Raikou,
-		.nickname = "Aaron Carter"sv,
+		.nickname = Nickname("Aaron Carter"_s),
 		.item = Item::Leftovers,
 		.stats = {
 			.dvs_or_ivs = DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
@@ -157,7 +158,7 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle
 	},
 	{
 		.species = Species::Alakazam,
-		.nickname = "Jackie Chan"sv,
+		.nickname = Nickname("Jackie Chan"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.moves = {{
@@ -169,7 +170,7 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle
 	},
 	{
 		.species = Species::Exeggutor,
-		.nickname = "Old Godzilla"sv,
+		.nickname = Nickname("Old Godzilla"_s),
 		.gender = Gender::male,
 		.moves = {{
 			MoveName::Explosion,
@@ -180,7 +181,7 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle
 	},
 	{
 		.species = Species::Snorlax,
-		.nickname = "Shaq Fu"sv,
+		.nickname = Nickname("Shaq Fu"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.moves = {{
@@ -192,7 +193,7 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle
 	},
 	{
 		.species = Species::Machamp,
-		.nickname = "Chuck Norris"sv,
+		.nickname = Nickname("Chuck Norris"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.stats = {
@@ -207,7 +208,7 @@ constexpr auto expected_netbattle_supremacy_team = InitialTeam<SpecialInputStyle
 	},
 	{
 		.species = Species::Gengar,
-		.nickname = "Abe Lincoln"sv,
+		.nickname = Nickname("Abe Lincoln"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.moves = {{

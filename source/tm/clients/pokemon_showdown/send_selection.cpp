@@ -23,20 +23,20 @@ import tv;
 // https://github.com/smogon/pokemon-showdown/blob/master/PROTOCOL.md
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct SendSelection {
 	constexpr auto operator()(Switch const switch_) const -> void {
 		m_send_message(containers::concatenate<containers::string>(
 			m_room,
-			"|/choose switch "sv,
+			"|/choose switch "_s,
 			containers::to_string(m_slot_memory[switch_.value()])
 		));
 	}
 	constexpr auto operator()(MoveName const move) const -> void {
 		m_send_message(containers::concatenate<containers::string>(
 			m_room,
-			"|/choose move "sv,
+			"|/choose move "_s,
 			to_string(move)
 		));
 	}

@@ -13,8 +13,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto is_digit = [](char const c) {
 	return '0' <= c and c <= '9';
@@ -22,7 +21,7 @@ constexpr auto is_digit = [](char const c) {
 
 export constexpr auto parse_generation_from_format(std::string_view const battle_format, std::string_view const expected_prefix) -> Generation {
 	if (!battle_format.starts_with(expected_prefix)) {
-		throw std::runtime_error(containers::concatenate<std::string>("Expected battle format "sv, battle_format, " to start with "sv, expected_prefix));
+		throw std::runtime_error(containers::concatenate<std::string>("Expected battle format "_s, battle_format, " to start with "_s, expected_prefix));
 	}
 	auto const remainder = battle_format.substr(expected_prefix.size());
 	auto const it = containers::find_if(remainder, std::not_fn(is_digit));

@@ -21,7 +21,7 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 enum class Extension {
 	po,
@@ -59,7 +59,7 @@ export auto load_team_from_file(std::filesystem::path const & file_name) -> AnyI
 				return nb::read_team_file(bytes);
 		}
 	} catch (std::exception const & ex) {
-		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse team file \""sv, file_name.string(), "\" -- "sv, std::string_view(ex.what())));
+		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse team file \""_s, file_name.string(), "\" -- "_s, std::string_view(ex.what())));
 	}
 }
 

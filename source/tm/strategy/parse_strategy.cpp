@@ -17,37 +17,38 @@ import tm.strategy.strategy;
 import tm.probability;
 
 import bounded;
+import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 	if (argc < 1) {
 		throw std::runtime_error("Command line must include strategy");
 	}
 	auto const name = std::string_view(argv[0]);
-	if (name == "random"sv) {
+	if (name == "random"_s) {
 		if (argc != 2) {
 			throw std::runtime_error("random strategy requires argument for switch weight");
 		}
 		return make_random_selection(Probability(std::stod(argv[1])));
-	} else if (name == "max_damage"sv) {
+	} else if (name == "max_damage"_s) {
 		if (argc != 1) {
 			throw std::runtime_error("max_damage strategy accepts no arguments");
 		}
 		return make_max_damage();
-	} else if (name == "net_hp"sv) {
+	} else if (name == "net_hp"_s) {
 		if (argc != 1) {
 			throw std::runtime_error("net_hp strategy accepts no arguments");
 		}
 		return make_net_hp();
-	} else if (name == "statistical"sv) {
+	} else if (name == "statistical"_s) {
 		if (argc != 1) {
 			throw std::runtime_error("statistical strategy accepts no arguments");
 		}
 		return make_statistical();
-	} else if (name == "expectimax"sv) {
+	} else if (name == "expectimax"_s) {
 		if (argc < 4) {
 			throw std::runtime_error("expectimax strategy requires two depth arguments followed by a foe strategy");
 		}

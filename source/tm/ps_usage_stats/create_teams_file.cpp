@@ -17,8 +17,7 @@ import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct ParsedArgs {
 	std::filesystem::path output_file;
@@ -32,12 +31,12 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	}
 	auto output_file = std::filesystem::path(argv[1]);
 	if (std::filesystem::exists(output_file)) {
-		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"sv));
+		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"_s));
 	}
 	auto const thread_count = bounded::to_integer<ThreadCount>(argv[2]);
 	auto input_directory = std::filesystem::path(argv[3]);
 	if (!std::filesystem::exists(input_directory)) {
-		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"sv));
+		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"_s));
 	}
 	return ParsedArgs{
 		std::move(output_file),
@@ -61,7 +60,7 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 				auto lock = std::scoped_lock(writer_mutex);
 				battle_result_writer(*battle_result);
 			} catch (std::exception const & ex) {
-				throw std::runtime_error(containers::concatenate<std::string>("Error parsing "sv, input_file.string(), ": "sv, std::string_view(ex.what())));
+				throw std::runtime_error(containers::concatenate<std::string>("Error parsing "_s, input_file.string(), ": "_s, std::string_view(ex.what())));
 			}
 		}
 	);

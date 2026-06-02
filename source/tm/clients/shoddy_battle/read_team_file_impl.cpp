@@ -51,7 +51,7 @@ import std_module;
 
 namespace technicalmachine::sb {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto number_of_stats = containers::size(containers::enum_range<SplitSpecialPermanentStat>());
 
@@ -164,7 +164,7 @@ constexpr auto to_gender(ByteInteger<4_bi> const id) -> Gender {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
 		case 2: return Gender::female;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "sv, containers::to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "_s, containers::to_string(id)));
 	}
 }
 
@@ -195,7 +195,7 @@ constexpr auto to_nature(ByteInteger<4_bi> const id) -> Nature {
 		case 22: return Nature::Serious;
 		case 23: return Nature::Bashful;
 		case 24: return Nature::Docile;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "sv, containers::to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "_s, containers::to_string(id)));
 	}
 }
 
@@ -258,7 +258,7 @@ struct Parser {
 				return ParsedData(std::monostate());
 			default:
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Unknown data type "sv,
+					"Unknown data type "_s,
 					containers::to_string(bounded::integer(type))
 				));
 		}
@@ -296,7 +296,7 @@ private:
 					[&] { return m_byte_parser.pop_integer(4_bi); }
 				)));
 			default:
-				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "sv, containers::array{code}));
+				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "_s, containers::array{code}));
 		}
 	}
 
@@ -329,7 +329,7 @@ private:
 							} else if (field.name == "m_nickname") {
 								emplace_once(nickname, state);
 							} else {
-								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "sv, field.name));
+								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "_s, field.name));
 							}
 						} else if constexpr (std::same_as<State, IntegerContainer>) {
 							if (field.name == "m_iv") {
@@ -344,7 +344,7 @@ private:
 									return bounded::check_in_range<PP::pp_ups_type>(x);
 								}));
 							} else {
-								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"sv, field.name));
+								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"_s, field.name));
 							}
 						} else if constexpr (std::same_as<State, AnyContainer>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
@@ -356,7 +356,7 @@ private:
 								} else if (inner_parsed.state.index() == bounded::type<std::monostate>) {
 									return false;
 								} else {
-									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, containers::to_string(inner_parsed.state.index().integer())));
+									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "_s, containers::to_string(inner_parsed.state.index().integer())));
 								}
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));
@@ -541,7 +541,7 @@ private:
 			auto const id = m_byte_parser.pop_integer(4_bi);
 			result = ParsedData(to_nature(id));
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Unknown string "sv, description.name));
+			throw std::runtime_error(containers::concatenate<std::string>("Unknown string "_s, description.name));
 		}
 		return result;
 	}

@@ -25,23 +25,23 @@ import std_module;
 import tv;
 
 namespace technicalmachine::ps_usage_stats {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 using namespace ps;
 
 constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage const rhs) {
 	auto matches = [&](InMessage const message, auto const... strs) {
 		return (... or (message.type() == strs));
 	};
-	if (matches(lhs, "teamsize"sv)) {
+	if (matches(lhs, "teamsize"_s)) {
 		return true;
 	}
-	if (matches(rhs, "teamsize"sv, "inactive"sv, "inactiveoff"sv)) {
+	if (matches(rhs, "teamsize"_s, "inactive"_s, "inactiveoff"_s)) {
 		return false;
 	}
-	if (matches(lhs, "turn"sv)) {
+	if (matches(lhs, "turn"_s)) {
 		return false;
 	}
-	if (matches(lhs, "faint"sv) and matches(rhs, ""sv)) {
+	if (matches(lhs, "faint"_s) and matches(rhs, ""_s)) {
 		return false;
 	}
 	return true;

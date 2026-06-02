@@ -44,9 +44,9 @@ import tv;
 import std_module;
 
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
 
 export template<Generation generation>
 struct KnownPokemon {
@@ -102,11 +102,10 @@ struct KnownPokemon {
 	}
 	constexpr auto add_move(Move const move) const -> void {
 		if (!containers::any_equal(regular_moves(), move.name()) and is_regular(move.name())) {
-			using namespace std::string_view_literals;
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to add "sv,
+				"Tried to add "_s,
 				to_string(move.name()),
-				" to a KnownPokemon of "sv,
+				" to a KnownPokemon of "_s,
 				to_string(species()),
 				" even though it does not know this move."
 			));
@@ -127,11 +126,11 @@ struct KnownPokemon {
 	constexpr auto set_initial_ability(Ability const ability) const -> void {
 		if (ability != initial_ability()) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Inconsistent abilities. Tried to change "sv,
+				"Inconsistent abilities. Tried to change "_s,
 				nickname().str(),
-				" from "sv,
+				" from "_s,
 				to_string(initial_ability()),
-				" to "sv,
+				" to "_s,
 				to_string(ability)
 			));
 		}

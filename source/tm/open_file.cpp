@@ -9,8 +9,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 template<typename Stream = std::fstream>
 constexpr auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode) -> Stream {
@@ -19,9 +18,9 @@ constexpr auto open_file(std::filesystem::path const & path, std::ios_base::open
 		file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Could not open "sv,
+			"Could not open "_s,
 			path.string(),
-			": "sv,
+			": "_s,
 			std::string_view(ex.what())
 		));
 	}

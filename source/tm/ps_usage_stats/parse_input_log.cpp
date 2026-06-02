@@ -21,7 +21,7 @@ import tv;
 
 namespace technicalmachine::ps_usage_stats {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 using namespace ps;
 
 export using PlayerInput = tv::variant<MoveName, BattleResponseSwitch>;
@@ -31,9 +31,9 @@ constexpr auto parse_input_for(std::string_view const player) {
 		auto const str = json.get<std::string_view>();
 		if (str.empty() or str.front() != '>') {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Selection string "sv,
+				"Selection string "_s,
 				str,
-				" does not start with >"sv
+				" does not start with >"_s
 			));
 		}
 		auto view = DelimitedBufferView(str.substr(1), ' ');
@@ -41,27 +41,27 @@ constexpr auto parse_input_for(std::string_view const player) {
 		auto matches = [=](auto const ... strs) {
 			return (... or (type == strs));
 		};
-		if (matches("p1"sv, "p2"sv)) {
+		if (matches("p1"_s, "p2"_s)) {
 			if (type != player) {
 				return tv::none;
 			}
 			auto const category = view.pop();
 			auto const data = view.pop();
-			if (category == "move"sv) {
+			if (category == "move"_s) {
 				return PlayerInput(from_string<MoveName>(data));
-			} else if (category == "switch"sv) {
+			} else if (category == "switch"_s) {
 				return PlayerInput(bounded::to_integer<BattleResponseSwitch>(data));
 			} else {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Unknown action category "sv,
+					"Unknown action category "_s,
 					category
 				));
 			}
-		} else if (matches("forcelose"sv, "player"sv, "start"sv, "version"sv, "version-origin"sv)) {
+		} else if (matches("forcelose"_s, "player"_s, "start"_s, "version"_s, "version-origin"_s)) {
 			return tv::none;
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Unknown action type "sv,
+				"Unknown action type "_s,
 				type
 			));
 		}
@@ -84,8 +84,8 @@ export struct InputLog {
 };
 export auto parse_input_log(nlohmann::json const & input_log) -> InputLog {
 	return InputLog(
-		input_for_side(input_log, "p1"sv),
-		input_for_side(input_log, "p2"sv)
+		input_for_side(input_log, "p1"_s),
+		input_for_side(input_log, "p2"_s)
 	);
 }
 

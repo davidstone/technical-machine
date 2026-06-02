@@ -9,7 +9,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 // https://www.smogon.com/forums/threads/gxe-glixare-a-much-better-way-of-estimating-a-players-overall-rating-than-shoddys-cre.51169/
 // https://pokemonshowdown.com/pages/ladderhelp
@@ -24,11 +24,11 @@ export struct Rating {
 	{
 		auto const value_in_range = std::numeric_limits<double>::min() < value_ and value <= std::numeric_limits<double>::max();
 		if (!value_in_range) {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating value of "sv, std::to_string(value_)));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating value of "_s, std::to_string(value_)));
 		}
 		auto const deviation_in_range = std::numeric_limits<double>::min() < deviation_ and deviation_ <= initial_deviation;
 		if (!deviation_in_range) {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating deviation of "sv, std::to_string(deviation_)));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating deviation of "_s, std::to_string(deviation_)));
 		}
 	}
 

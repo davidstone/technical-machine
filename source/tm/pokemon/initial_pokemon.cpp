@@ -22,10 +22,11 @@ import tm.gender;
 import tm.item;
 
 import bounded;
+import containers;
 import std_module;
 
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 namespace technicalmachine {
 
@@ -52,7 +53,7 @@ struct bounded::tombstone<technicalmachine::InitialPokemon<style>> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::InitialPokemon<style> {
 		return {
 			.species = {},
-			.nickname = ""sv,
+			.nickname = technicalmachine::Nickname(""_s),
 			.moves = base::make(index),
 		};
 	}

@@ -20,7 +20,7 @@ import std_module;
 import tv;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export constexpr auto to_string(
 	Selection const selection,
@@ -29,18 +29,18 @@ export constexpr auto to_string(
 	return tv::visit(selection, tv::overload(
 		[&](Switch const switch_) {
 			return containers::concatenate<containers::string>(
-				"Switch to "sv,
+				"Switch to "_s,
 				to_string(team.pokemon(switch_.value()).species())
 			);
 		},
 		[](MoveName const move) {
 			return containers::concatenate<containers::string>(
-				"Use "sv,
+				"Use "_s,
 				to_string(move)
 			);
 		},
 		[](Pass) {
-			return containers::string("Pass"sv);
+			return containers::string("Pass"_s);
 		}
 	));
 }

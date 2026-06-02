@@ -13,12 +13,11 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct PokemonNotFound : std::runtime_error {
 	explicit PokemonNotFound(Species const species):
-		std::runtime_error(containers::concatenate<std::string>("Unable to find "sv, to_string(species)))
+		std::runtime_error(containers::concatenate<std::string>("Unable to find "_s, to_string(species)))
 	{
 	}
 };

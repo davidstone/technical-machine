@@ -32,6 +32,7 @@ import tv;
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/TEAMS.md#packed-format
 
 namespace technicalmachine::ps {
+using namespace containers::string_literals;
 using namespace std::string_view_literals;
 
 constexpr auto comma_separator = containers::array({','});
@@ -90,9 +91,9 @@ constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & te
 			is_first ? ""sv : "]"sv,
 			pokemon.nickname().str(),
 			separator,
-			species_str == pokemon.nickname().str() ? ""sv : species_str,
+			species_str == pokemon.nickname().str() ? ""_s : species_str,
 			separator,
-			item == Item::None ? ""sv : to_string(item),
+			item == Item::None ? ""_s : to_string(item),
 			separator,
 			to_string(pokemon.initial_ability()),
 			separator

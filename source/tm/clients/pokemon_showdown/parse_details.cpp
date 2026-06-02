@@ -21,7 +21,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct ParsedDetails {
 	Species species;
@@ -44,7 +44,7 @@ export constexpr auto parse_details(std::string_view const details) -> ParsedDet
 
 	auto const shiny_str = gender != Gender::genderless ? parser.pop() : gender_or_shiny_str;
 	auto exception = [&] {
-		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "sv, details));
+		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "_s, details));
 	};
 	if (shiny_str != "shiny" and shiny_str != "") {
 		throw exception();

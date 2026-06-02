@@ -13,13 +13,13 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export template<containers::range Range>
 constexpr auto find_required_index(Range const & range, containers::range_value_t<Range> const & value) -> containers::index_type<Range> {
 	auto const it = containers::find(range, value);
 	if (it == containers::end(range)) {
-		throw std::runtime_error(containers::concatenate<std::string>("Unable to find "sv, to_string(value)));
+		throw std::runtime_error(containers::concatenate<std::string>("Unable to find "_s, to_string(value)));
 	}
 	return bounded::assume_in_range<containers::index_type<Range>>(it - containers::begin(range));
 }

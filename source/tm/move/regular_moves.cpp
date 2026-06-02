@@ -19,8 +19,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct RegularMoves {
 	constexpr RegularMoves() = default;
@@ -47,21 +46,21 @@ export struct RegularMoves {
 
 	constexpr auto push_back(Move const move) -> Move & {
 		if (!is_regular(move.name())) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to add an irregular move "sv, to_string(move.name())));
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to add an irregular move "_s, to_string(move.name())));
 		}
 		if (containers::any_equal(m_moves, move.name())) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to add "sv, to_string(move.name()), "twice"sv));
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to add "_s, to_string(move.name()), "twice"_s));
 		}
 		if (containers::size(m_moves) == max_moves_per_pokemon) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to add too many moves. Already have: "sv,
+				"Tried to add too many moves. Already have: "_s,
 				containers::string(containers::join_with(
 					containers::transform(m_moves, [](Move const element) {
 						return to_string(element.name());
 					}),
-					", "sv
+					", "_s
 				)),
-				" -- Tried to add "sv,
+				" -- Tried to add "_s,
 				to_string(move.name())
 			));
 		}

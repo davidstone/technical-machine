@@ -14,8 +14,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 auto get_string(nlohmann::json const & json, std::string_view const key) {
 	return containers::string(json.at(key).get<std::string_view>());
@@ -51,7 +50,7 @@ auto parse_style(nlohmann::json const & json) {
 			containers::dynamic_array<containers::string>(containers::transform(json.at("users").get<std::vector<std::string_view>>(), bounded::construct<containers::string>))
 		});
 	} else {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "sv, mode));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "_s, mode));
 	}
 }
 

@@ -44,7 +44,6 @@ import std_module;
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 constexpr auto visible_hp(auto const value) {
 	return VisibleHP(CurrentVisibleHP(value), MaxVisibleHP(value));

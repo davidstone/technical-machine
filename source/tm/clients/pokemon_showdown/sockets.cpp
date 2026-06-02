@@ -11,8 +11,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 namespace ssl = boost::asio::ssl;
 
@@ -29,7 +28,7 @@ export struct Sockets {
 	{
 		connect_ssl_socket(m_io, m_websocket.next_layer(), host, port);
 		m_websocket.handshake(
-			std::string_view(containers::concatenate<containers::string>(host, ":"sv, port)),
+			std::string_view(containers::concatenate<containers::string>(host, ":"_s, port)),
 			resource
 		);
 	}
@@ -41,9 +40,9 @@ export struct Sockets {
 		websocket_read(m_websocket, m_buffer);
 
 		auto const asio_buffer = m_buffer.data();
-		auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
+		auto const _s = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
 
-		return sv;
+		return _s;
 	}
 
 	auto write_message(std::string_view const message) -> void {

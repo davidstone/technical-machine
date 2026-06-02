@@ -24,7 +24,6 @@ export using OnWebsocketMessage = containers::trivial_inplace_function<
 >;
 
 namespace {
-using namespace std::string_view_literals;
 
 struct Connection {
 	explicit Connection(
@@ -57,13 +56,7 @@ private:
 	}
 	auto write(std::string_view const str) -> void {
 		auto buffer = m_buffer.prepare(str.size());
-		containers::copy(
-			str,
-			std::span<char>(
-				static_cast<char *>(buffer.data()),
-				buffer.size()
-			)
-		);
+		containers::copy(str, static_cast<char *>(buffer.data()));
 		websocket_async_write(
 			m_socket,
 			buffer,

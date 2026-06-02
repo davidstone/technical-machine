@@ -27,7 +27,7 @@ import std_module;
 
 namespace technicalmachine::po {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct SpeciesIDs {
 	using ID = bounded::integer<1, 493>;
@@ -38,14 +38,14 @@ export struct SpeciesIDs {
 
 struct InvalidFormeID : std::runtime_error {
 	InvalidFormeID(std::string_view const species, SpeciesIDs::Forme const forme):
-		std::runtime_error(containers::concatenate<std::string>("Invalid forme ID "sv, containers::to_string(forme), " for "sv, species))
+		std::runtime_error(containers::concatenate<std::string>("Invalid forme ID "_s, containers::to_string(forme), " for "_s, species))
 	{
 	}
 };
 
 struct UnsupportedSpecies : std::runtime_error {
 	explicit UnsupportedSpecies(Species const species):
-		std::runtime_error(containers::concatenate<std::string>(to_string(species), " not supported in Pokemon Online."sv))
+		std::runtime_error(containers::concatenate<std::string>(to_string(species), " not supported in Pokemon Online."_s))
 	{
 	}
 };
@@ -1388,7 +1388,7 @@ export constexpr auto ability_to_id(Ability const ability) -> AbilityID {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
-		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(ability), " not supported in Pokemon Online"sv));
+		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(ability), " not supported in Pokemon Online"_s));
 	}
 }
 

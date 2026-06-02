@@ -30,7 +30,7 @@ import std_module;
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
 	auto file = open_text_file_for_reading(file_name);
@@ -73,11 +73,11 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	{
 		auto client = ps::ClientMessageHandler(
 			SettingsFile{
-				.host = "",
-				.port = "",
-				.resource = "",
-				.username = "",
-				.password = "",
+				.host = ""_s,
+				.port = ""_s,
+				.resource = ""_s,
+				.username = ""_s,
+				.password = ""_s,
 				.team = SettingsFile::NoTeam(),
 				.style = SettingsFile::Accept()
 			},

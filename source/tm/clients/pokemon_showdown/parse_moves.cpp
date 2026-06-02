@@ -20,21 +20,21 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto parse_hidden_power(std::string_view const str) -> Type {
-	constexpr auto prefixes = containers::array({
-		"hiddenpower"sv,
-		"Hidden Power"sv,
-		"hp"sv,
-	});
+	constexpr auto prefixes = containers::array{
+		"hiddenpower"_s,
+		"Hidden Power"_s,
+		"hp"_s,
+	};
 	auto const matches = [=](std::string_view const prefix) {
 		return str.starts_with(prefix);
 	};
 	auto const ptr = containers::maybe_find_if(prefixes, matches);
 	if (!ptr) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unknown Hidden Power string: "sv,
+			"Unknown Hidden Power string: "_s,
 			str
 		));
 	}

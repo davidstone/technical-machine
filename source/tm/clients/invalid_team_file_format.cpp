@@ -9,12 +9,11 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct InvalidTeamFileFormat : std::runtime_error {
 	explicit InvalidTeamFileFormat(std::filesystem::path const & file):
-		std::runtime_error(containers::concatenate<std::string>("Attempted to load "sv, file.string(), "."sv))
+		std::runtime_error(containers::concatenate<std::string>("Attempted to load "_s, file.string(), "."_s))
 	{
 	}
 };

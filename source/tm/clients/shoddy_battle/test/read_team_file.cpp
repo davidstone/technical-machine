@@ -15,6 +15,7 @@ import tm.move.move_name;
 
 import tm.pokemon.initial_pokemon;
 import tm.pokemon.level;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.ev;
@@ -36,14 +37,14 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto generation = Generation::four;
 
 constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	{
 		.species = Species::Jirachi,
-		.nickname = "Homeland Security"sv,
+		.nickname = Nickname("Homeland Security"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Serene_Grace,
 		.stats = {
@@ -60,7 +61,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Machamp,
-		.nickname = "Big Brother"sv,
+		.nickname = Nickname("Big Brother"_s),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::No_Guard,
@@ -77,7 +78,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Tyranitar,
-		.nickname = "FBI"sv,
+		.nickname = Nickname("FBI"_s),
 		.gender = Gender::male,
 		.item = Item::Choice_Band,
 		.ability = Ability::Sand_Stream,
@@ -94,7 +95,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Blissey,
-		.nickname = "NSA"sv,
+		.nickname = Nickname("NSA"_s),
 		.gender = Gender::female,
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
@@ -111,7 +112,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Celebi,
-		.nickname = "Secret Service"sv,
+		.nickname = Nickname("Secret Service"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
 		.stats = {
@@ -128,7 +129,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Moltres,
-		.nickname = "Air Force"sv,
+		.nickname = Nickname("Air Force"_s),
 		.item = Item::Leftovers,
 		.ability = Ability::Pressure,
 		.stats = {

@@ -7,22 +7,23 @@ export module tm.clients.ps.parse_status;
 
 import tm.status.status_name;
 
+import containers;
 import std_module;
 
 namespace technicalmachine::ps {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export constexpr auto parse_status(std::string_view const str) -> StatusName {
 	return
-		(str == ""sv) ? StatusName::clear :
-		(str == "fnt"sv) ? StatusName::clear :
-		(str == "brn"sv) ? StatusName::burn :
-		(str == "frz"sv) ? StatusName::freeze :
-		(str == "par"sv) ? StatusName::paralysis :
-		(str == "psn"sv) ? StatusName::poison :
-		(str == "tox"sv) ? StatusName::toxic :
-		(str == "slp"sv) ? StatusName::sleep :
-//		(str == ""sv) ? StatusName::rest :
+		(str == ""_s) ? StatusName::clear :
+		(str == "fnt"_s) ? StatusName::clear :
+		(str == "brn"_s) ? StatusName::burn :
+		(str == "frz"_s) ? StatusName::freeze :
+		(str == "par"_s) ? StatusName::paralysis :
+		(str == "psn"_s) ? StatusName::poison :
+		(str == "tox"_s) ? StatusName::toxic :
+		(str == "slp"_s) ? StatusName::sleep :
+//		(str == ""_s) ? StatusName::rest :
 		throw std::runtime_error("Received an invalid status");
 }
 

@@ -14,6 +14,7 @@ import tm.clients.po.read_team_file;
 import tm.move.move_name;
 
 import tm.pokemon.happiness;
+import tm.pokemon.nickname;
 import tm.pokemon.species;
 
 import tm.stat.ev;
@@ -31,14 +32,14 @@ import tm.initial_team;
 import tm.item;
 
 import bounded;
+import containers;
 import tv;
 import std_module;
 
 namespace technicalmachine {
 namespace {
-
 using namespace bounded::literal;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	{
@@ -57,7 +58,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Wormadam_Sandy,
-        .nickname = "Wormadam-G"sv,
+        .nickname = Nickname("Wormadam-G"_s),
 		.gender = Gender::female,
 		.item = Item::Bright_Powder,
 		.ability = Ability::Anticipation,
@@ -186,10 +187,10 @@ constexpr auto team_xml = R"(
 		<EV>0</EV>
 	</Pokemon>
 </Team>
-)"sv;
+)"_s;
 
 TEST_CASE("Pokemon Online team file", "[Pokemon Online]") {
-	auto const original_team = po::read_team_file(std::as_bytes(std::span(team_xml)));
+	auto const original_team = po::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
 	CHECK(original_team == expected_team);
 }
 

@@ -20,7 +20,7 @@ import std_module;
 import tv;
 
 using namespace technicalmachine;
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 auto main() -> int {
 	constexpr auto http_port = static_cast<unsigned short>(46923);
@@ -38,7 +38,7 @@ auto main() -> int {
 		},
 		[&](std::string_view const str) -> containers::string {
 			return containers::string(nlohmann::json({{
-				"predicted"sv,
+				"predicted"_s,
 				predicted_team_string(
 					parse_predictor_inputs(str),
 					all_usage_stats,

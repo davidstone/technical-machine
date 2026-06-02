@@ -19,7 +19,7 @@ import tv;
 
 namespace technicalmachine {
 namespace {
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 auto get_client_directory() -> std::filesystem::path {
 	return std::filesystem::path(get_environment_variable("TM_CLIENT_DIRECTORY"));
@@ -63,7 +63,7 @@ auto make_response(
 		);
 		return make(http::status::ok, body, content_type);
 	} catch (std::exception const & ex) {
-		return make(http::status::bad_request, ex.what(), "text/html"sv);
+		return make(http::status::bad_request, ex.what(), "text/html"_s);
 	}
 }
 

@@ -5,14 +5,14 @@
 
 module;
 
+import std_module;
+
 #include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 export module tm.property_tree;
-
-import std_module;
 
 namespace technicalmachine::property_tree {
 

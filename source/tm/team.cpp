@@ -44,7 +44,6 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 template<any_pokemon PokemonType>
 struct TeamImpl {

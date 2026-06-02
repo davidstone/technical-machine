@@ -11,8 +11,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine::ps {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 export struct InMessage {
 	constexpr InMessage(std::string_view const data):
@@ -40,7 +39,7 @@ private:
 			auto const discarded = view.pop();
 			if (!discarded.empty()) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Expected empty string, got "sv,
+					"Expected empty string, got "_s,
 					discarded
 				));
 			}

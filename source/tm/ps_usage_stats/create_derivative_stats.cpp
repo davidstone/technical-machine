@@ -23,8 +23,7 @@ import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {
-
-using namespace std::string_view_literals;
+using namespace containers::string_literals;
 
 struct ParsedArgs {
 	std::filesystem::path output_directory;
@@ -41,11 +40,11 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	auto output_directory = std::filesystem::path(argv[1]);
 	auto full_stats_path = argc == 2 ? output_directory / "stats.json" : std::filesystem::path(argv[2]);
 	if (!std::filesystem::exists(full_stats_path)) {
-		throw std::runtime_error(containers::concatenate<std::string>(full_stats_path.string(), " does not exist"sv));
+		throw std::runtime_error(containers::concatenate<std::string>(full_stats_path.string(), " does not exist"_s));
 	}
 	auto const general_usage_stats_path = output_directory / "pokemon_usage_stats.json";
 	if (std::filesystem::exists(general_usage_stats_path)) {
-		throw std::runtime_error(containers::concatenate<std::string>(general_usage_stats_path.string(), " already exists"sv));
+		throw std::runtime_error(containers::concatenate<std::string>(general_usage_stats_path.string(), " already exists"_s));
 	}
 	std::filesystem::create_directories(output_directory);
 	return ParsedArgs{
