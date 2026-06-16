@@ -11,9 +11,9 @@ target_sources(team_predictor_server_test PRIVATE
 		make_dictionary.cpp
 )
 target_link_libraries(team_predictor_server_test
+	doctest::doctest_with_main
 	team_predictor_server_lib
 	tm_test_lib
-	Catch2::Catch2WithMain
 )
 
 add_test(team_predictor_server_test team_predictor_server_test)

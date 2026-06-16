@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.clients.ps.client_message_handler;
 
@@ -63,7 +63,7 @@ auto paths_in_directory(std::filesystem::path const & path) {
 	);
 }
 
-TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown regression") {
 	auto const test_directory = get_test_directory();
 	auto const battle_output_directory = test_directory / "temp-battles";
 	auto const remove_temporary_files = [&] {

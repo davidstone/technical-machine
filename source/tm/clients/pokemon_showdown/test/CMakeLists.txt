@@ -16,9 +16,9 @@ target_sources(tm_pokemon_showdown_test PRIVATE
 		slot_memory.cpp
 )
 target_link_libraries(tm_pokemon_showdown_test
+	doctest::doctest_with_main
 	tm_pokemon_showdown
 	tm_test_lib
-	Catch2::Catch2WithMain
 )
 add_test(tm_pokemon_showdown_test tm_pokemon_showdown_test)
 
@@ -30,8 +30,8 @@ target_sources(ps_regression_test PRIVATE
 		client_message_handler.cpp
 )
 target_link_libraries(ps_regression_test
+	doctest::doctest_with_main
 	tm_pokemon_showdown
-	Catch2::Catch2WithMain
 	TBB::tbb
 )
 add_test(ps_regression_test ps_regression_test)

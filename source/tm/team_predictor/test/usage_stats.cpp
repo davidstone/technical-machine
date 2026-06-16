@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.team_predictor.usage_stats;
 
@@ -33,7 +33,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-TEST_CASE("Smallest generation 1 team", "[UsageStats]") {
+TEST_CASE("UsageStats: Smallest generation 1 team") {
 	auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(Generation::one));
 	auto const & base = usage_stats.assuming();
 	auto const & map = base.map();
@@ -45,7 +45,7 @@ TEST_CASE("Smallest generation 1 team", "[UsageStats]") {
 	CHECK(ptr->abilities.map() == containers::flat_map<Ability, Weight<float>>());
 }
 
-TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
+TEST_CASE("UsageStats: Smallest generation 2 team") {
 	auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(Generation::two));
 	auto const & base = usage_stats.assuming();
 	auto const & map = base.map();
@@ -57,7 +57,7 @@ TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
 	CHECK(ptr->abilities.map() == containers::flat_map<Ability, Weight<float>>());
 }
 
-TEST_CASE("Smallest generation 3 team", "[UsageStats]") {
+TEST_CASE("UsageStats: Smallest generation 3 team") {
 	auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(Generation::three));
 	auto const & base = usage_stats.assuming();
 	auto const & map = base.map();

@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.clients.sb.read_team_file;
 
@@ -765,7 +765,7 @@ constexpr auto team_bytes = containers::array({
 	std::byte(0x00), std::byte(0x03), std::byte(0x78),
 });
 
-TEST_CASE("read_team_file", "[shoddy_battle]") {
+TEST_CASE("shoddy_battle: read_team_file") {
 	CHECK(sb::read_team_file(team_bytes) == expected_team);
 }
 

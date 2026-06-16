@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.po.team_file;
 
@@ -189,7 +189,7 @@ constexpr auto team_xml = R"(
 </Team>
 )"_s;
 
-TEST_CASE("Pokemon Online team file", "[Pokemon Online]") {
+TEST_CASE("Pokemon Online: Pokemon Online team file") {
 	auto const original_team = po::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
 	CHECK(original_team == expected_team);
 }

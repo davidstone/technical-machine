@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.parse_request;
 
@@ -44,7 +44,7 @@ constexpr auto visible_hp(auto const current, auto const max) {
 	return VisibleHP(CurrentVisibleHP(current), MaxVisibleHP(max));
 }
 
-TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
+TEST_CASE("pokemon showdown: Parse Pokemon Showdown generation 1 team") {
 	constexpr auto expected = ps::ParsedRequest(
 		ps::ParsedMoves({
 			{MoveName::Fire_Blast, 8_bi, true},
@@ -169,7 +169,7 @@ TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 	CHECK(parsed == expected);
 }
 
-TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
+TEST_CASE("pokemon showdown: Parse Pokemon Showdown generation 2 team") {
 	constexpr auto expected = ps::ParsedRequest(
 		ps::ParsedMoves({
 			{MoveName::Thief, 16_bi, true},
@@ -310,7 +310,7 @@ TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
 	CHECK(parsed == expected);
 }
 
-TEST_CASE("Parse Pokemon Showdown request with forced pass", "[pokemon showdown]") {
+TEST_CASE("pokemon showdown: Parse Pokemon Showdown request with forced pass") {
 	constexpr auto expected_moves = ps::ParsedMoves();
 	constexpr auto expected_switches = ps::SwitchPossibilities::trapped;
 
@@ -322,7 +322,7 @@ TEST_CASE("Parse Pokemon Showdown request with forced pass", "[pokemon showdown]
 	CHECK(parsed.switches == expected_switches);
 }
 
-TEST_CASE("Parse Pokemon Showdown request with forced switch", "[pokemon showdown]") {
+TEST_CASE("pokemon showdown: Parse Pokemon Showdown request with forced switch") {
 	constexpr auto expected_moves = ps::ParsedMoves();
 	constexpr auto expected_switches = ps::SwitchPossibilities::forced;
 

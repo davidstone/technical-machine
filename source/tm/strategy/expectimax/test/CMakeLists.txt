@@ -11,8 +11,8 @@ target_sources(tm_strategy_expectimax_test PRIVATE
 		expectimax.cpp
 )
 target_link_libraries(tm_strategy_expectimax_test
+	doctest::doctest_with_main
 	tm_strategy
-	Catch2::Catch2WithMain
 	TBB::tbb
 	strict_defaults
 )

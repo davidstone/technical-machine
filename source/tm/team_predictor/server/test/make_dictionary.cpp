@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.team_predictor.server.test.make_dictionary;
 
@@ -22,7 +22,7 @@ namespace technicalmachine {
 namespace {
 using namespace nlohmann::literals;
 
-TEST_CASE("make_dictionary", "[make_dictionary]") {
+TEST_CASE("make_dictionary") {
 	auto const all_usage_stats = AllUsageStats([](Generation const generation) {
 		return bytes_to_usage_stats(smallest_team_bytes(generation));
 	});

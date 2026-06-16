@@ -5,8 +5,7 @@
 
 module;
 
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.strategy.expectimax.test.expectimax;
 
@@ -78,7 +77,7 @@ auto determine_best_selection(Strategy const & strategy, Team<generation> const 
 	});
 }
 
-TEST_CASE("expectimax OHKO", "[expectimax]") {
+TEST_CASE("expectimax: expectimax OHKO") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto const environment = Environment();
@@ -141,7 +140,7 @@ TEST_CASE("expectimax OHKO", "[expectimax]") {
 	}
 }
 
-TEST_CASE("expectimax one-turn damage", "[expectimax]") {
+TEST_CASE("expectimax: expectimax one-turn damage") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto const environment = Environment();
@@ -178,7 +177,7 @@ TEST_CASE("expectimax one-turn damage", "[expectimax]") {
 	CHECK(best.selection == MoveName::Shadow_Ball);
 }
 
-TEST_CASE("expectimax BellyZard", "[expectimax]") {
+TEST_CASE("expectimax: expectimax BellyZard") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(8_bi);
 	auto const environment = Environment();
@@ -215,7 +214,7 @@ TEST_CASE("expectimax BellyZard", "[expectimax]") {
 	CHECK(best.probability == Probability(1.0));
 }
 
-TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Hippopotas vs Wobbuffet") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(55_bi);
 	auto const environment = Environment();
@@ -276,7 +275,7 @@ TEST_CASE("expectimax Hippopotas vs Wobbuffet", "[expectimax]") {
 }
 
 
-TEST_CASE("expectimax Baton Pass middle of turn other has moved", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Baton Pass middle of turn other has moved") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
@@ -355,7 +354,7 @@ TEST_CASE("expectimax Baton Pass middle of turn other has moved", "[expectimax]"
 	CHECK(best.selection == Switch(1_bi));
 }
 
-TEST_CASE("expectimax Baton Pass middle of turn other has not moved", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Baton Pass middle of turn other has not moved") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
@@ -417,7 +416,7 @@ TEST_CASE("expectimax Baton Pass middle of turn other has not moved", "[expectim
 }
 
 
-TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Baton Pass start of turn") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(14_bi);
 	auto const environment = Environment();
@@ -456,7 +455,7 @@ TEST_CASE("expectimax Baton Pass start of turn", "[expectimax]") {
 }
 
 
-TEST_CASE("expectimax replace fainted", "[expectimax]") {
+TEST_CASE("expectimax: expectimax replace fainted") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(6_bi);
 	auto environment = Environment();
@@ -531,7 +530,7 @@ TEST_CASE("expectimax replace fainted", "[expectimax]") {
 }
 
 
-TEST_CASE("expectimax Latias vs Suicune", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Latias vs Suicune") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(18_bi);
 	auto const environment = Environment();
@@ -589,7 +588,7 @@ TEST_CASE("expectimax Latias vs Suicune", "[expectimax]") {
 	CHECK(best.selection == MoveName::Calm_Mind);
 }
 
-TEST_CASE("expectimax Sleep Talk", "[expectimax]") {
+TEST_CASE("expectimax: expectimax Sleep Talk") {
 	constexpr auto generation = Generation::four;
 	auto const strategy = make_strategy(1_bi);
 	auto environment = Environment();
@@ -704,7 +703,7 @@ TEST_CASE("expectimax Sleep Talk", "[expectimax]") {
 	#endif
 }
 
-TEST_CASE("Generation 1 frozen last Pokemon", "[expectimax]") {
+TEST_CASE("expectimax: Generation 1 frozen last Pokemon") {
 	constexpr auto generation = Generation::one;
 	auto environment = Environment();
 

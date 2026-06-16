@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.clients.ps.slot_memory;
 
@@ -74,7 +74,7 @@ auto test_indexes_consistent(ps::SlotMemory const memory, TeamSize const size) -
 	}
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory initial state consistent", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory initial state consistent") {
 	for (auto const size : enumerate<TeamSize>) {
 		if (size == 0_bi) {
 			CHECK_THROWS(ps::SlotMemory(size));
@@ -85,11 +85,11 @@ TEST_CASE("Pokemon Showdown SlotMemory initial state consistent", "[Pokemon Show
 	}
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory Construct", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory Construct") {
 	validate_indexes(ps::SlotMemory(3_bi), {1_bi, 2_bi, 3_bi});
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory Switch", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory Switch") {
 	auto memory = ps::SlotMemory(4_bi);
 	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi});
 	memory.switch_to(1_bi);
@@ -100,13 +100,13 @@ TEST_CASE("Pokemon Showdown SlotMemory Switch", "[Pokemon Showdown]") {
 	validate_indexes(memory, {2_bi, 3_bi, 4_bi, 1_bi});
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory Switch to Self", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory Switch to Self") {
 	auto memory = ps::SlotMemory(3_bi);
 	memory.switch_to(0_bi);
 	validate_indexes(memory, {1_bi, 2_bi, 3_bi});
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory Faint", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory Faint") {
 	auto memory = ps::SlotMemory(6_bi);
 	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi, 5_bi, 6_bi});
 	memory.replace_fainted(3_bi);
@@ -115,7 +115,7 @@ TEST_CASE("Pokemon Showdown SlotMemory Faint", "[Pokemon Showdown]") {
 	validate_indexes(memory, {2_bi, 1_bi, 5_bi, 6_bi});
 }
 
-TEST_CASE("Pokemon Showdown SlotMemory mixed operations", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown SlotMemory mixed operations") {
 	auto memory = ps::SlotMemory(6_bi);
 	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi, 5_bi, 6_bi});
 	memory.switch_to(memory.reverse_lookup(2_bi));
@@ -130,7 +130,7 @@ TEST_CASE("Pokemon Showdown SlotMemory mixed operations", "[Pokemon Showdown]") 
 	validate_indexes(memory, {2_bi, 5_bi, 1_bi});
 }
 
-TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: Pokemon Showdown Slot Memory Fuzz") {
 	auto const iterations = 10000_bi;
 	auto random_engine = std::mt19937(std::random_device{}());
 	auto action_distribution = std::uniform_int_distribution<int>(0, 4);

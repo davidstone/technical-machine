@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.move.possible_side_effects;
 
@@ -27,7 +27,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-TEST_CASE("Recover", "[possible_side_effects]") {
+TEST_CASE("possible_side_effects: Recover") {
 	constexpr auto generation = Generation::four;
 	auto const environment = Environment();
 	auto const user = Team<generation>({{
@@ -95,7 +95,7 @@ auto test_phaze(Team<generation> team) -> void {
 	}
 }
 
-TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
+TEST_CASE("Side Effect: Phaze against 2 Pokemon") {
 	test_phaze(
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
@@ -103,7 +103,7 @@ TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 		}})
 	);
 }
-TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
+TEST_CASE("Side Effect: Phaze against 3 Pokemon") {
 	test_phaze(
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
@@ -112,7 +112,7 @@ TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 		}})
 	);
 }
-TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
+TEST_CASE("Side Effect: Phaze against 4 Pokemon") {
 	test_phaze(
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
@@ -122,7 +122,7 @@ TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 		}})
 	);
 }
-TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
+TEST_CASE("Side Effect: Phaze against 5 Pokemon") {
 	test_phaze(
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},
@@ -133,7 +133,7 @@ TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 		}})
 	);
 }
-TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
+TEST_CASE("Side Effect: Phaze against 6 Pokemon") {
 	test_phaze(
 		Team<generation>({{
 			{.species = Species::Bulbasaur, .moves = {{ MoveName::Tackle }}},

@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 #include <bounded/assert.hpp>
 
@@ -45,7 +45,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
+TEST_CASE("EV Optimizer: Optimize already optimized EVs") {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
@@ -72,7 +72,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	CHECK(optimized == ivs_and_evs);
 }
 
-TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
+TEST_CASE("EV Optimizer: Optimize EVs below level 100") {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
@@ -94,7 +94,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 	[[maybe_unused]] auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
 }
 
-TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
+TEST_CASE("EV Optimizer: Optimize generation 2 EVs") {
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);

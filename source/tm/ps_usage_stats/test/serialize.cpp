@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.ps_usage_stats.test.serialize;
 
@@ -128,7 +128,7 @@ auto string_to_bytes(std::string_view const str) {
 	return containers::dynamic_array(std::as_bytes(std::span(str)));
 }
 
-TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
+TEST_CASE("ps_usage_stats: Serialize smallest non-empty file") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	constexpr auto generation = Generation::one;
@@ -142,7 +142,7 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
-TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
+TEST_CASE("ps_usage_stats: Serialize team with two Pokemon") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	auto const team = make_team_with_two_pokemon();
@@ -252,7 +252,7 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
-TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
+TEST_CASE("ps_usage_stats: Serialize two teams") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	auto teams = containers::array{make_smallest_team(), make_second_team()};
@@ -313,7 +313,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
-TEST_CASE("Serialize smallest non-empty Generation 2 file", "[ps_usage_stats]") {
+TEST_CASE("ps_usage_stats: Serialize smallest non-empty Generation 2 file") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	constexpr auto generation = Generation::two;

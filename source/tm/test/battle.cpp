@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 import tm.move.actual_damage;
 import tm.move.move_name;
@@ -45,7 +45,7 @@ constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> 
 	return result;
 }
 
-TEST_CASE("Perish Song", "[Battle]") {
+TEST_CASE("Battle: Perish Song") {
 	constexpr auto generation = Generation::four;
 	auto battle = Battle<generation>(
 		KnownTeam<generation>({{
@@ -97,7 +97,7 @@ TEST_CASE("Perish Song", "[Battle]") {
 	CHECK(foe_pokemon.hp().current() == 0_bi);
 }
 
-TEST_CASE("Accurate HP after move", "[Battle]") {
+TEST_CASE("Battle: Accurate HP after move") {
 	constexpr auto generation = Generation::one;
 	auto battle = Battle<generation>(
 		KnownTeam<generation>({{
@@ -134,7 +134,7 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 	CHECK(hp.current() == 290_bi);
 }
 
-TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
+TEST_CASE("Battle: Handle Toxic in generation 1") {
 	constexpr auto generation = Generation::one;
 	auto battle = Battle<generation>(
 		KnownTeam<generation>({{
@@ -200,7 +200,7 @@ TEST_CASE("Handle Toxic in generation 1", "[Battle]") {
 	}
 }
 
-TEST_CASE("Handle hitting self in confusion", "[Battle]") {
+TEST_CASE("Battle: Handle hitting self in confusion") {
 	constexpr auto generation = Generation::one;
 	auto battle = Battle<generation>(
 		KnownTeam<generation>({{

@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 #include <bounded/assert.hpp>
 
@@ -35,7 +35,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
+TEST_CASE("EV Optimizer: Optimize defensive EVs") {
 	constexpr auto generation = Generation::four;
 	constexpr auto base_hp = 100_bi;
 	constexpr auto base_def = 100_bi;

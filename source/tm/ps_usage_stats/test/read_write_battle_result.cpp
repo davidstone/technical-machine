@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.ps_usage_stats.test.read_write_battle_result;
 
@@ -176,7 +176,7 @@ auto make_result() {
 	};
 }
 
-TEST_CASE("Minimal team file", "[Minimal]") {
+TEST_CASE("Minimal: Minimal team file") {
 	auto const path = std::filesystem::temp_directory_path() / "teams" / "test.tmmt";
 	auto const original = make_result();
 	{

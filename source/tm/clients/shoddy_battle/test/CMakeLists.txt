@@ -11,8 +11,8 @@ target_sources(tm_shoddy_battle_test PRIVATE
 		read_team_file.cpp
 )
 target_link_libraries(tm_shoddy_battle_test
+	doctest::doctest_with_main
 	strict_defaults
 	tm_shoddy_battle
-	Catch2::Catch2WithMain
 )
 add_test(tm_shoddy_battle_test tm_shoddy_battle_test)

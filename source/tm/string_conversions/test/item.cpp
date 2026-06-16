@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.string_conversions.test.item;
 
@@ -17,7 +17,7 @@ import tm.item;
 
 namespace technicalmachine {
 
-TEST_CASE("item", "[string_conversion]") {
+TEST_CASE("string_conversion: item") {
 	test_enum_string<Item>();
 }
 

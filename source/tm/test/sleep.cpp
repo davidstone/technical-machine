@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 import tm.move.actual_damage;
 import tm.move.call_move;
@@ -42,7 +42,7 @@ using namespace bounded::literal;
 
 constexpr auto damage = ActualDamage::Unknown{};
 
-TEST_CASE("Sleep Talk", "[Sleep]") {
+TEST_CASE("Sleep: Sleep Talk") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 	auto attacker = Team<generation>({{
@@ -187,7 +187,7 @@ private:
 	Team<generation> m_other;
 };
 
-TEST_CASE("Rest", "[Sleep]") {
+TEST_CASE("Sleep: Rest") {
 	auto sleeper = Sleeper<Generation::three>();
 	CHECK(!sleeper.asleep());
 	CHECK(sleeper.at_max_hp());
@@ -237,7 +237,7 @@ TEST_CASE("Rest", "[Sleep]") {
 	CHECK(!sleeper.at_max_hp());
 }
 
-TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
+TEST_CASE("Sleep: Sleep Talk Rest generation 3") {
 	auto sleeper = Sleeper<Generation::three>();
 	CHECK(!sleeper.asleep());
 	CHECK(sleeper.at_max_hp());

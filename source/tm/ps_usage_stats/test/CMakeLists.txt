@@ -15,10 +15,10 @@ target_sources(ps_usage_stats_test PRIVATE
 		serialize.cpp
 )
 target_link_libraries(ps_usage_stats_test
+	doctest::doctest_with_main
 	ps_usage_stats
 	tm_test_lib
 	strict_defaults
-	Catch2::Catch2WithMain
 	TBB::tbb
 )
 add_test(ps_usage_stats_test ps_usage_stats_test)

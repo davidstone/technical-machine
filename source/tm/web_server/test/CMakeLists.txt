@@ -11,8 +11,8 @@ target_sources(tm_web_server_test PRIVATE
 		normalize_requested_file.cpp
 )
 target_link_libraries(tm_web_server_test
+	doctest::doctest_with_main
 	tm_web_server
-	Catch2::Catch2WithMain
 )
 
 add_test(tm_web_server_test tm_web_server_test)

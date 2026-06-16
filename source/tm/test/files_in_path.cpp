@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 import tm.files_in_path;
 
@@ -14,7 +14,7 @@ import std_module;
 namespace technicalmachine {
 namespace {
 
-TEST_CASE("files_in_path", "[files_in_path]") {
+TEST_CASE("files_in_path: files_in_path") {
 	auto const path = std::filesystem::temp_directory_path() / "tm_test_files_in_path";
 
 	auto remove_temp_directory = [&] { std::filesystem::remove_all(path); };

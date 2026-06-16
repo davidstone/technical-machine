@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.team_predictor.estimate;
 
@@ -29,7 +29,7 @@ import std_module;
 namespace technicalmachine {
 namespace {
 
-TEST_CASE("Estimate", "[team_predictor]") {
+TEST_CASE("team_predictor: Estimate") {
 	for (auto const generation : {Generation::one, Generation::two, Generation::three}) {
 		INFO("Generation " << to_string(generation));
 		auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(generation));
@@ -47,7 +47,7 @@ TEST_CASE("Estimate", "[team_predictor]") {
 	}
 }
 
-TEST_CASE("Estimate seeing unused Pokemon", "[team_predictor]") {
+TEST_CASE("team_predictor: Estimate seeing unused Pokemon") {
 	for (auto const generation : {Generation::one, Generation::two, Generation::three}) {
 		INFO("Generation " << to_string(generation));
 		auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(generation));

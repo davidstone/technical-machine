@@ -12,8 +12,8 @@ target_sources(tm_team_predictor_test PRIVATE
 		usage_stats.cpp
 )
 target_link_libraries(tm_team_predictor_test
+	doctest::doctest_with_main
 	strict_defaults
 	tm_test_lib
-	Catch2::Catch2WithMain
 )
 add_test(tm_team_predictor_test tm_team_predictor_test)

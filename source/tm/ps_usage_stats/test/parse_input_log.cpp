@@ -1,6 +1,6 @@
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.ps_usage_stats.test.parse_input_log;
 
@@ -21,7 +21,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace ps_usage_stats;
 
-TEST_CASE("Parse input log", "[parse_input_log]") {
+TEST_CASE("parse_input_log: Parse input log") {
 	auto const parsed = parse_input_log(nlohmann::json({
 		">version 73a206e1a35e3dc83c7c975610dc2697cf7d8a34",
 		">start {\"formatid\":\"gen1ou\",\"seed\":[1,2,3,4],\"rated\":\"Rated battle\"}",

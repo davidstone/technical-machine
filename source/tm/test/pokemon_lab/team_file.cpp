@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 import tm.clients.pl.read_team_file;
 
@@ -283,7 +283,7 @@ constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	},
 });
 
-TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
+TEST_CASE("Pokemon Lab: Pokemon Lab team file") {
 	auto const parsed = pl::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
 	CHECK(parsed == expected);
 }

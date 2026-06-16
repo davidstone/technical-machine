@@ -11,7 +11,7 @@ target_sources(tm_evaluate_test PRIVATE
 		evaluate.cpp
 )
 target_link_libraries(tm_evaluate_test
-	tm_evaluate
+	doctest::doctest_with_main
 	strict_defaults
-	Catch2::Catch2WithMain
+	tm_evaluate
 )

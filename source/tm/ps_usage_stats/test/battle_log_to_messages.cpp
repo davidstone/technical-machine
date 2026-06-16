@@ -1,6 +1,6 @@
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.ps_usage_stats.battle_log_to_messages;
 
@@ -45,7 +45,7 @@ constexpr auto p2 = Party(1_bi);
 constexpr auto missed = true;
 constexpr auto did_not_miss = false;
 
-TEST_CASE("Battle log to messages", "[battle_log_to_messages]") {
+TEST_CASE("battle_log_to_messages: Battle log to messages") {
 	auto const parsed = battle_log_to_messages(
 		nlohmann::json({
 			"|j|☆355",

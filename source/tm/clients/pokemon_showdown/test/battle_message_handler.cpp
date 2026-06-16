@@ -6,7 +6,7 @@
 module;
 
 import std_module;
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.clients.ps.battle_message_handler;
 
@@ -210,7 +210,7 @@ auto check_state(
 
 constexpr auto did_not_miss = false;
 
-TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler constructor has correct initial state") {
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -227,7 +227,7 @@ TEST_CASE("BattleMessageHandler constructor has correct initial state", "[Pokemo
 	check_switch_options(handler, {1_bi});
 }
 
-TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler partial turn") {
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -254,7 +254,7 @@ TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 	}));
 }
 
-TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler full turn") {
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -309,7 +309,7 @@ TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
 	CHECK(handler.state() == expected->state());
 }
 
-TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can switch into entry hazards") {
 	constexpr auto generation = Generation::four;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -389,7 +389,7 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 
 }
 
-TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can Baton Pass") {
 	constexpr auto generation = Generation::two;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -424,7 +424,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 	check_switch_options(handler, {1_bi, 2_bi});
 }
 
-TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can Baton Pass with no other Pokemon") {
 	constexpr auto generation = Generation::three;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -464,7 +464,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 	CHECK(handler.state() == expected->state());
 }
 
-TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace fainted from middle of turn") {
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -537,7 +537,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 	}
 }
 
-TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace fainted from end of turn") {
 	constexpr auto generation = Generation::three;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -606,7 +606,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 }
 
 // TODO: Same test for generation 3
-TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace multiple Pokemon") {
 	constexpr auto generation = Generation::four;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -732,7 +732,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 	}
 }
 
-TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler lose") {
 	constexpr auto generation = Generation::four;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -761,7 +761,7 @@ TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
 	CHECK(result == BattleFinished());
 }
 
-TEST_CASE("BattleMessageHandler generation 1 explosion single faint", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion single faint") {
 	constexpr auto generation = Generation::one;
 
 	auto [expected, handler] = make_init<generation>(
@@ -823,7 +823,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion single faint", "[Pokemon 
 	}
 }
 
-TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion double faint") {
 	constexpr auto generation = Generation::one;
 
 	auto [expected, handler] = make_init<generation>(
@@ -899,7 +899,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 	}
 }
 
-TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler Pain Split") {
 	constexpr auto generation = Generation::two;
 
 	auto [expected, handler] = make_init<generation>(
@@ -953,7 +953,7 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 	CHECK(handler.state() == expected->state());
 }
 
-TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler full paralysis") {
 	constexpr auto generation = Generation::two;
 
 	auto [expected, handler] = make_init<generation>(
@@ -1024,7 +1024,7 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 	}
 }
 
-TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler random freeze") {
 	constexpr auto generation = Generation::one;
 
 	auto [expected, handler] = make_init<generation>(
@@ -1090,7 +1090,7 @@ TEST_CASE("BattleMessageHandler random freeze", "[Pokemon Showdown]") {
 	CHECK(handler.state() == expected->state());
 }
 
-TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 2 thaw") {
 	constexpr auto generation = Generation::two;
 
 	auto [expected, handler] = make_init<generation>(
@@ -1145,7 +1145,7 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 	CHECK(handler.state() == expected->state());
 }
 
-TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler Struggle") {
 	constexpr auto generation = Generation::three;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -1218,7 +1218,7 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 	}
 }
 
-TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler hit self") {
 	constexpr auto generation = Generation::one;
 	auto [expected, handler] = make_init<generation>(
 		{
@@ -1260,7 +1260,7 @@ TEST_CASE("BattleMessageHandler hit self", "[Pokemon Showdown]") {
 #if 0
 
 // TODO: Figure out how to handle this case
-TEST_CASE("BattleMessageHandler switch faints from entry hazards before other moves in Generation 3", "[Pokemon Showdown]") {
+TEST_CASE("Pokemon Showdown: BattleMessageHandler switch faints from entry hazards before other moves in Generation 3") {
 	constexpr auto generation = Generation::three;
 	auto [expected, handler] = make_init<generation>(
 		{

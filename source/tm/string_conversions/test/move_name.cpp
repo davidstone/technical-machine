@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.string_conversions.test.move_name;
 
@@ -17,7 +17,7 @@ import tm.string_conversions.move_name;
 
 namespace technicalmachine {
 
-TEST_CASE("move", "[string_conversion]") {
+TEST_CASE("string_conversion: move") {
 	test_enum_string<MoveName>();
 }
 

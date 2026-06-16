@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.ps_usage_stats.test.glicko1;
 
@@ -19,7 +19,7 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-TEST_CASE("Glicko-1", "[Glicko-1]") {
+TEST_CASE("Glicko-1: Glicko-1") {
 	auto glicko1 = ps_usage_stats::Glicko1();
 	glicko1.add_result(1_bi, 2_bi, ps_usage_stats::BattleResult::Winner::side1);
 	glicko1.finalize();

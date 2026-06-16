@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.string_conversions.test.pokemon;
 
@@ -33,7 +33,7 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-TEST_CASE("Generation 1 pokemon", "[string_conversion]") {
+TEST_CASE("string_conversion: Generation 1 pokemon") {
 	constexpr auto make = [](StatusName const status, InitialMoves const moves) {
 		auto pokemon = Pokemon<Generation::one>({
 			.species = Species::Mewtwo,
@@ -103,7 +103,7 @@ TEST_CASE("Generation 1 pokemon", "[string_conversion]") {
 	);
 }
 
-TEST_CASE("Generation 3 pokemon", "[string_conversion]") {
+TEST_CASE("string_conversion: Generation 3 pokemon") {
 	constexpr auto make = [](StatusName const status, InitialMoves const moves) {
 		auto pokemon = Pokemon<Generation::three>({
 			.species = Species::Mewtwo,

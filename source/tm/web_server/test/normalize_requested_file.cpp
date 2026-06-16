@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.web_server.normalize_requested_file;
 
@@ -15,7 +15,7 @@ import std_module;
 namespace technicalmachine {
 namespace {
 
-TEST_CASE("Valid paths normalized", "[normalize_requested_file]") {
+TEST_CASE("normalize_requested_file: Valid paths normalized") {
 	CHECK(normalize_requested_file("/", "f.txt") == "/f.txt");
 	CHECK(normalize_requested_file("/a", "f.txt") == "/a/f.txt");
 	CHECK(normalize_requested_file("/a/", "f.txt") == "/a/f.txt");
@@ -29,20 +29,20 @@ TEST_CASE("Valid paths normalized", "[normalize_requested_file]") {
 	CHECK(normalize_requested_file("/a", "/b") == "/a/b");
 }
 
-TEST_CASE("Unnamed file becomes index", "[normalize_requested_file]") {
+TEST_CASE("normalize_requested_file: Unnamed file becomes index") {
 	CHECK(normalize_requested_file("/", "") == "/index.html");
 	CHECK(normalize_requested_file("/", "/") == "/index.html");
 	CHECK(normalize_requested_file("/a/", "/") == "/a/index.html");
 	CHECK(normalize_requested_file("/", "a/") == "/a/index.html");
 }
 
-TEST_CASE("Relative root throws", "[normalize_requested_file]") {
+TEST_CASE("normalize_requested_file: Relative root throws") {
 	CHECK_THROWS(normalize_requested_file("", "f.txt"));
 	CHECK_THROWS(normalize_requested_file("a", "f.txt"));
 	CHECK_THROWS(normalize_requested_file("./", "f.txt"));
 }
 
-TEST_CASE("Path outside of root throws", "[normalize_requested_file]") {
+TEST_CASE("normalize_requested_file: Path outside of root throws") {
 	CHECK_THROWS(normalize_requested_file("/a", "../f.txt"));
 	CHECK_THROWS(normalize_requested_file("/a", "/../f.txt"));
 }

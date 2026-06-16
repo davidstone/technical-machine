@@ -324,9 +324,9 @@ target_sources(tm_test PRIVATE
 	test/sleep.cpp
 )
 target_link_libraries(tm_test
+	doctest::doctest_with_main
 	tm_clients
 	tm_test_lib
-	Catch2::Catch2WithMain
 	TBB::tbb
 )
 add_test(tm_test tm_test)

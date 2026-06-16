@@ -22,8 +22,8 @@ target_sources(tm_string_conversions_test PRIVATE
 		weather.cpp
 )
 target_link_libraries(tm_string_conversions_test
+	doctest::doctest_with_main
 	tm_common
-	Catch2::Catch2WithMain
 )
 
 add_test(tm_string_conversions_test tm_string_conversions_test)

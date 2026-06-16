@@ -1,7 +1,7 @@
 module;
 
 import std_module;
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.test.clients.client_battle;
 
@@ -61,7 +61,7 @@ constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> 
 	return result;
 }
 
-TEST_CASE("Accurate HP after move", "[ClientBattle]") {
+TEST_CASE("ClientBattle: Accurate HP after move") {
 	constexpr auto generation = Generation::one;
 	auto battle = make_battle<generation>(
 		{
@@ -93,7 +93,7 @@ TEST_CASE("Accurate HP after move", "[ClientBattle]") {
 	CHECK(hp.current() == 290_bi);
 }
 
-TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
+TEST_CASE("ClientBattle: Report end of turn after both Pokemon move") {
 	constexpr auto generation = Generation::one;
 	auto battle = make_battle<generation>(
 		{
@@ -132,7 +132,7 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 	CHECK(!battle->is_end_of_turn());
 }
 
-TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]") {
+TEST_CASE("ClientBattle: Handle replacing two fainted Pokemon old generation") {
 	constexpr auto generation = Generation::one;
 	auto battle = make_battle<generation>(
 		{
@@ -183,7 +183,7 @@ TEST_CASE("Handle replacing two fainted Pokemon old generation", "[ClientBattle]
 	CHECK(!battle->is_end_of_turn());
 }
 
-TEST_CASE("Handle replacing two fainted Pokemon new generation", "[ClientBattle]") {
+TEST_CASE("ClientBattle: Handle replacing two fainted Pokemon new generation") {
 	constexpr auto generation = Generation::four;
 	auto battle = make_battle<generation>(
 		{

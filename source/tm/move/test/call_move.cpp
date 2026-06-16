@@ -5,7 +5,7 @@
 
 module;
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest/doctest.h>
 
 export module tm.move.test.call_move;
 
@@ -55,7 +55,7 @@ using namespace bounded::literal;
 
 constexpr auto damage = ActualDamage::Unknown{};
 
-TEST_CASE("Baton Pass", "[call_move]") {
+TEST_CASE("call_move: Baton Pass") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -158,7 +158,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	);
 }
 
-TEST_CASE("Wonder Guard", "[call_move]") {
+TEST_CASE("call_move: Wonder Guard") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -217,7 +217,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 	}
 }
 
-TEST_CASE("Fire move thaws target", "[call_move]") {
+TEST_CASE("call_move: Fire move thaws target") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -281,7 +281,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 	CHECK(vaporeon.status().name() == StatusName::burn);
 }
 
-TEST_CASE("Sleep Talk Substitute", "[call_move]") {
+TEST_CASE("call_move: Sleep Talk Substitute") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -334,7 +334,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	CHECK(user.pokemon().substitute().hp() == user.pokemon().hp().max() / 4_bi);
 }
 
-TEST_CASE("Static paralyzes", "[call_move]") {
+TEST_CASE("call_move: Static paralyzes") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -381,7 +381,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 	CHECK(user.pokemon().status().name() == StatusName::paralysis);
 }
 
-TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
+TEST_CASE("call_move: Pokemon faints after Explosion against a Substitute in later generations") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -450,7 +450,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 	CHECK(user.pokemon().hp().current() == 0_bi);
 }
 
-TEST_CASE("Perish Song", "[call_move]") {
+TEST_CASE("call_move: Perish Song") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -531,7 +531,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 	check_max_hp(other);
 }
 
-TEST_CASE("Solar Beam", "[call_move]") {
+TEST_CASE("call_move: Solar Beam") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
 
@@ -608,7 +608,7 @@ TEST_CASE("Solar Beam", "[call_move]") {
 	CHECK(user.pokemon().last_used_move().locked_in() == MoveName::Solar_Beam);
 }
 
-TEST_CASE("Generation 1 Hyper Beam KO", "[call_move]") {
+TEST_CASE("call_move: Generation 1 Hyper Beam KO") {
 	constexpr auto generation = Generation::one;
 	auto environment = Environment();
 
@@ -667,7 +667,7 @@ TEST_CASE("Generation 1 Hyper Beam KO", "[call_move]") {
 	CHECK(!user.pokemon().recharge());
 }
 
-TEST_CASE("Generation 1 Mirror Move Hyper Beam KO", "[call_move]") {
+TEST_CASE("call_move: Generation 1 Mirror Move Hyper Beam KO") {
 	constexpr auto generation = Generation::one;
 	auto environment = Environment();
 
@@ -732,7 +732,7 @@ TEST_CASE("Generation 1 Mirror Move Hyper Beam KO", "[call_move]") {
 	CHECK(!user.pokemon().recharge());
 }
 
-TEST_CASE("Bide", "[call_move]") {
+TEST_CASE("call_move: Bide") {
 	constexpr auto generation = Generation::one;
 	auto environment = Environment();
 

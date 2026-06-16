@@ -12,8 +12,8 @@ target_sources(tm_pokemon_online_test PRIVATE
 		team_file.cpp
 )
 target_link_libraries(tm_pokemon_online_test
+	doctest::doctest_with_main
 	strict_defaults
 	tm_pokemon_online
-	Catch2::Catch2WithMain
 )
 add_test(tm_pokemon_online_test tm_pokemon_online_test)
