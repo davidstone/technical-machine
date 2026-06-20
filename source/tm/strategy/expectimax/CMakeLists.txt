@@ -10,6 +10,7 @@ target_sources(tm_strategy_expectimax PUBLIC
 	FILES
 		execute_switch.cpp
 		expectimax.cpp
+		moved.cpp
 		score_selections.cpp
 		to_selection_probabilities.cpp
 )

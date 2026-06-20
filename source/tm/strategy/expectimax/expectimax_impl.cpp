@@ -51,6 +51,7 @@ import tm.status.clears_status;
 import tm.status.status_name;
 
 import tm.strategy.expectimax.execute_switch;
+import tm.strategy.expectimax.moved;
 import tm.strategy.expectimax.score_selections;
 import tm.strategy.expectimax.to_selection_probabilities;
 
@@ -135,13 +136,6 @@ constexpr auto generic_flag_branch(Probability const basic_probability, auto con
 		probabilities(bounded::value_to_function(basic_probability)),
 		[&](FlagProbability const x) { return x.probability * next_branch(x.flag); }
 	));
-}
-
-constexpr auto moved(any_active_pokemon auto const pokemon) -> bool {
-	return pokemon.last_used_move().moved_this_turn();
-}
-constexpr auto moved(any_team auto const & team) -> bool {
-	return moved(team.pokemon());
 }
 
 template<Generation generation>
