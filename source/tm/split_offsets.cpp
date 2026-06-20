@@ -23,11 +23,11 @@ export struct split_offsets {
 	template<typename View, typename Delimiter> requires std::same_as<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
 	constexpr split_offsets(View const buffer, Delimiter const delimiter):
 		first(bounded::increase_min<0>(std::search(
-			containers::begin(buffer),
-			containers::end(buffer),
-			containers::begin(delimiter),
-			containers::end(delimiter)
-		) - containers::begin(buffer))),
+			containers::make_legacy_iterator(containers::begin(buffer)),
+			containers::make_legacy_iterator(containers::end(buffer)),
+			containers::make_legacy_iterator(containers::begin(delimiter)),
+			containers::make_legacy_iterator(containers::end(delimiter))
+		).base() - containers::begin(buffer))),
 		discard(containers::size(delimiter))
 	{
 	}
