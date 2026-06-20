@@ -329,6 +329,40 @@ constexpr auto get_other_action(any_active_pokemon auto const pokemon) -> OtherA
 }
 
 template<Generation generation>
+auto replace_fainted_action(
+	State<generation> const & original,
+	LegalSelections const ai_selections,
+	SelectionProbabilities const foe_selections,
+	auto const continuation
+) -> ScoredSelections {
+	BOUNDED_ASSERT(is_fainted(original.ai) or is_pass(ai_selections));
+	BOUNDED_ASSERT(is_fainted(original.foe) or is_pass(foe_selections));
+	return score_selections(
+		ai_selections,
+		foe_selections,
+		[&](Selection const ai_selection, Selection const foe_selection) {
+			auto updated = original;
+			// TODO: How does turn order matter here?
+			auto switch_one_side = [&](Selection const selection, Team<generation> & switcher, Team<generation> & other) {
+				tv::visit(selection, tv::overload(
+					[&](Switch const switch_) {
+						switcher.switch_pokemon(other.pokemon(), updated.environment, switch_.value());
+					},
+					[](MoveName) {
+						std::unreachable();
+					},
+					[](Pass) {
+					}
+				));
+			};
+			switch_one_side(ai_selection, updated.ai, updated.foe);
+			switch_one_side(foe_selection, updated.foe, updated.ai);
+			return continuation(updated);
+		}
+	);
+}
+
+template<Generation generation>
 struct Evaluator {
 	explicit Evaluator(
 		Evaluate<generation> const evaluate,
@@ -508,39 +542,6 @@ private:
 				);
 			}
 		));
-	}
-
-	auto replace_fainted_action(
-		State<generation> const & original,
-		LegalSelections const ai_selections,
-		SelectionProbabilities const foe_selections,
-		auto const continuation
-	) -> ScoredSelections {
-		BOUNDED_ASSERT(is_fainted(original.ai) or is_pass(ai_selections));
-		BOUNDED_ASSERT(is_fainted(original.foe) or is_pass(foe_selections));
-		return score_selections(
-			ai_selections,
-			foe_selections,
-			[&](Selection const ai_selection, Selection const foe_selection) {
-				auto updated = original;
-				// TODO: How does turn order matter here?
-				auto switch_one_side = [&](Selection const selection, Team<generation> & switcher, Team<generation> & other) {
-					tv::visit(selection, tv::overload(
-						[&](Switch const switch_) {
-							switcher.switch_pokemon(other.pokemon(), updated.environment, switch_.value());
-						},
-						[](MoveName) {
-							std::unreachable();
-						},
-						[](Pass) {
-						}
-					));
-				};
-				switch_one_side(ai_selection, updated.ai, updated.foe);
-				switch_one_side(foe_selection, updated.foe, updated.ai);
-				return continuation(updated);
-			}
-		);
 	}
 
 	auto before_end_of_turn_action(
