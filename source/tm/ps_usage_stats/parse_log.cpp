@@ -50,29 +50,29 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
-
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 template<typename T>
 auto parse_stats(nlohmann::json const & stats) {
-	auto read = [&](std::string_view const key) {
+	auto read = [&](containers::string_view const key) {
 		return T(bounded::check_in_range<typename T::value_type>(
 			stats.at(key).get<nlohmann::json::number_integer_t>()
 		));
 	};
 	return GenericStats(
-		read("hp"),
-		read("atk"),
-		read("def"),
-		read("spa"),
-		read("spd"),
-		read("spe")
+		read("hp"_s),
+		read("atk"_s),
+		read("def"_s),
+		read("spa"_s),
+		read("spd"_s),
+		read("spe"_s)
 	);
 }
 
-constexpr auto parse_nature(std::string_view const str) -> Nature {
+constexpr auto parse_nature(containers::string_view const str) -> Nature {
 	// A bug in the PS stats causes it to sometimes emit an empty nature
-	return str == "" ? Nature::Hardy : from_string<Nature>(str);
+	return str == ""_s ? Nature::Hardy : from_string<Nature>(str);
 }
 
 constexpr auto parse_pokemon = [](Generation const generation, nlohmann::json const & pokemon) -> ps::ParsedPokemon {
@@ -177,7 +177,7 @@ constexpr auto hex_digit(char const c) -> bounded::integer<0, 15> {
 	}
 }
 
-constexpr auto hex_to_integer(std::string_view const str) {
+constexpr auto hex_to_integer(containers::string_view const str) {
 	auto result = BattleResult::Side::ID(0_bi);
 	for (auto const c : str) {
 		result *= 16_bi;
@@ -186,13 +186,13 @@ constexpr auto hex_to_integer(std::string_view const str) {
 	return result;
 }
 
-constexpr auto to_player_id(std::string_view const str) {
+constexpr auto to_player_id(containers::string_view const str) {
 	constexpr auto anonymization = Anonymization::hashed;
 	switch (anonymization) {
 		case Anonymization::full:
 			return
-				str == "Player 1" ? BattleResult::Side::ID(1_bi) :
-				str == "Player 2" ? BattleResult::Side::ID(2_bi) :
+				str == "Player 1"_s ? BattleResult::Side::ID(1_bi) :
+				str == "Player 2"_s ? BattleResult::Side::ID(2_bi) :
 				throw std::runtime_error("Invalid fully anonymized username");
 		case Anonymization::hashed:
 			return hex_to_integer(str);
@@ -208,7 +208,7 @@ export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult>
 		return tv::none;
 	}
 	auto const format = json.at("format").get<std::string_view>();
-	auto const generation = ps::parse_generation_from_format(format, "gen");
+	auto const generation = ps::parse_generation_from_format(format, "gen"_s);
 	auto const p1 = json.at("p1").get<std::string_view>();
 	auto const p2 = json.at("p2").get<std::string_view>();
 	auto const winner_str = json.at("winner").get<std::string_view>();

@@ -45,27 +45,28 @@ import std_module;
 
 namespace technicalmachine::pl {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
-constexpr auto parse_species(std::string_view const str) -> Species {
+constexpr auto parse_species(containers::string_view const str) -> Species {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		containers::to_array<containers::map_value_type<std::string_view, Species>>({
-			{ "Deoxys", Species::Deoxys_Normal },
-			{ "Deoxys-e", Species::Deoxys_Speed },
-			{ "Deoxys-f", Species::Deoxys_Attack },
-			{ "Deoxys-l", Species::Deoxys_Defense },
-			{ "Giratina", Species::Giratina_Altered },
-			{ "Giratina-o", Species::Giratina_Origin },
-			{ "Rotom-c", Species::Rotom_Mow },
-			{ "Rotom-f", Species::Rotom_Frost },
-			{ "Rotom-h", Species::Rotom_Heat },
-			{ "Rotom-s", Species::Rotom_Fan },
-			{ "Rotom-w", Species::Rotom_Wash },
-			{ "Shaymin", Species::Shaymin_Land },
-			{ "Shaymin-s", Species::Shaymin_Sky },
-			{ "Wormadam", Species::Wormadam_Plant },
-			{ "Wormadam-g", Species::Wormadam_Sandy },
-			{ "Wormadam-s", Species::Wormadam_Trash }
+		containers::to_array<containers::map_value_type<containers::string_view, Species>>({
+			{ "Deoxys"_s, Species::Deoxys_Normal },
+			{ "Deoxys-e"_s, Species::Deoxys_Speed },
+			{ "Deoxys-f"_s, Species::Deoxys_Attack },
+			{ "Deoxys-l"_s, Species::Deoxys_Defense },
+			{ "Giratina"_s, Species::Giratina_Altered },
+			{ "Giratina-o"_s, Species::Giratina_Origin },
+			{ "Rotom-c"_s, Species::Rotom_Mow },
+			{ "Rotom-f"_s, Species::Rotom_Frost },
+			{ "Rotom-h"_s, Species::Rotom_Heat },
+			{ "Rotom-s"_s, Species::Rotom_Fan },
+			{ "Rotom-w"_s, Species::Rotom_Wash },
+			{ "Shaymin"_s, Species::Shaymin_Land },
+			{ "Shaymin-s"_s, Species::Shaymin_Sky },
+			{ "Wormadam"_s, Species::Wormadam_Plant },
+			{ "Wormadam-g"_s, Species::Wormadam_Sandy },
+			{ "Wormadam-s"_s, Species::Wormadam_Trash }
 		})
 	);
 	auto const result = containers::lookup(converter, str);
@@ -103,20 +104,20 @@ auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
 			IVType(stats.get<typename IVType::value_type>("<xmlattr>.iv")),
 			EV(stats.get<EV::value_type>("<xmlattr>.ev"))
 		};
-		if (stat_name == "HP") {
+		if (stat_name == "HP"_s) {
 			hp = iv_and_ev;
-		} else if (stat_name == "Atk") {
+		} else if (stat_name == "Atk"_s) {
 			atk = iv_and_ev;
-		} else if (stat_name == "Def") {
+		} else if (stat_name == "Def"_s) {
 			def = iv_and_ev;
-		} else if (stat_name == "SpAtk") {
+		} else if (stat_name == "SpAtk"_s) {
 			spa = iv_and_ev;
-		} else if (stat_name == "SpDef") {
+		} else if (stat_name == "SpDef"_s) {
 			spd = iv_and_ev;
-		} else if (stat_name == "Spd") {
+		} else if (stat_name == "Spd"_s) {
 			spe = iv_and_ev;
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid stat name "), stat_name));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid stat name "_s, stat_name));
 		}
 	}
 	if (!hp or !atk or !def or !spa or !spd or !spe) {
@@ -177,7 +178,7 @@ auto parse_team(property_tree::ptree_reader ptree) -> InitialTeam<style> {
 	);
 }
 
-auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
+auto read_team_file(containers::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto owner = property_tree::ptree();
 	auto pt = owner.read_xml(bytes);
 

@@ -9,6 +9,7 @@ import tm.web_server.web_server;
 
 import tm.boost_networking;
 
+import bounded;
 import containers;
 import std_module;
 
@@ -19,7 +20,7 @@ export using OnWebsocketConnect = containers::trivial_inplace_function<
 	sizeof(void *)
 >;
 export using OnWebsocketMessage = containers::trivial_inplace_function<
-	auto(std::string_view) const -> containers::string,
+	auto(containers::string_view) const -> containers::string,
 	sizeof(void *) * 2
 >;
 
@@ -54,8 +55,8 @@ private:
 			write(m_on_connect.get()());
 		});
 	}
-	auto write(std::string_view const str) -> void {
-		auto buffer = m_buffer.prepare(str.size());
+	auto write(containers::string_view const str) -> void {
+		auto buffer = m_buffer.prepare(static_cast<std::size_t>(str.size()));
 		containers::copy(str, static_cast<char *>(buffer.data()));
 		websocket_async_write(
 			m_socket,
@@ -81,9 +82,9 @@ private:
 					websocket_close(m_socket);
 					return;
 				}
-				auto const response = m_on_message.get()(std::string_view(
+				auto const response = m_on_message.get()(containers::string_view(
 					static_cast<char const *>(m_buffer.data().data()),
-					m_buffer.data().size()
+					bounded::assume_in_range<containers::array_size_type<char>>(m_buffer.data().size())
 				));
 				m_buffer.clear();
 				write(response);

@@ -86,7 +86,7 @@ auto get_predicted_selection(
 	ps::BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {
-	return [&](std::span<ps::ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
+	return [&](containers::span<ps::ParsedMessage const> const message) -> tv::optional<PredictedSelection> {
 		auto function = [&]<Generation generation>(VisibleState<generation> const & state) {
 			if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
 				return empty_selection_probability;
@@ -144,7 +144,7 @@ struct WeightedScore {
 	}
 };
 
-constexpr auto weighted_score(std::span<double const> const scores) -> WeightedScore {
+constexpr auto weighted_score(containers::span<double const> const scores) -> WeightedScore {
 	auto const weight = static_cast<double>(containers::size(scores));
 	return WeightedScore(
 		containers::sum(scores),
@@ -154,7 +154,7 @@ constexpr auto weighted_score(std::span<double const> const scores) -> WeightedS
 
 auto predicted_selections(
 	Strategy const & strategy,
-	std::span<ps::EventBlock const> const battle_messages,
+	containers::span<ps::EventBlock const> const battle_messages,
 	ps::BattleMessageHandler & battle,
 	AllUsageStats const & all_usage_stats
 ) {

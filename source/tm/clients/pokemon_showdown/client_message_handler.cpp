@@ -51,8 +51,8 @@ import tm.settings_file;
 
 import bounded;
 import containers;
-import tv;
 import std_module;
+import tv;
 
 // https://github.com/smogon/pokemon-showdown/blob/master/PROTOCOL.md
 
@@ -60,7 +60,7 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace containers::string_literals;
 
-constexpr auto remove_spaces(std::string_view str) {
+constexpr auto remove_spaces(containers::string_view str) {
 	return containers::filter(
 		std::move(str),
 		[](char const c) { return c != ' '; }
@@ -68,7 +68,7 @@ constexpr auto remove_spaces(std::string_view str) {
 }
 
 struct no_spaces_string_view {
-	constexpr explicit no_spaces_string_view(std::string_view const str):
+	constexpr explicit no_spaces_string_view(containers::string_view const str):
 		m_str(str)
 	{
 	}
@@ -79,7 +79,7 @@ struct no_spaces_string_view {
 			remove_spaces(rhs.m_str)
 		);
 	}
-	friend constexpr auto operator==(no_spaces_string_view const lhs, std::string_view const rhs) -> bool {
+	friend constexpr auto operator==(no_spaces_string_view const lhs, containers::string_view const rhs) -> bool {
 		return containers::equal(
 			remove_spaces(lhs.m_str),
 			rhs
@@ -87,7 +87,7 @@ struct no_spaces_string_view {
 	}
 
 private:
-	std::string_view m_str;
+	containers::string_view m_str;
 };
 
 using AuthenticationFunction = containers::trivial_inplace_function<
@@ -97,7 +97,7 @@ using AuthenticationFunction = containers::trivial_inplace_function<
 
 constexpr auto is_battle_message(Room const room) -> bool {
 	// TODO: is this correct?
-	return room.starts_with("battle-");
+	return containers::starts_with(room, "battle-"_s);
 }
 
 auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void {
@@ -174,8 +174,8 @@ private:
 		m_send_message(containers::concatenate<containers::string>("|/utm "_s, team_str));
 	}
 
-	auto send_request_battle_start(std::string_view const format, auto const & ... strings) -> void {
-		send_team(parse_generation_from_format(format, "gen"));
+	auto send_request_battle_start(containers::string_view const format, auto const & ... strings) -> void {
+		send_team(parse_generation_from_format(format, "gen"_s));
 		m_send_message(containers::concatenate<containers::string>(strings...));
 	}
 
@@ -193,7 +193,7 @@ private:
 
 	auto handle_battle_message(
 		Room const room,
-		std::span<ParsedMessage const> const message
+		containers::span<ParsedMessage const> const message
 	) -> void {
 		auto const result = m_battles.handle_message(room, message);
 		tv::visit(result, tv::overload(
@@ -204,7 +204,7 @@ private:
 			[](BattleContinues) {
 			},
 			[&](BattleFinished) {
-				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room));
+				m_send_message(containers::concatenate<containers::string>("|/leave "_s, room));
 				send_challenge();
 			},
 			[](BattleAlreadyFinished) {
@@ -232,7 +232,7 @@ private:
 		}
 	}
 
-	auto handle_error_message(Room const room, std::string_view const error) const -> void {
+	auto handle_error_message(Room const room, containers::string_view const error) const -> void {
 		std::cerr << "|error|" << error << '\n';
 		if (error != "[Invalid choice] There's nothing to choose"_s) {
 			m_send_message(containers::concatenate<containers::string>(
@@ -244,30 +244,30 @@ private:
 
 	auto handle_message(Room const room, InMessage message) -> void {
 		auto const type = message.type();
-		if (type == "b" or type == "B" or type == "battle") {
+		if (type == "b"_s or type == "B"_s or type == "battle"_s) {
 			// message.remainder() == ROOMID|username|username
-		} else if (type == "challstr") {
+		} else if (type == "challstr"_s) {
 			authenticate(message.remainder());
 			// After logging in, send "|/search FORMAT_NAME" to begin laddering
 			send_challenge();
-		} else if (type == "formats") {
+		} else if (type == "formats"_s) {
 			// message.remainder() == | separated list of formats with special rules
-		} else if (type == "html") {
+		} else if (type == "html"_s) {
 			// message.remainder() == HTML
-		} else if (type == "init") {
-		} else if (type == "nametaken") {
+		} else if (type == "init"_s) {
+		} else if (type == "nametaken"_s) {
 			auto const username = message.pop();
 			std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
-		} else if (type == "popup") {
+		} else if (type == "popup"_s) {
 			std::cout << "popup message: " << message.remainder() << '\n';
-		} else if (type == "pm") {
+		} else if (type == "pm"_s) {
 			auto const from = message.pop();
 			if (no_spaces_string_view(from) == no_spaces_string_view(m_settings.username)) {
 				return;
 			}
 			auto const to = message.pop();
 			auto const initial_message = message.pop();
-			if (initial_message.starts_with("/challenge")) {
+			if (containers::starts_with(initial_message, "/challenge"_s)) {
 				auto const format = message.pop();
 				if (containers::is_empty(format)) {
 					return;
@@ -284,24 +284,24 @@ private:
 				}
 				std::cout << '\n';
 			}
-		} else if (type == "queryresponse") {
+		} else if (type == "queryresponse"_s) {
 			// message.remainder() == QUERYTYPE|JSON
-		} else if (type == "uhtml" or type == "uhtmlchange") {
+		} else if (type == "uhtml"_s or type == "uhtmlchange"_s) {
 			// message.remainder() == NAME|HTML
-		} else if (type == "updateuser") {
+		} else if (type == "updateuser"_s) {
 			// message.remainder() == username|guest ? 0 : 1|AVATAR
-		} else if (type == "updatesearch") {
+		} else if (type == "updatesearch"_s) {
 			// message.remainder() == JSON: battles you are searching for
-		} else if (type == "usercount") {
+		} else if (type == "usercount"_s) {
 			// message.remainder() == number of users on server
-		} else if (type == "users") {
+		} else if (type == "users"_s) {
 			// message.remainder() == comma separated list of users
 		} else {
 			std::cerr << "Received unknown message in room: " << room << " |" << type << '|' << message.remainder() << '\n';
 		}
 	}
 
-	auto authenticate(std::string_view const challstr) -> void {
+	auto authenticate(containers::string_view const challstr) -> void {
 		// In theory, if we ever support session cookies, make HTTP GET:
 		// http://play.pokemonshowdown.com/api/upkeep?challstr=CHALLSTR
 		constexpr auto host = "play.pokemonshowdown.com";
@@ -314,13 +314,13 @@ private:
 		auto const response = m_authenticate(host, "443", request);
 
 		// Response begins with ']' followed by JSON object.
-		auto const body = std::string_view(response.body()).substr(1);
+		auto const body = std::string_view(containers::drop_exactly(response.body(), 1_bi));
 		auto const json = nlohmann::json::parse(body);
 		m_send_message(containers::concatenate<containers::string>("|/trn "_s, m_settings.username, ",0,"_s, json.at("assertion").get<std::string_view>()));
 	}
 
 	auto analysis_log_file(Room const room) -> std::fstream {
-		return open_text_file(m_battles_directory / room / "analysis.txt");
+		return open_text_file(m_battles_directory / std::filesystem::path(room) / "analysis.txt");
 	}
 
 	std::mt19937 m_random_engine;

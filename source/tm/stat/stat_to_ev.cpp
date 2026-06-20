@@ -16,7 +16,6 @@ import tm.stat.max_hp;
 import tm.stat.nature_effect;
 
 import bounded;
-import containers;
 import tv;
 
 namespace technicalmachine {

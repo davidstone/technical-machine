@@ -15,7 +15,10 @@ using namespace containers::string_literals;
 export auto get_environment_variable(char const * const environment_variable) -> std::string_view {
 	auto const dir = std::getenv(environment_variable);
 	if (!dir) {
-		throw std::runtime_error(containers::concatenate<std::string>("Please create an environment variable "_s, std::string_view(environment_variable)));
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Please create an environment variable "_s,
+			containers::string_view(environment_variable)
+		));
 	}
 	return dir;
 }

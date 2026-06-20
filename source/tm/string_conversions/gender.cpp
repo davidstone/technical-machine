@@ -17,31 +17,32 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
-export constexpr auto to_string(Gender const gender) -> std::string_view {
+export constexpr auto to_string(Gender const gender) -> containers::string_view {
 	switch (gender) {
-		case Gender::female: return "Female";
-		case Gender::male: return "Male";
-		case Gender::genderless: return "Genderless";
+		case Gender::female: return "Female"_s;
+		case Gender::male: return "Male"_s;
+		case Gender::genderless: return "Genderless"_s;
 	}
 }
 
 export template<>
-constexpr auto from_string(std::string_view const str) -> Gender {
+constexpr auto from_string(containers::string_view const str) -> Gender {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		containers::to_array<containers::map_value_type<std::string_view, Gender>>({
-			{"female", Gender::female},
-			{"genderless", Gender::genderless},
-			{"male", Gender::male},
-			{"nogender", Gender::genderless},
-			{"none", Gender::genderless},
+		containers::to_array<containers::map_value_type<containers::string_view, Gender>>({
+			{"female"_s, Gender::female},
+			{"genderless"_s, Gender::genderless},
+			{"male"_s, Gender::male},
+			{"nogender"_s, Gender::genderless},
+			{"none"_s, Gender::genderless},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<10_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Gender", str);
+		throw InvalidFromStringConversion("Gender"_s, str);
 	}
 	return *result;
 }

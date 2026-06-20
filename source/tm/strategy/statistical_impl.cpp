@@ -88,7 +88,7 @@ struct RelevantPokemon {
 struct SelectionWeights {
 	explicit SelectionWeights(Generation const generation) {
 		auto stream = open_binary_file_for_reading(
-			get_usage_stats_directory() / to_string(generation) / "OU.tmsw"
+			get_usage_stats_directory() / std::filesystem::path(to_string(generation)) / "OU.tmsw"
 		);
 		while (stream.peek() != std::char_traits<char>::eof()) {
 			auto const other = read<Species>(stream);

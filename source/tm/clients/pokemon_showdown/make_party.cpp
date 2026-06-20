@@ -15,7 +15,7 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace containers::string_literals;
 
-export constexpr auto make_party(std::string_view const party_str) -> Party {
+export constexpr auto make_party(containers::string_view const party_str) -> Party {
 	if (party_str == "p1"_s) {
 		return Party(0_bi);
 	} else if (party_str == "p2"_s) {

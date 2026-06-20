@@ -9,25 +9,32 @@ import tm.clients.ps.room;
 
 import tm.split_view;
 
+import bounded;
+import containers;
 import std_module;
 
 namespace technicalmachine::ps {
+using namespace bounded::literal;
+using namespace containers::string_literals;
 
-constexpr auto has_room(std::string_view const str) -> bool {
-	return !str.empty() and str.front() == '>';
+constexpr auto has_room(containers::string_view const str) -> bool {
+	return !containers::is_empty(str) and containers::front(str) == '>';
 }
 
-using SplitView = std::pair<std::string_view, std::string_view>;
+using SplitView = std::pair<containers::string_view, containers::string_view>;
 
 export struct RoomMessageBlock {
 	struct FirstLineIsRoom {};
 
-	constexpr explicit RoomMessageBlock(std::string_view const input):
-		RoomMessageBlock(has_room(input) ? split_view(input.substr(1), '\n') : SplitView("", input))
+	constexpr explicit RoomMessageBlock(containers::string_view const input):
+		RoomMessageBlock(has_room(input) ?
+			split_view(containers::drop_exactly(input, 1_bi), '\n') :
+			SplitView(""_s, input)
+		)
 	{
 	}
 
-	constexpr explicit RoomMessageBlock(std::string_view const input, FirstLineIsRoom):
+	constexpr explicit RoomMessageBlock(containers::string_view const input, FirstLineIsRoom):
 		RoomMessageBlock(split_view(input, '\n'))
 	{
 	}
@@ -35,7 +42,7 @@ export struct RoomMessageBlock {
 	constexpr auto room() const -> Room {
 		return m_room;
 	}
-	constexpr auto str() const -> std::string_view {
+	constexpr auto str() const -> containers::string_view {
 		return m_str;
 	}
 
@@ -47,7 +54,7 @@ private:
 	}
 
 	Room m_room;
-	std::string_view m_str;
+	containers::string_view m_str;
 };
 
 } // namespace technicalmachine::ps

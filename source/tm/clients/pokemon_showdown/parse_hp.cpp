@@ -12,15 +12,16 @@ import tm.split_view;
 import tm.visible_hp;
 
 import bounded;
+import containers;
 import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
 
-export constexpr auto parse_hp(std::string_view const str) {
+export constexpr auto parse_hp(containers::string_view const str) {
 	auto const hp = split_view(str, '/');
 	auto const current = CurrentVisibleHP(bounded::to_integer<CurrentHP>(hp.first));
-	auto const max = MaxVisibleHP(hp.second.empty() ? 100_bi : bounded::to_integer<MaxHP>(hp.second));
+	auto const max = MaxVisibleHP(containers::is_empty(hp.second) ? 100_bi : bounded::to_integer<MaxHP>(hp.second));
 	if (current > max) {
 		throw std::runtime_error("Received a current HP greater than max HP");
 	}

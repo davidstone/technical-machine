@@ -105,7 +105,7 @@ constexpr auto check_is_valid_start_of_turn(any_team auto const & team) -> void 
 }
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
-auto BattleMessageHandler::handle_message(std::span<ParsedMessage const> const block) -> Result {
+auto BattleMessageHandler::handle_message(containers::span<ParsedMessage const> const block) -> Result {
 	using ActionBuilder = tv::variant<
 		Nothing,
 		MoveStateBuilder,

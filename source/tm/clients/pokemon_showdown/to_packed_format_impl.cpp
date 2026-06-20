@@ -33,7 +33,6 @@ import tv;
 
 namespace technicalmachine::ps {
 using namespace containers::string_literals;
-using namespace std::string_view_literals;
 
 constexpr auto comma_separator = containers::array({','});
 
@@ -88,7 +87,7 @@ constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & te
 		auto const species_str = to_string(pokemon.species());
 		result = containers::concatenate<containers::string>(
 			std::move(result),
-			is_first ? ""sv : "]"sv,
+			is_first ? ""_sv : "]"_sv,
 			pokemon.nickname().str(),
 			separator,
 			species_str == pokemon.nickname().str() ? ""_s : species_str,

@@ -5,22 +5,24 @@
 
 export module tm.split_offsets;
 
+import bounded;
 import containers;
 import std_module;
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
 export struct split_offsets {
 	template<typename View>
 	constexpr split_offsets(View const buffer, containers::range_value_t<View> const delimiter):
-		first(static_cast<std::size_t>(containers::find(buffer, delimiter) - containers::begin(buffer))),
-		discard(1U)
+		first(bounded::increase_min<0>(containers::find(buffer, delimiter) - containers::begin(buffer))),
+		discard(1_bi)
 	{
 	}
 
 	template<typename View, typename Delimiter> requires std::same_as<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
 	constexpr split_offsets(View const buffer, Delimiter const delimiter):
-		first(static_cast<std::size_t>(std::search(
+		first(bounded::increase_min<0>(std::search(
 			containers::begin(buffer),
 			containers::end(buffer),
 			containers::begin(delimiter),
@@ -30,8 +32,8 @@ export struct split_offsets {
 	{
 	}
 
-	std::size_t first;
-	std::size_t discard;
+	containers::array_size_type<char> first;
+	containers::array_size_type<char> discard;
 };
 
 } // namespace technicalmachine

@@ -36,16 +36,16 @@ auto parse_style(nlohmann::json const & json) {
 		return get_string(json, str);
 	};
 	auto const mode = get("mode");
-	if (mode == "ladder") {
+	if (mode == "ladder"_s) {
 		return SettingsFile::Style(SettingsFile::Ladder{
 			get("format")
 		});
-	} else if (mode == "challenge") {
+	} else if (mode == "challenge"_s) {
 		return SettingsFile::Style(SettingsFile::Challenge{
 			get("user"),
 			get("format")
 		});
-	} else if (mode == "accept") {
+	} else if (mode == "accept"_s) {
 		return SettingsFile::Style(SettingsFile::Accept{
 			containers::dynamic_array<containers::string>(containers::transform(json.at("users").get<std::vector<std::string_view>>(), bounded::construct<containers::string>))
 		});

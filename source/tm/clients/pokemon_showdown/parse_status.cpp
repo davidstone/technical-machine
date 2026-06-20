@@ -13,7 +13,7 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace containers::string_literals;
 
-export constexpr auto parse_status(std::string_view const str) -> StatusName {
+export constexpr auto parse_status(containers::string_view const str) -> StatusName {
 	return
 		(str == ""_s) ? StatusName::clear :
 		(str == "fnt"_s) ? StatusName::clear :

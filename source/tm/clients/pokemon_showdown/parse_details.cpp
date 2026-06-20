@@ -28,14 +28,14 @@ struct ParsedDetails {
 	Level level;
 	Gender gender;
 };
-export constexpr auto parse_details(std::string_view const details) -> ParsedDetails {
-	auto parser = DelimitedBufferView(details, std::string_view(", "));
+export constexpr auto parse_details(containers::string_view const details) -> ParsedDetails {
+	auto parser = DelimitedBufferView(details, ", "_s);
 	auto const species = from_string<Species>(parser.pop());
 
 	auto const level_or_gender_or_shiny_str = parser.pop();
-	auto const has_level = !level_or_gender_or_shiny_str.empty() and level_or_gender_or_shiny_str.front() == 'L';
+	auto const has_level = !containers::is_empty(level_or_gender_or_shiny_str) and containers::front(level_or_gender_or_shiny_str) == 'L';
 	auto const level = Level(has_level ?
-		bounded::to_integer<Level::value_type>(level_or_gender_or_shiny_str.substr(1)) :
+		bounded::to_integer<Level::value_type>(containers::drop_exactly(level_or_gender_or_shiny_str, 1_bi)) :
 		100_bi
 	);
 
@@ -46,10 +46,10 @@ export constexpr auto parse_details(std::string_view const details) -> ParsedDet
 	auto exception = [&] {
 		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "_s, details));
 	};
-	if (shiny_str != "shiny" and shiny_str != "") {
+	if (shiny_str != "shiny"_s and shiny_str != ""_s) {
 		throw exception();
 	}
-	if (!parser.remainder().empty()) {
+	if (!containers::is_empty(parser.remainder())) {
 		throw exception();
 	}
 	return ParsedDetails{species, level, gender};

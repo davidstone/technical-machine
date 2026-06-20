@@ -7,6 +7,7 @@ export module tm.clients.ps.sockets;
 
 import tm.boost_networking;
 
+import bounded;
 import containers;
 import std_module;
 
@@ -22,7 +23,7 @@ auto make_ssl_context() -> ssl::context {
 }
 
 export struct Sockets {
-	Sockets(std::string_view const host, std::string_view const port, std::string_view const resource):
+	Sockets(containers::string_view const host, containers::string_view const port, std::string_view const resource):
 		m_ssl(make_ssl_context()),
 		m_websocket(m_io, m_ssl)
 	{
@@ -35,14 +36,15 @@ export struct Sockets {
 
 	Sockets(Sockets &&) = delete;
 
-	auto read_message() -> std::string_view {
+	auto read_message() -> containers::string_view {
 		m_buffer.consume(static_cast<std::size_t>(-1));
 		websocket_read(m_websocket, m_buffer);
 
 		auto const asio_buffer = m_buffer.data();
-		auto const _s = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
-
-		return _s;
+		return containers::string_view(
+			static_cast<char const *>(asio_buffer.data()),
+			bounded::assume_in_range<containers::array_size_type<char>>(asio_buffer.size())
+		);
 	}
 
 	auto write_message(std::string_view const message) -> void {

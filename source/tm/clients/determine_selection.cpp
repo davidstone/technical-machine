@@ -36,6 +36,7 @@ import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 template<Generation generation>
 auto log_move_probabilities(
@@ -98,13 +99,13 @@ auto determine_selection(
 	}
 	auto const state = predicted_state(visible, usage_stats);
 
-	auto log_team = [&](std::string_view const label, Team<generation> const & team) {
+	auto log_team = [&](containers::string_view const label, Team<generation> const & team) {
 		constexpr auto include_active_marker = true;
 		auto const team_str = to_string(team, include_active_marker);
 		stream << label << "'s " << team_str << '\n';
 	};
-	log_team("AI", state.ai);
-	log_team("Predicted Foe", state.foe);
+	log_team("AI"_s, state.ai);
+	log_team("Predicted Foe"_s, state.foe);
 	stream << std::flush;
 
 	auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);

@@ -124,8 +124,8 @@ auto make_second_team() -> ps::ParsedTeam {
 	});
 }
 
-auto string_to_bytes(std::string_view const str) {
-	return containers::dynamic_array(std::as_bytes(std::span(str)));
+auto string_to_bytes(containers::string_view const str) {
+	return containers::dynamic_array(containers::as_bytes(str));
 }
 
 TEST_CASE("ps_usage_stats: Serialize smallest non-empty file") {

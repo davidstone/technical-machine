@@ -133,7 +133,7 @@ constexpr auto get_species_from_state = []<Generation generation>(VisibleState<g
 };
 
 auto battle_states_requiring_selection(
-	std::span<ps::EventBlock const> const battle_messages,
+	containers::span<ps::EventBlock const> const battle_messages,
 	ps::BattleMessageHandler & battle
 ) {
 	return containers::remove_none(containers::transform_non_idempotent(

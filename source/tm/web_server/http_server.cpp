@@ -55,11 +55,10 @@ auto make_response(
 		auto const content_type = extension_to_content_type(path.extension());
 
 		auto const bytes = bytes_in_file(path);
-		auto const size = static_cast<std::size_t>(containers::size(bytes));
 
-		auto const body = std::string_view(
+		auto const body = containers::string_view(
 			reinterpret_cast<char const *>(containers::data(bytes)),
-			size
+			containers::size(bytes)
 		);
 		return make(http::status::ok, body, content_type);
 	} catch (std::exception const & ex) {

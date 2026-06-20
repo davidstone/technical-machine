@@ -36,7 +36,7 @@ auto main() -> int {
 		[&] -> containers::string {
 			return containers::string(make_dictionary(all_usage_stats).dump());
 		},
-		[&](std::string_view const str) -> containers::string {
+		[&](containers::string_view const str) -> containers::string {
 			return containers::string(nlohmann::json({{
 				"predicted"_s,
 				predicted_team_string(

@@ -190,7 +190,7 @@ constexpr auto team_xml = R"(
 )"_s;
 
 TEST_CASE("Pokemon Online: Pokemon Online team file") {
-	auto const original_team = po::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
+	auto const original_team = po::read_team_file(containers::as_bytes(team_xml));
 	CHECK(original_team == expected_team);
 }
 

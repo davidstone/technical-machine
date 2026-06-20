@@ -60,7 +60,7 @@ export struct Battles {
 	>;
 	constexpr auto handle_message(
 		Room const room,
-		std::span<ParsedMessage const> const message
+		containers::span<ParsedMessage const> const message
 	) -> Result {
 		auto const it = m_container.find(room);
 		if (it == containers::end(m_container)) {

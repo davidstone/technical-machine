@@ -95,7 +95,7 @@ constexpr auto status_to_string(Status const status) -> containers::string {
 
 template<typename StatNames>
 constexpr auto stat_to_string(
-	std::string_view const type,
+	containers::string_view const type,
 	StatNames const stat_names,
 	auto const get
 ) -> containers::string {

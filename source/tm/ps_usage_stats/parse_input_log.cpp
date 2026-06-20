@@ -26,17 +26,17 @@ using namespace ps;
 
 export using PlayerInput = tv::variant<MoveName, BattleResponseSwitch>;
 
-constexpr auto parse_input_for(std::string_view const player) {
+constexpr auto parse_input_for(containers::string_view const player) {
 	return [=](nlohmann::json const & json) -> tv::optional<PlayerInput> {
-		auto const str = json.get<std::string_view>();
-		if (str.empty() or str.front() != '>') {
+		auto const str = containers::string_view(json.get<std::string_view>());
+		if (containers::is_empty(str) or containers::front(str) != '>') {
 			throw std::runtime_error(containers::concatenate<std::string>(
 				"Selection string "_s,
 				str,
 				" does not start with >"_s
 			));
 		}
-		auto view = DelimitedBufferView(str.substr(1), ' ');
+		auto view = DelimitedBufferView(containers::string_view(containers::drop_exactly(str, 1_bi)), ' ');
 		auto const type = view.pop();
 		auto matches = [=](auto const ... strs) {
 			return (... or (type == strs));
@@ -68,7 +68,7 @@ constexpr auto parse_input_for(std::string_view const player) {
 	};
 }
 
-auto input_for_side(nlohmann::json const & input_log, std::string_view const player) -> containers::dynamic_array<PlayerInput> {
+auto input_for_side(nlohmann::json const & input_log, containers::string_view const player) -> containers::dynamic_array<PlayerInput> {
 	return containers::dynamic_array(
 		containers::remove_none(containers::transform(
 			input_log,

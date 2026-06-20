@@ -12,7 +12,7 @@ namespace technicalmachine {
 using namespace containers::string_literals;
 
 export struct InvalidFromStringConversion : std::runtime_error {
-	InvalidFromStringConversion(std::string_view const target, std::string_view const requested):
+	InvalidFromStringConversion(containers::string_view const target, containers::string_view const requested):
 		std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "_s, requested, " to type "_s, target))
 	{
 	}

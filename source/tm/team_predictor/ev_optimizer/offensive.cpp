@@ -67,7 +67,7 @@ constexpr auto none_nature = containers::array({
 	NatureEffects(NatureEffect::negative, NatureEffect::neutral),
 });
 
-using UsefulNatures = std::span<NatureEffects const>;
+using UsefulNatures = containers::span<NatureEffects const>;
 constexpr auto useful_nature_effects(bool const is_physical, bool const is_special) -> UsefulNatures {
 	return
 		is_physical and is_special ? UsefulNatures(nature_effects) :

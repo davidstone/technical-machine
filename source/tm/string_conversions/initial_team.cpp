@@ -39,7 +39,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace containers::string_literals;
 
-constexpr auto to_string(SplitSpecialPermanentStat const stat) -> std::string_view {
+constexpr auto to_string(SplitSpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
 		case SplitSpecialPermanentStat::hp: return "HP"_s;
 		case SplitSpecialPermanentStat::atk: return "Atk"_s;
@@ -50,7 +50,7 @@ constexpr auto to_string(SplitSpecialPermanentStat const stat) -> std::string_vi
 	}
 }
 
-constexpr auto to_string(SpecialPermanentStat const stat) -> std::string_view {
+constexpr auto to_string(SpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
 		case SpecialPermanentStat::hp: return "HP"_s;
 		case SpecialPermanentStat::atk: return "Atk"_s;
@@ -60,7 +60,7 @@ constexpr auto to_string(SpecialPermanentStat const stat) -> std::string_view {
 	}
 }
 
-constexpr auto to_string(SpecialRegularStat const stat) -> std::string_view {
+constexpr auto to_string(SpecialRegularStat const stat) -> containers::string_view {
 	switch (stat) {
 		case SpecialRegularStat::atk: return "Atk"_s;
 		case SpecialRegularStat::def: return "Def"_s;
@@ -71,7 +71,7 @@ constexpr auto to_string(SpecialRegularStat const stat) -> std::string_view {
 
 template<typename Index>
 constexpr auto stats_to_string(
-	std::string_view const name,
+	containers::string_view const name,
 	auto const stats,
 	bounded::bounded_integer auto const default_value
 ) -> containers::string {

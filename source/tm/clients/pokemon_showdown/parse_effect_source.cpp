@@ -43,38 +43,38 @@ export using EffectSource = tv::variant<
 	FromSubstitute
 >;
 
-export constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) -> EffectSource {
+export constexpr auto parse_effect_source(containers::string_view const type, containers::string_view const source) -> EffectSource {
 	return
-		(type == "") ? EffectSource(MainEffect()) :
-		(type == "item") ? EffectSource(from_string<Item>(source)) :
-		(type == "ability") ? EffectSource(from_string<Ability>(source)) :
-		(type == "move") ? EffectSource(FromMove()) :
-		(type == "confusion") ? EffectSource(FromConfusion()) :
-		(type == "Bide") ? EffectSource(FromBide()) :
-		(type == "Disable") ? EffectSource(FromDisable()) :
-		(type == "Recoil") ? EffectSource(FromRecoil()) :
-		(type == "Spikes") ? EffectSource(FromEntryHazards()) :
-		(type == "Stealth Rock") ? EffectSource(FromEntryHazards()) :
-		(type == "Substitute") ? EffectSource(FromSubstitute()) :
+		(type == ""_s) ? EffectSource(MainEffect()) :
+		(type == "item"_s) ? EffectSource(from_string<Item>(source)) :
+		(type == "ability"_s) ? EffectSource(from_string<Ability>(source)) :
+		(type == "move"_s) ? EffectSource(FromMove()) :
+		(type == "confusion"_s) ? EffectSource(FromConfusion()) :
+		(type == "Bide"_s) ? EffectSource(FromBide()) :
+		(type == "Disable"_s) ? EffectSource(FromDisable()) :
+		(type == "Recoil"_s) ? EffectSource(FromRecoil()) :
+		(type == "Spikes"_s) ? EffectSource(FromEntryHazards()) :
+		(type == "Stealth Rock"_s) ? EffectSource(FromEntryHazards()) :
+		(type == "Substitute"_s) ? EffectSource(FromSubstitute()) :
 		(
-			type == "brn" or
-			type == "psn" or
-			type == "tox" or
-			type == "drain" or
-			type == "perish3" or
-			type == "perish2" or
-			type == "perish1" or
-			type == "perish0" or
-			type == "trapped" or
-			type == "Encore" or
-			type == "Hail" or
-			type == "Leech Seed" or
-			type == "Light Screen" or
-			type == "Mimic" or // TODO: implement
-			type == "Mist" or
-			type == "Protect" or // Includes Detect
-			type == "Reflect" or
-			type == "Sandstorm"
+			type == "brn"_s or
+			type == "psn"_s or
+			type == "tox"_s or
+			type == "drain"_s or
+			type == "perish3"_s or
+			type == "perish2"_s or
+			type == "perish1"_s or
+			type == "perish0"_s or
+			type == "trapped"_s or
+			type == "Encore"_s or
+			type == "Hail"_s or
+			type == "Leech Seed"_s or
+			type == "Light Screen"_s or
+			type == "Mimic"_s or // TODO: implement
+			type == "Mist"_s or
+			type == "Protect"_s or // Includes Detect
+			type == "Reflect"_s or
+			type == "Sandstorm"_s
 		) ? EffectSource(FromMiscellaneous()) :
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Unhandled effect source type: "_s,
@@ -82,7 +82,7 @@ export constexpr auto parse_effect_source(std::string_view const type, std::stri
 		));
 }
 
-export constexpr auto parse_from_source(std::string_view const message) -> EffectSource {
+export constexpr auto parse_from_source(containers::string_view const message) -> EffectSource {
 	// [from]
 	auto const [bracketed_text_or_nothing, remainder] = split_view(message, ' ');
 	auto const [type, source] = split_view(remainder, ": "_s);

@@ -23,7 +23,7 @@ using namespace bounded::literal;
 
 auto stats_for_generation(Generation const generation) -> UsageStats {
 	return UsageStats::make(open_binary_file_for_reading(
-		get_usage_stats_directory() / to_string(generation) / "OU.tmus"
+		get_usage_stats_directory() / std::filesystem::path(to_string(generation)) / "OU.tmus"
 	));
 }
 

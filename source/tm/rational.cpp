@@ -13,6 +13,7 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 export template<typename Numerator, typename Denominator>
 struct rational;
@@ -39,7 +40,11 @@ struct rational {
 
 	friend constexpr auto to_string(rational const r) {
 		using containers::to_string;
-		return containers::concatenate<containers::string>(to_string(r.m_numerator), std::string_view(" / "), to_string(r.m_denominator));
+		return containers::concatenate<containers::string>(
+			to_string(r.m_numerator),
+			" / "_s,
+			to_string(r.m_denominator)
+		);
 	}
 
 	friend constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, rational const rhs) {

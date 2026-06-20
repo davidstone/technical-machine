@@ -42,10 +42,10 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 
 constexpr auto depth = Depth(1_bi, 0_bi);
 
-constexpr auto send_message = [](std::string_view) -> void {};
+constexpr auto send_message = [](containers::string_view) -> void {};
 constexpr auto authenticate = [](
-	std::string_view,
-	std::string_view,
+	containers::string_view,
+	containers::string_view,
 	http::request<http::string_body> const &
 ) -> http::response<http::string_body> {
 	return {};
@@ -94,8 +94,8 @@ TEST_CASE("Pokemon Showdown: Pokemon Showdown regression") {
 			for (auto const & path : paths_in_directory(generation)) {
 				INFO(path);
 				auto const data = load_lines_from_file(path / "server_messages.txt");
-				auto const messages = containers::split_range(std::string_view(data).substr(1), "\n>");
-				for (std::string_view const message : messages) {
+				auto const messages = containers::split_range(containers::drop_exactly(data, 1_bi), "\n>"_s);
+				for (containers::string_view const message : messages) {
 					INFO(message);
 					client.handle_messages(ps::RoomMessageBlock(
 						message,

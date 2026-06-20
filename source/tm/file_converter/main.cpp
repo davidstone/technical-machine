@@ -31,10 +31,10 @@ constexpr auto invalid_args_message =
 
 enum class OutputType { print, text };
 
-constexpr auto parse_output_type(std::string_view const str) -> OutputType {
-	if (str == "print") {
+constexpr auto parse_output_type(containers::string_view const str) -> OutputType {
+	if (str == "print"_s) {
 		return OutputType::print;
-	} else if (str == "text") {
+	} else if (str == "text"_s) {
 		return OutputType::text;
 	} else {
 		throw std::runtime_error(invalid_args_message);
@@ -75,7 +75,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (argc < 2) {
 		throw std::runtime_error(invalid_args_message);
 	}
-	auto const output_type = parse_output_type(argv[1]);
+	auto const output_type = parse_output_type(containers::string_view(argv[1]));
 	if (output_type != OutputType::print and argc < 3) {
 		throw std::runtime_error(invalid_args_message);
 	}

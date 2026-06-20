@@ -60,7 +60,12 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 				auto lock = std::scoped_lock(writer_mutex);
 				battle_result_writer(*battle_result);
 			} catch (std::exception const & ex) {
-				throw std::runtime_error(containers::concatenate<std::string>("Error parsing "_s, input_file.string(), ": "_s, std::string_view(ex.what())));
+				throw std::runtime_error(containers::concatenate<std::string>(
+					"Error parsing "_s,
+					input_file.string(),
+					": "_s,
+					containers::string_view(ex.what())
+				));
 			}
 		}
 	);

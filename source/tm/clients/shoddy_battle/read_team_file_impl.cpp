@@ -64,34 +64,34 @@ template<auto bytes>
 using ByteInteger = bounded::integer<0, bounded::normalize<(1_bi << (bytes * bits_in_byte)) - 1_bi>>;
 
 struct ByteParser {
-	constexpr explicit ByteParser(std::span<std::byte const> view):
+	constexpr explicit ByteParser(containers::span<std::byte const> view):
 		m_view(view)
 	{
 	}
 
 	constexpr auto pop_byte() -> std::byte {
-		return m_view.pop(1)[0];
+		return containers::front(m_view.pop(1_bi));
 	}
 	constexpr auto pop_integer(auto const bytes) -> ByteInteger<bytes> {
 		auto result = ByteInteger<bytes>(0_bi);
-		for (auto const byte : m_view.pop(static_cast<std::size_t>(bytes))) {
+		for (auto const byte : m_view.pop(bytes)) {
 			result *= (1_bi << bits_in_byte);
 			result += bounded::integer(byte);
 		}
 		return result;
 	}
-	auto pop_string() -> std::string_view {
+	auto pop_string() -> containers::string_view {
 		auto const size = pop_integer(2_bi);
-		auto const str = m_view.pop(static_cast<std::size_t>(size));
-		return std::string_view(reinterpret_cast<char const *>(str.data()), static_cast<std::size_t>(size));
+		auto const str = m_view.pop(size);
+		return containers::string_view(reinterpret_cast<char const *>(str.data()), size);
 	}
 
 	constexpr auto ignore(auto const bytes) -> void {
-		m_view.pop(static_cast<std::size_t>(bytes));
+		m_view.pop(bytes);
 	}
 
 private:
-	BufferView<std::span<std::byte const>> m_view;
+	BufferView<containers::span<std::byte const>> m_view;
 };
 
 constexpr auto null_type = std::byte(0x70);
@@ -114,11 +114,11 @@ constexpr auto write_method = std::byte(0x01);
 struct Field {
 	enum class Type { object, integer, byte };
 	Type type;
-	std::string_view name;
+	containers::string_view name;
 };
 
 struct ClassDescription {
-	std::string_view name;
+	containers::string_view name;
 	std::byte flags;
 	containers::dynamic_array<Field> fields;
 };
@@ -141,7 +141,7 @@ struct ParsedData {
 		IntegerContainer,
 		AnyContainer,
 		ClassDescription,
-		std::string_view,
+		containers::string_view,
 		Nature,
 		SBPokemon,
 		std::monostate
@@ -217,7 +217,7 @@ constexpr auto add_stat(tv::optional<GenericStats<T>> & optional, auto const & r
 }
 
 struct Parser {
-	constexpr explicit Parser(std::span<std::byte const> const bytes):
+	constexpr explicit Parser(containers::span<std::byte const> const bytes):
 		m_byte_parser(bytes)
 	{
 	}
@@ -308,7 +308,7 @@ private:
 		auto species = tv::optional<Species>();
 		auto ability = tv::optional<Ability>();
 		auto item = tv::optional<Item>();
-		auto nickname = tv::optional<std::string_view>();
+		auto nickname = tv::optional<containers::string_view>();
 		auto ivs = tv::optional<IVs>();
 		auto evs = tv::optional<EVs>();
 		auto moves = tv::optional<MoveNames>();
@@ -319,24 +319,24 @@ private:
 				case Field::Type::object: {
 					auto const parsed = parse_any();
 					tv::visit(parsed.state, [&]<typename State>(State const & state) {
-						if constexpr (std::same_as<State, std::string_view>) {
-							if (field.name == "m_name") {
+						if constexpr (std::same_as<State, containers::string_view>) {
+							if (field.name == "m_name"_s) {
 								emplace_once(species, from_string<Species>(state));
-							} else if (field.name == "m_abilityName") {
+							} else if (field.name == "m_abilityName"_s) {
 								emplace_once(ability, from_string<Ability>(state));
-							} else if (field.name == "m_itemName") {
+							} else if (field.name == "m_itemName"_s) {
 								emplace_once(item, from_string<Item>(state));
-							} else if (field.name == "m_nickname") {
+							} else if (field.name == "m_nickname"_s) {
 								emplace_once(nickname, state);
 							} else {
 								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "_s, field.name));
 							}
 						} else if constexpr (std::same_as<State, IntegerContainer>) {
-							if (field.name == "m_iv") {
+							if (field.name == "m_iv"_s) {
 								add_stat(ivs, state);
-							} else if (field.name == "m_ev") {
+							} else if (field.name == "m_ev"_s) {
 								add_stat(evs, state);
-							} else if (field.name == "m_ppUp") {
+							} else if (field.name == "m_ppUp"_s) {
 								if (containers::size(state) != max_moves_per_pokemon) {
 									throw std::runtime_error("Expected exactly 4 PP ups");
 								}
@@ -348,10 +348,10 @@ private:
 							}
 						} else if constexpr (std::same_as<State, AnyContainer>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
-								return from_string<MoveName>(inner_parsed.state[bounded::type<std::string_view>]);
+								return from_string<MoveName>(inner_parsed.state[bounded::type<containers::string_view>]);
 							};
 							auto filter_moves = [](ParsedData const & inner_parsed) {
-								if (inner_parsed.state.index() == bounded::type<std::string_view>) {
+								if (inner_parsed.state.index() == bounded::type<containers::string_view>) {
 									return true;
 								} else if (inner_parsed.state.index() == bounded::type<std::monostate>) {
 									return false;
@@ -361,7 +361,7 @@ private:
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));
 						} else if constexpr (std::same_as<State, Nature>) {
-							if (field.name == "m_nature") {
+							if (field.name == "m_nature"_s) {
 								emplace_once(nature, state);
 							} else {
 								throw std::runtime_error("Found a Nature in the wrong place");
@@ -376,16 +376,16 @@ private:
 				}
 				case Field::Type::integer: {
 					auto const value = m_byte_parser.pop_integer(4_bi);
-					if (field.name == "m_gender") {
+					if (field.name == "m_gender"_s) {
 						emplace_once(gender, to_gender(value));
-					} else if (field.name == "m_level") {
+					} else if (field.name == "m_level"_s) {
 						emplace_once(level, check_value_type<Level>(value));
 					}
 					break;
 				}
 				case Field::Type::byte: {
 					auto const value = m_byte_parser.pop_integer(1_bi);
-					if (field.name == "m_shiny") {
+					if (field.name == "m_shiny"_s) {
 						emplace_once(shiny, value != 0_bi);
 					}
 					break;
@@ -480,7 +480,7 @@ private:
 				return containers::dynamic_array<Field>();
 			}
 		});
-		constexpr auto empty_field = Field{Field::Type::byte, ""};
+		constexpr auto empty_field = Field{Field::Type::byte, ""_s};
 		using MaybeEmptyField = containers::static_vector<Field, 1_bi>;
 		auto const maybe_empty_field = (flags & write_method) != std::byte(0x00) ?
 			MaybeEmptyField({empty_field}) :
@@ -529,15 +529,15 @@ private:
 		});
 
 		auto & result = containers::push_back(m_objects, ParsedData(std::monostate()));
-		if (description.name == "shoddybattle.Pokemon") {
+		if (description.name == "shoddybattle.Pokemon"_s) {
 			result = parse_pokemon(description);
-		} else if (description.name == "mechanics.AdvanceMechanics" or description.name == "mechanics.JewelMechanics") {
+		} else if (description.name == "mechanics.AdvanceMechanics"_s or description.name == "mechanics.JewelMechanics"_s) {
 			result = parse_any();
-		} else if (description.name == "java.util.Random") {
+		} else if (description.name == "java.util.Random"_s) {
 			m_byte_parser.ignore(18_bi);
-		} else if (description.name == "mechanics.moves.MoveListEntry") {
+		} else if (description.name == "mechanics.moves.MoveListEntry"_s) {
 			result = parse_move(description);
-		} else if (description.name == "mechanics.PokemonNature") {
+		} else if (description.name == "mechanics.PokemonNature"_s) {
 			auto const id = m_byte_parser.pop_integer(4_bi);
 			result = ParsedData(to_nature(id));
 		} else {
@@ -550,7 +550,7 @@ private:
 	containers::static_vector<ParsedData, 1000_bi> m_objects;
 };
 
-auto read_team_file(std::span<std::byte const> const bytes) -> SBTeam {
+auto read_team_file(containers::span<std::byte const> const bytes) -> SBTeam {
 	auto parser = Parser(bytes);
 	parser.parse_and_validate_header();
 

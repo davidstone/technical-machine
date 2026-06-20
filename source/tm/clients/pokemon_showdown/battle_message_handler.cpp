@@ -30,8 +30,9 @@ import tm.generation_generic;
 import tm.state;
 import tm.visible_hp;
 
-import tv;
+import containers;
 import std_module;
+import tv;
 
 namespace technicalmachine::ps {
 
@@ -56,7 +57,7 @@ export struct BattleMessageHandler {
 		BattleContinues,
 		BattleFinished
 	>;
-	auto handle_message(std::span<ParsedMessage const> const block) -> Result;
+	auto handle_message(containers::span<ParsedMessage const> const block) -> Result;
 
 	auto state() const -> GenerationGeneric<VisibleState> {
 		return m_client_battle->state();

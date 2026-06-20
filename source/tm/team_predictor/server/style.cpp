@@ -17,7 +17,7 @@ using namespace containers::string_literals;
 
 export enum class Style { random, most_likely };
 
-export constexpr auto to_string(Style const style) -> std::string_view {
+export constexpr auto to_string(Style const style) -> containers::string_view {
 	switch (style) {
 		case Style::random:
 			return "random"_s;
@@ -27,13 +27,13 @@ export constexpr auto to_string(Style const style) -> std::string_view {
 }
 
 export template<>
-constexpr auto from_string(std::string_view const str) -> Style {
+constexpr auto from_string(containers::string_view const str) -> Style {
 	if (str == "random"_s) {
 		return Style::random;
 	} else if (str == "most likely"_s) {
 		return Style::most_likely;
 	} else {
-		throw InvalidFromStringConversion("Style", str);
+		throw InvalidFromStringConversion("Style"_s, str);
 	}
 }
 

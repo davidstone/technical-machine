@@ -46,7 +46,7 @@ using namespace bounded::literal;
 using namespace containers::string_literals;
 
 struct Parser {
-	constexpr explicit Parser(std::span<std::byte const> const bytes):
+	constexpr explicit Parser(containers::span<std::byte const> const bytes):
 		m_view(bytes),
 		m_file_version(pop_header())
 	{
@@ -82,11 +82,11 @@ struct Parser {
 private:
 	constexpr auto pop_header() -> FileVersion {
 		auto const file_version_string = pop_string(7_bi);
-		if (file_version_string == " PNB4.0") {
+		if (file_version_string == " PNB4.0"_s) {
 			return FileVersion::four_zero;
-		} else if (file_version_string == " PNB4.1") {
+		} else if (file_version_string == " PNB4.1"_s) {
 			return FileVersion::four_one;
-		} else if (file_version_string == " PNB5.0") {
+		} else if (file_version_string == " PNB5.0"_s) {
 			return FileVersion::five_zero;
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>("Version \""_s, file_version_string, "\" not supported"_s));
@@ -176,11 +176,11 @@ template<SpecialInputStyle style>
 constexpr auto parse_pokemon(Parser & parser) -> tv::optional<InitialPokemon<style>> {
 	constexpr auto nickname_bytes = 15_bi;
 	auto const padded_nickname = parser.pop_string(nickname_bytes);
-	auto const padded_nickname_view = std::string_view(padded_nickname);
-	auto const nickname = Nickname(std::string_view(
-		padded_nickname_view.begin(),
+	auto const padded_nickname_view = containers::string_view(padded_nickname);
+	auto const nickname = Nickname(containers::string_view(containers::subrange(
+		containers::begin(padded_nickname_view),
 		containers::find_if_not(containers::reversed(padded_nickname_view), bounded::equal_to(' ')).base()
-	));
+	)));
 	constexpr auto species_bits = 9_bi;
 	auto const species_id = parser.pop_integer<SpeciesID>(species_bits);
 	if (species_id == 0_bi) {
@@ -231,7 +231,7 @@ constexpr auto parse_team(Parser & parser) -> InitialTeam<style> {
 	));
 }
 
-export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
+export constexpr auto read_team_file(containers::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto parser = Parser(bytes);
 	// username
 	parser.ignore_sized_string();

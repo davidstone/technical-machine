@@ -45,7 +45,7 @@ struct CheckedIterator {
 	{
 	}
 
-	auto const & advance(std::string_view const expected_key) & {
+	auto const & advance(containers::string_view const expected_key) & {
 		++m_it;
 		if (m_it == m_last) {
 			throw std::runtime_error("Incomplete PO team file\n");
@@ -79,7 +79,7 @@ auto parse_moves(CheckedIterator it) {
 	};
 	auto moves = InitialMoves(containers::remove_none(
 		containers::generate_n(max_moves_per_pokemon, [&] -> tv::optional<InitialMove> {
-			auto const & value = it.advance("Move");
+			auto const & value = it.advance("Move"_s);
 			static_assert(numeric_traits::min_value<MoveID> == 1_bi);
 			using ReadMoveID = bounded::integer<0, bounded::normalize<numeric_traits::max_value<MoveID>>>;
 			auto const move_id = value.get_value<ReadMoveID>();
@@ -95,7 +95,7 @@ auto parse_moves(CheckedIterator it) {
 }
 
 template<typename T>
-auto parse_stats(std::string_view const name, CheckedIterator it) {
+auto parse_stats(containers::string_view const name, CheckedIterator it) {
 	struct Parsed {
 		GenericStats<T> stats;
 		CheckedIterator it;
@@ -200,14 +200,14 @@ auto parse_team(property_tree::ptree_reader pt) -> InitialTeam<style> {
 		containers::transform(
 			containers::filter(
 				pt,
-				[](auto const & value) { return value.first == "Pokemon"; }
+				[](auto const & value) { return value.first == "Pokemon"_s; }
 			),
 			[=](auto const & value) { return parse_pokemon<style>(value.second); }
 		)
 	));
 }
 
-export auto read_team_file(std::span<std::byte const> const bytes) -> AnyInitialTeam {
+export auto read_team_file(containers::span<std::byte const> const bytes) -> AnyInitialTeam {
 	auto owner = property_tree::ptree();
 	auto pt = owner.read_xml(bytes);
 

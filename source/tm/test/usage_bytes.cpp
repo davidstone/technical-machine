@@ -113,7 +113,7 @@ export constexpr auto smallest_team_bytes(Generation const generation) {
 	));
 }
 
-export auto bytes_to_usage_stats(std::span<std::byte const> const bytes) -> UsageStats {
+export auto bytes_to_usage_stats(containers::span<std::byte const> const bytes) -> UsageStats {
 	return UsageStats::make(std::stringstream(std::string(
 		reinterpret_cast<char const *>(containers::data(bytes)),
 		static_cast<std::size_t>(containers::size(bytes))

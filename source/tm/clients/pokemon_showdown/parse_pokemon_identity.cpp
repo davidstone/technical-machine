@@ -19,15 +19,16 @@ import tv;
 import std_module;
 
 namespace technicalmachine::ps {
+using namespace bounded::literal;
 using namespace containers::string_literals;
 
-export constexpr auto parse_pokemon_identity(std::string_view const str) {
+export constexpr auto parse_pokemon_identity(containers::string_view const str) {
 	struct result {
 		Party party;
 		Nickname nickname;
 	};
 	auto const [party_str, nickname] = split_view(str, ": "_s);
-	return result{make_party(party_str.substr(0, 2)), Nickname(nickname)};
+	return result{make_party(containers::take(party_str, 2_bi)), Nickname(nickname)};
 }
 
 } // namespace technicalmachine::ps

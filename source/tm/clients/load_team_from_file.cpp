@@ -59,7 +59,12 @@ export auto load_team_from_file(std::filesystem::path const & file_name) -> AnyI
 				return nb::read_team_file(bytes);
 		}
 	} catch (std::exception const & ex) {
-		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse team file \""_s, file_name.string(), "\" -- "_s, std::string_view(ex.what())));
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Failed to parse team file \""_s,
+			file_name.string(),
+			"\" -- "_s,
+			containers::string_view(ex.what())
+		));
 	}
 }
 

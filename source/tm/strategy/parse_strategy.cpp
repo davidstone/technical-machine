@@ -27,7 +27,7 @@ export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 	if (argc < 1) {
 		throw std::runtime_error("Command line must include strategy");
 	}
-	auto const name = std::string_view(argv[0]);
+	auto const name = containers::string_view(argv[0]);
 	if (name == "random"_s) {
 		if (argc != 2) {
 			throw std::runtime_error("random strategy requires argument for switch weight");

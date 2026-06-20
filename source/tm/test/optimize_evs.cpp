@@ -37,7 +37,6 @@ import tm.team_predictor.ev_optimizer.speed;
 import tm.generation;
 
 import bounded;
-import containers;
 import tv;
 import std_module;
 

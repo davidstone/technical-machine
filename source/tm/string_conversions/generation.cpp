@@ -15,38 +15,39 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
+using namespace containers::string_literals;
 
-export constexpr auto to_string(Generation const generation) -> std::string_view {
+export constexpr auto to_string(Generation const generation) -> containers::string_view {
 	switch (generation) {
-		case Generation::one: return "1";
-		case Generation::two: return "2";
-		case Generation::three: return "3";
-		case Generation::four: return "4";
-		case Generation::five: return "5";
-		case Generation::six: return "6";
-		case Generation::seven: return "7";
-		case Generation::eight: return "8";
+		case Generation::one: return "1"_s;
+		case Generation::two: return "2"_s;
+		case Generation::three: return "3"_s;
+		case Generation::four: return "4"_s;
+		case Generation::five: return "5"_s;
+		case Generation::six: return "6"_s;
+		case Generation::seven: return "7"_s;
+		case Generation::eight: return "8"_s;
 	}
 }
 
 export template<>
-constexpr auto from_string(std::string_view const str) -> Generation {
+constexpr auto from_string(containers::string_view const str) -> Generation {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		containers::to_array<containers::map_value_type<std::string_view, Generation>>({
-			{"1", Generation::one},
-			{"2", Generation::two},
-			{"3", Generation::three},
-			{"4", Generation::four},
-			{"5", Generation::five},
-			{"6", Generation::six},
-			{"7", Generation::seven},
-			{"8", Generation::eight},
+		containers::to_array<containers::map_value_type<containers::string_view, Generation>>({
+			{"1"_s, Generation::one},
+			{"2"_s, Generation::two},
+			{"3"_s, Generation::three},
+			{"4"_s, Generation::four},
+			{"5"_s, Generation::five},
+			{"6"_s, Generation::six},
+			{"7"_s, Generation::seven},
+			{"8"_s, Generation::eight},
 		})
 	);
 	auto const result = containers::lookup(converter, str);
 	if (!result) {
-		throw InvalidFromStringConversion("Generation", str);
+		throw InvalidFromStringConversion("Generation"_s, str);
 	}
 	return *result;
 }

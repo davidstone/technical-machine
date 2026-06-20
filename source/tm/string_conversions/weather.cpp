@@ -17,37 +17,38 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
-export constexpr auto to_string(Weather const weather) -> std::string_view {
+export constexpr auto to_string(Weather const weather) -> containers::string_view {
 	switch (weather) {
-		case Weather::clear: return "Clear";
-		case Weather::hail: return "Hail";
-		case Weather::sand: return "Sand";
-		case Weather::sun: return "Sun";
-		case Weather::rain: return "Rain";
+		case Weather::clear: return "Clear"_s;
+		case Weather::hail: return "Hail"_s;
+		case Weather::sand: return "Sand"_s;
+		case Weather::sun: return "Sun"_s;
+		case Weather::rain: return "Rain"_s;
 	}
 }
 
 export template<>
-constexpr auto from_string(std::string_view const str) -> Weather {
+constexpr auto from_string(containers::string_view const str) -> Weather {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		containers::to_array<containers::map_value_type<std::string_view, Weather>>({
-			{"clear", Weather::clear},
-			{"hail", Weather::hail},
-			{"none", Weather::clear},
-			{"rain", Weather::rain},
-			{"raindance", Weather::rain},
-			{"sand", Weather::sand},
-			{"sandstorm", Weather::sand},
-			{"sun", Weather::sun},
-			{"sunnyday", Weather::sun},
+		containers::to_array<containers::map_value_type<containers::string_view, Weather>>({
+			{"clear"_s, Weather::clear},
+			{"hail"_s, Weather::hail},
+			{"none"_s, Weather::clear},
+			{"rain"_s, Weather::rain},
+			{"raindance"_s, Weather::rain},
+			{"sand"_s, Weather::sand},
+			{"sandstorm"_s, Weather::sand},
+			{"sun"_s, Weather::sun},
+			{"sunnyday"_s, Weather::sun},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Weather", str);
+		throw InvalidFromStringConversion("Weather"_s, str);
 	}
 	return *result;
 }

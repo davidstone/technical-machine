@@ -14,13 +14,13 @@ using namespace bounded::literal;
 
 export struct Nickname {
 	Nickname() = default;
-	constexpr Nickname(std::string_view const str):
+	constexpr Nickname(containers::string_view const str):
 		m_str(str)
 	{
 	}
 
-	constexpr auto str() const -> std::string_view {
-		return std::string_view(containers::data(m_str), static_cast<std::size_t>(containers::size(m_str)));
+	constexpr auto str() const -> containers::string_view {
+		return containers::string_view(m_str);
 	}
 
 	friend auto operator==(Nickname, Nickname) -> bool = default;

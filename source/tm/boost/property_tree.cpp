@@ -14,6 +14,8 @@ import std_module;
 
 export module tm.property_tree;
 
+import containers;
+
 namespace technicalmachine::property_tree {
 
 // Work around some clang modules bug
@@ -66,10 +68,10 @@ private:
 };
 
 export struct ptree {
-	auto read_xml(std::span<std::byte const> const bytes) -> ptree_reader {
+	auto read_xml(containers::span<std::byte const> const bytes) -> ptree_reader {
 		auto const source = boost::iostreams::array_source(
 			reinterpret_cast<char const *>(bytes.data()),
-			bytes.size()
+			static_cast<std::size_t>(bytes.size())
 		);
 		auto stream = boost::iostreams::stream<boost::iostreams::array_source>(source);
 		boost::property_tree::read_xml(stream, m_ptree);

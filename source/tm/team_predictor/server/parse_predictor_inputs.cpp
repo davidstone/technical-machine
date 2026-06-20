@@ -38,40 +38,41 @@ import std_module;
 import tv;
 
 namespace technicalmachine {
+using namespace containers::string_literals;
 
 // Cannot use `containers::lookup` because `nlohmann::json` doesn't provide
 // `key_type` and `mapped_type`, and `find` just returns the mapped element.
-auto lookup(nlohmann::json const & map, std::string_view const key) {
+auto lookup(nlohmann::json const & map, containers::string_view const key) {
 	auto const it = map.find(key);
 	return it != containers::end(map) ?
 		std::addressof(*it) :
 		nullptr;
 }
 
-auto get_str(nlohmann::json const & json, std::string_view const key) -> std::string_view {
+auto get_str(nlohmann::json const & json, containers::string_view const key) -> containers::string_view {
 	return json.at(key).get<std::string_view>();
 }
 
 template<typename T>
-auto get_integer_wrapper(nlohmann::json const & json, std::string_view const key) -> T {
+auto get_integer_wrapper(nlohmann::json const & json, containers::string_view const key) -> T {
 	return T(bounded::to_integer<typename T::value_type>(get_str(json, key)));
 }
 
 auto parse_evs(nlohmann::json const & pokemon) -> tv::optional<EVs> {
-	auto const evs = lookup(pokemon, "evs");
+	auto const evs = lookup(pokemon, "evs"_s);
 	if (!evs) {
 		return tv::none;
 	}
-	auto get = [&](std::string_view const key) -> EV {
+	auto get = [&](containers::string_view const key) -> EV {
 		return get_integer_wrapper<EV>(*evs, key);
 	};
 	auto const result = EVs(
-		get("HP"),
-		get("Atk"),
-		get("Def"),
-		get("SpA"),
-		get("SpD"),
-		get("Spe")
+		get("HP"_s),
+		get("Atk"_s),
+		get("Def"_s),
+		get("SpA"_s),
+		get("SpD"_s),
+		get("Spe"_s)
 	);
 	if (ev_sum(result) > max_total_evs(SpecialInputStyle::split)) {
 		throw std::runtime_error("Too many EVs");
@@ -81,7 +82,7 @@ auto parse_evs(nlohmann::json const & pokemon) -> tv::optional<EVs> {
 
 auto parse_predictor_team(nlohmann::json const & team) -> PredictorTeam {
 	return PredictorTeam(containers::transform(team, [](nlohmann::json const & pokemon) {
-		auto get_opt = [&]<typename T>(bounded::type_t<T>, std::string_view const key) -> tv::optional<T> {
+		auto get_opt = [&]<typename T>(bounded::type_t<T>, containers::string_view const key) -> tv::optional<T> {
 			auto const value = lookup(pokemon, key);
 			if (!value) {
 				return tv::none;
@@ -89,14 +90,14 @@ auto parse_predictor_team(nlohmann::json const & team) -> PredictorTeam {
 			return from_string<T>(value->get<std::string_view>());
 		};
 		return PredictorPokemon(
-			from_string<Species>(get_str(pokemon, "species")),
-			get_integer_wrapper<Level>(pokemon, "level"),
-			get_opt(bounded::type<Item>, "item"),
-			get_opt(bounded::type<Ability>, "ability"),
-			get_opt(bounded::type<Nature>, "nature"),
+			from_string<Species>(get_str(pokemon, "species"_s)),
+			get_integer_wrapper<Level>(pokemon, "level"_s),
+			get_opt(bounded::type<Item>, "item"_s),
+			get_opt(bounded::type<Ability>, "ability"_s),
+			get_opt(bounded::type<Nature>, "nature"_s),
 			parse_evs(pokemon),
 			MoveNames(containers::transform(
-				pokemon.at("moves"),
+				pokemon.at("moves"_s),
 				[](nlohmann::json const & move) {
 					return from_string<MoveName>(move.get<std::string_view>());
 				}
@@ -108,8 +109,8 @@ auto parse_predictor_team(nlohmann::json const & team) -> PredictorTeam {
 export auto parse_predictor_inputs(std::string_view const str) -> PredictorInputs {
 	auto const json = nlohmann::json::parse(str);
 	return PredictorInputs(
-		from_string<Generation>(get_str(json, "generation")),
-		from_string<Style>(get_str(json, "style")),
+		from_string<Generation>(get_str(json, "generation"_s)),
+		from_string<Style>(get_str(json, "style"_s)),
 		parse_predictor_team(json.at("team"))
 	);
 }

@@ -41,19 +41,19 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace containers::string_literals;
 
-constexpr auto parse_condition(std::string_view const str) -> tv::optional<ScreenEndMessage::ScreenName> {
+constexpr auto parse_condition(containers::string_view const str) -> tv::optional<ScreenEndMessage::ScreenName> {
 	using enum ScreenEndMessage::ScreenName;
-	if (str == "Reflect") {
+	if (str == "Reflect"_s) {
 		return Reflect;
-	} else if (str == "Light Screen") {
+	} else if (str == "Light Screen"_s) {
 		return Light_Screen;
-	} else if (str == "Mist") {
+	} else if (str == "Mist"_s) {
 		return Mist;
-	} else if (str == "Safeguard") {
+	} else if (str == "Safeguard"_s) {
 		return Safeguard;
-	} else if (str == "Lucky Chant") {
+	} else if (str == "Lucky Chant"_s) {
 		return Lucky_Chant;
-	} else if (str == "Tailwind") {
+	} else if (str == "Tailwind"_s) {
 		return Tailwind;
 	} else {
 		return tv::none;
@@ -72,15 +72,15 @@ constexpr auto is_immobilize(MoveName const move) -> bool {
 	}
 }
 
-constexpr auto party_from_side_id(std::string_view const str) -> Party {
-	return make_party(str.substr(0, 2));
+constexpr auto party_from_side_id(containers::string_view const str) -> Party {
+	return make_party(containers::take(str, 2_bi));
 }
 
 constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 	auto const type = message.type();
-	if (type == "") {
+	if (type == ""_s) {
 		return SeparatorMessage();
-	} else if (type == "-ability") {
+	} else if (type == "-ability"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const ability = from_string<Ability>(message.pop());
 		auto const source = parse_from_source(message.pop());
@@ -100,7 +100,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Invalid ability source");
 			}
 		));
-	} else if (type == "-activate") {
+	} else if (type == "-activate"_s) {
 		// We can intentionally get a blank player ID when Splash "activates"
 		auto const player_id = message.pop();
 		auto const [category, source] = split_view(message.pop(), ": "_s);
@@ -157,34 +157,34 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				return ItemMessage(party_from_player_id(player_id), item);
 			}
 		));
-	} else if (type == "-anim") {
+	} else if (type == "-anim"_s) {
 		return tv::none;
-	} else if (type == "-boost") {
+	} else if (type == "-boost"_s) {
 		// TODO: Acupressure?
 		return tv::none;
-	} else if (type == "cant") {
+	} else if (type == "cant"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const reason = message.pop();
-		if (reason == "Disable") {
+		if (reason == "Disable"_s) {
 			auto const move_str = message.pop();
 			return MoveMessage(
 				party,
 				from_string<MoveName>(move_str),
 				false
 			);
-		} else if (reason == "flinch") {
+		} else if (reason == "flinch"_s) {
 			return FlinchMessage(party);
-		} else if (reason == "Focus Punch") {
+		} else if (reason == "Focus Punch"_s) {
 			return FocusPunchMessage(party);
-		} else if (reason == "frz") {
+		} else if (reason == "frz"_s) {
 			return FrozenSolidMessage(party);
-		} else if (reason == "par") {
+		} else if (reason == "par"_s) {
 			return FullyParalyzedMessage(party);
-		} else if (reason == "partiallytrapped") {
+		} else if (reason == "partiallytrapped"_s) {
 			return ImmobilizedMessage(party);
-		} else if (reason == "slp") {
+		} else if (reason == "slp"_s) {
 			return StillAsleepMessage(party);
-		} else if (reason == "recharge") {
+		} else if (reason == "recharge"_s) {
 			return RechargingMessage(party);
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
@@ -192,14 +192,14 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				reason
 			));
 		}
-	} else if (type == "-center") {
+	} else if (type == "-center"_s) {
 		return tv::none;
-	} else if (type == "-clearallboost") {
+	} else if (type == "-clearallboost"_s) {
 		return tv::none;
-	} else if (type == "-crit") {
+	} else if (type == "-crit"_s) {
 		auto const party = other(party_from_player_id(message.pop()));
 		return CriticalHitMessage(party);
-	} else if (type == "-curestatus") {
+	} else if (type == "-curestatus"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const status = parse_status(message.pop());
 		auto const source = parse_from_source(message.pop());
@@ -219,9 +219,9 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -curestatus source");
 			}
 		));
-	} else if (type == "-cureteam") {
+	} else if (type == "-cureteam"_s) {
 		return tv::none;
-	} else if (type == "-damage") {
+	} else if (type == "-damage"_s) {
 		auto const parsed = parse_set_hp_message(message);
 		return tv::visit(parsed.source, tv::overload(
 			[&](MainEffect) -> tv::optional<ParsedMessage> {
@@ -259,16 +259,16 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Invalid -damage source");
 			}
 		));
-	} else if (type == "detailschange" or type == "-formechange") {
+	} else if (type == "detailschange"_s or type == "-formechange"_s) {
 		// TODO
 		return tv::none;
-	} else if (type == "-end") {
+	} else if (type == "-end"_s) {
 		auto const party = party_from_player_id(message.pop());
 		// https://github.com/llvm/llvm-project/issues/72828
 		auto const temp = split_view(message.pop(), ": "_s);
 		auto const effect_type = temp.first;
 		auto const other = temp.second;
-		return tv::visit(parse_effect_source(effect_type, ""), tv::overload(
+		return tv::visit(parse_effect_source(effect_type, ""_s), tv::overload(
 			[&](FromSubstitute) -> tv::optional<ParsedMessage> {
 				return DestroySubstituteMessage(party);
 			},
@@ -302,23 +302,23 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Unexpected -end source");
 			}
 		));
-	} else if (type == "-endability") {
+	} else if (type == "-endability"_s) {
 		return tv::none;
-	} else if (type == "-enditem") {
+	} else if (type == "-enditem"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const item = from_string<Item>(message.pop());
 		return ItemMessage(party, item);
-	} else if (type == "-fail") {
+	} else if (type == "-fail"_s) {
 		return tv::none;
-	} else if (type == "faint") {
+	} else if (type == "faint"_s) {
 		return tv::none;
-	} else if (type == "-fieldactivate") {
+	} else if (type == "-fieldactivate"_s) {
 		return tv::none;
-	} else if (type == "-fieldend") {
+	} else if (type == "-fieldend"_s) {
 		return tv::none;
-	} else if (type == "-fieldstart") {
+	} else if (type == "-fieldstart"_s) {
 		return tv::none;
-	} else if (type == "-heal") {
+	} else if (type == "-heal"_s) {
 		auto const parsed = parse_set_hp_message(message);
 		auto const party = parsed.party;
 		return tv::visit(parsed.source, tv::overload(
@@ -341,11 +341,11 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Invalid heal source");
 			}
 		));
-	} else if (type == "-hint") {
+	} else if (type == "-hint"_s) {
 		return tv::none;
-	} else if (type == "-hitcount") {
+	} else if (type == "-hitcount"_s) {
 		return tv::none;
-	} else if (type == "-immune") {
+	} else if (type == "-immune"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const source = parse_from_source(message.pop());
 		return tv::visit(source, tv::overload(
@@ -365,22 +365,22 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Invalid immunity source");
 			}
 		));
-	} else if (type == "inactiveoff") {
+	} else if (type == "inactiveoff"_s) {
 		// message.remainder() == MESSAGE
 		// Timer is off
 		return tv::none;
-	} else if (type == "-item") {
+	} else if (type == "-item"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const item = from_string<Item>(message.pop());
 		return ItemMessage(party, item);
-	} else if (type == "-mega") {
+	} else if (type == "-mega"_s) {
 		return tv::none;
-	} else if (type == "-message") {
+	} else if (type == "-message"_s) {
 		return tv::none;
-	} else if (type == "-miss") {
+	} else if (type == "-miss"_s) {
 		// miss information is always sent with a move as well
 		return tv::none;
-	} else if (type == "move") {
+	} else if (type == "move"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const move_str = message.pop();
 		auto const move = from_string<MoveName>(move_str);
@@ -399,36 +399,36 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 			first_part_is_missed or second_part_is_missed,
 			!immobilize_continued
 		);
-	} else if (type == "-mustrecharge") {
+	} else if (type == "-mustrecharge"_s) {
 		// After moves like Hyper Beam
 		return tv::none;
-	} else if (type == "-notarget") {
+	} else if (type == "-notarget"_s) {
 		// When you use a move, but there is no one to target
 		return tv::none;
-	} else if (type == "-nothing") {
+	} else if (type == "-nothing"_s) {
 		return tv::none;
-	} else if (type == "-ohko") {
+	} else if (type == "-ohko"_s) {
 		return tv::none;
-	} else if (type == "-prepare") {
+	} else if (type == "-prepare"_s) {
 		// From moves like SolarBeam on the charge turn. We already get this
 		// information from the move message.
 		return tv::none;
-	} else if (type == "raw") {
+	} else if (type == "raw"_s) {
 		return tv::none;
-	} else if (type == "-resisted") {
+	} else if (type == "-resisted"_s) {
 		auto const party = party_from_player_id(message.pop());
 		return EffectivenessMessage(
 			party,
 			EffectivenessMessage::not_very
 		);
-	} else if (type == "-setboost") {
+	} else if (type == "-setboost"_s) {
 		// Belly Drum
 		return tv::none;
-	} else if (type == "-sethp") {
+	} else if (type == "-sethp"_s) {
 		auto const parsed = parse_set_hp_message(message);
 		// TODO: verify the source isn't anything meaningful
 		return HPMessage(parsed.party, parsed.status, parsed.hp);
-	} else if (type == "-sideend") {
+	} else if (type == "-sideend"_s) {
 		auto const party = party_from_side_id(message.pop());
 		auto const condition = parse_condition(message.pop());
 		if (condition) {
@@ -439,29 +439,29 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		} else {
 			return tv::none;
 		}
-	} else if (type == "-sidestart") {
+	} else if (type == "-sidestart"_s) {
 		return tv::none;
-	} else if (type == "-supereffective") {
+	} else if (type == "-supereffective"_s) {
 		auto const party = party_from_player_id(message.pop());
 		return EffectivenessMessage(
 			party,
 			EffectivenessMessage::super
 		);
-	} else if (type == "switch") {
+	} else if (type == "switch"_s) {
 		return parse_switch(message);
-	} else if (type == "drag") {
+	} else if (type == "drag"_s) {
 		return PhazeMessage(parse_switch(message));
-	} else if (type == "replace") {
+	} else if (type == "replace"_s) {
 		// Illusion ended
 		return tv::none;
-	} else if (type == "-singleturn") {
+	} else if (type == "-singleturn"_s) {
 		// Received for things like Protect that last the rest of the turn
 		return tv::none;
-	} else if (type == "-start") {
+	} else if (type == "-start"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const first_part_of_source = message.pop();
 		auto const source = [&] {
-			if (first_part_of_source == "typechange") {
+			if (first_part_of_source == "typechange"_s) {
 				// TODO: return this information for Hidden Power
 				[[maybe_unused]] auto const changed_type = message.pop();
 				return parse_from_source(message.pop());
@@ -473,7 +473,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 		return tv::visit(source, tv::overload(
 			[&](FromConfusion) -> tv::optional<ParsedMessage> {
 				auto const how = message.pop();
-				if (how == "[fatigue]") {
+				if (how == "[fatigue]"_s) {
 					return RampageEndMessage(party);
 				} else {
 					return StartConfusionMessage(party);
@@ -499,7 +499,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				return tv::none;
 			}
 		));
-	} else if (type == "-status") {
+	} else if (type == "-status"_s) {
 		auto const party = party_from_player_id(message.pop());
 		auto const status = parse_status(message.pop());
 		auto const source = parse_from_source(message.pop());
@@ -539,19 +539,19 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				throw std::runtime_error("Invalid status source");
 			}
 		));
-	} else if (type == "swap") {
+	} else if (type == "swap"_s) {
 		return tv::none;
-	} else if (type == "t:") {
+	} else if (type == "t:"_s) {
 		return tv::none;
-	} else if (type == "-transform") {
+	} else if (type == "-transform"_s) {
 		return tv::none;
-	} else if (type == "turn") {
+	} else if (type == "turn"_s) {
 		return TurnMessage(bounded::to_integer<TurnCount>(message.pop()));
-	} else if (type == "-unboost") {
+	} else if (type == "-unboost"_s) {
 		return tv::none;
-	} else if (type == "upkeep") {
+	} else if (type == "upkeep"_s) {
 		return tv::none;
-	} else if (type == "-weather") {
+	} else if (type == "-weather"_s) {
 		auto const weather = from_string<Weather>(message.pop());
 		auto const source = parse_from_source(message.pop());
 		return tv::visit(source, tv::overload(
@@ -571,7 +571,7 @@ constexpr auto parse_message(InMessage message) -> tv::optional<ParsedMessage> {
 				return tv::none;
 			}
 		));
-	} else if (type == "tie" or type == "win") {
+	} else if (type == "tie"_s or type == "win"_s) {
 		return BattleFinishedMessage();
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(

@@ -17,21 +17,23 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
+using size_type = containers::array_size_type<std::byte>;
+
 export struct BitView {
-	explicit constexpr BitView(std::span<std::byte const> const view):
+	explicit constexpr BitView(containers::span<std::byte const> const view):
 		m_view(view)
 	{
 	}
 
 	constexpr auto remaining_bits() const {
-		return bounded::increase_min<0>(::bounded::assume_in_range<containers::array_size_type<std::byte>>(m_view.size()) * bounded::char_bit - m_consumed_bits_in_initial_byte);
+		return bounded::increase_min<0>(m_view.size() * bounded::char_bit - m_consumed_bits_in_initial_byte);
 	}
 
 	constexpr auto skip_bits(auto const bits) -> void {
 		pop_bits<not_an_integer>(bits);
 	}
-	constexpr auto skip_bytes(auto const bytes) -> void {
-		pop(static_cast<std::size_t>(bytes));
+	constexpr auto skip_bytes(size_type const bytes) -> void {
+		pop(bytes);
 	}
 
 	constexpr auto pop_integer(auto const bits) {
@@ -40,7 +42,7 @@ export struct BitView {
 	constexpr auto pop_string(auto const size_in_bytes) -> containers::string {
 		BOUNDED_ASSERT(m_consumed_bits_in_initial_byte == 0_bi);
 		BOUNDED_ASSERT(size_in_bytes <= m_view.size());
-		auto const bytes = pop(static_cast<std::size_t>(size_in_bytes));
+		auto const bytes = pop(size_in_bytes);
 		return containers::string(containers::transform(bytes, bounded::construct<char>));
 	}
 
@@ -54,9 +56,9 @@ private:
 		}
 	};
 
-	constexpr auto pop(std::size_t const bytes) -> std::span<std::byte const> {
-		auto const result = m_view.subspan(0, bytes);
-		m_view = m_view.subspan(bytes);
+	constexpr auto pop(size_type const requested_bytes) -> containers::span<std::byte const> {
+		auto result = containers::take(m_view, requested_bytes);
+		m_view = containers::drop(m_view, requested_bytes);
 		return result;
 	}
 
@@ -73,7 +75,7 @@ private:
 			result += bounded::integer(without_upper_bits() >> low_bits_to_ignore);
 			m_consumed_bits_in_initial_byte += bits_to_consume;
 			if (m_consumed_bits_in_initial_byte == bounded::char_bit) {
-				pop(1);
+				pop(1_bi);
 				m_consumed_bits_in_initial_byte = 0_bi;
 			}
 			remaining_bits -= bits_to_consume;
@@ -85,7 +87,7 @@ private:
 		return (containers::at(m_view, 0_bi) << m_consumed_bits_in_initial_byte) >> m_consumed_bits_in_initial_byte;
 	}
 
-	std::span<std::byte const> m_view;
+	containers::span<std::byte const> m_view;
 	bounded::integer<0, bounded::normalize<bounded::char_bit>> m_consumed_bits_in_initial_byte = 0_bi;
 };
 

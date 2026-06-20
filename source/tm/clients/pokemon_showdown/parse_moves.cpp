@@ -22,14 +22,14 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace containers::string_literals;
 
-constexpr auto parse_hidden_power(std::string_view const str) -> Type {
+constexpr auto parse_hidden_power(containers::string_view const str) -> Type {
 	constexpr auto prefixes = containers::array{
 		"hiddenpower"_s,
 		"Hidden Power"_s,
 		"hp"_s,
 	};
-	auto const matches = [=](std::string_view const prefix) {
-		return str.starts_with(prefix);
+	auto const matches = [=](containers::string_view const prefix) {
+		return containers::starts_with(str, prefix);
 	};
 	auto const ptr = containers::maybe_find_if(prefixes, matches);
 	if (!ptr) {
@@ -38,8 +38,8 @@ constexpr auto parse_hidden_power(std::string_view const str) -> Type {
 			str
 		));
 	}
-	auto const type_str = str.substr(ptr->size());
-	return type_str.empty() ? Type::Dark : from_string<Type>(type_str);
+	auto const type_str = containers::drop_exactly(str, ptr->size());
+	return containers::is_empty(type_str) ? Type::Dark : from_string<Type>(type_str);
 }
 
 struct MovesAndHiddenPower {

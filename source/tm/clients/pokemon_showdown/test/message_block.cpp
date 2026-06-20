@@ -18,7 +18,7 @@ namespace {
 using namespace containers::string_literals;
 
 template<std::size_t size>
-constexpr auto equal(ps::MessageBlock const block, containers::c_array<std::string_view, size> && expected) {
+constexpr auto equal(ps::MessageBlock const block, containers::c_array<containers::string_view, size> && expected) {
 	return containers::equal(
 		expected,
 		containers::transform(
@@ -36,13 +36,13 @@ constexpr auto equal(ps::MessageBlock const block, containers::c_array<std::stri
 }
 
 static_assert(equal(
-	ps::message_block("||"),
-	{"||"}
+	ps::message_block("||"_s),
+	{"||"_s}
 ));
 
 static_assert(equal(
-	ps::message_block("|switch|fuzz"),
-	{"|switch|fuzz"}
+	ps::message_block("|switch|fuzz"_s),
+	{"|switch|fuzz"_s}
 ));
 
 } // namespace

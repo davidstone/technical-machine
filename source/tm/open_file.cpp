@@ -21,7 +21,7 @@ constexpr auto open_file(std::filesystem::path const & path, std::ios_base::open
 			"Could not open "_s,
 			path.string(),
 			": "_s,
-			std::string_view(ex.what())
+			containers::string_view(ex.what())
 		));
 	}
 	return file;

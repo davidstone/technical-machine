@@ -9,6 +9,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine::po {
+using namespace containers::string_literals;
 
 export struct InvalidTeamFile : std::runtime_error {
 	explicit InvalidTeamFile(std::string const & message):
@@ -16,11 +17,15 @@ export struct InvalidTeamFile : std::runtime_error {
 	{
 	}
 
-	InvalidTeamFile(std::string_view const expected, std::string_view const received):
-		InvalidTeamFile(containers::concatenate<std::string>(std::string_view("Expected a field labeled "), expected, std::string_view(" but got "), received))
+	InvalidTeamFile(containers::string_view const expected, containers::string_view const received):
+		InvalidTeamFile(containers::concatenate<std::string>(
+			"Expected a field labeled "_s,
+			expected,
+			" but got "_s,
+			received
+		))
 	{
 	}
 };
-
 
 } // namespace technicalmachine::po

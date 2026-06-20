@@ -5,7 +5,6 @@
 
 export module tm.web_server.normalize_requested_file;
 
-import containers;
 import std_module;
 
 namespace technicalmachine {

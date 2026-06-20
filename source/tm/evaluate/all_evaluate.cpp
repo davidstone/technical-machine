@@ -14,13 +14,14 @@ import tm.generation;
 import tm.get_directory;
 
 import bounded;
+import std_module;
 import tv;
 
 namespace technicalmachine {
 
 template<Generation generation>
 auto settings_for_generation() {
-	return Evaluate<generation>(load_evaluate(get_settings_directory() / to_string(generation) / "OU/evaluate.json"));
+	return Evaluate<generation>(load_evaluate(get_settings_directory() / std::filesystem::path(to_string(generation)) / "OU/evaluate.json"));
 }
 
 export struct AllEvaluate {

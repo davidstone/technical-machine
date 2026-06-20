@@ -50,10 +50,10 @@ constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage con
 constexpr auto is_potentially_useful = [](InMessage const message) {
 	return
 		!is_chat_message(message) and
-		message.type() != "error" and
-		message.type() != "gametype" and
-		message.type() != "player" and
-		message.type() != "t:";
+		message.type() != "error"_s and
+		message.type() != "gametype"_s and
+		message.type() != "player"_s and
+		message.type() != "t:"_s;
 };
 
 export struct BattleLogMessages {

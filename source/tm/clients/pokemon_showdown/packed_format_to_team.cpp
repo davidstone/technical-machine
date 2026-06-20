@@ -46,37 +46,38 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 constexpr auto pokemon_delimiter = ']';
 
-constexpr auto parse_species(std::string_view const species_str, Nickname const nickname) {
-	return from_string<Species>(species_str.empty() ? nickname.str() : species_str);
+constexpr auto parse_species(containers::string_view const species_str, Nickname const nickname) {
+	return from_string<Species>(containers::is_empty(species_str) ? nickname.str() : species_str);
 }
 
-constexpr auto parse_ability(std::string_view const ability_str, [[maybe_unused]] Species const species) {
+constexpr auto parse_ability(containers::string_view const ability_str, [[maybe_unused]] Species const species) {
 	// TODO: Get the correct values for this
 	return
-		ability_str == "" ? Ability::Honey_Gather :
-		ability_str == "0" ? Ability::Honey_Gather :
-		ability_str == "1" ? Ability::Honey_Gather :
-		ability_str == "H" ? Ability::Honey_Gather :
+		ability_str == ""_s ? Ability::Honey_Gather :
+		ability_str == "0"_s ? Ability::Honey_Gather :
+		ability_str == "1"_s ? Ability::Honey_Gather :
+		ability_str == "H"_s ? Ability::Honey_Gather :
 		from_string<Ability>(ability_str);
 }
 
-constexpr auto parse_moves(std::string_view const str, Generation const generation) {
+constexpr auto parse_moves(containers::string_view const str, Generation const generation) {
 	return RegularMoves(containers::transform(
 		containers::split(str, ','),
-		[=](std::string_view move_str) {
+		[=](containers::string_view move_str) {
 			return Move(generation, from_string<MoveName>(move_str));
 		}
 	));
 }
 
-constexpr auto parse_nature(std::string_view const str) {
-	return str.empty() ? Nature::Serious : from_string<Nature>(str);
+constexpr auto parse_nature(containers::string_view const str) {
+	return containers::is_empty(str) ? Nature::Serious : from_string<Nature>(str);
 }
 
-constexpr auto parse_stat_components(std::string_view const str, auto parse_value) {
+constexpr auto parse_stat_components(containers::string_view const str, auto parse_value) {
 	auto buffer = DelimitedBufferView(str, ',');
 	auto next = [&] {
 		return parse_value(buffer.pop());
@@ -90,32 +91,32 @@ constexpr auto parse_stat_components(std::string_view const str, auto parse_valu
 	return GenericStats(hp, atk, def, spa, spd, spe);
 }
 
-constexpr auto parse_gender(std::string_view const str) {
-	return str.empty() ? Gender::genderless : from_string<Gender>(str);
+constexpr auto parse_gender(containers::string_view const str) {
+	return containers::is_empty(str) ? Gender::genderless : from_string<Gender>(str);
 }
 
-constexpr auto parse_shiny(std::string_view const str) {
+constexpr auto parse_shiny(containers::string_view const str) {
 	return
-		str == "S" ? true :
-		str == "" ? false :
-		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid shiny string: "), str));
+		str == "S"_s ? true :
+		str == ""_s ? false :
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid shiny string: "_s, str));
 }
 
 template<typename T>
-constexpr auto parse_integer_wrapper(std::string_view const str) {
+constexpr auto parse_integer_wrapper(containers::string_view const str) {
 	using integer = typename T::value_type;
-	return T(str.empty() ? numeric_traits::max_value<integer> : bounded::to_integer<integer>(str));
+	return T(containers::is_empty(str) ? numeric_traits::max_value<integer> : bounded::to_integer<integer>(str));
 }
 
 template<typename T>
 constexpr auto parse_ev_or_iv(T const default_value) {
-	return [=](std::string_view const maybe) {
-		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
+	return [=](containers::string_view const maybe) {
+		return containers::is_empty(maybe) ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
 	};
 }
 
 template<Generation generation>
-constexpr auto parse_evs(std::string_view const str) {
+constexpr auto parse_evs(containers::string_view const str) {
 	auto const evs = parse_stat_components(str, parse_ev_or_iv(EV(0_bi)));
 	if constexpr (generation <= Generation::two) {
 		return to_old_gen_evs(evs);
@@ -125,7 +126,7 @@ constexpr auto parse_evs(std::string_view const str) {
 }
 
 template<Generation generation>
-constexpr auto parse_dv_or_iv = [](std::string_view const maybe) {
+constexpr auto parse_dv_or_iv = [](containers::string_view const maybe) {
 	auto const iv = parse_ev_or_iv(IV(31_bi))(maybe);
 	if constexpr (generation <= Generation::two) {
 		return DV(iv);
@@ -135,7 +136,7 @@ constexpr auto parse_dv_or_iv = [](std::string_view const maybe) {
 };
 
 template<Generation generation>
-constexpr auto parse_dvs_or_ivs(std::string_view const str) {
+constexpr auto parse_dvs_or_ivs(containers::string_view const str) {
 	auto const stats = parse_stat_components(str, parse_dv_or_iv<generation>);
 	if constexpr (generation <= Generation::two) {
 		return to_dvs(stats);
@@ -145,7 +146,7 @@ constexpr auto parse_dvs_or_ivs(std::string_view const str) {
 }
 
 template<Generation generation>
-constexpr auto parse_pokemon(std::string_view const str) -> KnownPokemon<generation> {
+constexpr auto parse_pokemon(containers::string_view const str) -> KnownPokemon<generation> {
 	auto buffer = DelimitedBufferView(str, '|');
 	auto const nickname = Nickname(buffer.pop());
 	auto const species = parse_species(buffer.pop(), nickname);
@@ -176,7 +177,7 @@ constexpr auto parse_pokemon(std::string_view const str) -> KnownPokemon<generat
 }
 
 export template<Generation generation>
-constexpr auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
+constexpr auto packed_format_to_team(containers::string_view const str) -> KnownTeam<generation> {
 	return KnownTeam<generation>(containers::transform(
 		containers::split(str, pokemon_delimiter),
 		parse_pokemon<generation>

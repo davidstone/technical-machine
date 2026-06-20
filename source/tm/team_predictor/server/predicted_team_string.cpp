@@ -98,7 +98,7 @@ export auto predicted_team_string(
 		};
 		return constant_generation(inputs.generation, impl);
 	} catch (std::exception const & ex) {
-		return containers::string(std::string_view(ex.what()));
+		return containers::string(containers::string_view(ex.what()));
 	}
 }
 

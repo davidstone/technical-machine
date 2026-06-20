@@ -7,14 +7,16 @@ export module tm.clients.ps.parse_gender;
 
 import tm.gender;
 
+import containers;
 import std_module;
 
 namespace technicalmachine::ps {
+using namespace containers::string_literals;
 
-export constexpr auto parse_gender(std::string_view const str) -> Gender {
+export constexpr auto parse_gender(containers::string_view const str) -> Gender {
 	return
-		str == "F" ? Gender::female :
-		str == "M" ? Gender::male :
+		str == "F"_s ? Gender::female :
+		str == "M"_s ? Gender::male :
 		Gender::genderless;
 }
 

@@ -14,7 +14,7 @@ namespace technicalmachine::ps {
 using namespace containers::string_literals;
 
 export struct InMessage {
-	constexpr InMessage(std::string_view const data):
+	constexpr InMessage(containers::string_view const data):
 		InMessage(DelimitedBufferView(data, '|'))
 	{
 	}
@@ -33,11 +33,11 @@ export struct InMessage {
 	}
 
 private:
-	constexpr InMessage(DelimitedBufferView<std::string_view> view):
+	constexpr InMessage(DelimitedBufferView<containers::string_view> view):
 		m_type([&] {
 			// Because messages start with a '|', discard first empty string
 			auto const discarded = view.pop();
-			if (!discarded.empty()) {
+			if (!containers::is_empty(discarded)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
 					"Expected empty string, got "_s,
 					discarded
@@ -49,8 +49,8 @@ private:
 	{
 	}
 
-	std::string_view m_type;
-	DelimitedBufferView<std::string_view> m_view;
+	containers::string_view m_type;
+	DelimitedBufferView<containers::string_view> m_view;
 };
 
 } // namespace technicalmachine::ps

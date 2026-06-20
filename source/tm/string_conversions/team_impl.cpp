@@ -21,7 +21,6 @@ import std_module;
 
 namespace technicalmachine {
 using namespace containers::string_literals;
-using namespace std::string_view_literals;
 
 template<any_team TeamType>
 constexpr auto to_string_impl(
@@ -33,7 +32,7 @@ constexpr auto to_string_impl(
 		to_string(generation_from<TeamType>),
 		" team:\n"_s
 	);
-	auto const active_marker = include_active_marker ? "* "sv : ""sv;
+	auto const active_marker = include_active_marker ? "* "_sv : ""_sv;
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),

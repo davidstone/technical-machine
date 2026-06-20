@@ -39,6 +39,7 @@ target_sources(tm_boost_property_tree PUBLIC
 )
 target_link_libraries(tm_boost_property_tree
 	PUBLIC
+		containers
 		strict_defaults_interface
 		std_module
 	PRIVATE

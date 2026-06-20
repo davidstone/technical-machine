@@ -11,7 +11,7 @@ import std_module;
 namespace technicalmachine {
 using namespace containers::string_literals;
 
-export auto extension_to_content_type(std::filesystem::path const & ext) -> std::string_view {
+export auto extension_to_content_type(std::filesystem::path const & ext) -> containers::string_view {
 	if (ext == ".html") {
 		return "text/html"_s;
 	} else if (ext == ".js") {

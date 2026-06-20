@@ -10,6 +10,7 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
+using namespace containers::string_literals;
 
 // Not portable because it does not respect character encodings.
 // We do not want to use cctype functions because we do not want to
@@ -39,41 +40,38 @@ static_assert(!is_valid('Z'));
 static_assert(!is_valid('%'));
 static_assert(!is_valid(' '));
 
-export constexpr auto lowercase_alphanumeric = [](std::string_view const input) {
+export constexpr auto lowercase_alphanumeric = [](containers::string_view const input) {
 	return containers::filter(containers::transform(std::move(input), to_lower), is_valid);
 };
 
 export template<auto max_size>
 struct fixed_capacity_lowercase_and_digit_string {
-	constexpr explicit fixed_capacity_lowercase_and_digit_string(std::string_view const str):
+	constexpr explicit fixed_capacity_lowercase_and_digit_string(containers::string_view const str):
 		m_data(containers::take(lowercase_alphanumeric(str), max_size))
 	{
 	}
-	constexpr operator std::string_view() const {
-		return std::string_view(
-			containers::data(m_data),
-			bounded::assume_in_range<std::size_t>(containers::size(m_data))
-		);
+	constexpr operator containers::string_view() const {
+		return containers::string_view(m_data);
 	}
 
 private:
 	containers::static_vector<char, max_size> m_data;
 };
 
-constexpr auto compare = [](auto const lhs, auto const rhs) {
+constexpr auto compare(containers::string_view const lhs, containers::string_view const rhs) {
 	return containers::lexicographical_compare(lowercase_alphanumeric(lhs), lowercase_alphanumeric(rhs)) < 0;
-};
+}
 
-constexpr auto a = std::string_view("adaptability");
-constexpr auto b = std::string_view("Adaptability");
+constexpr auto a = "adaptability"_s;
+constexpr auto b = "Adaptability"_s;
 static_assert(!compare(a, b));
 static_assert(!compare(b, a));
-constexpr auto c = std::string_view("Aftermath");
+constexpr auto c = "Aftermath"_s;
 static_assert(compare(a, c));
 static_assert(compare(b, c));
 static_assert(!compare(c, a));
 static_assert(!compare(c, b));
-constexpr auto d = std::string_view("----aftermath----");
+constexpr auto d = "----aftermath----"_s;
 static_assert(compare(a, d));
 static_assert(!compare(d, a));
 static_assert(!compare(d, c));

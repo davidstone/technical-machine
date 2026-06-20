@@ -284,7 +284,7 @@ constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 });
 
 TEST_CASE("Pokemon Lab: Pokemon Lab team file") {
-	auto const parsed = pl::read_team_file(std::as_bytes(std::span<char const>(team_xml)));
+	auto const parsed = pl::read_team_file(containers::as_bytes(team_xml));
 	CHECK(parsed == expected);
 }
 

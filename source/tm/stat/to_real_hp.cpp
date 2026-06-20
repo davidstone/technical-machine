@@ -12,7 +12,6 @@ import tm.stat.max_hp;
 import tm.visible_hp;
 
 import bounded;
-import containers;
 import std_module;
 
 namespace technicalmachine {

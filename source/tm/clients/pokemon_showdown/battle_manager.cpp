@@ -54,7 +54,7 @@ export struct BattleManager {
 	}
 
 	using Result = BattleMessageHandler::Result;
-	constexpr auto handle_message(std::span<ParsedMessage const> const message) -> Result {
+	constexpr auto handle_message(containers::span<ParsedMessage const> const message) -> Result {
 		return tv::visit(m_battle, tv::overload(
 			[](BattleInitMessage const &) -> Result {
 				throw std::runtime_error("Received an event before the first action");

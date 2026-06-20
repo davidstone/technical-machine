@@ -36,6 +36,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
+using namespace containers::string_literals;
 
 auto parse_active_moves(nlohmann::json const & json) -> ParsedMoves {
 	return ParsedMoves(containers::transform(
@@ -63,35 +64,35 @@ auto parse_switching_allowed(nlohmann::json const & json) -> SwitchPossibilities
 }
 
 auto parse_stats(VisibleHP const hp, nlohmann::json const & stats) -> ParsedStats {
-	auto get = [&](std::string_view const str) {
+	auto get = [&](containers::string_view const str) {
 		auto const received = stats.at(str).get<nlohmann::json::number_integer_t>();
 		return bounded::check_in_range<ParsedStat>(received);
 	};
 	return ParsedStats(
 		hp,
-		get("atk"),
-		get("def"),
-		get("spa"),
-		get("spd"),
-		get("spe")
+		get("atk"_s),
+		get("def"_s),
+		get("spa"_s),
+		get("spd"_s),
+		get("spe"_s)
 	);
 }
 
 auto parse_pokemon(nlohmann::json const & json) -> ParsedPokemon {
-	auto get = [&](std::string_view const key) {
+	auto get = [&](containers::string_view const key) {
 		return json.at(key).get<std::string_view>();
 	};
-	auto const details = parse_details(get("details"));
-	auto const hp_and_status = parse_hp_and_status(get("condition"));
+	auto const details = parse_details(get("details"_s));
+	auto const hp_and_status = parse_hp_and_status(get("condition"_s));
 	auto const moves = parse_moves(json.at("moves"));
-	// auto const nickname = parse_pokemon_identity(get("ident")).nickname;
+	// auto const nickname = parse_pokemon_identity(get("ident"_s)).nickname;
 	return ParsedPokemon(
 		details.species,
 		details.level,
 		details.gender,
 		hp_and_status.status,
-		from_string<Item>(get("item")),
-		from_string<Ability>(get("baseAbility")),
+		from_string<Item>(get("item"_s)),
+		from_string<Ability>(get("baseAbility"_s)),
 		parse_stats(hp_and_status.hp, json.at("stats")),
 		moves.names,
 		moves.hidden_power_type
@@ -120,8 +121,8 @@ auto is_force_switch(nlohmann::json const & json) -> bool {
 	return true;
 }
 
-export auto parse_request(std::string_view const str) -> ParsedRequest {
-	auto const json = nlohmann::json::parse(str);
+export auto parse_request(containers::string_view const str) -> ParsedRequest {
+	auto const json = nlohmann::json::parse(std::string_view(str));
 	auto side = parse_team_from_request(json.at("side"));
 	if (json.value("wait", false)) {
 		// The only legal selection is pass

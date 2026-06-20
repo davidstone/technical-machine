@@ -5,9 +5,11 @@
 
 export module tm.ps_usage_stats.mode;
 
+import containers;
 import std_module;
 
 namespace technicalmachine::ps_usage_stats {
+using namespace containers::string_literals;
 
 export enum class Mode {
 	unweighted,
@@ -16,12 +18,12 @@ export enum class Mode {
 	top_players
 };
 
-export constexpr auto parse_mode(std::string_view const str) -> Mode {
+export constexpr auto parse_mode(containers::string_view const str) -> Mode {
 	return
-		str == "unweighted" ? Mode::unweighted :
-		str == "weighted" ? Mode::weighted :
-		str == "weighted_winner" ? Mode::weighted_winner :
-		str == "top_players" ? Mode::top_players :
+		str == "unweighted"_s ? Mode::unweighted :
+		str == "weighted"_s ? Mode::weighted :
+		str == "weighted_winner"_s ? Mode::weighted_winner :
+		str == "top_players"_s ? Mode::top_players :
 		throw std::runtime_error("Invalid mode");
 }
 

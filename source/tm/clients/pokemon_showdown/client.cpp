@@ -14,6 +14,7 @@ import tm.strategy.strategy;
 import tm.get_directory;
 import tm.settings_file;
 
+import containers;
 import std_module;
 
 namespace technicalmachine::ps {
@@ -25,7 +26,7 @@ export struct Client {
 			std::move(settings),
 			get_battles_directory(),
 			std::move(strategy),
-			[&](std::string_view const output) { m_sockets.write_message(output); },
+			[&](containers::string_view const output) { m_sockets.write_message(output); },
 			[&](auto const & ... args) { return m_sockets.authenticate(args...); }
 		)
 	{
