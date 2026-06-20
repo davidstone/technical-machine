@@ -12,6 +12,7 @@ target_sources(tm_strategy_expectimax PUBLIC
 		expectimax.cpp
 		moved.cpp
 		generic_flag_branch.cpp
+		score_executed_actions.cpp
 		score_selections.cpp
 		to_selection_probabilities.cpp
 )
