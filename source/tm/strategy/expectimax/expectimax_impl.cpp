@@ -51,6 +51,7 @@ import tm.status.clears_status;
 import tm.status.status_name;
 
 import tm.strategy.expectimax.execute_switch;
+import tm.strategy.expectimax.generic_flag_branch;
 import tm.strategy.expectimax.moved;
 import tm.strategy.expectimax.score_selections;
 import tm.strategy.expectimax.to_selection_probabilities;
@@ -95,46 +96,6 @@ constexpr auto is_damaging(Selection const selection) -> bool {
 		[](Switch) { return false; },
 		[](MoveName const move) { return is_damaging(move); },
 		[](Pass) { return false; }
-	));
-}
-
-struct FlagProbability {
-	bool flag;
-	Probability probability;
-};
-
-constexpr auto probabilities(auto const basic_probability, auto... args) {
-	return containers::filter(
-		containers::transform(
-			containers::array({true, false}),
-			[=](bool const flag) {
-				auto const base = basic_probability(args...);
-				return FlagProbability(
-					flag,
-					flag ? base : Probability(1.0) - base
-				);
-			}
-		),
-		[](FlagProbability const x) { return x.probability != Probability(0.0); }
-	);
-};
-
-constexpr auto multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) -> Score {
-	auto average_score = Score(0.0);
-	auto const first_probabilities = probabilities(basic_probability, true);
-	auto const last_probabilities = containers::make_static_vector(probabilities(basic_probability, false));
-	for (auto const first : first_probabilities) {
-		for (auto const last : last_probabilities) {
-			average_score += first.probability * last.probability * next_branch(first.flag, last.flag);
-		}
-	}
-	return average_score;
-}
-
-constexpr auto generic_flag_branch(Probability const basic_probability, auto const & next_branch) -> Score {
-	return containers::sum(containers::transform(
-		probabilities(bounded::value_to_function(basic_probability)),
-		[&](FlagProbability const x) { return x.probability * next_branch(x.flag); }
 	));
 }
 
