@@ -97,15 +97,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	}
 }
 
-auto unique_path_component(std::filesystem::path const & base_path, std::filesystem::path const & full_path) -> std::filesystem::path {
-	auto const & base_str = base_path.string();
-	auto const & full_str = full_path.string();
-	if (!full_str.starts_with(base_str)) {
-		throw std::runtime_error(containers::concatenate<std::string>("Could not extract trailing part of file name with a base of "_s, base_str, " and a filename of "_s, full_str));
-	}
-	return std::filesystem::path(full_str.substr(base_str.size()));
-}
-
 } // namespace
 
 auto main(int argc, char ** argv) -> int {
@@ -115,7 +106,7 @@ auto main(int argc, char ** argv) -> int {
 		for (auto const & path : files_in_path(source)) {
 			try {
 				auto const visitor = [&](auto const & team, auto const & function) {
-					function(team, unique_path_component(source, path));
+					function(team, std::filesystem::is_directory(source) ? path.lexically_relative(source) : path.filename());
 				};
 				tv::visit(load_team_from_file(path), args.outputter, visitor);
 			} catch (std::exception const & ex) {
