@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang_version: [ 'main', '22' ]
+        clang_version: [ 'main', '23' ]
     uses: ./.github/workflows/build-and-test-impl.yml
     with:
       clang_version: ${{ matrix.clang_version }}
