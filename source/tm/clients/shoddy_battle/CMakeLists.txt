@@ -16,7 +16,6 @@ target_sources(tm_shoddy_battle PRIVATE
 target_link_libraries(tm_shoddy_battle
 	PUBLIC
 		tm_common
-		strict_defaults_interface
 	PRIVATE
 		strict_defaults
 )

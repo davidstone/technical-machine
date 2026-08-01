@@ -20,7 +20,6 @@ target_sources(tm_netbattle PUBLIC
 target_link_libraries(tm_netbattle
 	PUBLIC
 		tm_common
-		strict_defaults_interface
 	PRIVATE
 		strict_defaults
 )

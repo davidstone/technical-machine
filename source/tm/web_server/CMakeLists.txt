@@ -17,7 +17,6 @@ target_sources(tm_web_server PUBLIC
 target_link_libraries(tm_web_server
 	PUBLIC
 		containers
-		strict_defaults_interface
 		tm_boost_networking
 		tm_common
 	PRIVATE

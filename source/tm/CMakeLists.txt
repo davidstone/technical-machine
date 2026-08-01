@@ -279,7 +279,6 @@ target_link_libraries(tm_test_lib
 	PUBLIC
 		tm_common
 		tm_team_predictor
-		strict_defaults_interface
 	PRIVATE
 		strict_defaults
 )

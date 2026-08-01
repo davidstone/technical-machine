@@ -41,7 +41,6 @@ target_link_libraries(tm_clients
 		tm_shoddy_battle
 		tm_strategy
 		tm_team_predictor
-		strict_defaults_interface
 	PRIVATE
 		strict_defaults
 )
