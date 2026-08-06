@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
       with:
-        repository: davidstone/pokemon-usage-stats.git
+        repository: davidstone/pokemon-usage-stats
         path: pokemon-usage-stats
     - name: Set environment variables
       run: |
