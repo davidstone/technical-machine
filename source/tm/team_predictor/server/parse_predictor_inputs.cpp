@@ -30,7 +30,7 @@ import tm.ability;
 import tm.gender;
 import tm.generation;
 import tm.item;
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import bounded;
 import containers;

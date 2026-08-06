@@ -14,7 +14,7 @@ import tm.string_conversions.generation;
 import tm.string_conversions.species;
 
 import tm.load_json_from_file;
-import tm.nlohmann_json;
+import nlohmann.json;
 import tm.open_file;
 
 import bounded;

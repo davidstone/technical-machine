@@ -26,7 +26,7 @@ import tm.team_predictor.usage_stats_probabilities;
 
 import tm.generation;
 import tm.item;
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import containers;
 import std_module;

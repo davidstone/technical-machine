@@ -17,7 +17,7 @@ import tm.clients.ps.in_message;
 import tm.clients.ps.is_chat_message;
 import tm.clients.ps.make_battle_init_message;
 
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import bounded;
 import containers;

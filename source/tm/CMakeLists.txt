@@ -211,7 +211,6 @@ target_sources(tm_common PUBLIC
 		initial_team.cpp
 		item.cpp
 		get_legal_selections.cpp
-		nlohmann_json.cpp
 		load_json_from_file.cpp
 		load_settings_file.cpp
 		open_file.cpp
@@ -247,7 +246,7 @@ target_sources(tm_common PRIVATE
 target_link_libraries(tm_common
 	concurrent
 	containers
-	nlohmann_json
+	nlohmann_json_modules
 	strict_defaults
 )
 target_include_directories(tm_common PUBLIC

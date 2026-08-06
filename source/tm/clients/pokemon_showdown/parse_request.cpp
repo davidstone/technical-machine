@@ -26,7 +26,7 @@ import tm.type.type;
 
 import tm.ability;
 import tm.item;
-import tm.nlohmann_json;
+import nlohmann.json;
 import tm.visible_hp;
 
 import bounded;

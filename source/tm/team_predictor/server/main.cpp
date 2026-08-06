@@ -13,7 +13,7 @@ import tm.team_predictor.server.predicted_team_string;
 import tm.team_predictor.all_usage_stats;
 
 import tm.boost_networking;
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import containers;
 import std_module;

@@ -45,7 +45,7 @@ import tm.boost_networking;
 import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
-import tm.nlohmann_json;
+import nlohmann.json;
 import tm.open_file;
 import tm.settings_file;
 

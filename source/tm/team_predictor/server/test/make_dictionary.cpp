@@ -16,7 +16,7 @@ import tm.team_predictor.all_usage_stats;
 import tm.test.usage_bytes;
 
 import tm.generation;
-import tm.nlohmann_json;
+import nlohmann.json;
 
 namespace technicalmachine {
 namespace {

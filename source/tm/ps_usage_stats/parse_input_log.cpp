@@ -12,7 +12,7 @@ import tm.move.move_name;
 import tm.string_conversions.move_name;
 
 import tm.buffer_view;
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import bounded;
 import containers;

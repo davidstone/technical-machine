@@ -5,7 +5,7 @@
 
 export module tm.load_json_from_file;
 
-export import tm.nlohmann_json;
+export import nlohmann.json;
 import tm.open_file;
 
 import std_module;

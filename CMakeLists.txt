@@ -20,15 +20,14 @@ enable_testing()
 
 find_package(TBB REQUIRED)
 
-add_library(nlohmann_json INTERFACE IMPORTED)
-target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/include")
-
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
 	add_subdirectory(dependencies/bounded-integer)
 	add_subdirectory(dependencies/cmake_strict_defaults)
 	add_subdirectory(dependencies/concurrent)
 	add_subdirectory(dependencies/doctest)
+	set(NLOHMANN_JSON_BUILD_MODULES ON)
+	add_subdirectory(dependencies/json)
 	add_subdirectory(dependencies/numeric-traits)
 	add_subdirectory(dependencies/operators)
 	add_subdirectory(dependencies/std_module)

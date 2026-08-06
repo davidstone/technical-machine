@@ -12,7 +12,7 @@ import tm.move.move_name;
 
 import tm.ps_usage_stats.parse_input_log;
 
-import tm.nlohmann_json;
+import nlohmann.json;
 
 import bounded;
 

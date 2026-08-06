@@ -6,7 +6,7 @@
 export module tm.load_settings_file;
 
 import tm.load_json_from_file;
-import tm.nlohmann_json;
+import nlohmann.json;
 export import tm.settings_file;
 
 import bounded;

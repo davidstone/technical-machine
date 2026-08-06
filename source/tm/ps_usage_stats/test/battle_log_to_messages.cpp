@@ -24,7 +24,7 @@ import tm.status.status_name;
 
 import tm.gender;
 import tm.generation;
-import tm.nlohmann_json;
+import nlohmann.json;
 import tm.visible_hp;
 
 import bounded;
