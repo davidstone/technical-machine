@@ -79,7 +79,7 @@ auto parse_moves(CheckedIterator it) {
 	};
 	auto moves = InitialMoves(containers::remove_none(
 		containers::generate_n(max_moves_per_pokemon, [&] -> tv::optional<InitialMove> {
-			auto const & value = it.advance("Move"_s);
+			auto const & value = it.advance("Move"_sv);
 			static_assert(numeric_traits::min_value<MoveID> == 1_bi);
 			using ReadMoveID = bounded::integer<0, bounded::normalize<numeric_traits::max_value<MoveID>>>;
 			auto const move_id = value.get_value<ReadMoveID>();
@@ -119,7 +119,7 @@ auto parse_stats(containers::string_view const name, CheckedIterator it) {
 
 template<SpecialInputStyle style>
 auto parse_dvs_or_ivs(CheckedIterator it) {
-	constexpr auto name = "DV"_s;
+	constexpr auto name = "DV"_sv;
 	if constexpr (style == SpecialInputStyle::combined) {
 		auto const parsed = parse_stats<DV>(name, it);
 		struct Parsed {
@@ -134,7 +134,7 @@ auto parse_dvs_or_ivs(CheckedIterator it) {
 
 template<SpecialInputStyle style>
 auto parse_evs(CheckedIterator it) {
-	auto const parsed = parse_stats<EV>("EV"_s, it);
+	auto const parsed = parse_stats<EV>("EV"_sv, it);
 	if constexpr (style == SpecialInputStyle::combined) {
 		struct Parsed {
 			OldGenEVs stats;
@@ -200,7 +200,7 @@ auto parse_team(property_tree::ptree_reader pt) -> InitialTeam<style> {
 		containers::transform(
 			containers::filter(
 				pt,
-				[](auto const & value) { return value.first == "Pokemon"_s; }
+				[](auto const & value) { return value.first == "Pokemon"_sv; }
 			),
 			[=](auto const & value) { return parse_pokemon<style>(value.second); }
 		)

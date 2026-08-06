@@ -53,7 +53,7 @@ struct bounded::tombstone<technicalmachine::InitialPokemon<style>> {
 	static constexpr auto make(auto const index) noexcept -> technicalmachine::InitialPokemon<style> {
 		return {
 			.species = {},
-			.nickname = technicalmachine::Nickname(""_s),
+			.nickname = technicalmachine::Nickname(""_sv),
 			.moves = base::make(index),
 		};
 	}

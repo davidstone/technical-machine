@@ -41,31 +41,31 @@ using namespace containers::string_literals;
 
 constexpr auto to_string(SplitSpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SplitSpecialPermanentStat::hp: return "HP"_s;
-		case SplitSpecialPermanentStat::atk: return "Atk"_s;
-		case SplitSpecialPermanentStat::def: return "Def"_s;
-		case SplitSpecialPermanentStat::spa: return "SpA"_s;
-		case SplitSpecialPermanentStat::spd: return "SpD"_s;
-		case SplitSpecialPermanentStat::spe: return "Spe"_s;
+		case SplitSpecialPermanentStat::hp: return "HP"_sv;
+		case SplitSpecialPermanentStat::atk: return "Atk"_sv;
+		case SplitSpecialPermanentStat::def: return "Def"_sv;
+		case SplitSpecialPermanentStat::spa: return "SpA"_sv;
+		case SplitSpecialPermanentStat::spd: return "SpD"_sv;
+		case SplitSpecialPermanentStat::spe: return "Spe"_sv;
 	}
 }
 
 constexpr auto to_string(SpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SpecialPermanentStat::hp: return "HP"_s;
-		case SpecialPermanentStat::atk: return "Atk"_s;
-		case SpecialPermanentStat::def: return "Def"_s;
-		case SpecialPermanentStat::spe: return "Spe"_s;
-		case SpecialPermanentStat::spc: return "Spc"_s;
+		case SpecialPermanentStat::hp: return "HP"_sv;
+		case SpecialPermanentStat::atk: return "Atk"_sv;
+		case SpecialPermanentStat::def: return "Def"_sv;
+		case SpecialPermanentStat::spe: return "Spe"_sv;
+		case SpecialPermanentStat::spc: return "Spc"_sv;
 	}
 }
 
 constexpr auto to_string(SpecialRegularStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SpecialRegularStat::atk: return "Atk"_s;
-		case SpecialRegularStat::def: return "Def"_s;
-		case SpecialRegularStat::spe: return "Spe"_s;
-		case SpecialRegularStat::spc: return "Spc"_s;
+		case SpecialRegularStat::atk: return "Atk"_sv;
+		case SpecialRegularStat::def: return "Def"_sv;
+		case SpecialRegularStat::spe: return "Spe"_sv;
+		case SpecialRegularStat::spc: return "Spc"_sv;
 	}
 }
 
@@ -95,20 +95,20 @@ constexpr auto stats_to_string(
 					}
 					return containers::concatenate<containers::string>(
 						containers::to_string(ev),
-						" "_s,
+						" "_sv,
 						to_string(index)
 					);
 				}
 			)),
-			" / "_s
+			" / "_sv
 		),
-		"\n"_s
+		"\n"_sv
 	));
 }
 
 constexpr auto ivs_to_string(DVs const dvs) -> containers::string {
 	return stats_to_string<SpecialRegularStat>(
-		"DVs: "_s,
+		"DVs: "_sv,
 		dvs,
 		numeric_traits::max_value<DV::value_type>
 	);
@@ -116,40 +116,40 @@ constexpr auto ivs_to_string(DVs const dvs) -> containers::string {
 
 constexpr auto ivs_to_string(IVs const ivs) -> containers::string {
 	return stats_to_string<SplitSpecialPermanentStat>(
-		"IVs: "_s,
+		"IVs: "_sv,
 		ivs,
 		numeric_traits::max_value<IV::value_type>
 	);
 }
 
 constexpr auto evs_to_string(OldGenEVs const evs) -> containers::string {
-	return stats_to_string<SpecialPermanentStat>("EVs: "_s, evs, EV::useful_max);
+	return stats_to_string<SpecialPermanentStat>("EVs: "_sv, evs, EV::useful_max);
 }
 
 constexpr auto evs_to_string(EVs const evs) -> containers::string {
-	return stats_to_string<SplitSpecialPermanentStat>("EVs: "_s, evs, 0_bi);
+	return stats_to_string<SplitSpecialPermanentStat>("EVs: "_sv, evs, 0_bi);
 }
 
 constexpr auto pp_ups_to_string(PP::pp_ups_type const pp_ups) -> containers::string {
 	return pp_ups != numeric_traits::max_value<PP::pp_ups_type> ?
 		containers::concatenate<containers::string>(
-			" ("_s,
+			" ("_sv,
 			containers::to_string(pp_ups),
-			" PP ups)"_s
+			" PP ups)"_sv
 		) :
-		containers::string(""_s);
+		containers::string(""_sv);
 }
 
 constexpr auto moves_to_string(InitialMoves const moves) -> containers::string {
 	return containers::string(containers::join_with(
 		containers::transform(moves, [](InitialMove const move) {
 			return containers::concatenate<containers::string>(
-				"- "_s,
+				"- "_sv,
 				to_string(move.name),
 				pp_ups_to_string(move.pp_ups)
 			);
 		}),
-		"\n"_s
+		"\n"_sv
 	));
 };
 
@@ -159,49 +159,49 @@ constexpr auto to_string(InitialPokemon<style> const & pokemon) -> containers::s
 	return containers::concatenate<containers::string>(
 		pokemon.nickname.str(),
 		species_str != pokemon.nickname ?
-			containers::concatenate<containers::string>(" ("_s, species_str, ")"_s) :
-			containers::string(""_s),
+			containers::concatenate<containers::string>(" ("_sv, species_str, ")"_sv) :
+			containers::string(""_sv),
 		pokemon.gender != Gender::genderless ?
 			containers::concatenate<containers::string>(
-				" ("_s,
+				" ("_sv,
 				to_string(pokemon.gender),
-				")"_s
+				")"_sv
 			) :
-			containers::string(""_s),
+			containers::string(""_sv),
 		pokemon.item != Item::None ?
-			containers::concatenate<containers::string>(" @ "_s, to_string(pokemon.item)) :
-			containers::string(""_s),
-		"\n"_s,
+			containers::concatenate<containers::string>(" @ "_sv, to_string(pokemon.item)) :
+			containers::string(""_sv),
+		"\n"_sv,
 		// Technically not the right check, but in practice it's always accurate
 		style == SpecialInputStyle::split ?
 			containers::concatenate<containers::string>(
-				"Ability: "_s,
+				"Ability: "_sv,
 				to_string(pokemon.ability),
-				"\n"_s
+				"\n"_sv
 			) :
-			containers::string(""_s),
+			containers::string(""_sv),
 		pokemon.level != Level(100_bi) ?
 			containers::concatenate<containers::string>(
-				"Level: "_s,
+				"Level: "_sv,
 				containers::to_string(pokemon.level()),
-				"\n"_s
+				"\n"_sv
 			) :
-			containers::string(""_s),
+			containers::string(""_sv),
 		pokemon.happiness != Happiness() ?
 			containers::concatenate<containers::string>(
-				"Happiness: "_s,
+				"Happiness: "_sv,
 				containers::to_string(pokemon.happiness()),
-				"\n"_s
+				"\n"_sv
 			) :
-			containers::string(""_s),
+			containers::string(""_sv),
 		evs_to_string(pokemon.stats.evs),
 		// Technically not the right check, but in practice it's always accurate
 		style == SpecialInputStyle::split ?
 			containers::concatenate<containers::string>(
 				to_string(pokemon.stats.nature),
-				" Nature\n"_s
+				" Nature\n"_sv
 			) :
-			containers::string(""_s),
+			containers::string(""_sv),
 		ivs_to_string(pokemon.stats.dvs_or_ivs),
 		moves_to_string(pokemon.moves)
 	);
@@ -213,7 +213,7 @@ constexpr auto to_string(InitialTeam<style> const & team) -> containers::string 
 		containers::transform(team, [](auto const & pokemon) {
 			return to_string(pokemon);
 		}),
-		"\n\n"_s
+		"\n\n"_sv
 	));
 }
 

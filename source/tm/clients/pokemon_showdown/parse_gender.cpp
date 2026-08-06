@@ -15,8 +15,8 @@ using namespace containers::string_literals;
 
 export constexpr auto parse_gender(containers::string_view const str) -> Gender {
 	return
-		str == "F"_s ? Gender::female :
-		str == "M"_s ? Gender::male :
+		str == "F"_sv ? Gender::female :
+		str == "M"_sv ? Gender::male :
 		Gender::genderless;
 }
 

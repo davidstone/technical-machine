@@ -38,7 +38,7 @@ auto main() -> int {
 		},
 		[&](containers::string_view const str) -> containers::string {
 			return containers::string(nlohmann::json({{
-				"predicted"_s,
+				"predicted"_sv,
 				predicted_team_string(
 					parse_predictor_inputs(str),
 					all_usage_stats,

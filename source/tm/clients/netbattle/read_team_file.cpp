@@ -82,14 +82,14 @@ struct Parser {
 private:
 	constexpr auto pop_header() -> FileVersion {
 		auto const file_version_string = pop_string(7_bi);
-		if (file_version_string == " PNB4.0"_s) {
+		if (file_version_string == " PNB4.0"_sv) {
 			return FileVersion::four_zero;
-		} else if (file_version_string == " PNB4.1"_s) {
+		} else if (file_version_string == " PNB4.1"_sv) {
 			return FileVersion::four_one;
-		} else if (file_version_string == " PNB5.0"_s) {
+		} else if (file_version_string == " PNB5.0"_sv) {
 			return FileVersion::five_zero;
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Version \""_s, file_version_string, "\" not supported"_s));
+			throw std::runtime_error(containers::concatenate<std::string>("Version \""_sv, file_version_string, "\" not supported"_sv));
 		}
 	}
 	BitView m_view;

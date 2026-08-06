@@ -62,16 +62,16 @@ constexpr auto compare(containers::string_view const lhs, containers::string_vie
 	return containers::lexicographical_compare(lowercase_alphanumeric(lhs), lowercase_alphanumeric(rhs)) < 0;
 }
 
-constexpr auto a = "adaptability"_s;
-constexpr auto b = "Adaptability"_s;
+constexpr auto a = "adaptability"_sv;
+constexpr auto b = "Adaptability"_sv;
 static_assert(!compare(a, b));
 static_assert(!compare(b, a));
-constexpr auto c = "Aftermath"_s;
+constexpr auto c = "Aftermath"_sv;
 static_assert(compare(a, c));
 static_assert(compare(b, c));
 static_assert(!compare(c, a));
 static_assert(!compare(c, b));
-constexpr auto d = "----aftermath----"_s;
+constexpr auto d = "----aftermath----"_sv;
 static_assert(compare(a, d));
 static_assert(!compare(d, a));
 static_assert(!compare(d, c));

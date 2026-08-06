@@ -32,9 +32,9 @@ constexpr auto invalid_args_message =
 enum class OutputType { print, text };
 
 constexpr auto parse_output_type(containers::string_view const str) -> OutputType {
-	if (str == "print"_s) {
+	if (str == "print"_sv) {
 		return OutputType::print;
-	} else if (str == "text"_s) {
+	} else if (str == "text"_sv) {
 		return OutputType::text;
 	} else {
 		throw std::runtime_error(invalid_args_message);

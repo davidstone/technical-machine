@@ -36,21 +36,21 @@ auto parse_style(nlohmann::json const & json) {
 		return get_string(json, str);
 	};
 	auto const mode = get("mode");
-	if (mode == "ladder"_s) {
+	if (mode == "ladder"_sv) {
 		return SettingsFile::Style(SettingsFile::Ladder{
 			get("format")
 		});
-	} else if (mode == "challenge"_s) {
+	} else if (mode == "challenge"_sv) {
 		return SettingsFile::Style(SettingsFile::Challenge{
 			get("user"),
 			get("format")
 		});
-	} else if (mode == "accept"_s) {
+	} else if (mode == "accept"_sv) {
 		return SettingsFile::Style(SettingsFile::Accept{
 			containers::dynamic_array<containers::string>(containers::transform(json.at("users").get<std::vector<std::string_view>>(), bounded::construct<containers::string>))
 		});
 	} else {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "_s, mode));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "_sv, mode));
 	}
 }
 

@@ -105,10 +105,10 @@ struct LastUsedMove {
 			// TODO: Choice Band can be weird
 			if (!successful_last_move(first_executed)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Tried to use "_s,
+					"Tried to use "_sv,
 					to_string(first_executed),
-					" while locked into "_s,
-					m_move ? to_string(*m_move) : "nothing"_s
+					" while locked into "_sv,
+					m_move ? to_string(*m_move) : "nothing"_sv
 				));
 			}
 		};

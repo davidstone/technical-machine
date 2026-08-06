@@ -39,7 +39,7 @@ private:
 			auto const discarded = view.pop();
 			if (!containers::is_empty(discarded)) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Expected empty string, got "_s,
+					"Expected empty string, got "_sv,
 					discarded
 				));
 			}

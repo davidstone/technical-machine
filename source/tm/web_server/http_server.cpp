@@ -62,7 +62,7 @@ auto make_response(
 		);
 		return make(http::status::ok, body, content_type);
 	} catch (std::exception const & ex) {
-		return make(http::status::bad_request, ex.what(), "text/html"_s);
+		return make(http::status::bad_request, ex.what(), "text/html"_sv);
 	}
 }
 

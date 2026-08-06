@@ -21,25 +21,25 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(Type const type) -> containers::string_view {
 	switch (type) {
-		case Type::Bug: return "Bug"_s;
-		case Type::Dark: return "Dark"_s;
-		case Type::Dragon: return "Dragon"_s;
-		case Type::Electric: return "Electric"_s;
-		case Type::Fairy: return "Fairy"_s;
-		case Type::Fighting: return "Fighting"_s;
-		case Type::Fire: return "Fire"_s;
-		case Type::Flying: return "Flying"_s;
-		case Type::Ghost: return "Ghost"_s;
-		case Type::Grass: return "Grass"_s;
-		case Type::Ground: return "Ground"_s;
-		case Type::Ice: return "Ice"_s;
-		case Type::Normal: return "Normal"_s;
-		case Type::Poison: return "Poison"_s;
-		case Type::Psychic: return "Psychic"_s;
-		case Type::Rock: return "Rock"_s;
-		case Type::Steel: return "Steel"_s;
-		case Type::Water: return "Water"_s;
-		case Type::Typeless: return "Typeless"_s;
+		case Type::Bug: return "Bug"_sv;
+		case Type::Dark: return "Dark"_sv;
+		case Type::Dragon: return "Dragon"_sv;
+		case Type::Electric: return "Electric"_sv;
+		case Type::Fairy: return "Fairy"_sv;
+		case Type::Fighting: return "Fighting"_sv;
+		case Type::Fire: return "Fire"_sv;
+		case Type::Flying: return "Flying"_sv;
+		case Type::Ghost: return "Ghost"_sv;
+		case Type::Grass: return "Grass"_sv;
+		case Type::Ground: return "Ground"_sv;
+		case Type::Ice: return "Ice"_sv;
+		case Type::Normal: return "Normal"_sv;
+		case Type::Poison: return "Poison"_sv;
+		case Type::Psychic: return "Psychic"_sv;
+		case Type::Rock: return "Rock"_sv;
+		case Type::Steel: return "Steel"_sv;
+		case Type::Water: return "Water"_sv;
+		case Type::Typeless: return "Typeless"_sv;
 	}
 }
 
@@ -48,31 +48,31 @@ constexpr auto from_string(containers::string_view const str) -> Type {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Type>>({
-			{"bug"_s, Type::Bug},
-			{"dark"_s, Type::Dark},
-			{"dragon"_s, Type::Dragon},
-			{"electric"_s, Type::Electric},
-			{"fairy"_s, Type::Fairy},
-			{"fighting"_s, Type::Fighting},
-			{"fire"_s, Type::Fire},
-			{"flying"_s, Type::Flying},
-			{"ghost"_s, Type::Ghost},
-			{"grass"_s, Type::Grass},
-			{"ground"_s, Type::Ground},
-			{"ice"_s, Type::Ice},
-			{"normal"_s, Type::Normal},
-			{"poison"_s, Type::Poison},
-			{"psychic"_s, Type::Psychic},
-			{"rock"_s, Type::Rock},
-			{"steel"_s, Type::Steel},
-			{"typeless"_s, Type::Typeless},
-			{"water"_s, Type::Water},
+			{"bug"_sv, Type::Bug},
+			{"dark"_sv, Type::Dark},
+			{"dragon"_sv, Type::Dragon},
+			{"electric"_sv, Type::Electric},
+			{"fairy"_sv, Type::Fairy},
+			{"fighting"_sv, Type::Fighting},
+			{"fire"_sv, Type::Fire},
+			{"flying"_sv, Type::Flying},
+			{"ghost"_sv, Type::Ghost},
+			{"grass"_sv, Type::Grass},
+			{"ground"_sv, Type::Ground},
+			{"ice"_sv, Type::Ice},
+			{"normal"_sv, Type::Normal},
+			{"poison"_sv, Type::Poison},
+			{"psychic"_sv, Type::Psychic},
+			{"rock"_sv, Type::Rock},
+			{"steel"_sv, Type::Steel},
+			{"typeless"_sv, Type::Typeless},
+			{"water"_sv, Type::Water},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<8_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Type"_s, str);
+		throw InvalidFromStringConversion("Type"_sv, str);
 	}
 	return *result;
 }

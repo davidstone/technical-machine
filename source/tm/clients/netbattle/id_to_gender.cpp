@@ -23,7 +23,7 @@ using namespace containers::string_literals;
 export constexpr auto id_to_gender(Species const species, bounded::integer<0, 1> const id) -> Gender {
 	if (is_genderless(species)) {
 		if (id == 1_bi) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to give a gender to "_s, to_string(species)));
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to give a gender to "_sv, to_string(species)));
 		}
 		return Gender::genderless;
 	}

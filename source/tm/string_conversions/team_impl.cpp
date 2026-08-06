@@ -28,9 +28,9 @@ constexpr auto to_string_impl(
 	bool const include_active_marker
 ) -> containers::string {
 	auto output = containers::concatenate<containers::string>(
-		"Generation "_s,
+		"Generation "_sv,
 		to_string(generation_from<TeamType>),
-		" team:\n"_s
+		" team:\n"_sv
 	);
 	auto const active_marker = include_active_marker ? "* "_sv : ""_sv;
 	for (auto const & member : team.all_pokemon()) {
@@ -38,7 +38,7 @@ constexpr auto to_string_impl(
 			std::move(output),
 			member.species() == team.pokemon().species() ?
 				active_marker :
-				""_s,
+				""_sv,
 			to_string(member),
 			containers::array{'\n'}
 		);

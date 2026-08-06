@@ -29,14 +29,14 @@ struct SendSelection {
 	constexpr auto operator()(Switch const switch_) const -> void {
 		m_send_message(containers::concatenate<containers::string>(
 			m_room,
-			"|/choose switch "_s,
+			"|/choose switch "_sv,
 			containers::to_string(m_slot_memory[switch_.value()])
 		));
 	}
 	constexpr auto operator()(MoveName const move) const -> void {
 		m_send_message(containers::concatenate<containers::string>(
 			m_room,
-			"|/choose move "_s,
+			"|/choose move "_sv,
 			to_string(move)
 		));
 	}

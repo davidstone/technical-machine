@@ -57,10 +57,10 @@ constexpr auto parse_species(containers::string_view const species_str, Nickname
 constexpr auto parse_ability(containers::string_view const ability_str, [[maybe_unused]] Species const species) {
 	// TODO: Get the correct values for this
 	return
-		ability_str == ""_s ? Ability::Honey_Gather :
-		ability_str == "0"_s ? Ability::Honey_Gather :
-		ability_str == "1"_s ? Ability::Honey_Gather :
-		ability_str == "H"_s ? Ability::Honey_Gather :
+		ability_str == ""_sv ? Ability::Honey_Gather :
+		ability_str == "0"_sv ? Ability::Honey_Gather :
+		ability_str == "1"_sv ? Ability::Honey_Gather :
+		ability_str == "H"_sv ? Ability::Honey_Gather :
 		from_string<Ability>(ability_str);
 }
 
@@ -97,9 +97,9 @@ constexpr auto parse_gender(containers::string_view const str) {
 
 constexpr auto parse_shiny(containers::string_view const str) {
 	return
-		str == "S"_s ? true :
-		str == ""_s ? false :
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid shiny string: "_s, str));
+		str == "S"_sv ? true :
+		str == ""_sv ? false :
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid shiny string: "_sv, str));
 }
 
 template<typename T>

@@ -61,18 +61,18 @@ auto parse_stats(nlohmann::json const & stats) {
 		));
 	};
 	return GenericStats(
-		read("hp"_s),
-		read("atk"_s),
-		read("def"_s),
-		read("spa"_s),
-		read("spd"_s),
-		read("spe"_s)
+		read("hp"_sv),
+		read("atk"_sv),
+		read("def"_sv),
+		read("spa"_sv),
+		read("spd"_sv),
+		read("spe"_sv)
 	);
 }
 
 constexpr auto parse_nature(containers::string_view const str) -> Nature {
 	// A bug in the PS stats causes it to sometimes emit an empty nature
-	return str == ""_s ? Nature::Hardy : from_string<Nature>(str);
+	return str == ""_sv ? Nature::Hardy : from_string<Nature>(str);
 }
 
 constexpr auto parse_pokemon = [](Generation const generation, nlohmann::json const & pokemon) -> ps::ParsedPokemon {
@@ -191,8 +191,8 @@ constexpr auto to_player_id(containers::string_view const str) {
 	switch (anonymization) {
 		case Anonymization::full:
 			return
-				str == "Player 1"_s ? BattleResult::Side::ID(1_bi) :
-				str == "Player 2"_s ? BattleResult::Side::ID(2_bi) :
+				str == "Player 1"_sv ? BattleResult::Side::ID(1_bi) :
+				str == "Player 2"_sv ? BattleResult::Side::ID(2_bi) :
 				throw std::runtime_error("Invalid fully anonymized username");
 		case Anonymization::hashed:
 			return hex_to_integer(str);
@@ -208,7 +208,7 @@ export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult>
 		return tv::none;
 	}
 	auto const format = json.at("format").get<std::string_view>();
-	auto const generation = ps::parse_generation_from_format(format, "gen"_s);
+	auto const generation = ps::parse_generation_from_format(format, "gen"_sv);
 	auto const p1 = json.at("p1").get<std::string_view>();
 	auto const p2 = json.at("p2").get<std::string_view>();
 	auto const winner_str = json.at("winner").get<std::string_view>();

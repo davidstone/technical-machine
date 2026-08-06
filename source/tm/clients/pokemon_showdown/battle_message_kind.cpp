@@ -13,7 +13,7 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace containers::string_literals;
 
-constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"_s;
+constexpr auto ladder_timeout = "Ladder isn't responding, score probably updated but might not have (Request timeout)"_sv;
 
 export enum class BattleMessageKind {
 	junk,
@@ -29,35 +29,35 @@ export constexpr auto get_battle_message_kind(InMessage const first_message, boo
 		return (... or (first_message.type() == strs));
 	};
 	using enum BattleMessageKind;
-	if (matches("init"_s, "raw"_s, "t:"_s, "inactive"_s, "inactiveoff"_s)) {
+	if (matches("init"_sv, "raw"_sv, "t:"_sv, "inactive"_sv, "inactiveoff"_sv)) {
 		return junk;
-	} else if (matches("teamsize"_s)) {
+	} else if (matches("teamsize"_sv)) {
 		// "teamsize" never starts a block in the real stream. However, we have
 		// to filter out all the "player" messages when parsing PS logs due to
 		// bugs on the PS side. That makes "teamsize" the beginning of the block
 		// when parsing those files.
 		return init;
-	} else if (matches("player"_s)) {
+	} else if (matches("player"_sv)) {
 		return has_more_data ? init	: junk;
-	} else if (matches("-message"_s)) {
+	} else if (matches("-message"_sv)) {
 		return regular;
-	} else if (matches(""_s)) {
+	} else if (matches(""_sv)) {
 		return first_message.remainder() == ladder_timeout ? junk : regular;
-	} else if (matches("request"_s)) {
+	} else if (matches("request"_sv)) {
 		if (has_more_data) {
 			throw std::runtime_error("Request message contains too much data");
 		}
 		return request;
-	} else if (matches("error"_s)) {
+	} else if (matches("error"_sv)) {
 		if (has_more_data) {
 			throw std::runtime_error("Error message contains too much data");
 		}
 		return error;
 	} else {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unknown battle message kind: |"_s,
+			"Unknown battle message kind: |"_sv,
 			first_message.type(),
-			"|"_s,
+			"|"_sv,
 			first_message.remainder()
 		));
 	}

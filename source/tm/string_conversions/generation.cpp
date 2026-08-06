@@ -19,14 +19,14 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(Generation const generation) -> containers::string_view {
 	switch (generation) {
-		case Generation::one: return "1"_s;
-		case Generation::two: return "2"_s;
-		case Generation::three: return "3"_s;
-		case Generation::four: return "4"_s;
-		case Generation::five: return "5"_s;
-		case Generation::six: return "6"_s;
-		case Generation::seven: return "7"_s;
-		case Generation::eight: return "8"_s;
+		case Generation::one: return "1"_sv;
+		case Generation::two: return "2"_sv;
+		case Generation::three: return "3"_sv;
+		case Generation::four: return "4"_sv;
+		case Generation::five: return "5"_sv;
+		case Generation::six: return "6"_sv;
+		case Generation::seven: return "7"_sv;
+		case Generation::eight: return "8"_sv;
 	}
 }
 
@@ -35,19 +35,19 @@ constexpr auto from_string(containers::string_view const str) -> Generation {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Generation>>({
-			{"1"_s, Generation::one},
-			{"2"_s, Generation::two},
-			{"3"_s, Generation::three},
-			{"4"_s, Generation::four},
-			{"5"_s, Generation::five},
-			{"6"_s, Generation::six},
-			{"7"_s, Generation::seven},
-			{"8"_s, Generation::eight},
+			{"1"_sv, Generation::one},
+			{"2"_sv, Generation::two},
+			{"3"_sv, Generation::three},
+			{"4"_sv, Generation::four},
+			{"5"_sv, Generation::five},
+			{"6"_sv, Generation::six},
+			{"7"_sv, Generation::seven},
+			{"8"_sv, Generation::eight},
 		})
 	);
 	auto const result = containers::lookup(converter, str);
 	if (!result) {
-		throw InvalidFromStringConversion("Generation"_s, str);
+		throw InvalidFromStringConversion("Generation"_sv, str);
 	}
 	return *result;
 }

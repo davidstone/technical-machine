@@ -24,11 +24,11 @@ export auto load_evaluate(std::filesystem::path const & path) -> EvaluateSetting
 		return bounded::check_in_range<EvaluateSettings::value_type>(bounded::integer(config.value(field, 0)));
 	};
 	return EvaluateSettings{
-		.hp = get("hp"_s),
-		.hidden = get("hidden"_s),
-		.spikes = get("spikes"_s),
-		.stealth_rock = get("stealth rock"_s),
-		.toxic_spikes = get("toxic spikes"_s)
+		.hp = get("hp"_sv),
+		.hidden = get("hidden"_sv),
+		.spikes = get("spikes"_sv),
+		.stealth_rock = get("stealth rock"_sv),
+		.toxic_spikes = get("toxic spikes"_sv)
 	};
 }
 

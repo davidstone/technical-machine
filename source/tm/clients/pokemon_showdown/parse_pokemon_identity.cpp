@@ -27,7 +27,7 @@ export constexpr auto parse_pokemon_identity(containers::string_view const str) 
 		Party party;
 		Nickname nickname;
 	};
-	auto const [party_str, nickname] = split_view(str, ": "_s);
+	auto const [party_str, nickname] = split_view(str, ": "_sv);
 	return result{make_party(containers::take(party_str, 2_bi)), Nickname(nickname)};
 }
 

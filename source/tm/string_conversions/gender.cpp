@@ -21,9 +21,9 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(Gender const gender) -> containers::string_view {
 	switch (gender) {
-		case Gender::female: return "Female"_s;
-		case Gender::male: return "Male"_s;
-		case Gender::genderless: return "Genderless"_s;
+		case Gender::female: return "Female"_sv;
+		case Gender::male: return "Male"_sv;
+		case Gender::genderless: return "Genderless"_sv;
 	}
 }
 
@@ -32,17 +32,17 @@ constexpr auto from_string(containers::string_view const str) -> Gender {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Gender>>({
-			{"female"_s, Gender::female},
-			{"genderless"_s, Gender::genderless},
-			{"male"_s, Gender::male},
-			{"nogender"_s, Gender::genderless},
-			{"none"_s, Gender::genderless},
+			{"female"_sv, Gender::female},
+			{"genderless"_sv, Gender::genderless},
+			{"male"_sv, Gender::male},
+			{"nogender"_sv, Gender::genderless},
+			{"none"_sv, Gender::genderless},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<10_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Gender"_s, str);
+		throw InvalidFromStringConversion("Gender"_sv, str);
 	}
 	return *result;
 }

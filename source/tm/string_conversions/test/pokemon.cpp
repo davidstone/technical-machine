@@ -64,7 +64,7 @@ TEST_CASE("string_conversion: Generation 1 pokemon") {
 		) ==
 		"Mewtwo (100.0% HP)\n"
 		"\tEVs: 4 HP / 0 Spe / 32 Spc\n"
-		"\t- Psychic"_s
+		"\t- Psychic"_sv
 	);
 
 	CHECK(
@@ -82,7 +82,7 @@ TEST_CASE("string_conversion: Generation 1 pokemon") {
 		"\t- Psychic\n"
 		"\t- Recover\n"
 		"\t- Calm Mind\n"
-		"\t- Taunt"_s
+		"\t- Taunt"_sv
 	);
 
 	CHECK(
@@ -96,7 +96,7 @@ TEST_CASE("string_conversion: Generation 1 pokemon") {
 		"Mewtwo (100.0% HP)\n"
 		"\tStatus: Burn\n"
 		"\tEVs: 4 HP / 0 Spe / 32 Spc\n"
-		"\t- Psychic"_s
+		"\t- Psychic"_sv
 	);
 }
 
@@ -135,7 +135,7 @@ TEST_CASE("string_conversion: Generation 3 pokemon") {
 		"\tAbility: Pressure\n"
 		"\tNature: Modest\n"
 		"\tEVs: 4 HP / 12 Atk / 24 Def / 32 SpD / 100 Spe\n"
-		"\t- Psychic"_s
+		"\t- Psychic"_sv
 	);
 
 	CHECK(
@@ -150,7 +150,7 @@ TEST_CASE("string_conversion: Generation 3 pokemon") {
 		"\tStatus: Burn\n"
 		"\tNature: Modest\n"
 		"\tEVs: 4 HP / 12 Atk / 24 Def / 32 SpD / 100 Spe\n"
-		"\t- Psychic"_s
+		"\t- Psychic"_sv
 	);
 }
 

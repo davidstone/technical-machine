@@ -31,12 +31,12 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	}
 	auto output_file = std::filesystem::path(argv[1]);
 	if (std::filesystem::exists(output_file)) {
-		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"_sv));
 	}
 	auto const thread_count = bounded::to_integer<ThreadCount>(argv[2]);
 	auto input_directory = std::filesystem::path(argv[3]);
 	if (!std::filesystem::exists(input_directory)) {
-		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"_sv));
 	}
 	return ParsedArgs{
 		std::move(output_file),
@@ -61,9 +61,9 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 				battle_result_writer(*battle_result);
 			} catch (std::exception const & ex) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Error parsing "_s,
+					"Error parsing "_sv,
 					input_file.string(),
-					": "_s,
+					": "_sv,
 					containers::string_view(ex.what())
 				));
 			}

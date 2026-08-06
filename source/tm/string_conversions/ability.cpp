@@ -21,274 +21,274 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(Ability const ability) -> containers::string_view {
 	switch (ability) {
-		case Ability::Stench: return "Stench"_s;
-		case Ability::Drizzle: return "Drizzle"_s;
-		case Ability::Speed_Boost: return "Speed Boost"_s;
-		case Ability::Battle_Armor: return "Battle Armor"_s;
-		case Ability::Sturdy: return "Sturdy"_s;
-		case Ability::Damp: return "Damp"_s;
-		case Ability::Limber: return "Limber"_s;
-		case Ability::Sand_Veil: return "Sand Veil"_s;
-		case Ability::Static: return "Static"_s;
-		case Ability::Volt_Absorb: return "Volt Absorb"_s;
-		case Ability::Water_Absorb: return "Water Absorb"_s;
-		case Ability::Oblivious: return "Oblivious"_s;
-		case Ability::Cloud_Nine: return "Cloud Nine"_s;
-		case Ability::Compound_Eyes: return "Compound Eyes"_s;
-		case Ability::Insomnia: return "Insomnia"_s;
-		case Ability::Color_Change: return "Color Change"_s;
-		case Ability::Immunity: return "Immunity"_s;
-		case Ability::Flash_Fire: return "Flash Fire"_s;
-		case Ability::Shield_Dust: return "Shield Dust"_s;
-		case Ability::Own_Tempo: return "Own Tempo"_s;
-		case Ability::Suction_Cups: return "Suction Cups"_s;
-		case Ability::Intimidate: return "Intimidate"_s;
-		case Ability::Shadow_Tag: return "Shadow Tag"_s;
-		case Ability::Rough_Skin: return "Rough Skin"_s;
-		case Ability::Wonder_Guard: return "Wonder Guard"_s;
-		case Ability::Levitate: return "Levitate"_s;
-		case Ability::Effect_Spore: return "Effect Spore"_s;
-		case Ability::Synchronize: return "Synchronize"_s;
-		case Ability::Clear_Body: return "Clear Body"_s;
-		case Ability::Natural_Cure: return "Natural Cure"_s;
-		case Ability::Lightning_Rod: return "Lightning Rod"_s;
-		case Ability::Serene_Grace: return "Serene Grace"_s;
-		case Ability::Swift_Swim: return "Swift Swim"_s;
-		case Ability::Chlorophyll: return "Chlorophyll"_s;
-		case Ability::Illuminate: return "Illuminate"_s;
-		case Ability::Trace: return "Trace"_s;
-		case Ability::Huge_Power: return "Huge Power"_s;
-		case Ability::Poison_Point: return "Poison Point"_s;
-		case Ability::Inner_Focus: return "Inner Focus"_s;
-		case Ability::Magma_Armor: return "Magma Armor"_s;
-		case Ability::Water_Veil: return "Water Veil"_s;
-		case Ability::Magnet_Pull: return "Magnet Pull"_s;
-		case Ability::Soundproof: return "Soundproof"_s;
-		case Ability::Rain_Dish: return "Rain Dish"_s;
-		case Ability::Sand_Stream: return "Sand Stream"_s;
-		case Ability::Pressure: return "Pressure"_s;
-		case Ability::Thick_Fat: return "Thick Fat"_s;
-		case Ability::Early_Bird: return "Early Bird"_s;
-		case Ability::Flame_Body: return "Flame Body"_s;
-		case Ability::Run_Away: return "Run Away"_s;
-		case Ability::Keen_Eye: return "Keen Eye"_s;
-		case Ability::Hyper_Cutter: return "Hyper Cutter"_s;
-		case Ability::Pickup: return "Pickup"_s;
-		case Ability::Truant: return "Truant"_s;
-		case Ability::Hustle: return "Hustle"_s;
-		case Ability::Cute_Charm: return "Cute Charm"_s;
-		case Ability::Plus: return "Plus"_s;
-		case Ability::Minus: return "Minus"_s;
-		case Ability::Forecast: return "Forecast"_s;
-		case Ability::Sticky_Hold: return "Sticky Hold"_s;
-		case Ability::Shed_Skin: return "Shed Skin"_s;
-		case Ability::Guts: return "Guts"_s;
-		case Ability::Marvel_Scale: return "Marvel Scale"_s;
-		case Ability::Liquid_Ooze: return "Liquid Ooze"_s;
-		case Ability::Overgrow: return "Overgrow"_s;
-		case Ability::Blaze: return "Blaze"_s;
-		case Ability::Torrent: return "Torrent"_s;
-		case Ability::Swarm: return "Swarm"_s;
-		case Ability::Rock_Head: return "Rock Head"_s;
-		case Ability::Drought: return "Drought"_s;
-		case Ability::Arena_Trap: return "Arena Trap"_s;
-		case Ability::Vital_Spirit: return "Vital Spirit"_s;
-		case Ability::White_Smoke: return "White Smoke"_s;
-		case Ability::Pure_Power: return "Pure Power"_s;
-		case Ability::Shell_Armor: return "Shell Armor"_s;
-		case Ability::Air_Lock: return "Air Lock"_s;
+		case Ability::Stench: return "Stench"_sv;
+		case Ability::Drizzle: return "Drizzle"_sv;
+		case Ability::Speed_Boost: return "Speed Boost"_sv;
+		case Ability::Battle_Armor: return "Battle Armor"_sv;
+		case Ability::Sturdy: return "Sturdy"_sv;
+		case Ability::Damp: return "Damp"_sv;
+		case Ability::Limber: return "Limber"_sv;
+		case Ability::Sand_Veil: return "Sand Veil"_sv;
+		case Ability::Static: return "Static"_sv;
+		case Ability::Volt_Absorb: return "Volt Absorb"_sv;
+		case Ability::Water_Absorb: return "Water Absorb"_sv;
+		case Ability::Oblivious: return "Oblivious"_sv;
+		case Ability::Cloud_Nine: return "Cloud Nine"_sv;
+		case Ability::Compound_Eyes: return "Compound Eyes"_sv;
+		case Ability::Insomnia: return "Insomnia"_sv;
+		case Ability::Color_Change: return "Color Change"_sv;
+		case Ability::Immunity: return "Immunity"_sv;
+		case Ability::Flash_Fire: return "Flash Fire"_sv;
+		case Ability::Shield_Dust: return "Shield Dust"_sv;
+		case Ability::Own_Tempo: return "Own Tempo"_sv;
+		case Ability::Suction_Cups: return "Suction Cups"_sv;
+		case Ability::Intimidate: return "Intimidate"_sv;
+		case Ability::Shadow_Tag: return "Shadow Tag"_sv;
+		case Ability::Rough_Skin: return "Rough Skin"_sv;
+		case Ability::Wonder_Guard: return "Wonder Guard"_sv;
+		case Ability::Levitate: return "Levitate"_sv;
+		case Ability::Effect_Spore: return "Effect Spore"_sv;
+		case Ability::Synchronize: return "Synchronize"_sv;
+		case Ability::Clear_Body: return "Clear Body"_sv;
+		case Ability::Natural_Cure: return "Natural Cure"_sv;
+		case Ability::Lightning_Rod: return "Lightning Rod"_sv;
+		case Ability::Serene_Grace: return "Serene Grace"_sv;
+		case Ability::Swift_Swim: return "Swift Swim"_sv;
+		case Ability::Chlorophyll: return "Chlorophyll"_sv;
+		case Ability::Illuminate: return "Illuminate"_sv;
+		case Ability::Trace: return "Trace"_sv;
+		case Ability::Huge_Power: return "Huge Power"_sv;
+		case Ability::Poison_Point: return "Poison Point"_sv;
+		case Ability::Inner_Focus: return "Inner Focus"_sv;
+		case Ability::Magma_Armor: return "Magma Armor"_sv;
+		case Ability::Water_Veil: return "Water Veil"_sv;
+		case Ability::Magnet_Pull: return "Magnet Pull"_sv;
+		case Ability::Soundproof: return "Soundproof"_sv;
+		case Ability::Rain_Dish: return "Rain Dish"_sv;
+		case Ability::Sand_Stream: return "Sand Stream"_sv;
+		case Ability::Pressure: return "Pressure"_sv;
+		case Ability::Thick_Fat: return "Thick Fat"_sv;
+		case Ability::Early_Bird: return "Early Bird"_sv;
+		case Ability::Flame_Body: return "Flame Body"_sv;
+		case Ability::Run_Away: return "Run Away"_sv;
+		case Ability::Keen_Eye: return "Keen Eye"_sv;
+		case Ability::Hyper_Cutter: return "Hyper Cutter"_sv;
+		case Ability::Pickup: return "Pickup"_sv;
+		case Ability::Truant: return "Truant"_sv;
+		case Ability::Hustle: return "Hustle"_sv;
+		case Ability::Cute_Charm: return "Cute Charm"_sv;
+		case Ability::Plus: return "Plus"_sv;
+		case Ability::Minus: return "Minus"_sv;
+		case Ability::Forecast: return "Forecast"_sv;
+		case Ability::Sticky_Hold: return "Sticky Hold"_sv;
+		case Ability::Shed_Skin: return "Shed Skin"_sv;
+		case Ability::Guts: return "Guts"_sv;
+		case Ability::Marvel_Scale: return "Marvel Scale"_sv;
+		case Ability::Liquid_Ooze: return "Liquid Ooze"_sv;
+		case Ability::Overgrow: return "Overgrow"_sv;
+		case Ability::Blaze: return "Blaze"_sv;
+		case Ability::Torrent: return "Torrent"_sv;
+		case Ability::Swarm: return "Swarm"_sv;
+		case Ability::Rock_Head: return "Rock Head"_sv;
+		case Ability::Drought: return "Drought"_sv;
+		case Ability::Arena_Trap: return "Arena Trap"_sv;
+		case Ability::Vital_Spirit: return "Vital Spirit"_sv;
+		case Ability::White_Smoke: return "White Smoke"_sv;
+		case Ability::Pure_Power: return "Pure Power"_sv;
+		case Ability::Shell_Armor: return "Shell Armor"_sv;
+		case Ability::Air_Lock: return "Air Lock"_sv;
 
 		// Generation 4
-		case Ability::Tangled_Feet: return "Tangled Feet"_s;
-		case Ability::Motor_Drive: return "Motor Drive"_s;
-		case Ability::Rivalry: return "Rivalry"_s;
-		case Ability::Steadfast: return "Steadfast"_s;
-		case Ability::Snow_Cloak: return "Snow Cloak"_s;
-		case Ability::Gluttony: return "Gluttony"_s;
-		case Ability::Anger_Point: return "Anger Point"_s;
-		case Ability::Unburden: return "Unburden"_s;
-		case Ability::Heatproof: return "Heatproof"_s;
-		case Ability::Simple: return "Simple"_s;
-		case Ability::Dry_Skin: return "Dry Skin"_s;
-		case Ability::Download: return "Download"_s;
-		case Ability::Iron_Fist: return "Iron Fist"_s;
-		case Ability::Poison_Heal: return "Poison Heal"_s;
-		case Ability::Adaptability: return "Adaptability"_s;
-		case Ability::Skill_Link: return "Skill Link"_s;
-		case Ability::Hydration: return "Hydration"_s;
-		case Ability::Solar_Power: return "Solar Power"_s;
-		case Ability::Quick_Feet: return "Quick Feet"_s;
-		case Ability::Normalize: return "Normalize"_s;
-		case Ability::Sniper: return "Sniper"_s;
-		case Ability::Magic_Guard: return "Magic Guard"_s;
-		case Ability::No_Guard: return "No Guard"_s;
-		case Ability::Stall: return "Stall"_s;
-		case Ability::Technician: return "Technician"_s;
-		case Ability::Leaf_Guard: return "Leaf Guard"_s;
-		case Ability::Klutz: return "Klutz"_s;
-		case Ability::Mold_Breaker: return "Mold Breaker"_s;
-		case Ability::Super_Luck: return "Super Luck"_s;
-		case Ability::Aftermath: return "Aftermath"_s;
-		case Ability::Anticipation: return "Anticipation"_s;
-		case Ability::Forewarn: return "Forewarn"_s;
-		case Ability::Unaware: return "Unaware"_s;
-		case Ability::Tinted_Lens: return "Tinted Lens"_s;
-		case Ability::Filter: return "Filter"_s;
-		case Ability::Slow_Start: return "Slow Start"_s;
-		case Ability::Scrappy: return "Scrappy"_s;
-		case Ability::Storm_Drain: return "Storm Drain"_s;
-		case Ability::Ice_Body: return "Ice Body"_s;
-		case Ability::Solid_Rock: return "Solid Rock"_s;
-		case Ability::Snow_Warning: return "Snow Warning"_s;
-		case Ability::Honey_Gather: return "Honey Gather"_s;
-		case Ability::Frisk: return "Frisk"_s;
-		case Ability::Reckless: return "Reckless"_s;
-		case Ability::Multitype: return "Multitype"_s;
-		case Ability::Flower_Gift: return "Flower Gift"_s;
-		case Ability::Bad_Dreams: return "Bad Dreams"_s;
+		case Ability::Tangled_Feet: return "Tangled Feet"_sv;
+		case Ability::Motor_Drive: return "Motor Drive"_sv;
+		case Ability::Rivalry: return "Rivalry"_sv;
+		case Ability::Steadfast: return "Steadfast"_sv;
+		case Ability::Snow_Cloak: return "Snow Cloak"_sv;
+		case Ability::Gluttony: return "Gluttony"_sv;
+		case Ability::Anger_Point: return "Anger Point"_sv;
+		case Ability::Unburden: return "Unburden"_sv;
+		case Ability::Heatproof: return "Heatproof"_sv;
+		case Ability::Simple: return "Simple"_sv;
+		case Ability::Dry_Skin: return "Dry Skin"_sv;
+		case Ability::Download: return "Download"_sv;
+		case Ability::Iron_Fist: return "Iron Fist"_sv;
+		case Ability::Poison_Heal: return "Poison Heal"_sv;
+		case Ability::Adaptability: return "Adaptability"_sv;
+		case Ability::Skill_Link: return "Skill Link"_sv;
+		case Ability::Hydration: return "Hydration"_sv;
+		case Ability::Solar_Power: return "Solar Power"_sv;
+		case Ability::Quick_Feet: return "Quick Feet"_sv;
+		case Ability::Normalize: return "Normalize"_sv;
+		case Ability::Sniper: return "Sniper"_sv;
+		case Ability::Magic_Guard: return "Magic Guard"_sv;
+		case Ability::No_Guard: return "No Guard"_sv;
+		case Ability::Stall: return "Stall"_sv;
+		case Ability::Technician: return "Technician"_sv;
+		case Ability::Leaf_Guard: return "Leaf Guard"_sv;
+		case Ability::Klutz: return "Klutz"_sv;
+		case Ability::Mold_Breaker: return "Mold Breaker"_sv;
+		case Ability::Super_Luck: return "Super Luck"_sv;
+		case Ability::Aftermath: return "Aftermath"_sv;
+		case Ability::Anticipation: return "Anticipation"_sv;
+		case Ability::Forewarn: return "Forewarn"_sv;
+		case Ability::Unaware: return "Unaware"_sv;
+		case Ability::Tinted_Lens: return "Tinted Lens"_sv;
+		case Ability::Filter: return "Filter"_sv;
+		case Ability::Slow_Start: return "Slow Start"_sv;
+		case Ability::Scrappy: return "Scrappy"_sv;
+		case Ability::Storm_Drain: return "Storm Drain"_sv;
+		case Ability::Ice_Body: return "Ice Body"_sv;
+		case Ability::Solid_Rock: return "Solid Rock"_sv;
+		case Ability::Snow_Warning: return "Snow Warning"_sv;
+		case Ability::Honey_Gather: return "Honey Gather"_sv;
+		case Ability::Frisk: return "Frisk"_sv;
+		case Ability::Reckless: return "Reckless"_sv;
+		case Ability::Multitype: return "Multitype"_sv;
+		case Ability::Flower_Gift: return "Flower Gift"_sv;
+		case Ability::Bad_Dreams: return "Bad Dreams"_sv;
 
 		// Generation 5
-		case Ability::Pickpocket: return "Pickpocket"_s;
-		case Ability::Sheer_Force: return "Sheer Force"_s;
-		case Ability::Contrary: return "Contrary"_s;
-		case Ability::Unnerve: return "Unnerve"_s;
-		case Ability::Defiant: return "Defiant"_s;
-		case Ability::Defeatist: return "Defeatist"_s;
-		case Ability::Cursed_Body: return "Cursed Body"_s;
-		case Ability::Healer: return "Healer"_s;
-		case Ability::Friend_Guard: return "Friend Guard"_s;
-		case Ability::Weak_Armor: return "Weak Armor"_s;
-		case Ability::Heavy_Metal: return "Heavy Metal"_s;
-		case Ability::Light_Metal: return "Light Metal"_s;
-		case Ability::Multiscale: return "Multiscale"_s;
-		case Ability::Toxic_Boost: return "Toxic Boost"_s;
-		case Ability::Flare_Boost: return "Flare Boost"_s;
-		case Ability::Harvest: return "Harvest"_s;
-		case Ability::Telepathy: return "Telepathy"_s;
-		case Ability::Moody: return "Moody"_s;
-		case Ability::Overcoat: return "Overcoat"_s;
-		case Ability::Poison_Touch: return "Poison Touch"_s;
-		case Ability::Regenerator: return "Regenerator"_s;
-		case Ability::Big_Pecks: return "Big Pecks"_s;
-		case Ability::Sand_Rush: return "Sand Rush"_s;
-		case Ability::Wonder_Skin: return "Wonder Skin"_s;
-		case Ability::Analytic: return "Analytic"_s;
-		case Ability::Illusion: return "Illusion"_s;
-		case Ability::Imposter: return "Imposter"_s;
-		case Ability::Infiltrator: return "Infiltrator"_s;
-		case Ability::Mummy: return "Mummy"_s;
-		case Ability::Moxie: return "Moxie"_s;
-		case Ability::Justified: return "Justified"_s;
-		case Ability::Rattled: return "Rattled"_s;
-		case Ability::Magic_Bounce: return "Magic Bounce"_s;
-		case Ability::Sap_Sipper: return "Sap Sipper"_s;
-		case Ability::Prankster: return "Prankster"_s;
-		case Ability::Sand_Force: return "Sand Force"_s;
-		case Ability::Iron_Barbs: return "Iron Barbs"_s;
-		case Ability::Zen_Mode: return "Zen Mode"_s;
-		case Ability::Victory_Star: return "Victory Star"_s;
-		case Ability::Turboblaze: return "Turboblaze"_s;
-		case Ability::Teravolt: return "Teravolt"_s;
+		case Ability::Pickpocket: return "Pickpocket"_sv;
+		case Ability::Sheer_Force: return "Sheer Force"_sv;
+		case Ability::Contrary: return "Contrary"_sv;
+		case Ability::Unnerve: return "Unnerve"_sv;
+		case Ability::Defiant: return "Defiant"_sv;
+		case Ability::Defeatist: return "Defeatist"_sv;
+		case Ability::Cursed_Body: return "Cursed Body"_sv;
+		case Ability::Healer: return "Healer"_sv;
+		case Ability::Friend_Guard: return "Friend Guard"_sv;
+		case Ability::Weak_Armor: return "Weak Armor"_sv;
+		case Ability::Heavy_Metal: return "Heavy Metal"_sv;
+		case Ability::Light_Metal: return "Light Metal"_sv;
+		case Ability::Multiscale: return "Multiscale"_sv;
+		case Ability::Toxic_Boost: return "Toxic Boost"_sv;
+		case Ability::Flare_Boost: return "Flare Boost"_sv;
+		case Ability::Harvest: return "Harvest"_sv;
+		case Ability::Telepathy: return "Telepathy"_sv;
+		case Ability::Moody: return "Moody"_sv;
+		case Ability::Overcoat: return "Overcoat"_sv;
+		case Ability::Poison_Touch: return "Poison Touch"_sv;
+		case Ability::Regenerator: return "Regenerator"_sv;
+		case Ability::Big_Pecks: return "Big Pecks"_sv;
+		case Ability::Sand_Rush: return "Sand Rush"_sv;
+		case Ability::Wonder_Skin: return "Wonder Skin"_sv;
+		case Ability::Analytic: return "Analytic"_sv;
+		case Ability::Illusion: return "Illusion"_sv;
+		case Ability::Imposter: return "Imposter"_sv;
+		case Ability::Infiltrator: return "Infiltrator"_sv;
+		case Ability::Mummy: return "Mummy"_sv;
+		case Ability::Moxie: return "Moxie"_sv;
+		case Ability::Justified: return "Justified"_sv;
+		case Ability::Rattled: return "Rattled"_sv;
+		case Ability::Magic_Bounce: return "Magic Bounce"_sv;
+		case Ability::Sap_Sipper: return "Sap Sipper"_sv;
+		case Ability::Prankster: return "Prankster"_sv;
+		case Ability::Sand_Force: return "Sand Force"_sv;
+		case Ability::Iron_Barbs: return "Iron Barbs"_sv;
+		case Ability::Zen_Mode: return "Zen Mode"_sv;
+		case Ability::Victory_Star: return "Victory Star"_sv;
+		case Ability::Turboblaze: return "Turboblaze"_sv;
+		case Ability::Teravolt: return "Teravolt"_sv;
 
 		// Generation 6
-		case Ability::Aroma_Veil: return "Aroma Veil"_s;
-		case Ability::Flower_Veil: return "Flower Veil"_s;
-		case Ability::Cheek_Pouch: return "Cheek Pouch"_s;
-		case Ability::Protean: return "Protean"_s;
-		case Ability::Fur_Coat: return "Fur Coat"_s;
-		case Ability::Magician: return "Magician"_s;
-		case Ability::Bulletproof: return "Bulletproof"_s;
-		case Ability::Competitive: return "Competitive"_s;
-		case Ability::Strong_Jaw: return "Strong Jaw"_s;
-		case Ability::Refrigerate: return "Refrigerate"_s;
-		case Ability::Sweet_Veil: return "Sweet Veil"_s;
-		case Ability::Stance_Change: return "Stance Change"_s;
-		case Ability::Gale_Wings: return "Gale Wings"_s;
-		case Ability::Mega_Launcher: return "Mega Launcher"_s;
-		case Ability::Grass_Pelt: return "Grass Pelt"_s;
-		case Ability::Symbiosis: return "Symbiosis"_s;
-		case Ability::Tough_Claws: return "Tough Claws"_s;
-		case Ability::Pixilate: return "Pixilate"_s;
-		case Ability::Gooey: return "Gooey"_s;
-		case Ability::Aerilate: return "Aerilate"_s;
-		case Ability::Parental_Bond: return "Parental Bond"_s;
-		case Ability::Dark_Aura: return "Dark Aura"_s;
-		case Ability::Fairy_Aura: return "Fairy Aura"_s;
-		case Ability::Aura_Break: return "Aura Break"_s;
-		case Ability::Primordial_Sea: return "Primordial Sea"_s;
-		case Ability::Desolate_Land: return "Desolate Land"_s;
-		case Ability::Delta_Stream: return "Delta Stream"_s;
+		case Ability::Aroma_Veil: return "Aroma Veil"_sv;
+		case Ability::Flower_Veil: return "Flower Veil"_sv;
+		case Ability::Cheek_Pouch: return "Cheek Pouch"_sv;
+		case Ability::Protean: return "Protean"_sv;
+		case Ability::Fur_Coat: return "Fur Coat"_sv;
+		case Ability::Magician: return "Magician"_sv;
+		case Ability::Bulletproof: return "Bulletproof"_sv;
+		case Ability::Competitive: return "Competitive"_sv;
+		case Ability::Strong_Jaw: return "Strong Jaw"_sv;
+		case Ability::Refrigerate: return "Refrigerate"_sv;
+		case Ability::Sweet_Veil: return "Sweet Veil"_sv;
+		case Ability::Stance_Change: return "Stance Change"_sv;
+		case Ability::Gale_Wings: return "Gale Wings"_sv;
+		case Ability::Mega_Launcher: return "Mega Launcher"_sv;
+		case Ability::Grass_Pelt: return "Grass Pelt"_sv;
+		case Ability::Symbiosis: return "Symbiosis"_sv;
+		case Ability::Tough_Claws: return "Tough Claws"_sv;
+		case Ability::Pixilate: return "Pixilate"_sv;
+		case Ability::Gooey: return "Gooey"_sv;
+		case Ability::Aerilate: return "Aerilate"_sv;
+		case Ability::Parental_Bond: return "Parental Bond"_sv;
+		case Ability::Dark_Aura: return "Dark Aura"_sv;
+		case Ability::Fairy_Aura: return "Fairy Aura"_sv;
+		case Ability::Aura_Break: return "Aura Break"_sv;
+		case Ability::Primordial_Sea: return "Primordial Sea"_sv;
+		case Ability::Desolate_Land: return "Desolate Land"_sv;
+		case Ability::Delta_Stream: return "Delta Stream"_sv;
 
 		// Generation 7
-		case Ability::Stamina: return "Stamina"_s;
-		case Ability::Wimp_Out: return "Wimp Out"_s;
-		case Ability::Emergency_Exit: return "Emergency Exit"_s;
-		case Ability::Water_Compaction: return "Water Compaction"_s;
-		case Ability::Merciless: return "Merciless"_s;
-		case Ability::Shields_Down: return "Shields Down"_s;
-		case Ability::Stakeout: return "Stakeout"_s;
-		case Ability::Water_Bubble: return "Water Bubble"_s;
-		case Ability::Steelworker: return "Steelworker"_s;
-		case Ability::Berserk: return "Berserk"_s;
-		case Ability::Slush_Rush: return "Slush Rush"_s;
-		case Ability::Long_Reach: return "Long Reach"_s;
-		case Ability::Liquid_Voice: return "Liquid Voice"_s;
-		case Ability::Triage: return "Triage"_s;
-		case Ability::Galvanize: return "Galvanize"_s;
-		case Ability::Surge_Surfer: return "Surge Surfer"_s;
-		case Ability::Schooling: return "Schooling"_s;
-		case Ability::Disguise: return "Disguise"_s;
-		case Ability::Battle_Bond: return "Battle Bond"_s;
-		case Ability::Power_Construct: return "Power Construct"_s;
-		case Ability::Corrosion: return "Corrosion"_s;
-		case Ability::Comatose: return "Comatose"_s;
-		case Ability::Queenly_Majesty: return "Queenly Majesty"_s;
-		case Ability::Innards_Out: return "Innards Out"_s;
-		case Ability::Dancer: return "Dancer"_s;
-		case Ability::Battery: return "Battery"_s;
-		case Ability::Fluffy: return "Fluffy"_s;
-		case Ability::Dazzling: return "Dazzling"_s;
-		case Ability::Soul_Heart: return "Soul-Heart"_s;
-		case Ability::Tangling_Hair: return "Tangling Hair"_s;
-		case Ability::Receiver: return "Receiver"_s;
-		case Ability::Power_of_Alchemy: return "Power of Alchemy"_s;
-		case Ability::Beast_Boost: return "Beast Boost"_s;
-		case Ability::RKS_System: return "RKS System"_s;
-		case Ability::Electric_Surge: return "Electric Surge"_s;
-		case Ability::Psychic_Surge: return "Psychic Surge"_s;
-		case Ability::Misty_Surge: return "Misty Surge"_s;
-		case Ability::Grassy_Surge: return "Grassy Surge"_s;
-		case Ability::Full_Metal_Body: return "Full Metal Body"_s;
-		case Ability::Shadow_Shield: return "Shadow Shield"_s;
-		case Ability::Prism_Armor: return "Prism Armor"_s;
-		case Ability::Neuroforce: return "Neuroforce"_s;
+		case Ability::Stamina: return "Stamina"_sv;
+		case Ability::Wimp_Out: return "Wimp Out"_sv;
+		case Ability::Emergency_Exit: return "Emergency Exit"_sv;
+		case Ability::Water_Compaction: return "Water Compaction"_sv;
+		case Ability::Merciless: return "Merciless"_sv;
+		case Ability::Shields_Down: return "Shields Down"_sv;
+		case Ability::Stakeout: return "Stakeout"_sv;
+		case Ability::Water_Bubble: return "Water Bubble"_sv;
+		case Ability::Steelworker: return "Steelworker"_sv;
+		case Ability::Berserk: return "Berserk"_sv;
+		case Ability::Slush_Rush: return "Slush Rush"_sv;
+		case Ability::Long_Reach: return "Long Reach"_sv;
+		case Ability::Liquid_Voice: return "Liquid Voice"_sv;
+		case Ability::Triage: return "Triage"_sv;
+		case Ability::Galvanize: return "Galvanize"_sv;
+		case Ability::Surge_Surfer: return "Surge Surfer"_sv;
+		case Ability::Schooling: return "Schooling"_sv;
+		case Ability::Disguise: return "Disguise"_sv;
+		case Ability::Battle_Bond: return "Battle Bond"_sv;
+		case Ability::Power_Construct: return "Power Construct"_sv;
+		case Ability::Corrosion: return "Corrosion"_sv;
+		case Ability::Comatose: return "Comatose"_sv;
+		case Ability::Queenly_Majesty: return "Queenly Majesty"_sv;
+		case Ability::Innards_Out: return "Innards Out"_sv;
+		case Ability::Dancer: return "Dancer"_sv;
+		case Ability::Battery: return "Battery"_sv;
+		case Ability::Fluffy: return "Fluffy"_sv;
+		case Ability::Dazzling: return "Dazzling"_sv;
+		case Ability::Soul_Heart: return "Soul-Heart"_sv;
+		case Ability::Tangling_Hair: return "Tangling Hair"_sv;
+		case Ability::Receiver: return "Receiver"_sv;
+		case Ability::Power_of_Alchemy: return "Power of Alchemy"_sv;
+		case Ability::Beast_Boost: return "Beast Boost"_sv;
+		case Ability::RKS_System: return "RKS System"_sv;
+		case Ability::Electric_Surge: return "Electric Surge"_sv;
+		case Ability::Psychic_Surge: return "Psychic Surge"_sv;
+		case Ability::Misty_Surge: return "Misty Surge"_sv;
+		case Ability::Grassy_Surge: return "Grassy Surge"_sv;
+		case Ability::Full_Metal_Body: return "Full Metal Body"_sv;
+		case Ability::Shadow_Shield: return "Shadow Shield"_sv;
+		case Ability::Prism_Armor: return "Prism Armor"_sv;
+		case Ability::Neuroforce: return "Neuroforce"_sv;
 
 		// Generation 8
-		case Ability::Intrepid_Sword: return "Intrepid Sword"_s;
-		case Ability::Dauntless_Shield: return "Dauntless Shield"_s;
-		case Ability::Libero: return "Libero"_s;
-		case Ability::Ball_Fetch: return "Ball Fetch"_s;
-		case Ability::Cotton_Down: return "Cotton Down"_s;
-		case Ability::Propeller_Tail: return "Propeller Tail"_s;
-		case Ability::Mirror_Armor: return "Mirror Armor"_s;
-		case Ability::Gulp_Missile: return "Gulp Missile"_s;
-		case Ability::Stalwart: return "Stalwart"_s;
-		case Ability::Steam_Engine: return "Steam Engine"_s;
-		case Ability::Punk_Rock: return "Punk Rock"_s;
-		case Ability::Sand_Spit: return "Sand Spit"_s;
-		case Ability::Ice_Scales: return "Ice Scales"_s;
-		case Ability::Ripen: return "Ripen"_s;
-		case Ability::Ice_Face: return "Ice Face"_s;
-		case Ability::Power_Spot: return "Power Spot"_s;
-		case Ability::Mimicry: return "Mimicry"_s;
-		case Ability::Screen_Cleaner: return "Screen Cleaner"_s;
-		case Ability::Steely_Spirit: return "Steely Spirit"_s;
-		case Ability::Perish_Body: return "Perish Body"_s;
-		case Ability::Wandering_Spirit: return "Wandering Spirit"_s;
-		case Ability::Gorilla_Tactics: return "Gorilla Tactics"_s;
-		case Ability::Neutralizing_Gas: return "Neutralizing Gas"_s;
-		case Ability::Pastel_Veil: return "Pastel Veil"_s;
-		case Ability::Hunger_Switch: return "Hunger Switch"_s;
+		case Ability::Intrepid_Sword: return "Intrepid Sword"_sv;
+		case Ability::Dauntless_Shield: return "Dauntless Shield"_sv;
+		case Ability::Libero: return "Libero"_sv;
+		case Ability::Ball_Fetch: return "Ball Fetch"_sv;
+		case Ability::Cotton_Down: return "Cotton Down"_sv;
+		case Ability::Propeller_Tail: return "Propeller Tail"_sv;
+		case Ability::Mirror_Armor: return "Mirror Armor"_sv;
+		case Ability::Gulp_Missile: return "Gulp Missile"_sv;
+		case Ability::Stalwart: return "Stalwart"_sv;
+		case Ability::Steam_Engine: return "Steam Engine"_sv;
+		case Ability::Punk_Rock: return "Punk Rock"_sv;
+		case Ability::Sand_Spit: return "Sand Spit"_sv;
+		case Ability::Ice_Scales: return "Ice Scales"_sv;
+		case Ability::Ripen: return "Ripen"_sv;
+		case Ability::Ice_Face: return "Ice Face"_sv;
+		case Ability::Power_Spot: return "Power Spot"_sv;
+		case Ability::Mimicry: return "Mimicry"_sv;
+		case Ability::Screen_Cleaner: return "Screen Cleaner"_sv;
+		case Ability::Steely_Spirit: return "Steely Spirit"_sv;
+		case Ability::Perish_Body: return "Perish Body"_sv;
+		case Ability::Wandering_Spirit: return "Wandering Spirit"_sv;
+		case Ability::Gorilla_Tactics: return "Gorilla Tactics"_sv;
+		case Ability::Neutralizing_Gas: return "Neutralizing Gas"_sv;
+		case Ability::Pastel_Veil: return "Pastel Veil"_sv;
+		case Ability::Hunger_Switch: return "Hunger Switch"_sv;
 	}
 }
 
@@ -297,272 +297,272 @@ constexpr auto from_string<Ability>(containers::string_view const str) -> Abilit
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Ability>>({
-			{"adaptability"_s, Ability::Adaptability},
-			{"aerilate"_s, Ability::Aerilate},
-			{"aftermath"_s, Ability::Aftermath},
-			{"airlock"_s, Ability::Air_Lock},
-			{"analytic"_s, Ability::Analytic},
-			{"angerpoint"_s, Ability::Anger_Point},
-			{"anticipation"_s, Ability::Anticipation},
-			{"arenatrap"_s, Ability::Arena_Trap},
-			{"aromaveil"_s, Ability::Aroma_Veil},
-			{"aurabreak"_s, Ability::Aura_Break},
-			{"baddreams"_s, Ability::Bad_Dreams},
-			{"ballfetch"_s, Ability::Ball_Fetch},
-			{"battery"_s, Ability::Battery},
-			{"battlearmor"_s, Ability::Battle_Armor},
-			{"battlebond"_s, Ability::Battle_Bond},
-			{"beastboost"_s, Ability::Beast_Boost},
-			{"berserk"_s, Ability::Berserk},
-			{"bigpecks"_s, Ability::Big_Pecks},
-			{"blaze"_s, Ability::Blaze},
-			{"bulletproof"_s, Ability::Bulletproof},
-			{"cheekpouch"_s, Ability::Cheek_Pouch},
-			{"chlorophyll"_s, Ability::Chlorophyll},
-			{"clearbody"_s, Ability::Clear_Body},
-			{"cloudnine"_s, Ability::Cloud_Nine},
-			{"colorchange"_s, Ability::Color_Change},
-			{"comatose"_s, Ability::Comatose},
-			{"competitive"_s, Ability::Competitive},
-			{"compoundeyes"_s, Ability::Compound_Eyes},
-			{"contrary"_s, Ability::Contrary},
-			{"corrosion"_s, Ability::Corrosion},
-			{"cottondown"_s, Ability::Cotton_Down},
-			{"cursedbody"_s, Ability::Cursed_Body},
-			{"cutecharm"_s, Ability::Cute_Charm},
-			{"damp"_s, Ability::Damp},
-			{"dancer"_s, Ability::Dancer},
-			{"darkaura"_s, Ability::Dark_Aura},
-			{"dauntlessshield"_s, Ability::Dauntless_Shield},
-			{"dazzling"_s, Ability::Dazzling},
-			{"defeatist"_s, Ability::Defeatist},
-			{"defiant"_s, Ability::Defiant},
-			{"deltastream"_s, Ability::Delta_Stream},
-			{"desolateland"_s, Ability::Desolate_Land},
-			{"disguise"_s, Ability::Disguise},
-			{"download"_s, Ability::Download},
-			{"drizzle"_s, Ability::Drizzle},
-			{"drought"_s, Ability::Drought},
-			{"dryskin"_s, Ability::Dry_Skin},
-			{"earlybird"_s, Ability::Early_Bird},
-			{"effectspore"_s, Ability::Effect_Spore},
-			{"electricsurge"_s, Ability::Electric_Surge},
-			{"emergencyexit"_s, Ability::Emergency_Exit},
-			{"fairyaura"_s, Ability::Fairy_Aura},
-			{"filter"_s, Ability::Filter},
-			{"flamebody"_s, Ability::Flame_Body},
-			{"flareboost"_s, Ability::Flare_Boost},
-			{"flashfire"_s, Ability::Flash_Fire},
-			{"flowergift"_s, Ability::Flower_Gift},
-			{"flowerveil"_s, Ability::Flower_Veil},
-			{"fluffy"_s, Ability::Fluffy},
-			{"forecast"_s, Ability::Forecast},
-			{"forewarn"_s, Ability::Forewarn},
-			{"friendguard"_s, Ability::Friend_Guard},
-			{"frisk"_s, Ability::Frisk},
-			{"fullmetalbody"_s, Ability::Full_Metal_Body},
-			{"furcoat"_s, Ability::Fur_Coat},
-			{"galewings"_s, Ability::Gale_Wings},
-			{"galvanize"_s, Ability::Galvanize},
-			{"gluttony"_s, Ability::Gluttony},
-			{"gooey"_s, Ability::Gooey},
-			{"gorillatactics"_s, Ability::Gorilla_Tactics},
-			{"grasspelt"_s, Ability::Grass_Pelt},
-			{"grassysurge"_s, Ability::Grassy_Surge},
-			{"gulpmissile"_s, Ability::Gulp_Missile},
-			{"guts"_s, Ability::Guts},
-			{"harvest"_s, Ability::Harvest},
-			{"healer"_s, Ability::Healer},
-			{"heatproof"_s, Ability::Heatproof},
-			{"heavymetal"_s, Ability::Heavy_Metal},
-			{"honeygather"_s, Ability::Honey_Gather},
-			{"hugepower"_s, Ability::Huge_Power},
-			{"hungerswitch"_s, Ability::Hunger_Switch},
-			{"hustle"_s, Ability::Hustle},
-			{"hydration"_s, Ability::Hydration},
-			{"hypercutter"_s, Ability::Hyper_Cutter},
-			{"icebody"_s, Ability::Ice_Body},
-			{"iceface"_s, Ability::Ice_Face},
-			{"icescales"_s, Ability::Ice_Scales},
-			{"illuminate"_s, Ability::Illuminate},
-			{"illusion"_s, Ability::Illusion},
-			{"immunity"_s, Ability::Immunity},
-			{"imposter"_s, Ability::Imposter},
-			{"infiltrator"_s, Ability::Infiltrator},
-			{"innardsout"_s, Ability::Innards_Out},
-			{"innerfocus"_s, Ability::Inner_Focus},
-			{"insomnia"_s, Ability::Insomnia},
-			{"intimidate"_s, Ability::Intimidate},
-			{"intrepidsword"_s, Ability::Intrepid_Sword},
-			{"ironbarbs"_s, Ability::Iron_Barbs},
-			{"ironfist"_s, Ability::Iron_Fist},
-			{"justified"_s, Ability::Justified},
-			{"keeneye"_s, Ability::Keen_Eye},
-			{"klutz"_s, Ability::Klutz},
-			{"leafguard"_s, Ability::Leaf_Guard},
-			{"levitate"_s, Ability::Levitate},
-			{"libero"_s, Ability::Libero},
-			{"lightmetal"_s, Ability::Light_Metal},
-			{"lightningrod"_s, Ability::Lightning_Rod},
-			{"limber"_s, Ability::Limber},
-			{"liquidooze"_s, Ability::Liquid_Ooze},
-			{"liquidvoice"_s, Ability::Liquid_Voice},
-			{"longreach"_s, Ability::Long_Reach},
-			{"magicbounce"_s, Ability::Magic_Bounce},
-			{"magicguard"_s, Ability::Magic_Guard},
-			{"magician"_s, Ability::Magician},
-			{"magmaarmor"_s, Ability::Magma_Armor},
-			{"magnetpull"_s, Ability::Magnet_Pull},
-			{"marvelscale"_s, Ability::Marvel_Scale},
-			{"megalauncher"_s, Ability::Mega_Launcher},
-			{"merciless"_s, Ability::Merciless},
-			{"mimicry"_s, Ability::Mimicry},
-			{"minus"_s, Ability::Minus},
-			{"mirrorarmor"_s, Ability::Mirror_Armor},
-			{"mistysurge"_s, Ability::Misty_Surge},
-			{"moldbreaker"_s, Ability::Mold_Breaker},
-			{"moody"_s, Ability::Moody},
-			{"motordrive"_s, Ability::Motor_Drive},
-			{"moxie"_s, Ability::Moxie},
-			{"multiscale"_s, Ability::Multiscale},
-			{"multitype"_s, Ability::Multitype},
-			{"mummy"_s, Ability::Mummy},
-			{"naturalcure"_s, Ability::Natural_Cure},
-			{"neuroforce"_s, Ability::Neuroforce},
-			{"neutralizinggas"_s, Ability::Neutralizing_Gas},
-			{"noability"_s, Ability::Honey_Gather}, // TODO: ???
-			{"noguard"_s, Ability::No_Guard},
-			{"none"_s, Ability::Honey_Gather}, // TODO: ???
-			{"normalize"_s, Ability::Normalize},
-			{"oblivious"_s, Ability::Oblivious},
-			{"overcoat"_s, Ability::Overcoat},
-			{"overgrow"_s, Ability::Overgrow},
-			{"owntempo"_s, Ability::Own_Tempo},
-			{"parentalbond"_s, Ability::Parental_Bond},
-			{"pastelveil"_s, Ability::Pastel_Veil},
-			{"perishbody"_s, Ability::Perish_Body},
-			{"pickpocket"_s, Ability::Pickpocket},
-			{"pickup"_s, Ability::Pickup},
-			{"pixilate"_s, Ability::Pixilate},
-			{"plus"_s, Ability::Plus},
-			{"poisonheal"_s, Ability::Poison_Heal},
-			{"poisonpoint"_s, Ability::Poison_Point},
-			{"poisontouch"_s, Ability::Poison_Touch},
-			{"powerconstruct"_s, Ability::Power_Construct},
-			{"powerofalchemy"_s, Ability::Power_of_Alchemy},
-			{"powerspot"_s, Ability::Power_Spot},
-			{"prankster"_s, Ability::Prankster},
-			{"pressure"_s, Ability::Pressure},
-			{"primordialsea"_s, Ability::Primordial_Sea},
-			{"prismarmor"_s, Ability::Prism_Armor},
-			{"propellertail"_s, Ability::Propeller_Tail},
-			{"protean"_s, Ability::Protean},
-			{"psychicsurge"_s, Ability::Psychic_Surge},
-			{"punkrock"_s, Ability::Punk_Rock},
-			{"purepower"_s, Ability::Pure_Power},
-			{"queenlymajesty"_s, Ability::Queenly_Majesty},
-			{"quickfeet"_s, Ability::Quick_Feet},
-			{"raindish"_s, Ability::Rain_Dish},
-			{"rattled"_s, Ability::Rattled},
-			{"receiver"_s, Ability::Receiver},
-			{"reckless"_s, Ability::Reckless},
-			{"refrigerate"_s, Ability::Refrigerate},
-			{"regenerator"_s, Ability::Regenerator},
-			{"ripen"_s, Ability::Ripen},
-			{"rivalry"_s, Ability::Rivalry},
-			{"rkssystem"_s, Ability::RKS_System},
-			{"rockhead"_s, Ability::Rock_Head},
-			{"roughskin"_s, Ability::Rough_Skin},
-			{"runaway"_s, Ability::Run_Away},
-			{"sandforce"_s, Ability::Sand_Force},
-			{"sandrush"_s, Ability::Sand_Rush},
-			{"sandspit"_s, Ability::Sand_Spit},
-			{"sandstream"_s, Ability::Sand_Stream},
-			{"sandveil"_s, Ability::Sand_Veil},
-			{"sapsipper"_s, Ability::Sap_Sipper},
-			{"schooling"_s, Ability::Schooling},
-			{"scrappy"_s, Ability::Scrappy},
-			{"screencleaner"_s, Ability::Screen_Cleaner},
-			{"serenegrace"_s, Ability::Serene_Grace},
-			{"shadowshield"_s, Ability::Shadow_Shield},
-			{"shadowtag"_s, Ability::Shadow_Tag},
-			{"shedskin"_s, Ability::Shed_Skin},
-			{"sheerforce"_s, Ability::Sheer_Force},
-			{"shellarmor"_s, Ability::Shell_Armor},
-			{"shielddust"_s, Ability::Shield_Dust},
-			{"shieldsdown"_s, Ability::Shields_Down},
-			{"simple"_s, Ability::Simple},
-			{"skilllink"_s, Ability::Skill_Link},
-			{"slowstart"_s, Ability::Slow_Start},
-			{"slushrush"_s, Ability::Slush_Rush},
-			{"sniper"_s, Ability::Sniper},
-			{"snowcloak"_s, Ability::Snow_Cloak},
-			{"snowwarning"_s, Ability::Snow_Warning},
-			{"solarpower"_s, Ability::Solar_Power},
-			{"solidrock"_s, Ability::Solid_Rock},
-			{"soulheart"_s, Ability::Soul_Heart},
-			{"soundproof"_s, Ability::Soundproof},
-			{"speedboost"_s, Ability::Speed_Boost},
-			{"stakeout"_s, Ability::Stakeout},
-			{"stall"_s, Ability::Stall},
-			{"stalwart"_s, Ability::Stalwart},
-			{"stamina"_s, Ability::Stamina},
-			{"stancechange"_s, Ability::Stance_Change},
-			{"static"_s, Ability::Static},
-			{"steadfast"_s, Ability::Steadfast},
-			{"steamengine"_s, Ability::Steam_Engine},
-			{"steelworker"_s, Ability::Steelworker},
-			{"steelyspirit"_s, Ability::Steely_Spirit},
-			{"stench"_s, Ability::Stench},
-			{"stickyhold"_s, Ability::Sticky_Hold},
-			{"stormdrain"_s, Ability::Storm_Drain},
-			{"strongjaw"_s, Ability::Strong_Jaw},
-			{"sturdy"_s, Ability::Sturdy},
-			{"suctioncups"_s, Ability::Suction_Cups},
-			{"superluck"_s, Ability::Super_Luck},
-			{"surgesurfer"_s, Ability::Surge_Surfer},
-			{"swarm"_s, Ability::Swarm},
-			{"sweetveil"_s, Ability::Sweet_Veil},
-			{"swiftswim"_s, Ability::Swift_Swim},
-			{"symbiosis"_s, Ability::Symbiosis},
-			{"synchronize"_s, Ability::Synchronize},
-			{"tangledfeet"_s, Ability::Tangled_Feet},
-			{"tanglinghair"_s, Ability::Tangling_Hair},
-			{"technician"_s, Ability::Technician},
-			{"telepathy"_s, Ability::Telepathy},
-			{"teravolt"_s, Ability::Teravolt},
-			{"thickfat"_s, Ability::Thick_Fat},
-			{"tintedlens"_s, Ability::Tinted_Lens},
-			{"torrent"_s, Ability::Torrent},
-			{"toughclaws"_s, Ability::Tough_Claws},
-			{"toxicboost"_s, Ability::Toxic_Boost},
-			{"trace"_s, Ability::Trace},
-			{"triage"_s, Ability::Triage},
-			{"truant"_s, Ability::Truant},
-			{"turboblaze"_s, Ability::Turboblaze},
-			{"unaware"_s, Ability::Unaware},
-			{"unburden"_s, Ability::Unburden},
-			{"unnerve"_s, Ability::Unnerve},
-			{"victorystar"_s, Ability::Victory_Star},
-			{"vitalspirit"_s, Ability::Vital_Spirit},
-			{"voltabsorb"_s, Ability::Volt_Absorb},
-			{"wanderingspirit"_s, Ability::Wandering_Spirit},
-			{"waterabsorb"_s, Ability::Water_Absorb},
-			{"waterbubble"_s, Ability::Water_Bubble},
-			{"watercompaction"_s, Ability::Water_Compaction},
-			{"waterveil"_s, Ability::Water_Veil},
-			{"weakarmor"_s, Ability::Weak_Armor},
-			{"whitesmoke"_s, Ability::White_Smoke},
-			{"wimpout"_s, Ability::Wimp_Out},
-			{"wonderguard"_s, Ability::Wonder_Guard},
-			{"wonderskin"_s, Ability::Wonder_Skin},
-			{"zenmode"_s, Ability::Zen_Mode},
+			{"adaptability"_sv, Ability::Adaptability},
+			{"aerilate"_sv, Ability::Aerilate},
+			{"aftermath"_sv, Ability::Aftermath},
+			{"airlock"_sv, Ability::Air_Lock},
+			{"analytic"_sv, Ability::Analytic},
+			{"angerpoint"_sv, Ability::Anger_Point},
+			{"anticipation"_sv, Ability::Anticipation},
+			{"arenatrap"_sv, Ability::Arena_Trap},
+			{"aromaveil"_sv, Ability::Aroma_Veil},
+			{"aurabreak"_sv, Ability::Aura_Break},
+			{"baddreams"_sv, Ability::Bad_Dreams},
+			{"ballfetch"_sv, Ability::Ball_Fetch},
+			{"battery"_sv, Ability::Battery},
+			{"battlearmor"_sv, Ability::Battle_Armor},
+			{"battlebond"_sv, Ability::Battle_Bond},
+			{"beastboost"_sv, Ability::Beast_Boost},
+			{"berserk"_sv, Ability::Berserk},
+			{"bigpecks"_sv, Ability::Big_Pecks},
+			{"blaze"_sv, Ability::Blaze},
+			{"bulletproof"_sv, Ability::Bulletproof},
+			{"cheekpouch"_sv, Ability::Cheek_Pouch},
+			{"chlorophyll"_sv, Ability::Chlorophyll},
+			{"clearbody"_sv, Ability::Clear_Body},
+			{"cloudnine"_sv, Ability::Cloud_Nine},
+			{"colorchange"_sv, Ability::Color_Change},
+			{"comatose"_sv, Ability::Comatose},
+			{"competitive"_sv, Ability::Competitive},
+			{"compoundeyes"_sv, Ability::Compound_Eyes},
+			{"contrary"_sv, Ability::Contrary},
+			{"corrosion"_sv, Ability::Corrosion},
+			{"cottondown"_sv, Ability::Cotton_Down},
+			{"cursedbody"_sv, Ability::Cursed_Body},
+			{"cutecharm"_sv, Ability::Cute_Charm},
+			{"damp"_sv, Ability::Damp},
+			{"dancer"_sv, Ability::Dancer},
+			{"darkaura"_sv, Ability::Dark_Aura},
+			{"dauntlessshield"_sv, Ability::Dauntless_Shield},
+			{"dazzling"_sv, Ability::Dazzling},
+			{"defeatist"_sv, Ability::Defeatist},
+			{"defiant"_sv, Ability::Defiant},
+			{"deltastream"_sv, Ability::Delta_Stream},
+			{"desolateland"_sv, Ability::Desolate_Land},
+			{"disguise"_sv, Ability::Disguise},
+			{"download"_sv, Ability::Download},
+			{"drizzle"_sv, Ability::Drizzle},
+			{"drought"_sv, Ability::Drought},
+			{"dryskin"_sv, Ability::Dry_Skin},
+			{"earlybird"_sv, Ability::Early_Bird},
+			{"effectspore"_sv, Ability::Effect_Spore},
+			{"electricsurge"_sv, Ability::Electric_Surge},
+			{"emergencyexit"_sv, Ability::Emergency_Exit},
+			{"fairyaura"_sv, Ability::Fairy_Aura},
+			{"filter"_sv, Ability::Filter},
+			{"flamebody"_sv, Ability::Flame_Body},
+			{"flareboost"_sv, Ability::Flare_Boost},
+			{"flashfire"_sv, Ability::Flash_Fire},
+			{"flowergift"_sv, Ability::Flower_Gift},
+			{"flowerveil"_sv, Ability::Flower_Veil},
+			{"fluffy"_sv, Ability::Fluffy},
+			{"forecast"_sv, Ability::Forecast},
+			{"forewarn"_sv, Ability::Forewarn},
+			{"friendguard"_sv, Ability::Friend_Guard},
+			{"frisk"_sv, Ability::Frisk},
+			{"fullmetalbody"_sv, Ability::Full_Metal_Body},
+			{"furcoat"_sv, Ability::Fur_Coat},
+			{"galewings"_sv, Ability::Gale_Wings},
+			{"galvanize"_sv, Ability::Galvanize},
+			{"gluttony"_sv, Ability::Gluttony},
+			{"gooey"_sv, Ability::Gooey},
+			{"gorillatactics"_sv, Ability::Gorilla_Tactics},
+			{"grasspelt"_sv, Ability::Grass_Pelt},
+			{"grassysurge"_sv, Ability::Grassy_Surge},
+			{"gulpmissile"_sv, Ability::Gulp_Missile},
+			{"guts"_sv, Ability::Guts},
+			{"harvest"_sv, Ability::Harvest},
+			{"healer"_sv, Ability::Healer},
+			{"heatproof"_sv, Ability::Heatproof},
+			{"heavymetal"_sv, Ability::Heavy_Metal},
+			{"honeygather"_sv, Ability::Honey_Gather},
+			{"hugepower"_sv, Ability::Huge_Power},
+			{"hungerswitch"_sv, Ability::Hunger_Switch},
+			{"hustle"_sv, Ability::Hustle},
+			{"hydration"_sv, Ability::Hydration},
+			{"hypercutter"_sv, Ability::Hyper_Cutter},
+			{"icebody"_sv, Ability::Ice_Body},
+			{"iceface"_sv, Ability::Ice_Face},
+			{"icescales"_sv, Ability::Ice_Scales},
+			{"illuminate"_sv, Ability::Illuminate},
+			{"illusion"_sv, Ability::Illusion},
+			{"immunity"_sv, Ability::Immunity},
+			{"imposter"_sv, Ability::Imposter},
+			{"infiltrator"_sv, Ability::Infiltrator},
+			{"innardsout"_sv, Ability::Innards_Out},
+			{"innerfocus"_sv, Ability::Inner_Focus},
+			{"insomnia"_sv, Ability::Insomnia},
+			{"intimidate"_sv, Ability::Intimidate},
+			{"intrepidsword"_sv, Ability::Intrepid_Sword},
+			{"ironbarbs"_sv, Ability::Iron_Barbs},
+			{"ironfist"_sv, Ability::Iron_Fist},
+			{"justified"_sv, Ability::Justified},
+			{"keeneye"_sv, Ability::Keen_Eye},
+			{"klutz"_sv, Ability::Klutz},
+			{"leafguard"_sv, Ability::Leaf_Guard},
+			{"levitate"_sv, Ability::Levitate},
+			{"libero"_sv, Ability::Libero},
+			{"lightmetal"_sv, Ability::Light_Metal},
+			{"lightningrod"_sv, Ability::Lightning_Rod},
+			{"limber"_sv, Ability::Limber},
+			{"liquidooze"_sv, Ability::Liquid_Ooze},
+			{"liquidvoice"_sv, Ability::Liquid_Voice},
+			{"longreach"_sv, Ability::Long_Reach},
+			{"magicbounce"_sv, Ability::Magic_Bounce},
+			{"magicguard"_sv, Ability::Magic_Guard},
+			{"magician"_sv, Ability::Magician},
+			{"magmaarmor"_sv, Ability::Magma_Armor},
+			{"magnetpull"_sv, Ability::Magnet_Pull},
+			{"marvelscale"_sv, Ability::Marvel_Scale},
+			{"megalauncher"_sv, Ability::Mega_Launcher},
+			{"merciless"_sv, Ability::Merciless},
+			{"mimicry"_sv, Ability::Mimicry},
+			{"minus"_sv, Ability::Minus},
+			{"mirrorarmor"_sv, Ability::Mirror_Armor},
+			{"mistysurge"_sv, Ability::Misty_Surge},
+			{"moldbreaker"_sv, Ability::Mold_Breaker},
+			{"moody"_sv, Ability::Moody},
+			{"motordrive"_sv, Ability::Motor_Drive},
+			{"moxie"_sv, Ability::Moxie},
+			{"multiscale"_sv, Ability::Multiscale},
+			{"multitype"_sv, Ability::Multitype},
+			{"mummy"_sv, Ability::Mummy},
+			{"naturalcure"_sv, Ability::Natural_Cure},
+			{"neuroforce"_sv, Ability::Neuroforce},
+			{"neutralizinggas"_sv, Ability::Neutralizing_Gas},
+			{"noability"_sv, Ability::Honey_Gather}, // TODO: ???
+			{"noguard"_sv, Ability::No_Guard},
+			{"none"_sv, Ability::Honey_Gather}, // TODO: ???
+			{"normalize"_sv, Ability::Normalize},
+			{"oblivious"_sv, Ability::Oblivious},
+			{"overcoat"_sv, Ability::Overcoat},
+			{"overgrow"_sv, Ability::Overgrow},
+			{"owntempo"_sv, Ability::Own_Tempo},
+			{"parentalbond"_sv, Ability::Parental_Bond},
+			{"pastelveil"_sv, Ability::Pastel_Veil},
+			{"perishbody"_sv, Ability::Perish_Body},
+			{"pickpocket"_sv, Ability::Pickpocket},
+			{"pickup"_sv, Ability::Pickup},
+			{"pixilate"_sv, Ability::Pixilate},
+			{"plus"_sv, Ability::Plus},
+			{"poisonheal"_sv, Ability::Poison_Heal},
+			{"poisonpoint"_sv, Ability::Poison_Point},
+			{"poisontouch"_sv, Ability::Poison_Touch},
+			{"powerconstruct"_sv, Ability::Power_Construct},
+			{"powerofalchemy"_sv, Ability::Power_of_Alchemy},
+			{"powerspot"_sv, Ability::Power_Spot},
+			{"prankster"_sv, Ability::Prankster},
+			{"pressure"_sv, Ability::Pressure},
+			{"primordialsea"_sv, Ability::Primordial_Sea},
+			{"prismarmor"_sv, Ability::Prism_Armor},
+			{"propellertail"_sv, Ability::Propeller_Tail},
+			{"protean"_sv, Ability::Protean},
+			{"psychicsurge"_sv, Ability::Psychic_Surge},
+			{"punkrock"_sv, Ability::Punk_Rock},
+			{"purepower"_sv, Ability::Pure_Power},
+			{"queenlymajesty"_sv, Ability::Queenly_Majesty},
+			{"quickfeet"_sv, Ability::Quick_Feet},
+			{"raindish"_sv, Ability::Rain_Dish},
+			{"rattled"_sv, Ability::Rattled},
+			{"receiver"_sv, Ability::Receiver},
+			{"reckless"_sv, Ability::Reckless},
+			{"refrigerate"_sv, Ability::Refrigerate},
+			{"regenerator"_sv, Ability::Regenerator},
+			{"ripen"_sv, Ability::Ripen},
+			{"rivalry"_sv, Ability::Rivalry},
+			{"rkssystem"_sv, Ability::RKS_System},
+			{"rockhead"_sv, Ability::Rock_Head},
+			{"roughskin"_sv, Ability::Rough_Skin},
+			{"runaway"_sv, Ability::Run_Away},
+			{"sandforce"_sv, Ability::Sand_Force},
+			{"sandrush"_sv, Ability::Sand_Rush},
+			{"sandspit"_sv, Ability::Sand_Spit},
+			{"sandstream"_sv, Ability::Sand_Stream},
+			{"sandveil"_sv, Ability::Sand_Veil},
+			{"sapsipper"_sv, Ability::Sap_Sipper},
+			{"schooling"_sv, Ability::Schooling},
+			{"scrappy"_sv, Ability::Scrappy},
+			{"screencleaner"_sv, Ability::Screen_Cleaner},
+			{"serenegrace"_sv, Ability::Serene_Grace},
+			{"shadowshield"_sv, Ability::Shadow_Shield},
+			{"shadowtag"_sv, Ability::Shadow_Tag},
+			{"shedskin"_sv, Ability::Shed_Skin},
+			{"sheerforce"_sv, Ability::Sheer_Force},
+			{"shellarmor"_sv, Ability::Shell_Armor},
+			{"shielddust"_sv, Ability::Shield_Dust},
+			{"shieldsdown"_sv, Ability::Shields_Down},
+			{"simple"_sv, Ability::Simple},
+			{"skilllink"_sv, Ability::Skill_Link},
+			{"slowstart"_sv, Ability::Slow_Start},
+			{"slushrush"_sv, Ability::Slush_Rush},
+			{"sniper"_sv, Ability::Sniper},
+			{"snowcloak"_sv, Ability::Snow_Cloak},
+			{"snowwarning"_sv, Ability::Snow_Warning},
+			{"solarpower"_sv, Ability::Solar_Power},
+			{"solidrock"_sv, Ability::Solid_Rock},
+			{"soulheart"_sv, Ability::Soul_Heart},
+			{"soundproof"_sv, Ability::Soundproof},
+			{"speedboost"_sv, Ability::Speed_Boost},
+			{"stakeout"_sv, Ability::Stakeout},
+			{"stall"_sv, Ability::Stall},
+			{"stalwart"_sv, Ability::Stalwart},
+			{"stamina"_sv, Ability::Stamina},
+			{"stancechange"_sv, Ability::Stance_Change},
+			{"static"_sv, Ability::Static},
+			{"steadfast"_sv, Ability::Steadfast},
+			{"steamengine"_sv, Ability::Steam_Engine},
+			{"steelworker"_sv, Ability::Steelworker},
+			{"steelyspirit"_sv, Ability::Steely_Spirit},
+			{"stench"_sv, Ability::Stench},
+			{"stickyhold"_sv, Ability::Sticky_Hold},
+			{"stormdrain"_sv, Ability::Storm_Drain},
+			{"strongjaw"_sv, Ability::Strong_Jaw},
+			{"sturdy"_sv, Ability::Sturdy},
+			{"suctioncups"_sv, Ability::Suction_Cups},
+			{"superluck"_sv, Ability::Super_Luck},
+			{"surgesurfer"_sv, Ability::Surge_Surfer},
+			{"swarm"_sv, Ability::Swarm},
+			{"sweetveil"_sv, Ability::Sweet_Veil},
+			{"swiftswim"_sv, Ability::Swift_Swim},
+			{"symbiosis"_sv, Ability::Symbiosis},
+			{"synchronize"_sv, Ability::Synchronize},
+			{"tangledfeet"_sv, Ability::Tangled_Feet},
+			{"tanglinghair"_sv, Ability::Tangling_Hair},
+			{"technician"_sv, Ability::Technician},
+			{"telepathy"_sv, Ability::Telepathy},
+			{"teravolt"_sv, Ability::Teravolt},
+			{"thickfat"_sv, Ability::Thick_Fat},
+			{"tintedlens"_sv, Ability::Tinted_Lens},
+			{"torrent"_sv, Ability::Torrent},
+			{"toughclaws"_sv, Ability::Tough_Claws},
+			{"toxicboost"_sv, Ability::Toxic_Boost},
+			{"trace"_sv, Ability::Trace},
+			{"triage"_sv, Ability::Triage},
+			{"truant"_sv, Ability::Truant},
+			{"turboblaze"_sv, Ability::Turboblaze},
+			{"unaware"_sv, Ability::Unaware},
+			{"unburden"_sv, Ability::Unburden},
+			{"unnerve"_sv, Ability::Unnerve},
+			{"victorystar"_sv, Ability::Victory_Star},
+			{"vitalspirit"_sv, Ability::Vital_Spirit},
+			{"voltabsorb"_sv, Ability::Volt_Absorb},
+			{"wanderingspirit"_sv, Ability::Wandering_Spirit},
+			{"waterabsorb"_sv, Ability::Water_Absorb},
+			{"waterbubble"_sv, Ability::Water_Bubble},
+			{"watercompaction"_sv, Ability::Water_Compaction},
+			{"waterveil"_sv, Ability::Water_Veil},
+			{"weakarmor"_sv, Ability::Weak_Armor},
+			{"whitesmoke"_sv, Ability::White_Smoke},
+			{"wimpout"_sv, Ability::Wimp_Out},
+			{"wonderguard"_sv, Ability::Wonder_Guard},
+			{"wonderskin"_sv, Ability::Wonder_Skin},
+			{"zenmode"_sv, Ability::Zen_Mode},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<15_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Ability"_s, str);
+		throw InvalidFromStringConversion("Ability"_sv, str);
 	}
 	return *result;
 }

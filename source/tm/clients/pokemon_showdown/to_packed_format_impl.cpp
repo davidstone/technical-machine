@@ -90,9 +90,9 @@ constexpr auto impl = []<Generation generation>(KnownTeam<generation> const & te
 			is_first ? ""_sv : "]"_sv,
 			pokemon.nickname().str(),
 			separator,
-			species_str == pokemon.nickname().str() ? ""_s : species_str,
+			species_str == pokemon.nickname().str() ? ""_sv : species_str,
 			separator,
-			item == Item::None ? ""_s : to_string(item),
+			item == Item::None ? ""_sv : to_string(item),
 			separator,
 			to_string(pokemon.initial_ability()),
 			separator

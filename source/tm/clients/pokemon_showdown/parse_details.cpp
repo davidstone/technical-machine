@@ -29,7 +29,7 @@ struct ParsedDetails {
 	Gender gender;
 };
 export constexpr auto parse_details(containers::string_view const details) -> ParsedDetails {
-	auto parser = DelimitedBufferView(details, ", "_s);
+	auto parser = DelimitedBufferView(details, ", "_sv);
 	auto const species = from_string<Species>(parser.pop());
 
 	auto const level_or_gender_or_shiny_str = parser.pop();
@@ -44,9 +44,9 @@ export constexpr auto parse_details(containers::string_view const details) -> Pa
 
 	auto const shiny_str = gender != Gender::genderless ? parser.pop() : gender_or_shiny_str;
 	auto exception = [&] {
-		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "_s, details));
+		return std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "_sv, details));
 	};
-	if (shiny_str != "shiny"_s and shiny_str != ""_s) {
+	if (shiny_str != "shiny"_sv and shiny_str != ""_sv) {
 		throw exception();
 	}
 	if (!containers::is_empty(parser.remainder())) {

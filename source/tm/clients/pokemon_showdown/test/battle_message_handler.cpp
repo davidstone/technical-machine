@@ -361,7 +361,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler can switch into entry hazards"
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Bulbasaur,
-				Nickname("Bulbasaur"_s),
+				Nickname("Bulbasaur"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(231_bi, 231_bi),
@@ -521,7 +521,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace fainted from middl
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Tauros,
-				Nickname("Tauros"_s),
+				Nickname("Tauros"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(353_bi, 353_bi),
@@ -590,7 +590,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace fainted from end o
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Tauros,
-				Nickname("Tauros"_s),
+				Nickname("Tauros"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(291_bi, 291_bi),
@@ -694,7 +694,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace multiple Pokemon")
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Shedinja,
-				Nickname("Shedinja"_s),
+				Nickname("Shedinja"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(1_bi, 1_bi),
@@ -715,7 +715,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler can replace multiple Pokemon")
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Bulbasaur,
-				Nickname("Bulbasaur"_s),
+				Nickname("Bulbasaur"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(231_bi, 231_bi),
@@ -806,7 +806,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion single 
 			ps::SwitchMessage(
 				Party(1_bi),
 				Species::Pikachu,
-				Nickname("Pikachu"_s),
+				Nickname("Pikachu"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(100_bi, 100_bi),
@@ -816,7 +816,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion single 
 		}));
 		CHECK(result == ps::StartOfTurn(TurnCount(2_bi)));
 
-		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_s), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
+		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_sv), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
 
 		CHECK(handler.state() == expected->state());
@@ -872,7 +872,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion double 
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Jynx,
-				Nickname("Jynx"_s),
+				Nickname("Jynx"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(333_bi, 333_bi),
@@ -881,7 +881,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion double 
 			ps::SwitchMessage(
 				Party(1_bi),
 				Species::Pikachu,
-				Nickname("Pikachu"_s),
+				Nickname("Pikachu"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(100_bi, 100_bi),
@@ -892,7 +892,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler generation 1 explosion double 
 		CHECK(result == ps::StartOfTurn(TurnCount(2_bi)));
 
 		expected->use_switch(true, Switch(1_bi));
-		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_s), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
+		expected->foe_has(Species::Pikachu, Nickname("Pikachu"_sv), Level(100_bi), Gender::genderless, MaxVisibleHP(100_bi));
 		expected->use_switch(false, Switch(1_bi));
 
 		CHECK(handler.state() == expected->state());
@@ -1310,7 +1310,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler switch faints from entry hazar
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Shedinja,
-				Nickname("Shedinja"_s),
+				Nickname("Shedinja"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(1_bi, 1_bi),
@@ -1331,7 +1331,7 @@ TEST_CASE("Pokemon Showdown: BattleMessageHandler switch faints from entry hazar
 			ps::SwitchMessage(
 				Party(0_bi),
 				Species::Smeargle,
-				Nickname("Smeargle"_s),
+				Nickname("Smeargle"_sv),
 				Level(100_bi),
 				Gender::genderless,
 				visible_hp(251_bi, 251_bi),

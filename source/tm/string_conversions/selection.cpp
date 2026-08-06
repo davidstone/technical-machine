@@ -29,18 +29,18 @@ export constexpr auto to_string(
 	return tv::visit(selection, tv::overload(
 		[&](Switch const switch_) {
 			return containers::concatenate<containers::string>(
-				"Switch to "_s,
+				"Switch to "_sv,
 				to_string(team.pokemon(switch_.value()).species())
 			);
 		},
 		[](MoveName const move) {
 			return containers::concatenate<containers::string>(
-				"Use "_s,
+				"Use "_sv,
 				to_string(move)
 			);
 		},
 		[](Pass) {
-			return containers::string("Pass"_s);
+			return containers::string("Pass"_sv);
 		}
 	));
 }

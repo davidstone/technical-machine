@@ -97,7 +97,7 @@ using AuthenticationFunction = containers::trivial_inplace_function<
 
 constexpr auto is_battle_message(Room const room) -> bool {
 	// TODO: is this correct?
-	return containers::starts_with(room, "battle-"_s);
+	return containers::starts_with(room, "battle-"_sv);
 }
 
 auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void {
@@ -170,22 +170,22 @@ export struct ClientMessageHandler {
 private:
 	auto send_team(Generation const generation) -> void {
 		auto const team = get_team(generation, m_settings.team, m_all_usage_stats, m_random_engine);
-		auto const team_str = team ? to_packed_format(*team) : "null"_s;
-		m_send_message(containers::concatenate<containers::string>("|/utm "_s, team_str));
+		auto const team_str = team ? to_packed_format(*team) : "null"_sv;
+		m_send_message(containers::concatenate<containers::string>("|/utm "_sv, team_str));
 	}
 
 	auto send_request_battle_start(containers::string_view const format, auto const & ... strings) -> void {
-		send_team(parse_generation_from_format(format, "gen"_s));
+		send_team(parse_generation_from_format(format, "gen"_sv));
 		m_send_message(containers::concatenate<containers::string>(strings...));
 	}
 
 	auto send_challenge() -> void {
 		tv::visit(m_settings.style, tv::overload(
 			[&](SettingsFile::Ladder const & ladder) {
-				send_request_battle_start(ladder.format, "|/search "_s, ladder.format);
+				send_request_battle_start(ladder.format, "|/search "_sv, ladder.format);
 			},
 			[&](SettingsFile::Challenge const & challenge) {
-				send_request_battle_start(challenge.format, "|/challenge "_s, challenge.user, ","_s, challenge.format);
+				send_request_battle_start(challenge.format, "|/challenge "_sv, challenge.user, ","_sv, challenge.format);
 			},
 			[](SettingsFile::Accept const &) {}
 		));
@@ -204,7 +204,7 @@ private:
 			[](BattleContinues) {
 			},
 			[&](BattleFinished) {
-				m_send_message(containers::concatenate<containers::string>("|/leave "_s, room));
+				m_send_message(containers::concatenate<containers::string>("|/leave "_sv, room));
 				send_challenge();
 			},
 			[](BattleAlreadyFinished) {
@@ -227,55 +227,55 @@ private:
 		// then turn it back on after sending a response, but that seems
 		// like it would be annoying for the human opponent.
 		if (m_should_start_timer) {
-			m_send_message(containers::concatenate<containers::string>(room, "|/timer on"_s));
+			m_send_message(containers::concatenate<containers::string>(room, "|/timer on"_sv));
 			m_should_start_timer = false;
 		}
 	}
 
 	auto handle_error_message(Room const room, containers::string_view const error) const -> void {
 		std::cerr << "|error|" << error << '\n';
-		if (error != "[Invalid choice] There's nothing to choose"_s) {
+		if (error != "[Invalid choice] There's nothing to choose"_sv) {
 			m_send_message(containers::concatenate<containers::string>(
 				room,
-				"|/choose default"_s
+				"|/choose default"_sv
 			));
 		}
 	}
 
 	auto handle_message(Room const room, InMessage message) -> void {
 		auto const type = message.type();
-		if (type == "b"_s or type == "B"_s or type == "battle"_s) {
+		if (type == "b"_sv or type == "B"_sv or type == "battle"_sv) {
 			// message.remainder() == ROOMID|username|username
-		} else if (type == "challstr"_s) {
+		} else if (type == "challstr"_sv) {
 			authenticate(message.remainder());
 			// After logging in, send "|/search FORMAT_NAME" to begin laddering
 			send_challenge();
-		} else if (type == "formats"_s) {
+		} else if (type == "formats"_sv) {
 			// message.remainder() == | separated list of formats with special rules
-		} else if (type == "html"_s) {
+		} else if (type == "html"_sv) {
 			// message.remainder() == HTML
-		} else if (type == "init"_s) {
-		} else if (type == "nametaken"_s) {
+		} else if (type == "init"_sv) {
+		} else if (type == "nametaken"_sv) {
 			auto const username = message.pop();
 			std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
-		} else if (type == "popup"_s) {
+		} else if (type == "popup"_sv) {
 			std::cout << "popup message: " << message.remainder() << '\n';
-		} else if (type == "pm"_s) {
+		} else if (type == "pm"_sv) {
 			auto const from = message.pop();
 			if (no_spaces_string_view(from) == no_spaces_string_view(m_settings.username)) {
 				return;
 			}
 			auto const to = message.pop();
 			auto const initial_message = message.pop();
-			if (containers::starts_with(initial_message, "/challenge"_s)) {
+			if (containers::starts_with(initial_message, "/challenge"_sv)) {
 				auto const format = message.pop();
 				if (containers::is_empty(format)) {
 					return;
 				}
 				if (should_accept_challenge(m_settings.style, no_spaces_string_view(from))) {
-					send_request_battle_start(format, "|/accept "_s, from);
+					send_request_battle_start(format, "|/accept "_sv, from);
 				} else {
-					m_send_message(containers::concatenate<containers::string>("|/reject "_s, from));
+					m_send_message(containers::concatenate<containers::string>("|/reject "_sv, from));
 				}
 			} else {
 				std::cout << "PM from " << from << " to " << to << ": " << initial_message;
@@ -284,17 +284,17 @@ private:
 				}
 				std::cout << '\n';
 			}
-		} else if (type == "queryresponse"_s) {
+		} else if (type == "queryresponse"_sv) {
 			// message.remainder() == QUERYTYPE|JSON
-		} else if (type == "uhtml"_s or type == "uhtmlchange"_s) {
+		} else if (type == "uhtml"_sv or type == "uhtmlchange"_sv) {
 			// message.remainder() == NAME|HTML
-		} else if (type == "updateuser"_s) {
+		} else if (type == "updateuser"_sv) {
 			// message.remainder() == username|guest ? 0 : 1|AVATAR
-		} else if (type == "updatesearch"_s) {
+		} else if (type == "updatesearch"_sv) {
 			// message.remainder() == JSON: battles you are searching for
-		} else if (type == "usercount"_s) {
+		} else if (type == "usercount"_sv) {
 			// message.remainder() == number of users on server
-		} else if (type == "users"_s) {
+		} else if (type == "users"_sv) {
 			// message.remainder() == comma separated list of users
 		} else {
 			std::cerr << "Received unknown message in room: " << room << " |" << type << '|' << message.remainder() << '\n';
@@ -309,14 +309,14 @@ private:
 		auto const request = create_http_post(
 			host,
 			"/api/login",
-			containers::concatenate<containers::string>("name="_s, m_settings.username, "&pass="_s, m_settings.password, "&challstr="_s, challstr)
+			containers::concatenate<containers::string>("name="_sv, m_settings.username, "&pass="_sv, m_settings.password, "&challstr="_sv, challstr)
 		);
 		auto const response = m_authenticate(host, "443", request);
 
 		// Response begins with ']' followed by JSON object.
 		auto const body = std::string_view(containers::drop_exactly(response.body(), 1_bi));
 		auto const json = nlohmann::json::parse(body);
-		m_send_message(containers::concatenate<containers::string>("|/trn "_s, m_settings.username, ",0,"_s, json.at("assertion").get<std::string_view>()));
+		m_send_message(containers::concatenate<containers::string>("|/trn "_sv, m_settings.username, ",0,"_sv, json.at("assertion").get<std::string_view>()));
 	}
 
 	auto analysis_log_file(Room const room) -> std::fstream {

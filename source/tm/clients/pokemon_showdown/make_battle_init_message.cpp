@@ -42,19 +42,19 @@ export constexpr auto make_battle_init_message(auto const messages) -> BattleIni
 		auto matches = [&](auto... strs) {
 			return (... or (strs == type));
 		};
-		if (matches("gen"_s)) {
+		if (matches("gen"_sv)) {
 			if (generation) {
 				throw std::runtime_error("Received gen multiple times");
 			}
 			generation = from_string<Generation>(message.pop());
-		} else if (matches("switch"_s)) {
+		} else if (matches("switch"_sv)) {
 			auto parsed = parse_switch(message);
 			auto & target = teams[parsed.party.value()].starter;
 			if (target) {
 				throw std::runtime_error("Same party switched in twice");
 			}
 			target = parsed;
-		} else if (matches("teamsize"_s)) {
+		} else if (matches("teamsize"_sv)) {
 			auto const party = make_party(message.pop());
 			auto const team_size = bounded::to_integer<TeamSize>(message.pop());
 			auto & target = teams[party.value()].size;
@@ -62,18 +62,18 @@ export constexpr auto make_battle_init_message(auto const messages) -> BattleIni
 				throw std::runtime_error("Same party gave a team size twice");
 			}
 			target = team_size;
-		} else if (matches("turn"_s)) {
+		} else if (matches("turn"_sv)) {
 			auto const turn = bounded::to_integer<TurnCount>(message.pop());
 			if (turn != 1_bi) {
 				throw std::runtime_error("Got a turn after turn 1 during battle set-up");
 			}
-		} else if (matches(""_s, "player"_s, "rated"_s, "rule"_s, "start"_s, "t:"_s, "teampreview"_s, "tier"_s)) {
+		} else if (matches(""_sv, "player"_sv, "rated"_sv, "rule"_sv, "start"_sv, "t:"_sv, "teampreview"_sv, "tier"_sv)) {
 			// Do nothing, junk
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Received battle setup message of unknown type: "_s,
+				"Received battle setup message of unknown type: "_sv,
 				type,
-				": "_s,
+				": "_sv,
 				message.remainder()
 			));
 		}

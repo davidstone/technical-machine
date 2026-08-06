@@ -164,7 +164,7 @@ constexpr auto to_gender(ByteInteger<4_bi> const id) -> Gender {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
 		case 2: return Gender::female;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "_s, containers::to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "_sv, containers::to_string(id)));
 	}
 }
 
@@ -195,7 +195,7 @@ constexpr auto to_nature(ByteInteger<4_bi> const id) -> Nature {
 		case 22: return Nature::Serious;
 		case 23: return Nature::Bashful;
 		case 24: return Nature::Docile;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "_s, containers::to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "_sv, containers::to_string(id)));
 	}
 }
 
@@ -258,7 +258,7 @@ struct Parser {
 				return ParsedData(std::monostate());
 			default:
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Unknown data type "_s,
+					"Unknown data type "_sv,
 					containers::to_string(bounded::integer(type))
 				));
 		}
@@ -296,7 +296,7 @@ private:
 					[&] { return m_byte_parser.pop_integer(4_bi); }
 				)));
 			default:
-				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "_s, containers::array{code}));
+				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "_sv, containers::array{code}));
 		}
 	}
 
@@ -320,23 +320,23 @@ private:
 					auto const parsed = parse_any();
 					tv::visit(parsed.state, [&]<typename State>(State const & state) {
 						if constexpr (std::same_as<State, containers::string_view>) {
-							if (field.name == "m_name"_s) {
+							if (field.name == "m_name"_sv) {
 								emplace_once(species, from_string<Species>(state));
-							} else if (field.name == "m_abilityName"_s) {
+							} else if (field.name == "m_abilityName"_sv) {
 								emplace_once(ability, from_string<Ability>(state));
-							} else if (field.name == "m_itemName"_s) {
+							} else if (field.name == "m_itemName"_sv) {
 								emplace_once(item, from_string<Item>(state));
-							} else if (field.name == "m_nickname"_s) {
+							} else if (field.name == "m_nickname"_sv) {
 								emplace_once(nickname, state);
 							} else {
-								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "_s, field.name));
+								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "_sv, field.name));
 							}
 						} else if constexpr (std::same_as<State, IntegerContainer>) {
-							if (field.name == "m_iv"_s) {
+							if (field.name == "m_iv"_sv) {
 								add_stat(ivs, state);
-							} else if (field.name == "m_ev"_s) {
+							} else if (field.name == "m_ev"_sv) {
 								add_stat(evs, state);
-							} else if (field.name == "m_ppUp"_s) {
+							} else if (field.name == "m_ppUp"_sv) {
 								if (containers::size(state) != max_moves_per_pokemon) {
 									throw std::runtime_error("Expected exactly 4 PP ups");
 								}
@@ -344,7 +344,7 @@ private:
 									return bounded::check_in_range<PP::pp_ups_type>(x);
 								}));
 							} else {
-								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"_s, field.name));
+								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"_sv, field.name));
 							}
 						} else if constexpr (std::same_as<State, AnyContainer>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
@@ -356,12 +356,12 @@ private:
 								} else if (inner_parsed.state.index() == bounded::type<std::monostate>) {
 									return false;
 								} else {
-									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "_s, containers::to_string(inner_parsed.state.index().integer())));
+									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "_sv, containers::to_string(inner_parsed.state.index().integer())));
 								}
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));
 						} else if constexpr (std::same_as<State, Nature>) {
-							if (field.name == "m_nature"_s) {
+							if (field.name == "m_nature"_sv) {
 								emplace_once(nature, state);
 							} else {
 								throw std::runtime_error("Found a Nature in the wrong place");
@@ -376,16 +376,16 @@ private:
 				}
 				case Field::Type::integer: {
 					auto const value = m_byte_parser.pop_integer(4_bi);
-					if (field.name == "m_gender"_s) {
+					if (field.name == "m_gender"_sv) {
 						emplace_once(gender, to_gender(value));
-					} else if (field.name == "m_level"_s) {
+					} else if (field.name == "m_level"_sv) {
 						emplace_once(level, check_value_type<Level>(value));
 					}
 					break;
 				}
 				case Field::Type::byte: {
 					auto const value = m_byte_parser.pop_integer(1_bi);
-					if (field.name == "m_shiny"_s) {
+					if (field.name == "m_shiny"_sv) {
 						emplace_once(shiny, value != 0_bi);
 					}
 					break;
@@ -480,7 +480,7 @@ private:
 				return containers::dynamic_array<Field>();
 			}
 		});
-		constexpr auto empty_field = Field{Field::Type::byte, ""_s};
+		constexpr auto empty_field = Field{Field::Type::byte, ""_sv};
 		using MaybeEmptyField = containers::static_vector<Field, 1_bi>;
 		auto const maybe_empty_field = (flags & write_method) != std::byte(0x00) ?
 			MaybeEmptyField({empty_field}) :
@@ -529,19 +529,19 @@ private:
 		});
 
 		auto & result = containers::push_back(m_objects, ParsedData(std::monostate()));
-		if (description.name == "shoddybattle.Pokemon"_s) {
+		if (description.name == "shoddybattle.Pokemon"_sv) {
 			result = parse_pokemon(description);
-		} else if (description.name == "mechanics.AdvanceMechanics"_s or description.name == "mechanics.JewelMechanics"_s) {
+		} else if (description.name == "mechanics.AdvanceMechanics"_sv or description.name == "mechanics.JewelMechanics"_sv) {
 			result = parse_any();
-		} else if (description.name == "java.util.Random"_s) {
+		} else if (description.name == "java.util.Random"_sv) {
 			m_byte_parser.ignore(18_bi);
-		} else if (description.name == "mechanics.moves.MoveListEntry"_s) {
+		} else if (description.name == "mechanics.moves.MoveListEntry"_sv) {
 			result = parse_move(description);
-		} else if (description.name == "mechanics.PokemonNature"_s) {
+		} else if (description.name == "mechanics.PokemonNature"_sv) {
 			auto const id = m_byte_parser.pop_integer(4_bi);
 			result = ParsedData(to_nature(id));
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Unknown string "_s, description.name));
+			throw std::runtime_error(containers::concatenate<std::string>("Unknown string "_sv, description.name));
 		}
 		return result;
 	}

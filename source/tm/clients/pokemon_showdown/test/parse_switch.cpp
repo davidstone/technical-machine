@@ -31,12 +31,12 @@ using namespace containers::string_literals;
 
 static_assert(
 	ps::parse_switch(ps::InMessage(
-		"|switch|p2a: Raikou|Raikou, shiny|100/100"_s
+		"|switch|p2a: Raikou|Raikou, shiny|100/100"_sv
 	)) ==
 	ps::SwitchMessage(
 		Party(1_bi),
 		Species::Raikou,
-		Nickname("Raikou"_s),
+		Nickname("Raikou"_sv),
 		Level(100_bi),
 		Gender::genderless,
 		VisibleHP(CurrentVisibleHP(100_bi), MaxVisibleHP(100_bi)),

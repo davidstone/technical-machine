@@ -32,16 +32,16 @@ constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage con
 	auto matches = [&](InMessage const message, auto const... strs) {
 		return (... or (message.type() == strs));
 	};
-	if (matches(lhs, "teamsize"_s)) {
+	if (matches(lhs, "teamsize"_sv)) {
 		return true;
 	}
-	if (matches(rhs, "teamsize"_s, "inactive"_s, "inactiveoff"_s)) {
+	if (matches(rhs, "teamsize"_sv, "inactive"_sv, "inactiveoff"_sv)) {
 		return false;
 	}
-	if (matches(lhs, "turn"_s)) {
+	if (matches(lhs, "turn"_sv)) {
 		return false;
 	}
-	if (matches(lhs, "faint"_s) and matches(rhs, ""_s)) {
+	if (matches(lhs, "faint"_sv) and matches(rhs, ""_sv)) {
 		return false;
 	}
 	return true;
@@ -50,10 +50,10 @@ constexpr auto is_part_of_previous_chunk = [](InMessage const lhs, InMessage con
 constexpr auto is_potentially_useful = [](InMessage const message) {
 	return
 		!is_chat_message(message) and
-		message.type() != "error"_s and
-		message.type() != "gametype"_s and
-		message.type() != "player"_s and
-		message.type() != "t:"_s;
+		message.type() != "error"_sv and
+		message.type() != "gametype"_sv and
+		message.type() != "player"_sv and
+		message.type() != "t:"_sv;
 };
 
 export struct BattleLogMessages {

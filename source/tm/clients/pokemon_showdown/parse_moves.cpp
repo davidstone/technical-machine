@@ -24,9 +24,9 @@ using namespace containers::string_literals;
 
 constexpr auto parse_hidden_power(containers::string_view const str) -> Type {
 	constexpr auto prefixes = containers::array{
-		"hiddenpower"_s,
-		"Hidden Power"_s,
-		"hp"_s,
+		"hiddenpower"_sv,
+		"Hidden Power"_sv,
+		"hp"_sv,
 	};
 	auto const matches = [=](containers::string_view const prefix) {
 		return containers::starts_with(str, prefix);
@@ -34,7 +34,7 @@ constexpr auto parse_hidden_power(containers::string_view const str) -> Type {
 	auto const ptr = containers::maybe_find_if(prefixes, matches);
 	if (!ptr) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Unknown Hidden Power string: "_s,
+			"Unknown Hidden Power string: "_sv,
 			str
 		));
 	}

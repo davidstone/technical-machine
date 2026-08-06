@@ -29,7 +29,7 @@ export struct RoomMessageBlock {
 	constexpr explicit RoomMessageBlock(containers::string_view const input):
 		RoomMessageBlock(has_room(input) ?
 			split_view(containers::drop_exactly(input, 1_bi), '\n') :
-			SplitView(""_s, input)
+			SplitView(""_sv, input)
 		)
 	{
 	}

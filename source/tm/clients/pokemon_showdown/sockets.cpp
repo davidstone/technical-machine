@@ -29,7 +29,7 @@ export struct Sockets {
 	{
 		connect_ssl_socket(m_io, m_websocket.next_layer(), host, port);
 		m_websocket.handshake(
-			std::string_view(containers::concatenate<containers::string>(host, ":"_s, port)),
+			std::string_view(containers::concatenate<containers::string>(host, ":"_sv, port)),
 			resource
 		);
 	}

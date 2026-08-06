@@ -46,21 +46,21 @@ export struct RegularMoves {
 
 	constexpr auto push_back(Move const move) -> Move & {
 		if (!is_regular(move.name())) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to add an irregular move "_s, to_string(move.name())));
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to add an irregular move "_sv, to_string(move.name())));
 		}
 		if (containers::any_equal(m_moves, move.name())) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to add "_s, to_string(move.name()), "twice"_s));
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to add "_sv, to_string(move.name()), "twice"_sv));
 		}
 		if (containers::size(m_moves) == max_moves_per_pokemon) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to add too many moves. Already have: "_s,
+				"Tried to add too many moves. Already have: "_sv,
 				containers::string(containers::join_with(
 					containers::transform(m_moves, [](Move const element) {
 						return to_string(element.name());
 					}),
-					", "_s
+					", "_sv
 				)),
-				" -- Tried to add "_s,
+				" -- Tried to add "_sv,
 				to_string(move.name())
 			));
 		}

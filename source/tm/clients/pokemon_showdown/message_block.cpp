@@ -21,6 +21,6 @@ export constexpr auto message_block(containers::string_view str) {
 		bounded::construct<InMessage>
 	);
 }
-export using MessageBlock = decltype(message_block(""_s));
+export using MessageBlock = decltype(message_block(""_sv));
 
 } // namespace technicalmachine::ps

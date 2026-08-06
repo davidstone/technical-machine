@@ -94,7 +94,7 @@ TEST_CASE("Pokemon Showdown: Pokemon Showdown regression") {
 			for (auto const & path : paths_in_directory(generation)) {
 				INFO(path);
 				auto const data = load_lines_from_file(path / "server_messages.txt");
-				auto const messages = containers::split_range(containers::drop_exactly(data, 1_bi), "\n>"_s);
+				auto const messages = containers::split_range(containers::drop_exactly(data, 1_bi), "\n>"_sv);
 				for (containers::string_view const message : messages) {
 					INFO(message);
 					client.handle_messages(ps::RoomMessageBlock(

@@ -13,7 +13,7 @@ using namespace containers::string_literals;
 
 export struct InvalidFromStringConversion : std::runtime_error {
 	InvalidFromStringConversion(containers::string_view const target, containers::string_view const requested):
-		std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "_s, requested, " to type "_s, target))
+		std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "_sv, requested, " to type "_sv, target))
 	{
 	}
 };

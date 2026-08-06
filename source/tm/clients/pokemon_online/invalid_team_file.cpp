@@ -19,9 +19,9 @@ export struct InvalidTeamFile : std::runtime_error {
 
 	InvalidTeamFile(containers::string_view const expected, containers::string_view const received):
 		InvalidTeamFile(containers::concatenate<std::string>(
-			"Expected a field labeled "_s,
+			"Expected a field labeled "_sv,
 			expected,
-			" but got "_s,
+			" but got "_sv,
 			received
 		))
 	{

@@ -44,14 +44,14 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	auto const output_path = std::filesystem::path(argv[1]);
 	auto output_stats_path = output_path / "stats.tmus";
 	if (std::filesystem::exists(output_stats_path)) {
-		throw std::runtime_error(containers::concatenate<std::string>(output_stats_path.string(), " already exists"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(output_stats_path.string(), " already exists"_sv));
 	}
 	auto const mode = parse_mode(containers::string_view(argv[2]));
 	auto const generation = from_string<Generation>(containers::string_view(argv[3]));
 	auto const thread_count = bounded::to_integer<ThreadCount>(containers::string_view(argv[4]));
 	auto teams_file_path = std::filesystem::path(argv[5]);
 	if (!std::filesystem::exists(teams_file_path)) {
-		throw std::runtime_error(containers::concatenate<std::string>(teams_file_path.string(), " does not exist"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(teams_file_path.string(), " does not exist"_sv));
 	}
 	std::filesystem::create_directories(output_path);
 	return ParsedArgs{

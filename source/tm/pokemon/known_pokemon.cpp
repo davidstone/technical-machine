@@ -103,9 +103,9 @@ struct KnownPokemon {
 	constexpr auto add_move(Move const move) const -> void {
 		if (!containers::any_equal(regular_moves(), move.name()) and is_regular(move.name())) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to add "_s,
+				"Tried to add "_sv,
 				to_string(move.name()),
-				" to a KnownPokemon of "_s,
+				" to a KnownPokemon of "_sv,
 				to_string(species()),
 				" even though it does not know this move."
 			));
@@ -126,11 +126,11 @@ struct KnownPokemon {
 	constexpr auto set_initial_ability(Ability const ability) const -> void {
 		if (ability != initial_ability()) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Inconsistent abilities. Tried to change "_s,
+				"Inconsistent abilities. Tried to change "_sv,
 				nickname().str(),
-				" from "_s,
+				" from "_sv,
 				to_string(initial_ability()),
-				" to "_s,
+				" to "_sv,
 				to_string(ability)
 			));
 		}

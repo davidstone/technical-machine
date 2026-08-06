@@ -21,11 +21,11 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(Weather const weather) -> containers::string_view {
 	switch (weather) {
-		case Weather::clear: return "Clear"_s;
-		case Weather::hail: return "Hail"_s;
-		case Weather::sand: return "Sand"_s;
-		case Weather::sun: return "Sun"_s;
-		case Weather::rain: return "Rain"_s;
+		case Weather::clear: return "Clear"_sv;
+		case Weather::hail: return "Hail"_sv;
+		case Weather::sand: return "Sand"_sv;
+		case Weather::sun: return "Sun"_sv;
+		case Weather::rain: return "Rain"_sv;
 	}
 }
 
@@ -34,21 +34,21 @@ constexpr auto from_string(containers::string_view const str) -> Weather {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Weather>>({
-			{"clear"_s, Weather::clear},
-			{"hail"_s, Weather::hail},
-			{"none"_s, Weather::clear},
-			{"rain"_s, Weather::rain},
-			{"raindance"_s, Weather::rain},
-			{"sand"_s, Weather::sand},
-			{"sandstorm"_s, Weather::sand},
-			{"sun"_s, Weather::sun},
-			{"sunnyday"_s, Weather::sun},
+			{"clear"_sv, Weather::clear},
+			{"hail"_sv, Weather::hail},
+			{"none"_sv, Weather::clear},
+			{"rain"_sv, Weather::rain},
+			{"raindance"_sv, Weather::rain},
+			{"sand"_sv, Weather::sand},
+			{"sandstorm"_sv, Weather::sand},
+			{"sun"_sv, Weather::sun},
+			{"sunnyday"_sv, Weather::sun},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("Weather"_s, str);
+		throw InvalidFromStringConversion("Weather"_sv, str);
 	}
 	return *result;
 }

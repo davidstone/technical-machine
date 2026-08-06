@@ -114,9 +114,9 @@ export constexpr auto to_dvs_using_spa_as_spc(GenericStats<DV> const stats) -> D
 	auto const hp_dv = get_hp(result);
 	if (hp_dv != stats.hp) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Invalid DVs. Calculated HP DV of "_s,
+			"Invalid DVs. Calculated HP DV of "_sv,
 			containers::to_string(hp_dv.value()),
-			" but received "_s,
+			" but received "_sv,
 			containers::to_string(stats.hp.value())
 		));
 	}

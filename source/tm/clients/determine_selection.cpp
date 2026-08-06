@@ -104,8 +104,8 @@ auto determine_selection(
 		auto const team_str = to_string(team, include_active_marker);
 		stream << label << "'s " << team_str << '\n';
 	};
-	log_team("AI"_s, state.ai);
-	log_team("Predicted Foe"_s, state.foe);
+	log_team("AI"_sv, state.ai);
+	log_team("Predicted Foe"_sv, state.foe);
 	stream << std::flush;
 
 	auto const ai_selections = get_legal_selections(state.ai, state.foe, state.environment);

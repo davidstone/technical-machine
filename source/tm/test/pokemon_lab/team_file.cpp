@@ -181,7 +181,7 @@ constexpr auto team_xml = R"(
 </pokemon>
 
 </shoddybattle>
-)"_s;
+)"_sv;
 
 constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	{
@@ -266,7 +266,7 @@ constexpr auto expected = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Rotom_Wash,
-		.nickname = Nickname("Rotom-w"_s),
+		.nickname = Nickname("Rotom-w"_sv),
 		.item = Item::Leftovers,
 		.ability = Ability::Levitate,
 		.stats = {

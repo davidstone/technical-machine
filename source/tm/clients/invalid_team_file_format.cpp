@@ -13,7 +13,7 @@ using namespace containers::string_literals;
 
 export struct InvalidTeamFileFormat : std::runtime_error {
 	explicit InvalidTeamFileFormat(std::filesystem::path const & file):
-		std::runtime_error(containers::concatenate<std::string>("Attempted to load "_s, file.string(), "."_s))
+		std::runtime_error(containers::concatenate<std::string>("Attempted to load "_sv, file.string(), "."_sv))
 	{
 	}
 };

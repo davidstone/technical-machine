@@ -115,7 +115,7 @@ export struct MoveStateBuilder {
 			[](Recharging) { throw std::runtime_error("Tried to use a move while recharging"); },
 			[&](StillAsleep) {
 				if (!usable_while_sleeping(move)) {
-					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "_s, to_string(move), " while asleep"_s));
+					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "_sv, to_string(move), " while asleep"_sv));
 				}
 				m_move->emplace([&] { return VisibleMove(move, miss); });
 			},

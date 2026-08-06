@@ -31,9 +31,9 @@ constexpr auto parse_input_for(containers::string_view const player) {
 		auto const str = containers::string_view(json.get<std::string_view>());
 		if (containers::is_empty(str) or containers::front(str) != '>') {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Selection string "_s,
+				"Selection string "_sv,
 				str,
-				" does not start with >"_s
+				" does not start with >"_sv
 			));
 		}
 		auto view = DelimitedBufferView(containers::string_view(containers::drop_exactly(str, 1_bi)), ' ');
@@ -41,27 +41,27 @@ constexpr auto parse_input_for(containers::string_view const player) {
 		auto matches = [=](auto const ... strs) {
 			return (... or (type == strs));
 		};
-		if (matches("p1"_s, "p2"_s)) {
+		if (matches("p1"_sv, "p2"_sv)) {
 			if (type != player) {
 				return tv::none;
 			}
 			auto const category = view.pop();
 			auto const data = view.pop();
-			if (category == "move"_s) {
+			if (category == "move"_sv) {
 				return PlayerInput(from_string<MoveName>(data));
-			} else if (category == "switch"_s) {
+			} else if (category == "switch"_sv) {
 				return PlayerInput(bounded::to_integer<BattleResponseSwitch>(data));
 			} else {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Unknown action category "_s,
+					"Unknown action category "_sv,
 					category
 				));
 			}
-		} else if (matches("forcelose"_s, "player"_s, "start"_s, "version"_s, "version-origin"_s)) {
+		} else if (matches("forcelose"_sv, "player"_sv, "start"_sv, "version"_sv, "version-origin"_sv)) {
 			return tv::none;
 		} else {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Unknown action type "_s,
+				"Unknown action type "_sv,
 				type
 			));
 		}
@@ -84,8 +84,8 @@ export struct InputLog {
 };
 export auto parse_input_log(nlohmann::json const & input_log) -> InputLog {
 	return InputLog(
-		input_for_side(input_log, "p1"_s),
-		input_for_side(input_log, "p2"_s)
+		input_for_side(input_log, "p1"_sv),
+		input_for_side(input_log, "p2"_sv)
 	);
 }
 

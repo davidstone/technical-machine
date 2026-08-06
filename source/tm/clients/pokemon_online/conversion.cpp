@@ -39,9 +39,9 @@ export struct SpeciesIDs {
 struct InvalidFormeID : std::runtime_error {
 	InvalidFormeID(containers::string_view const species, SpeciesIDs::Forme const forme):
 		std::runtime_error(containers::concatenate<std::string>(
-			"Invalid forme ID "_s,
+			"Invalid forme ID "_sv,
 			containers::to_string(forme),
-			" for "_s,
+			" for "_sv,
 			species
 		))
 	{
@@ -52,7 +52,7 @@ struct UnsupportedSpecies : std::runtime_error {
 	explicit UnsupportedSpecies(Species const species):
 		std::runtime_error(containers::concatenate<std::string>(
 			to_string(species),
-			" not supported in Pokemon Online."_s
+			" not supported in Pokemon Online."_sv
 		))
 	{
 	}
@@ -456,7 +456,7 @@ export constexpr auto id_to_species(SpeciesIDs const species) -> Species {
 				case 1: return Species::Deoxys_Attack;
 				case 2: return Species::Deoxys_Defense;
 				case 3: return Species::Deoxys_Speed;
-				default: throw InvalidFormeID("Deoxys"_s, species.forme);
+				default: throw InvalidFormeID("Deoxys"_sv, species.forme);
 			}
 
 		// Generation 4
@@ -491,7 +491,7 @@ export constexpr auto id_to_species(SpeciesIDs const species) -> Species {
 				case 0: return Species::Wormadam_Plant;
 				case 1: return Species::Wormadam_Sandy;
 				case 2: return Species::Wormadam_Trash;
-				default: throw InvalidFormeID("Wormadam"_s, species.forme);
+				default: throw InvalidFormeID("Wormadam"_sv, species.forme);
 			}
 		case 414: return Species::Mothim;
 		case 415: return Species::Combee;
@@ -580,7 +580,7 @@ export constexpr auto id_to_species(SpeciesIDs const species) -> Species {
 			switch (species.forme.value()) {
 				case 0: return Species::Giratina_Altered;
 				case 1: return Species::Giratina_Origin;
-				default: throw InvalidFormeID("Giratina"_s, species.forme);
+				default: throw InvalidFormeID("Giratina"_sv, species.forme);
 			}
 		case 488: return Species::Cresselia;
 		case 489: return Species::Phione;
@@ -590,7 +590,7 @@ export constexpr auto id_to_species(SpeciesIDs const species) -> Species {
 			switch (species.forme.value()) {
 				case 0: return Species::Shaymin_Land;
 				case 1: return Species::Shaymin_Sky;
-				default: throw InvalidFormeID("Shaymin"_s, species.forme);
+				default: throw InvalidFormeID("Shaymin"_sv, species.forme);
 			}
 		case 493: return Species::Arceus;
 		default:
@@ -1396,7 +1396,7 @@ export constexpr auto ability_to_id(Ability const ability) -> AbilityID {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
-		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(ability), " not supported in Pokemon Online"_s));
+		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(ability), " not supported in Pokemon Online"_sv));
 	}
 }
 

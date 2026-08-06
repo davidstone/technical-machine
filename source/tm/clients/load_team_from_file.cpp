@@ -60,9 +60,9 @@ export auto load_team_from_file(std::filesystem::path const & file_name) -> AnyI
 		}
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Failed to parse team file \""_s,
+			"Failed to parse team file \""_sv,
 			file_name.string(),
-			"\" -- "_s,
+			"\" -- "_sv,
 			containers::string_view(ex.what())
 		));
 	}

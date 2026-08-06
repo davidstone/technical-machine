@@ -20,20 +20,20 @@ export enum class Style { random, most_likely };
 export constexpr auto to_string(Style const style) -> containers::string_view {
 	switch (style) {
 		case Style::random:
-			return "random"_s;
+			return "random"_sv;
 		case Style::most_likely:
-			return "most likely"_s;
+			return "most likely"_sv;
 	}
 }
 
 export template<>
 constexpr auto from_string(containers::string_view const str) -> Style {
-	if (str == "random"_s) {
+	if (str == "random"_sv) {
 		return Style::random;
-	} else if (str == "most likely"_s) {
+	} else if (str == "most likely"_sv) {
 		return Style::most_likely;
 	} else {
-		throw InvalidFromStringConversion("Style"_s, str);
+		throw InvalidFromStringConversion("Style"_sv, str);
 	}
 }
 

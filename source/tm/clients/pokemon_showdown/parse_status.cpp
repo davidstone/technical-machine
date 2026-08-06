@@ -15,15 +15,15 @@ using namespace containers::string_literals;
 
 export constexpr auto parse_status(containers::string_view const str) -> StatusName {
 	return
-		(str == ""_s) ? StatusName::clear :
-		(str == "fnt"_s) ? StatusName::clear :
-		(str == "brn"_s) ? StatusName::burn :
-		(str == "frz"_s) ? StatusName::freeze :
-		(str == "par"_s) ? StatusName::paralysis :
-		(str == "psn"_s) ? StatusName::poison :
-		(str == "tox"_s) ? StatusName::toxic :
-		(str == "slp"_s) ? StatusName::sleep :
-//		(str == ""_s) ? StatusName::rest :
+		(str == ""_sv) ? StatusName::clear :
+		(str == "fnt"_sv) ? StatusName::clear :
+		(str == "brn"_sv) ? StatusName::burn :
+		(str == "frz"_sv) ? StatusName::freeze :
+		(str == "par"_sv) ? StatusName::paralysis :
+		(str == "psn"_sv) ? StatusName::poison :
+		(str == "tox"_sv) ? StatusName::toxic :
+		(str == "slp"_sv) ? StatusName::sleep :
+//		(str == ""_sv) ? StatusName::rest :
 		throw std::runtime_error("Received an invalid status");
 }
 

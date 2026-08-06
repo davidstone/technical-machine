@@ -40,15 +40,15 @@ export struct SlotMemory {
 		auto const it = containers::find(m_container, index);
 		if (it == containers::end(m_container)) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				"Unable to find switch index "_s,
+				"Unable to find switch index "_sv,
 				containers::to_string(index),
-				", possible values are "_s,
+				", possible values are "_sv,
 				[&] {
 					return containers::string(containers::join_with(
 						containers::transform(m_container, [](Index const value) {
 							return containers::to_string(value);
 						}),
-						", "_s
+						", "_sv
 					));
 				}()
 			));

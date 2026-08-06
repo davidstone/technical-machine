@@ -21,7 +21,7 @@ using namespace containers::string_literals;
 
 export constexpr auto id_to_ability(Species const species, bounded::integer<0, 1> const id) -> Ability {
 	auto invalid = [=]() -> Ability {
-		throw std::runtime_error(containers::concatenate<std::string>(to_string(species), " does not have two abilities"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(to_string(species), " does not have two abilities"_sv));
 	};
 	switch (species) {
 		case Species::Bulbasaur: return id == 0_bi ? Ability::Overgrow : invalid();
@@ -413,7 +413,7 @@ export constexpr auto id_to_ability(Species const species, bounded::integer<0, 1
 		case Species::Deoxys_Attack: return id == 0_bi ? Ability::Pressure : invalid();
 		case Species::Deoxys_Defense: return id == 0_bi ? Ability::Pressure : invalid();
 		case Species::Deoxys_Speed: return id == 0_bi ? Ability::Pressure : invalid();
-		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(species), " not supported in NetBattle team files"_s));
+		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(species), " not supported in NetBattle team files"_sv));
 	}
 }
 

@@ -44,7 +44,7 @@ constexpr auto generation = Generation::four;
 constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	{
 		.species = Species::Jirachi,
-		.nickname = Nickname("Homeland Security"_s),
+		.nickname = Nickname("Homeland Security"_sv),
 		.item = Item::Leftovers,
 		.ability = Ability::Serene_Grace,
 		.stats = {
@@ -61,7 +61,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Machamp,
-		.nickname = Nickname("Big Brother"_s),
+		.nickname = Nickname("Big Brother"_sv),
 		.gender = Gender::male,
 		.item = Item::Leftovers,
 		.ability = Ability::No_Guard,
@@ -78,7 +78,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Tyranitar,
-		.nickname = Nickname("FBI"_s),
+		.nickname = Nickname("FBI"_sv),
 		.gender = Gender::male,
 		.item = Item::Choice_Band,
 		.ability = Ability::Sand_Stream,
@@ -95,7 +95,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Blissey,
-		.nickname = Nickname("NSA"_s),
+		.nickname = Nickname("NSA"_sv),
 		.gender = Gender::female,
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
@@ -112,7 +112,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Celebi,
-		.nickname = Nickname("Secret Service"_s),
+		.nickname = Nickname("Secret Service"_sv),
 		.item = Item::Leftovers,
 		.ability = Ability::Natural_Cure,
 		.stats = {
@@ -129,7 +129,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Moltres,
-		.nickname = Nickname("Air Force"_s),
+		.nickname = Nickname("Air Force"_sv),
 		.item = Item::Leftovers,
 		.ability = Ability::Pressure,
 		.stats = {

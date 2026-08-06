@@ -18,9 +18,9 @@ constexpr auto open_file(std::filesystem::path const & path, std::ios_base::open
 		file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Could not open "_s,
+			"Could not open "_sv,
 			path.string(),
-			": "_s,
+			": "_sv,
 			containers::string_view(ex.what())
 		));
 	}

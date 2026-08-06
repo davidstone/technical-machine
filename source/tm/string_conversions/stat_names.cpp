@@ -21,11 +21,11 @@ using namespace containers::string_literals;
 
 export constexpr auto to_string(SpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SpecialPermanentStat::hp: return "HP"_s;
-		case SpecialPermanentStat::atk: return "Atk"_s;
-		case SpecialPermanentStat::def: return "Def"_s;
-		case SpecialPermanentStat::spe: return "Spe"_s;
-		case SpecialPermanentStat::spc: return "Spc"_s;
+		case SpecialPermanentStat::hp: return "HP"_sv;
+		case SpecialPermanentStat::atk: return "Atk"_sv;
+		case SpecialPermanentStat::def: return "Def"_sv;
+		case SpecialPermanentStat::spe: return "Spe"_sv;
+		case SpecialPermanentStat::spc: return "Spc"_sv;
 	}
 }
 
@@ -34,29 +34,29 @@ constexpr auto from_string(containers::string_view const str) -> SpecialPermanen
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, SpecialPermanentStat>>({
-			{"atk"_s, SpecialPermanentStat::atk},
-			{"def"_s, SpecialPermanentStat::def},
-			{"hp"_s, SpecialPermanentStat::hp},
-			{"spc"_s, SpecialPermanentStat::spc},
-			{"spe"_s, SpecialPermanentStat::spe},
+			{"atk"_sv, SpecialPermanentStat::atk},
+			{"def"_sv, SpecialPermanentStat::def},
+			{"hp"_sv, SpecialPermanentStat::hp},
+			{"spc"_sv, SpecialPermanentStat::spc},
+			{"spe"_sv, SpecialPermanentStat::spe},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<3_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("SpecialPermanentStat"_s, str);
+		throw InvalidFromStringConversion("SpecialPermanentStat"_sv, str);
 	}
 	return *result;
 }
 
 export constexpr auto to_string(SplitSpecialPermanentStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SplitSpecialPermanentStat::hp: return "HP"_s;
-		case SplitSpecialPermanentStat::atk: return "Atk"_s;
-		case SplitSpecialPermanentStat::def: return "Def"_s;
-		case SplitSpecialPermanentStat::spa: return "SpA"_s;
-		case SplitSpecialPermanentStat::spd: return "SpD"_s;
-		case SplitSpecialPermanentStat::spe: return "Spe"_s;
+		case SplitSpecialPermanentStat::hp: return "HP"_sv;
+		case SplitSpecialPermanentStat::atk: return "Atk"_sv;
+		case SplitSpecialPermanentStat::def: return "Def"_sv;
+		case SplitSpecialPermanentStat::spa: return "SpA"_sv;
+		case SplitSpecialPermanentStat::spd: return "SpD"_sv;
+		case SplitSpecialPermanentStat::spe: return "Spe"_sv;
 	}
 }
 
@@ -65,28 +65,28 @@ constexpr auto from_string(containers::string_view const str) -> SplitSpecialPer
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, SplitSpecialPermanentStat>>({
-			{"atk"_s, SplitSpecialPermanentStat::atk},
-			{"def"_s, SplitSpecialPermanentStat::def},
-			{"hp"_s, SplitSpecialPermanentStat::hp},
-			{"spa"_s, SplitSpecialPermanentStat::spa},
-			{"spd"_s, SplitSpecialPermanentStat::spd},
-			{"spe"_s, SplitSpecialPermanentStat::spe},
+			{"atk"_sv, SplitSpecialPermanentStat::atk},
+			{"def"_sv, SplitSpecialPermanentStat::def},
+			{"hp"_sv, SplitSpecialPermanentStat::hp},
+			{"spa"_sv, SplitSpecialPermanentStat::spa},
+			{"spd"_sv, SplitSpecialPermanentStat::spd},
+			{"spe"_sv, SplitSpecialPermanentStat::spe},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<3_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("SplitSpecialPermanentStat"_s, str);
+		throw InvalidFromStringConversion("SplitSpecialPermanentStat"_sv, str);
 	}
 	return *result;
 }
 
 export constexpr auto to_string(SpecialRegularStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SpecialRegularStat::atk: return "Atk"_s;
-		case SpecialRegularStat::def: return "Def"_s;
-		case SpecialRegularStat::spe: return "Spe"_s;
-		case SpecialRegularStat::spc: return "Spc"_s;
+		case SpecialRegularStat::atk: return "Atk"_sv;
+		case SpecialRegularStat::def: return "Def"_sv;
+		case SpecialRegularStat::spe: return "Spe"_sv;
+		case SpecialRegularStat::spc: return "Spc"_sv;
 	}
 }
 
@@ -95,27 +95,27 @@ constexpr auto from_string(containers::string_view const str) -> SpecialRegularS
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, SpecialRegularStat>>({
-			{"atk"_s, SpecialRegularStat::atk},
-			{"def"_s, SpecialRegularStat::def},
-			{"spc"_s, SpecialRegularStat::spc},
-			{"spe"_s, SpecialRegularStat::spe},
+			{"atk"_sv, SpecialRegularStat::atk},
+			{"def"_sv, SpecialRegularStat::def},
+			{"spc"_sv, SpecialRegularStat::spc},
+			{"spe"_sv, SpecialRegularStat::spe},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<3_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("SpecialRegularStat"_s, str);
+		throw InvalidFromStringConversion("SpecialRegularStat"_sv, str);
 	}
 	return *result;
 }
 
 export constexpr auto to_string(SplitSpecialRegularStat const stat) -> containers::string_view {
 	switch (stat) {
-		case SplitSpecialRegularStat::atk: return "Atk"_s;
-		case SplitSpecialRegularStat::def: return "Def"_s;
-		case SplitSpecialRegularStat::spa: return "SpA"_s;
-		case SplitSpecialRegularStat::spd: return "SpD"_s;
-		case SplitSpecialRegularStat::spe: return "Spe"_s;
+		case SplitSpecialRegularStat::atk: return "Atk"_sv;
+		case SplitSpecialRegularStat::def: return "Def"_sv;
+		case SplitSpecialRegularStat::spa: return "SpA"_sv;
+		case SplitSpecialRegularStat::spd: return "SpD"_sv;
+		case SplitSpecialRegularStat::spe: return "Spe"_sv;
 	}
 }
 
@@ -124,17 +124,17 @@ constexpr auto from_string(containers::string_view const str) -> SplitSpecialReg
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, SplitSpecialRegularStat>>({
-			{"atk"_s, SplitSpecialRegularStat::atk},
-			{"def"_s, SplitSpecialRegularStat::def},
-			{"spa"_s, SplitSpecialRegularStat::spa},
-			{"spd"_s, SplitSpecialRegularStat::spd},
-			{"spe"_s, SplitSpecialRegularStat::spe},
+			{"atk"_sv, SplitSpecialRegularStat::atk},
+			{"def"_sv, SplitSpecialRegularStat::def},
+			{"spa"_sv, SplitSpecialRegularStat::spa},
+			{"spd"_sv, SplitSpecialRegularStat::spd},
+			{"spe"_sv, SplitSpecialRegularStat::spe},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<3_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("SplitSpecialRegularStat"_s, str);
+		throw InvalidFromStringConversion("SplitSpecialRegularStat"_sv, str);
 	}
 	return *result;
 }

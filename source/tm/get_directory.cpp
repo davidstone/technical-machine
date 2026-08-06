@@ -16,7 +16,7 @@ export auto get_environment_variable(char const * const environment_variable) ->
 	auto const dir = std::getenv(environment_variable);
 	if (!dir) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Please create an environment variable "_s,
+			"Please create an environment variable "_sv,
 			containers::string_view(environment_variable)
 		));
 	}

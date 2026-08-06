@@ -85,11 +85,11 @@ namespace {
 constexpr auto pop_zero_from_empty() -> bool {
 	auto view = BufferView(""_sv);
 
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 
 	auto const result = view.pop(0_bi);
-	BOUNDED_ASSERT(result == ""_s);
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	BOUNDED_ASSERT(result == ""_sv);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 	return true;
 }
 
@@ -99,11 +99,11 @@ static_assert(pop_zero_from_empty());
 constexpr auto pop_zero_from_non_empty() -> bool {
 	auto view = BufferView("technical"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "technical"_s);
+	BOUNDED_ASSERT(view.remainder() == "technical"_sv);
 
 	auto const result = view.pop(0_bi);
-	BOUNDED_ASSERT(result == ""_s);
-	BOUNDED_ASSERT(view.remainder() == "technical"_s);
+	BOUNDED_ASSERT(result == ""_sv);
+	BOUNDED_ASSERT(view.remainder() == "technical"_sv);
 	return true;
 }
 
@@ -112,11 +112,11 @@ static_assert(pop_zero_from_non_empty());
 constexpr auto pop_some() -> bool {
 	auto view = BufferView("machine"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "machine"_s);
+	BOUNDED_ASSERT(view.remainder() == "machine"_sv);
 
 	auto const result = view.pop(3_bi);
-	BOUNDED_ASSERT(result == "mac"_s);
-	BOUNDED_ASSERT(view.remainder() == "hine"_s);
+	BOUNDED_ASSERT(result == "mac"_sv);
+	BOUNDED_ASSERT(view.remainder() == "hine"_sv);
 	return true;
 }
 
@@ -125,11 +125,11 @@ static_assert(pop_some());
 constexpr auto pop_char_delimiter_from_empty() -> bool {
 	auto view = DelimitedBufferView(""_sv, 'c');
 
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 
 	auto const result = view.pop();
-	BOUNDED_ASSERT(result == ""_s);
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	BOUNDED_ASSERT(result == ""_sv);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 	return true;
 }
 
@@ -138,11 +138,11 @@ static_assert(pop_char_delimiter_from_empty());
 constexpr auto pop_to_found_char_delimiter() -> bool {
 	auto view = BufferView("pokemon"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "pokemon"_s);
+	BOUNDED_ASSERT(view.remainder() == "pokemon"_sv);
 
 	auto const result = pop_to_delimiter(view, 'e');
-	BOUNDED_ASSERT(result == "pok"_s);
-	BOUNDED_ASSERT(view.remainder() == "mon"_s);
+	BOUNDED_ASSERT(result == "pok"_sv);
+	BOUNDED_ASSERT(view.remainder() == "mon"_sv);
 
 	return true;
 }
@@ -152,11 +152,11 @@ static_assert(pop_to_found_char_delimiter());
 constexpr auto pop_to_not_found_char_delimiter() -> bool {
 	auto view = BufferView("pokemon"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "pokemon"_s);
+	BOUNDED_ASSERT(view.remainder() == "pokemon"_sv);
 
 	auto const result = pop_to_delimiter(view, 'q');
-	BOUNDED_ASSERT(result == "pokemon"_s);
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	BOUNDED_ASSERT(result == "pokemon"_sv);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 
 	return true;
 }
@@ -166,11 +166,11 @@ static_assert(pop_to_not_found_char_delimiter());
 constexpr auto pop_to_found_string_delimiter() -> bool {
 	auto view = BufferView("pokemon"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "pokemon"_s);
+	BOUNDED_ASSERT(view.remainder() == "pokemon"_sv);
 
-	auto const result = pop_to_delimiter(view, "kem"_s);
-	BOUNDED_ASSERT(result == "po"_s);
-	BOUNDED_ASSERT(view.remainder() == "on"_s);
+	auto const result = pop_to_delimiter(view, "kem"_sv);
+	BOUNDED_ASSERT(result == "po"_sv);
+	BOUNDED_ASSERT(view.remainder() == "on"_sv);
 
 	return true;
 }
@@ -180,11 +180,11 @@ static_assert(pop_to_found_string_delimiter());
 constexpr auto pop_to_not_found_string_delimiter() -> bool {
 	auto view = BufferView("pokemon"_sv);
 
-	BOUNDED_ASSERT(view.remainder() == "pokemon"_s);
+	BOUNDED_ASSERT(view.remainder() == "pokemon"_sv);
 
-	auto const result = pop_to_delimiter(view, "pikachu"_s);
-	BOUNDED_ASSERT(result == "pokemon"_s);
-	BOUNDED_ASSERT(view.remainder() == ""_s);
+	auto const result = pop_to_delimiter(view, "pikachu"_sv);
+	BOUNDED_ASSERT(result == "pokemon"_sv);
+	BOUNDED_ASSERT(view.remainder() == ""_sv);
 
 	return true;
 }

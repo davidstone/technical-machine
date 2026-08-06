@@ -25,9 +25,9 @@ constexpr auto equal(ps::MessageBlock const block, containers::c_array<container
 			block,
 			[](ps::InMessage const message) {
 				return containers::concatenate<containers::string>(
-					"|"_s,
+					"|"_sv,
 					message.type(),
-					"|"_s,
+					"|"_sv,
 					message.remainder()
 				);
 			}
@@ -36,13 +36,13 @@ constexpr auto equal(ps::MessageBlock const block, containers::c_array<container
 }
 
 static_assert(equal(
-	ps::message_block("||"_s),
-	{"||"_s}
+	ps::message_block("||"_sv),
+	{"||"_sv}
 ));
 
 static_assert(equal(
-	ps::message_block("|switch|fuzz"_s),
-	{"|switch|fuzz"_s}
+	ps::message_block("|switch|fuzz"_sv),
+	{"|switch|fuzz"_sv}
 ));
 
 } // namespace

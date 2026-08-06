@@ -42,7 +42,7 @@ struct rational {
 		using containers::to_string;
 		return containers::concatenate<containers::string>(
 			to_string(r.m_numerator),
-			" / "_s,
+			" / "_sv,
 			to_string(r.m_denominator)
 		);
 	}

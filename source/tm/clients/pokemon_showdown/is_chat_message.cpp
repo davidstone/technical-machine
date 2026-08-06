@@ -14,21 +14,21 @@ namespace technicalmachine::ps {
 using namespace containers::string_literals;
 
 constexpr auto chat_message_types = containers::array{
-	":"_s,
-	"c"_s,
-	"chat"_s,
-	"c:"_s,
-	"deinit"_s,
-	"expire"_s,
-	"j"_s,
-	"J"_s,
-	"join"_s,
-	"l"_s,
-	"L"_s,
-	"leave"_s,
-	"n"_s,
-	"N"_s,
-	"name"_s
+	":"_sv,
+	"c"_sv,
+	"chat"_sv,
+	"c:"_sv,
+	"deinit"_sv,
+	"expire"_sv,
+	"j"_sv,
+	"J"_sv,
+	"join"_sv,
+	"l"_sv,
+	"L"_sv,
+	"leave"_sv,
+	"n"_sv,
+	"N"_sv,
+	"name"_sv
 };
 
 export constexpr auto is_chat_message(InMessage const message) -> bool {

@@ -69,15 +69,15 @@ constexpr auto percent_to_string(double const value) -> containers::string {
 		0_bi,
 		9_bi
 	);
-	return containers::concatenate<containers::string>(containers::to_string(integer_part), "."_s, containers::to_string(decimal_part));
+	return containers::concatenate<containers::string>(containers::to_string(integer_part), "."_sv, containers::to_string(decimal_part));
 }
 
 constexpr auto ability_to_string(Generation const generation, Ability const ability) -> containers::string {
 	return generation >= Generation::three ?
 		containers::concatenate<containers::string>(
-			"\tAbility: "_s,
+			"\tAbility: "_sv,
 			to_string(ability),
-			"\n"_s
+			"\n"_sv
 		) :
 		containers::string();
 }
@@ -86,9 +86,9 @@ constexpr auto status_to_string(Status const status) -> containers::string {
 	auto const output_status = !is_clear(status);
 	return output_status ?
 		containers::concatenate<containers::string>(
-			"\tStatus: "_s,
+			"\tStatus: "_sv,
 			to_string(status.name()),
-			"\n"_s
+			"\n"_sv
 		) :
 		""_s;
 };
@@ -104,7 +104,7 @@ constexpr auto stat_to_string(
 		constexpr auto to_string() const -> containers::string {
 			return containers::concatenate<containers::string>(
 				containers::to_string(value.value()),
-				" "_s,
+				" "_sv,
 				technicalmachine::to_string(name)
 			);
 		}
@@ -120,14 +120,14 @@ constexpr auto stat_to_string(
 	return containers::is_empty(used_stats) ?
 		containers::string() :
 		containers::concatenate<containers::string>(
-			"\t"_s,
+			"\t"_sv,
 			type,
-			": "_s,
+			": "_sv,
 			containers::string(containers::join_with(
 				containers::transform(used_stats, &NamedStat::to_string),
-				" / "_s
+				" / "_sv
 			)),
-			"\n"_s
+			"\n"_sv
 		);
 };
 
@@ -144,12 +144,12 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 		};
 		return containers::concatenate<containers::string>(
 			stat_to_string(
-				"DVs"_s,
+				"DVs"_sv,
 				containers::enum_range<SpecialRegularStat>(),
 				get_iv
 			),
 			stat_to_string(
-				"EVs"_s,
+				"EVs"_sv,
 				containers::enum_range<SpecialPermanentStat>(),
 				get_ev
 			)
@@ -161,16 +161,16 @@ constexpr auto stats_to_string(CombinedStats<special_style> const stats) -> cont
 			return BOUNDED_CONDITIONAL(value != 0_bi, value, tv::none);
 		};
 		return containers::concatenate<containers::string>(
-			"\tNature: "_s,
+			"\tNature: "_sv,
 			to_string(stats.nature),
-			"\n"_s,
+			"\n"_sv,
 			stat_to_string(
-				"IVs"_s,
+				"IVs"_sv,
 				containers::enum_range<SplitSpecialRegularStat>(),
 				get_iv
 			),
 			stat_to_string(
-				"EVs"_s,
+				"EVs"_sv,
 				containers::enum_range<SplitSpecialPermanentStat>(),
 				get_ev
 			)
@@ -182,11 +182,11 @@ constexpr auto moves_to_string(RegularMoves const moves) -> containers::string {
 	return containers::string(containers::join_with(
 		containers::transform(moves, [](Move const move) {
 			return containers::concatenate<containers::string>(
-				"\t- "_s,
+				"\t- "_sv,
 				to_string(move.name())
 			);
 		}),
-		"\n"_s
+		"\n"_sv
 	));
 };
 
@@ -200,7 +200,7 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 	auto item_to_string = [&] -> containers::string {
 		return generation >= Generation::two ?
 			containers::concatenate<containers::string>(
-				" @ "_s,
+				" @ "_sv,
 				to_string(pokemon.item(false, false))
 			) :
 			containers::string();
@@ -209,11 +209,11 @@ constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 
 	return containers::concatenate<containers::string>(
 		to_string(pokemon.species()),
-		" ("_s,
+		" ("_sv,
 		hp_str,
-		"% HP)"_s,
+		"% HP)"_sv,
 		item_to_string(),
-		"\n"_s,
+		"\n"_sv,
 		ability_to_string(generation, pokemon.initial_ability()),
 		status_to_string(pokemon.status()),
 		stats_to_string(calculate_ivs_and_evs(pokemon)),

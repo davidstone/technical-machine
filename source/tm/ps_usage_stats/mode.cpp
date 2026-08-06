@@ -20,10 +20,10 @@ export enum class Mode {
 
 export constexpr auto parse_mode(containers::string_view const str) -> Mode {
 	return
-		str == "unweighted"_s ? Mode::unweighted :
-		str == "weighted"_s ? Mode::weighted :
-		str == "weighted_winner"_s ? Mode::weighted_winner :
-		str == "top_players"_s ? Mode::top_players :
+		str == "unweighted"_sv ? Mode::unweighted :
+		str == "weighted"_sv ? Mode::weighted :
+		str == "weighted_winner"_sv ? Mode::weighted_winner :
+		str == "top_players"_sv ? Mode::top_players :
 		throw std::runtime_error("Invalid mode");
 }
 

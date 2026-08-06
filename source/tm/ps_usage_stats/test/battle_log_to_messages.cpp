@@ -113,7 +113,7 @@ TEST_CASE("battle_log_to_messages: Battle log to messages") {
 					ps::SwitchMessage(
 						p1,
 						Species::Tauros,
-						Nickname("Tauros"_s),
+						Nickname("Tauros"_sv),
 						Level(100_bi),
 						Gender::genderless,
 						visible_hp(353_bi, 353_bi),
@@ -125,7 +125,7 @@ TEST_CASE("battle_log_to_messages: Battle log to messages") {
 					ps::SwitchMessage(
 						p2,
 						Species::Starmie,
-						Nickname("Starmie"_s),
+						Nickname("Starmie"_sv),
 						Level(100_bi),
 						Gender::genderless,
 						visible_hp(323_bi, 323_bi),
@@ -141,7 +141,7 @@ TEST_CASE("battle_log_to_messages: Battle log to messages") {
 				ps::SwitchMessage(
 					p2,
 					Species::Cloyster,
-					Nickname("Cloyster"_s),
+					Nickname("Cloyster"_sv),
 					Level(100_bi),
 					Gender::genderless,
 					visible_hp(303_bi, 303_bi),
@@ -220,7 +220,7 @@ TEST_CASE("battle_log_to_messages: Battle log to messages") {
 				ps::SwitchMessage(
 					p1,
 					Species::Gengar,
-					Nickname("Gengar"_s),
+					Nickname("Gengar"_sv),
 					Level(100_bi),
 					Gender::genderless,
 					visible_hp(323_bi, 323_bi),

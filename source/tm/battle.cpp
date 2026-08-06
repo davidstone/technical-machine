@@ -375,9 +375,9 @@ struct Battle {
 			auto const normalized_original_status = (original_status == StatusName::rest) ? StatusName::sleep : original_status;
 			if (normalized_original_status != visible_status) {
 				throw std::runtime_error(containers::concatenate<std::string>(
-					"Status out of sync with server messages: expected "_s,
+					"Status out of sync with server messages: expected "_sv,
 					to_string(original_status),
-					" but received "_s,
+					" but received "_sv,
 					to_string(visible_status)
 				));
 			}

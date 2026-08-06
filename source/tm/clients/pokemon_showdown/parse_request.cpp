@@ -70,11 +70,11 @@ auto parse_stats(VisibleHP const hp, nlohmann::json const & stats) -> ParsedStat
 	};
 	return ParsedStats(
 		hp,
-		get("atk"_s),
-		get("def"_s),
-		get("spa"_s),
-		get("spd"_s),
-		get("spe"_s)
+		get("atk"_sv),
+		get("def"_sv),
+		get("spa"_sv),
+		get("spd"_sv),
+		get("spe"_sv)
 	);
 }
 
@@ -82,17 +82,17 @@ auto parse_pokemon(nlohmann::json const & json) -> ParsedPokemon {
 	auto get = [&](containers::string_view const key) {
 		return json.at(key).get<std::string_view>();
 	};
-	auto const details = parse_details(get("details"_s));
-	auto const hp_and_status = parse_hp_and_status(get("condition"_s));
+	auto const details = parse_details(get("details"_sv));
+	auto const hp_and_status = parse_hp_and_status(get("condition"_sv));
 	auto const moves = parse_moves(json.at("moves"));
-	// auto const nickname = parse_pokemon_identity(get("ident"_s)).nickname;
+	// auto const nickname = parse_pokemon_identity(get("ident"_sv)).nickname;
 	return ParsedPokemon(
 		details.species,
 		details.level,
 		details.gender,
 		hp_and_status.status,
-		from_string<Item>(get("item"_s)),
-		from_string<Ability>(get("baseAbility"_s)),
+		from_string<Item>(get("item"_sv)),
+		from_string<Ability>(get("baseAbility"_sv)),
 		parse_stats(hp_and_status.hp, json.at("stats")),
 		moves.names,
 		moves.hidden_power_type

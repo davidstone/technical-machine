@@ -24,11 +24,11 @@ export struct Rating {
 	{
 		auto const value_in_range = std::numeric_limits<double>::min() < value_ and value <= std::numeric_limits<double>::max();
 		if (!value_in_range) {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating value of "_s, std::to_string(value_)));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating value of "_sv, std::to_string(value_)));
 		}
 		auto const deviation_in_range = std::numeric_limits<double>::min() < deviation_ and deviation_ <= initial_deviation;
 		if (!deviation_in_range) {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating deviation of "_s, std::to_string(deviation_)));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid rating deviation of "_sv, std::to_string(deviation_)));
 		}
 	}
 

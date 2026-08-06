@@ -34,9 +34,9 @@ constexpr auto ability_statuses(Ability const ability) -> containers::static_vec
 export constexpr auto check_ability_can_status(Ability const ability, StatusName const status) -> void {
 	if (!containers::any_equal(ability_statuses(ability), status)) {
 		throw std::runtime_error(containers::concatenate<std::string>(
-			"Tried to apply "_s,
+			"Tried to apply "_sv,
 			to_string(status),
-			" as a result of a contact move against "_s,
+			" as a result of a contact move against "_sv,
 			to_string(ability)
 		));
 	}

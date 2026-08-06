@@ -28,27 +28,27 @@ export auto parse_strategy(int argc, char const * const * argv) -> Strategy {
 		throw std::runtime_error("Command line must include strategy");
 	}
 	auto const name = containers::string_view(argv[0]);
-	if (name == "random"_s) {
+	if (name == "random"_sv) {
 		if (argc != 2) {
 			throw std::runtime_error("random strategy requires argument for switch weight");
 		}
 		return make_random_selection(Probability(std::stod(argv[1])));
-	} else if (name == "max_damage"_s) {
+	} else if (name == "max_damage"_sv) {
 		if (argc != 1) {
 			throw std::runtime_error("max_damage strategy accepts no arguments");
 		}
 		return make_max_damage();
-	} else if (name == "net_hp"_s) {
+	} else if (name == "net_hp"_sv) {
 		if (argc != 1) {
 			throw std::runtime_error("net_hp strategy accepts no arguments");
 		}
 		return make_net_hp();
-	} else if (name == "statistical"_s) {
+	} else if (name == "statistical"_sv) {
 		if (argc != 1) {
 			throw std::runtime_error("statistical strategy accepts no arguments");
 		}
 		return make_statistical();
-	} else if (name == "expectimax"_s) {
+	} else if (name == "expectimax"_sv) {
 		if (argc < 4) {
 			throw std::runtime_error("expectimax strategy requires two depth arguments followed by a foe strategy");
 		}

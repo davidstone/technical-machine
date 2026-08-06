@@ -59,7 +59,7 @@ auto get_integer_wrapper(nlohmann::json const & json, containers::string_view co
 }
 
 auto parse_evs(nlohmann::json const & pokemon) -> tv::optional<EVs> {
-	auto const evs = lookup(pokemon, "evs"_s);
+	auto const evs = lookup(pokemon, "evs"_sv);
 	if (!evs) {
 		return tv::none;
 	}
@@ -67,12 +67,12 @@ auto parse_evs(nlohmann::json const & pokemon) -> tv::optional<EVs> {
 		return get_integer_wrapper<EV>(*evs, key);
 	};
 	auto const result = EVs(
-		get("HP"_s),
-		get("Atk"_s),
-		get("Def"_s),
-		get("SpA"_s),
-		get("SpD"_s),
-		get("Spe"_s)
+		get("HP"_sv),
+		get("Atk"_sv),
+		get("Def"_sv),
+		get("SpA"_sv),
+		get("SpD"_sv),
+		get("Spe"_sv)
 	);
 	if (ev_sum(result) > max_total_evs(SpecialInputStyle::split)) {
 		throw std::runtime_error("Too many EVs");
@@ -90,14 +90,14 @@ auto parse_predictor_team(nlohmann::json const & team) -> PredictorTeam {
 			return from_string<T>(value->get<std::string_view>());
 		};
 		return PredictorPokemon(
-			from_string<Species>(get_str(pokemon, "species"_s)),
-			get_integer_wrapper<Level>(pokemon, "level"_s),
-			get_opt(bounded::type<Item>, "item"_s),
-			get_opt(bounded::type<Ability>, "ability"_s),
-			get_opt(bounded::type<Nature>, "nature"_s),
+			from_string<Species>(get_str(pokemon, "species"_sv)),
+			get_integer_wrapper<Level>(pokemon, "level"_sv),
+			get_opt(bounded::type<Item>, "item"_sv),
+			get_opt(bounded::type<Ability>, "ability"_sv),
+			get_opt(bounded::type<Nature>, "nature"_sv),
 			parse_evs(pokemon),
 			MoveNames(containers::transform(
-				pokemon.at("moves"_s),
+				pokemon.at("moves"_sv),
 				[](nlohmann::json const & move) {
 					return from_string<MoveName>(move.get<std::string_view>());
 				}
@@ -109,8 +109,8 @@ auto parse_predictor_team(nlohmann::json const & team) -> PredictorTeam {
 export auto parse_predictor_inputs(std::string_view const str) -> PredictorInputs {
 	auto const json = nlohmann::json::parse(str);
 	return PredictorInputs(
-		from_string<Generation>(get_str(json, "generation"_s)),
-		from_string<Style>(get_str(json, "style"_s)),
+		from_string<Generation>(get_str(json, "generation"_sv)),
+		from_string<Style>(get_str(json, "style"_sv)),
 		parse_predictor_team(json.at("team"))
 	);
 }

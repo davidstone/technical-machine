@@ -173,7 +173,7 @@ TEST_CASE("ClientBattle: Handle replacing two fainted Pokemon old generation") {
 	battle->use_switch(true, Switch(1_bi));
 	battle->foe_has(
 		Species::Pikachu,
-		Nickname("Pikachu"_s),
+		Nickname("Pikachu"_sv),
 		Level(100_bi),
 		Gender::genderless,
 		MaxVisibleHP(100_bi)
@@ -224,7 +224,7 @@ TEST_CASE("ClientBattle: Handle replacing two fainted Pokemon new generation") {
 	battle->use_switch(true, Switch(1_bi));
 	battle->foe_has(
 		Species::Pikachu,
-		Nickname("Pikachu"_s),
+		Nickname("Pikachu"_sv),
 		Level(100_bi),
 		Gender::genderless,
 		MaxVisibleHP(100_bi)

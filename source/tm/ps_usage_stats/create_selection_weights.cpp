@@ -66,11 +66,11 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	auto const thread_count = bounded::to_integer<ThreadCount>(argv[1]);
 	auto input_directory = std::filesystem::path(argv[2]);
 	if (!std::filesystem::exists(input_directory)) {
-		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(input_directory.string(), " does not exist"_sv));
 	}
 	auto output_file = std::filesystem::path(argv[3]);
 	if (std::filesystem::exists(output_file)) {
-		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"_s));
+		throw std::runtime_error(containers::concatenate<std::string>(output_file.string(), " already exists"_sv));
 	}
 	return ParsedArgs(
 		thread_count,
@@ -273,7 +273,7 @@ auto update_weights_for_one_side_of_battle(
 			));
 		}
 	} catch (std::exception const & ex) {
-		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"_s : "p2"_s;
+		auto const party_str = rated_side.side.party == Party(0_bi) ? "p1"_sv : "p2"_sv;
 		std::cerr << "Unable to process " << input_file.string() << ", side " << party_str << ": " << ex.what() << ", skipping\n";
 	}
 }

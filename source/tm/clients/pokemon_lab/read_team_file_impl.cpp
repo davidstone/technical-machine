@@ -51,22 +51,22 @@ constexpr auto parse_species(containers::string_view const str) -> Species {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<containers::string_view, Species>>({
-			{ "Deoxys"_s, Species::Deoxys_Normal },
-			{ "Deoxys-e"_s, Species::Deoxys_Speed },
-			{ "Deoxys-f"_s, Species::Deoxys_Attack },
-			{ "Deoxys-l"_s, Species::Deoxys_Defense },
-			{ "Giratina"_s, Species::Giratina_Altered },
-			{ "Giratina-o"_s, Species::Giratina_Origin },
-			{ "Rotom-c"_s, Species::Rotom_Mow },
-			{ "Rotom-f"_s, Species::Rotom_Frost },
-			{ "Rotom-h"_s, Species::Rotom_Heat },
-			{ "Rotom-s"_s, Species::Rotom_Fan },
-			{ "Rotom-w"_s, Species::Rotom_Wash },
-			{ "Shaymin"_s, Species::Shaymin_Land },
-			{ "Shaymin-s"_s, Species::Shaymin_Sky },
-			{ "Wormadam"_s, Species::Wormadam_Plant },
-			{ "Wormadam-g"_s, Species::Wormadam_Sandy },
-			{ "Wormadam-s"_s, Species::Wormadam_Trash }
+			{ "Deoxys"_sv, Species::Deoxys_Normal },
+			{ "Deoxys-e"_sv, Species::Deoxys_Speed },
+			{ "Deoxys-f"_sv, Species::Deoxys_Attack },
+			{ "Deoxys-l"_sv, Species::Deoxys_Defense },
+			{ "Giratina"_sv, Species::Giratina_Altered },
+			{ "Giratina-o"_sv, Species::Giratina_Origin },
+			{ "Rotom-c"_sv, Species::Rotom_Mow },
+			{ "Rotom-f"_sv, Species::Rotom_Frost },
+			{ "Rotom-h"_sv, Species::Rotom_Heat },
+			{ "Rotom-s"_sv, Species::Rotom_Fan },
+			{ "Rotom-w"_sv, Species::Rotom_Wash },
+			{ "Shaymin"_sv, Species::Shaymin_Land },
+			{ "Shaymin-s"_sv, Species::Shaymin_Sky },
+			{ "Wormadam"_sv, Species::Wormadam_Plant },
+			{ "Wormadam-g"_sv, Species::Wormadam_Sandy },
+			{ "Wormadam-s"_sv, Species::Wormadam_Trash }
 		})
 	);
 	auto const result = containers::lookup(converter, str);
@@ -104,20 +104,20 @@ auto parse_stats(property_tree::ptree_reader pt) -> CombinedStats<stat_style> {
 			IVType(stats.get<typename IVType::value_type>("<xmlattr>.iv")),
 			EV(stats.get<EV::value_type>("<xmlattr>.ev"))
 		};
-		if (stat_name == "HP"_s) {
+		if (stat_name == "HP"_sv) {
 			hp = iv_and_ev;
-		} else if (stat_name == "Atk"_s) {
+		} else if (stat_name == "Atk"_sv) {
 			atk = iv_and_ev;
-		} else if (stat_name == "Def"_s) {
+		} else if (stat_name == "Def"_sv) {
 			def = iv_and_ev;
-		} else if (stat_name == "SpAtk"_s) {
+		} else if (stat_name == "SpAtk"_sv) {
 			spa = iv_and_ev;
-		} else if (stat_name == "SpDef"_s) {
+		} else if (stat_name == "SpDef"_sv) {
 			spd = iv_and_ev;
-		} else if (stat_name == "Spd"_s) {
+		} else if (stat_name == "Spd"_sv) {
 			spe = iv_and_ev;
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid stat name "_s, stat_name));
+			throw std::runtime_error(containers::concatenate<std::string>("Invalid stat name "_sv, stat_name));
 		}
 	}
 	if (!hp or !atk or !def or !spa or !spd or !spe) {

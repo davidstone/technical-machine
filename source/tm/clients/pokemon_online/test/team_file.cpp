@@ -58,7 +58,7 @@ constexpr auto expected_team = InitialTeam<SpecialInputStyle::split>({
 	},
 	{
 		.species = Species::Wormadam_Sandy,
-        .nickname = Nickname("Wormadam-G"_s),
+        .nickname = Nickname("Wormadam-G"_sv),
 		.gender = Gender::female,
 		.item = Item::Bright_Powder,
 		.ability = Ability::Anticipation,
@@ -187,7 +187,7 @@ constexpr auto team_xml = R"(
 		<EV>0</EV>
 	</Pokemon>
 </Team>
-)"_s;
+)"_sv;
 
 TEST_CASE("Pokemon Online: Pokemon Online team file") {
 	auto const original_team = po::read_team_file(containers::as_bytes(team_xml));
