@@ -1315,15 +1315,24 @@ constexpr auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 		case MoveName::Snore: return BOUNDED_CONDITIONAL(generation <= Generation::five, 40_bi, 50_bi);
 		case MoveName::Curse: return 0_bi;
 		case MoveName::Flail:
-		case MoveName::Reversal: {
-			auto const k = 64_bi * hp_ratio(attacker);
-			if (k <= 1_bi) return 200_bi;
-			else if (k <= 5_bi) return 150_bi;
-			else if (k <= 12_bi) return 100_bi;
-			else if (k <= 21_bi) return 80_bi;
-			else if (k <= 42_bi) return 40_bi;
-			else return 20_bi;
-		}
+		case MoveName::Reversal:
+			if constexpr (generation != Generation::four) {
+				auto const k = 48_bi * hp_ratio(attacker);
+				if (k <= 1_bi) return 200_bi;
+				else if (k <= 4_bi) return 150_bi;
+				else if (k <= 9_bi) return 100_bi;
+				else if (k <= 16_bi) return 80_bi;
+				else if (k <= 32_bi) return 40_bi;
+				else return 20_bi;
+			} else {
+				auto const k = 64_bi * hp_ratio(attacker);
+				if (k <= 1_bi) return 200_bi;
+				else if (k <= 5_bi) return 150_bi;
+				else if (k <= 12_bi) return 100_bi;
+				else if (k <= 21_bi) return 80_bi;
+				else if (k <= 42_bi) return 40_bi;
+				else return 20_bi;
+			}
 		case MoveName::Conversion_2: return 0_bi;
 		case MoveName::Aeroblast: return 100_bi;
 		case MoveName::Cotton_Spore: return 0_bi;
