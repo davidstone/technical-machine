@@ -156,7 +156,7 @@ export struct BaseStats {
 					55_bi,
 					BOUNDED_CONDITIONAL(generation <= Generation::five, 30_bi, 40_bi),
 					50_bi,
-					50_bi,
+					BOUNDED_CONDITIONAL(Generation::two <= generation and generation <= Generation::five, 40_bi, 50_bi),
 					90_bi
 				};
 				case Species::Raichu: return {
@@ -1842,18 +1842,18 @@ export struct BaseStats {
 				case Species::Aegislash: return {
 					60_bi,
 					50_bi,
-					BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+					BOUNDED_CONDITIONAL(generation <= Generation::seven, 150_bi, 140_bi),
 					50_bi,
-					BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+					BOUNDED_CONDITIONAL(generation <= Generation::seven, 150_bi, 140_bi),
 					60_bi
 				};
 				// Changes before using offensive move
 				#if 0
 				case Species::Aegislash_Blade: return {
 					60_bi,
-					BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+					BOUNDED_CONDITIONAL(generation <= Generation::seven, 150_bi, 140_bi),
 					50_bi,
-					BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+					BOUNDED_CONDITIONAL(generation <= Generation::seven, 150_bi, 140_bi),
 					50_bi,
 					60_bi
 				};
