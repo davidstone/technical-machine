@@ -434,7 +434,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Extrasensory: return 100_bi;
 		case MoveName::Sky_Uppercut: return 90_bi;
 		case MoveName::Sand_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::four, 70_bi, 85_bi);
-		case MoveName::Sheer_Cold: return none;
+		case MoveName::Sheer_Cold: return 30_bi;
 		case MoveName::Muddy_Water: return 85_bi;
 		case MoveName::Bullet_Seed: return 100_bi;
 		case MoveName::Aerial_Ace: return none;
