@@ -100,10 +100,18 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Surf: return 100_bi;
 		case MoveName::Ice_Beam: return 100_bi;
 		case MoveName::Blizzard:
-			if (weather == Weather::hail) {
-				return none;
+			switch (generation) {
+				case Generation::one:
+					return 90_bi;
+				case Generation::two:
+				case Generation::three:
+					return 70_bi;
+				default:
+					if (weather == Weather::hail) {
+						return none;
+					}
+					return 70_bi;
 			}
-			return BOUNDED_CONDITIONAL(generation == Generation::one, 90_bi, 70_bi);
 		case MoveName::Psybeam: return 100_bi;
 		case MoveName::Bubble_Beam: return 100_bi;
 		case MoveName::Aurora_Beam: return 100_bi;
